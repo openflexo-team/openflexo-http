@@ -5,19 +5,32 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.StaticHandler;
+import j2html.tags.ContainerTag;
 import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
+import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.resource.PamelaResource;
+import org.openflexo.foundation.resource.ResourceManager;
 
+import java.io.ByteArrayOutputStream;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
+
+import static j2html.TagCreator.*;
 
 /**
  * Created by charlie on 17/01/2017.
  */
 public class HttpService extends FlexoServiceImpl implements FlexoService {
 
+	public static final String RESOURCE_PREFIX = "/resource";
 	private static Logger logger = Logger.getLogger(HttpService.class.getPackage().getName());
 
 	public static class Options {
@@ -38,6 +51,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	private final HttpServerOptions serverOptions;
 
 	private HttpServer server = null;
+	private Router router = null;
 
 	public HttpService(Options options) {
 		this.port = options.port;
@@ -49,8 +63,14 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	@Override
 	public void initialize() {
+		router = Router.router(vertx);
+		router.get("/resource").handler(this::serveResourcesRoot);
+		router.get("/resource/*").handler(this::serveResource);
+		router.get("/*").handler(StaticHandler.create());
+
 		server = vertx.createHttpServer(serverOptions);
-		server.requestHandler(this::authentication);
+		server.requestHandler(router::accept);
+
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
 	}
@@ -63,30 +83,63 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		return result;
 	}
 
+	private void serveResourcesRoot(RoutingContext context) {
+		HttpServerRequest request = context.request();
+		HttpServerResponse response = request.response();
+		ContainerTag resourceCentersDiv = div();
+		for (FlexoResourceCenter<?> resourceCenter : getServiceManager().getResourceCenterService().getResourceCenters()) {
+			resourceCentersDiv.with(h3(resourceCenter.getName()));
+			ContainerTag ul = ul();
+			for (FlexoResource<?> flexoResource : resourceCenter.getAllResources(null)) {
+				String link = "/resource/" + flexoResource.getURI();
+				ul.with(
+						li().with(a(flexoResource.getName()).withHref(link))
+				);
+			}
+			resourceCentersDiv.with(ul);
+		}
 
-	private void authentication(HttpServerRequest request) {
-		logger.info("Accessing " +  request.path());
-		// TODO authentication
-		dispatch(request);
+		ContainerTag body = body();
+		body.with(h2("Resources")).with(resourceCentersDiv);
+
+		response.end(html()
+				.with(HtmlUtils.createHeader("Resources"))
+				.with(body).render()
+		);
 	}
 
-	private void dispatch(HttpServerRequest request) {
-		String path = request.path();
-		HttpServerResponse response = request.response();
-		if (path.startsWith("/resource")) {
+	private void serveResource(RoutingContext context) {
+		try {
+			HttpServerRequest request = context.request();
+			String resourceId = URLDecoder.decode(context.request().path().substring("/resource/".length()), "UTF-8");
+			HttpServerResponse response = request.response();
 
-		} else if (path.startsWith("/api")) {
-
-		} else {
-			Path filename = resolveWebPath(path);
-			if (filename != null) {
-				response.sendFile(filename.toAbsolutePath().toString());
-			} else {
-				response.setStatusCode(404);
-				response.end();
+			// serves the resource
+			ResourceManager resourceManager = getServiceManager().getResourceManager();
+			FlexoResource<?> resource = resourceManager.getResource(resourceId);
+			if (resource == null) {
+				context.fail(404);
+				return;
 			}
+
+			if (resource instanceof PamelaResource) {
+				PamelaResource pamelaResource = (PamelaResource) resource;
+				if (!resource.isLoaded()) {
+					resource.loadResourceData(null);
+				}
+
+				ByteArrayOutputStream stream = new ByteArrayOutputStream();
+				pamelaResource.getFactory().serialize(pamelaResource.getLoadedResourceData(), stream);
+				stream.close();
+
+				response.write(stream.toString("utf-8"));
+			}
+
+		} catch (Exception e) {
+			context.fail(e);
 		}
 	}
+
 
 	@Override
 	public void stop() {

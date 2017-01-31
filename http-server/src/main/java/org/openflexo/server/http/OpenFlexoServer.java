@@ -21,7 +21,6 @@ import java.util.logging.Level;
 public class OpenFlexoServer {
 
 	public static class Options {
-		public int port = 8080;
 
 		public HttpService.Options serverOptions = new HttpService.Options();
 
