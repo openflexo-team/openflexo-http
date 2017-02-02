@@ -1,4 +1,4 @@
-package org.openflexo.server.http;
+package org.openflexo.http.server;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerRequest;

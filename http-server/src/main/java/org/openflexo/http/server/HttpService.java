@@ -1,4 +1,4 @@
-package org.openflexo.server.http;
+package org.openflexo.http.server;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
@@ -38,7 +38,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		public String host = "localhost";
 
-		public String webDirectory = "./web";
+		public String webDirectory = "./webroot";
 
 	}
 

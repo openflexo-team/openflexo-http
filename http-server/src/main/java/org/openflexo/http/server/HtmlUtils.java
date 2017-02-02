@@ -1,4 +1,4 @@
-package org.openflexo.server.http;
+package org.openflexo.http.server;
 
 import j2html.tags.ContainerTag;
 

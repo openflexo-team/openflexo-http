@@ -1,4 +1,4 @@
-package org.openflexo.server.http;
+package org.openflexo.http.server;
 
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.DefaultFlexoServiceManager;

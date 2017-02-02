@@ -1,0 +1,8 @@
+dependencies {
+
+    compile flexoFoundation()
+
+    testCompile testUtils()
+    testCompile flexoFoundationTest()
+
+}
