@@ -1,14 +1,19 @@
 package org.openflexo.http.connector;
 
+import org.openflexo.foundation.fml.annotations.DeclareModelSlots;
+import org.openflexo.foundation.fml.annotations.DeclareResourceTypes;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterBindingFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
+import org.openflexo.http.connector.rm.HttpResourceFactory;
 
 /**
  * Created by charlie on 02/02/2017.
  */
+@DeclareModelSlots({HttpModelSlot.class})
+@DeclareResourceTypes({HttpResourceFactory.class})
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 
 	@Override
