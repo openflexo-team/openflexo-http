@@ -22,15 +22,15 @@ package org.openflexo.http.connector.rm;
 
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
-import org.openflexo.technologyadapter.jdbc.JDBCTechnologyAdapter;
-import org.openflexo.technologyadapter.jdbc.model.JDBCConnection;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.UrlModel;
 
 public class HttpResourceRepository<I> extends
-        TechnologyAdapterResourceRepository<HttpResource, JDBCTechnologyAdapter, JDBCConnection, I>
+        TechnologyAdapterResourceRepository<HttpResource, HttpTechnologyAdapter, UrlModel, I>
 {
     private static final String DEFAULT_BASE_URI = "http://www.openflexo.org/JDBCTechnologyAdapter/Models";
 
-    public HttpResourceRepository(JDBCTechnologyAdapter adapter, FlexoResourceCenter<I> resourceCenter) {
+    public HttpResourceRepository(HttpTechnologyAdapter adapter, FlexoResourceCenter<I> resourceCenter) {
         super(adapter, resourceCenter);
     }
 
