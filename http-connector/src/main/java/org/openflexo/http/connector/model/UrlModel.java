@@ -1,8 +1,9 @@
-package org.openflexo.http.connector;
+package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
-import org.openflexo.http.connector.UrlModel.UrlModelImpl;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.UrlModel.UrlModelImpl;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;

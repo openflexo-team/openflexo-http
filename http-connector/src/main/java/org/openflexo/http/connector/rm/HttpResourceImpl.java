@@ -22,8 +22,8 @@ package org.openflexo.http.connector.rm;
 
 import org.openflexo.foundation.resource.PamelaResourceImpl;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.UrlModel;
 import org.openflexo.http.connector.model.HttpFactory;
+import org.openflexo.http.connector.model.UrlModel;
 
 public abstract class HttpResourceImpl
 	extends PamelaResourceImpl<UrlModel, HttpFactory>

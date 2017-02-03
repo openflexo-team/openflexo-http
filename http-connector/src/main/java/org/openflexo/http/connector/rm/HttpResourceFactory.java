@@ -6,8 +6,8 @@ import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.UrlModel;
 import org.openflexo.http.connector.model.HttpFactory;
+import org.openflexo.http.connector.model.UrlModel;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.toolbox.StringUtils;
 
