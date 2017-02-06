@@ -12,7 +12,7 @@ import org.openflexo.http.connector.rm.HttpResourceFactory;
 /**
  * Created by charlie on 02/02/2017.
  */
-@DeclareModelSlots({HttpModelSlot.class})
+@DeclareModelSlots({RestModelSlot.class})
 @DeclareResourceTypes({HttpResourceFactory.class})
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 

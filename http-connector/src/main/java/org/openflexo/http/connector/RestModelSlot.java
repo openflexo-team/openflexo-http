@@ -26,24 +26,23 @@ import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.action.ModelSlotInstanceConfiguration;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
-import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.connector.model.UrlModel;
+import org.openflexo.http.connector.rm.HttpResource;
 
 import java.lang.reflect.Type;
 
 /**
- * Implementation of the ModelSlot class for the JDBC technology adapter<br>
- * We expect here to connect an JDBC model conform to an JDBCMetaModel
- * 
- * @author SomeOne
- * 
+ * REST model slot for Http technology adapter
+ *
+ *
+ *
  */
-public interface HttpModelSlot extends FreeModelSlot<UrlModel> {
+public interface RestModelSlot extends FreeModelSlot<UrlModel> {
 
     @Override
     HttpTechnologyAdapter getModelSlotTechnologyAdapter();
 
-    abstract class JDBCModelSlotImpl extends FreeModelSlotImpl<UrlModel> implements HttpModelSlot {
+    abstract class RestModelSlotImpl extends FreeModelSlotImpl<UrlModel> implements RestModelSlot {
 
         @Override
         public Class<HttpTechnologyAdapter> getTechnologyAdapterClass() {
@@ -67,19 +66,23 @@ public interface HttpModelSlot extends FreeModelSlot<UrlModel> {
         }
 
         @Override
-        public ModelSlotInstanceConfiguration<? extends FreeModelSlot<UrlModel>, UrlModel> createConfiguration(AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc) {
+        public ModelSlotInstanceConfiguration<? extends FreeModelSlot<UrlModel>, UrlModel> createConfiguration(
+                AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc
+        ) {
             return new HttpModelSlotInstanceConfiguration(this, virtualModelInstance, rc);
         }
 
         @Override
-        public TechnologyAdapterResource<UrlModel, ?> createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
+        public HttpResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
             // TODO create empty resource
             return null;
         }
 
         @Override
-        public TechnologyAdapterResource<UrlModel, ?> createSharedEmptyResource(FlexoResourceCenter<?> resourceCenter,
-                String relativePath, String filename, String modelUri) {
+        public HttpResource createSharedEmptyResource(
+                FlexoResourceCenter<?> resourceCenter,
+                String relativePath, String filename, String modelUri
+        ) {
             // TODO create empty resource
             return null;
         }

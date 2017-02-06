@@ -26,9 +26,9 @@ import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.FreeModelSlotInstanceConfiguration;
 import org.openflexo.http.connector.model.UrlModel;
 
-public class HttpModelSlotInstanceConfiguration extends FreeModelSlotInstanceConfiguration<UrlModel, HttpModelSlot> {
+public class HttpModelSlotInstanceConfiguration extends FreeModelSlotInstanceConfiguration<UrlModel, RestModelSlot> {
 
-    protected HttpModelSlotInstanceConfiguration(HttpModelSlot ms, AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc) {
+    protected HttpModelSlotInstanceConfiguration(RestModelSlot ms, AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc) {
         super(ms, virtualModelInstance, rc);
     }
 
