@@ -38,7 +38,7 @@ Example results for `/center/347d5ab625ede4b9d7`:
 }
 ```
 
-# Resources lists
+# Resources lists for center
 
 - **`/center/{center_id}/resource{path}`:** List of resources for resource center with given id.
 
@@ -64,9 +64,28 @@ Example results for `/center/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`
 ]
 ```
 
+# Resources list
+
+- **`/resource`:** List of all resources
+
+Example results for `/resource`:
+
+```json
+[ 
+  { "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
+    "id": "af8bca0b3983d28a03", "url": "/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
+  { "name": "People.diagram", "uri": "http://people", "version": "0.5", "type": "Diagram",
+    "id": "db835d8f1a32e5234c", "url": "/center/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
+  { "name": "CityMapping", "uri": "http://simpleVP/CityMapping", "version": "0.2", "type": "EMF",
+    "id": "f455f327a9f3a57de0", "url": "/center/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
+  { "name": "CityViews", "uri": "http://simpleVP/CityViews", "version": "0.2", "type": "EMF",
+    "id": "890822e1ec66f5b1a6", "url": "/center/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
+]
+```
+
 # Resources
 
-- **`/center/{center_id}/resource/{resource_id}`:** Information for resource with given id in the given resource center.
+- **`/resource/{resource_id}`:** Information for resource with given id in the given resource center.
 
 Example results for `/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03`:
 
@@ -77,9 +96,9 @@ Example results for `/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03`:
 }
 ```
 
-- **`/center/{center_id}/resource/{resource_id}/contents`**: Raw content for the resource with given id.
+- **`/resource/{resource_id}/contents`**: Raw content for the resource with given id.
 
-Example results for `/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03/contents`:
+Example results for `/resource/af8bca0b3983d28a03/contents`:
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
