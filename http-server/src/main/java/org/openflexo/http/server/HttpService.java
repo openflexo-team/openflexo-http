@@ -3,34 +3,27 @@ package org.openflexo.http.server;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
-import io.vertx.core.http.HttpServerRequest;
-import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
-import j2html.tags.ContainerTag;
 import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.resource.PamelaResource;
-import org.openflexo.foundation.resource.ResourceManager;
 
-import java.io.ByteArrayOutputStream;
-import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
-
-import static j2html.TagCreator.*;
 
 /**
  * Created by charlie on 17/01/2017.
  */
 public class HttpService extends FlexoServiceImpl implements FlexoService {
 
-	public static final String RESOURCE_PREFIX = "/resource";
+	private static final String JSON = "application/json";
+
 	private static Logger logger = Logger.getLogger(HttpService.class.getPackage().getName());
 
 	public static class Options {
@@ -39,7 +32,6 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		public String host = "localhost";
 
 		public String webDirectory = "./webroot";
-
 	}
 
 	private final int port;
@@ -64,8 +56,15 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	@Override
 	public void initialize() {
 		router = Router.router(vertx);
-		router.get("/resource").handler(this::serveResourcesRoot);
-		router.get("/resource/*").handler(this::serveResource);
+		router.get("/center").produces(JSON).handler(this::serveCenterList);
+		router.get("/center/:cid").produces(JSON).handler(this::serveCenter);
+
+		// TODO add support for path
+		router.get("/center/:cid/resource").produces(JSON).handler(this::serveCenterResourceList);
+
+		router.get("/resource").produces(JSON).handler(this::serveResourceList);
+		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
+
 		router.get("/*").handler(StaticHandler.create());
 
 		server = vertx.createHttpServer(serverOptions);
@@ -83,63 +82,66 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		return result;
 	}
 
-	private void serveResourcesRoot(RoutingContext context) {
-		HttpServerRequest request = context.request();
-		HttpServerResponse response = request.response();
-		ContainerTag resourceCentersDiv = div();
-		for (FlexoResourceCenter<?> resourceCenter : getServiceManager().getResourceCenterService().getResourceCenters()) {
-			resourceCentersDiv.with(h3(resourceCenter.getName()));
-			ContainerTag ul = ul();
-			for (FlexoResource<?> flexoResource : resourceCenter.getAllResources(null)) {
-				String link = "/resource/" + flexoResource.getURI();
-				ul.with(
-						li().with(a(flexoResource.getName()).withHref(link))
-				);
-			}
-			resourceCentersDiv.with(ul);
+	private void serveCenterList(RoutingContext context) {
+		JsonArray result = new JsonArray();
+		for (FlexoResourceCenter<?> center : getServiceManager().getResourceCenterService().getResourceCenters()) {
+			result.add(JsonUtils.getCenterDescription(center));
 		}
+		context.response().end(result.encodePrettily());
+	}
 
-		ContainerTag body = body();
-		body.with(h2("Resources")).with(resourceCentersDiv);
+	private void serveCenter(RoutingContext context) {
+		String centerId = context.request().getParam(("cid"));
+		String uri = IdUtils.decodeId(centerId);
 
-		response.end(html()
-				.with(HtmlUtils.createHeader("Resources"))
-				.with(body).render()
-		);
+		FlexoResourceCenter<?> resourceCenter = getServiceManager().getResourceCenterService().getFlexoResourceCenter(uri);
+		if (resourceCenter != null) {
+			context.response().end(JsonUtils.getCenterDescription(resourceCenter).encodePrettily());
+		} else {
+			notFound(context);
+		}
+	}
+
+	private void serveCenterResourceList(RoutingContext context) {
+		String centerId = context.request().getParam(("cid"));
+		String centerUri = IdUtils.decodeId(centerId);
+
+		FlexoResourceCenter<?> resourceCenter = getServiceManager().getResourceCenterService().getFlexoResourceCenter(centerUri);
+		if (resourceCenter != null) {
+			JsonArray result = new JsonArray();
+			for (FlexoResource<?> resource : resourceCenter.getAllResources(null)) {
+				result.add(JsonUtils.getResourceDescription(resource));
+			}
+			context.response().end(result.encodePrettily());
+		} else {
+			notFound(context);
+		}
+	}
+
+	private void serveResourceList(RoutingContext context) {
+		JsonArray result = new JsonArray();
+		for (FlexoResource<?> resource : getServiceManager().getResourceManager().getRegisteredResources()) {
+			result.add(JsonUtils.getResourceDescription(resource));
+		}
+		context.response().end(result.encodePrettily());
 	}
 
 	private void serveResource(RoutingContext context) {
-		try {
-			HttpServerRequest request = context.request();
-			String resourceId = URLDecoder.decode(context.request().path().substring("/resource/".length()), "UTF-8");
-			HttpServerResponse response = request.response();
+		String id = context.request().getParam(("rid"));
+		String uri = IdUtils.decodeId(id);
 
-			// serves the resource
-			ResourceManager resourceManager = getServiceManager().getResourceManager();
-			FlexoResource<?> resource = resourceManager.getResource(resourceId);
-			if (resource == null) {
-				context.fail(404);
-				return;
-			}
-
-			if (resource instanceof PamelaResource) {
-				PamelaResource pamelaResource = (PamelaResource) resource;
-				if (!resource.isLoaded()) {
-					resource.loadResourceData(null);
-				}
-
-				ByteArrayOutputStream stream = new ByteArrayOutputStream();
-				pamelaResource.getFactory().serialize(pamelaResource.getLoadedResourceData(), stream);
-				stream.close();
-
-				response.write(stream.toString("utf-8"));
-			}
-
-		} catch (Exception e) {
-			context.fail(e);
+		FlexoResource<?> resource = getServiceManager().getResourceManager().getResource(uri);
+		if (resource != null) {
+			context.response().end(JsonUtils.getResourceDescription(resource).encodePrettily());
+		} else {
+			notFound(context);
 		}
 	}
 
+
+	private void notFound(RoutingContext context) {
+		context.response().setStatusCode(404).close();
+	}
 
 	@Override
 	public void stop() {

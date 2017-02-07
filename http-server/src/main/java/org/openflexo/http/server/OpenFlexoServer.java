@@ -42,7 +42,10 @@ public class OpenFlexoServer {
 			@Override
 			protected FlexoResourceCenterService createResourceCenterService() {
 				FlexoResourceCenterService resourceCenterService = super.createResourceCenterService();
-				resourceCenterService.addToResourceCenters(new DirectoryResourceCenter(new File("./rc"), options.resourceCenterUri, resourceCenterService));
+				DirectoryResourceCenter resourceCenter = new DirectoryResourceCenter(
+						new File("./rc"), options.resourceCenterUri, resourceCenterService
+				);
+				resourceCenterService.addToResourceCenters(resourceCenter);
 				return resourceCenterService;
 			}
 		};
