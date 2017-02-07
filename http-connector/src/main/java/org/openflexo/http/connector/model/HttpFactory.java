@@ -84,6 +84,10 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 		return newInstance(UrlModel.class);
 	}
 
+	public UrlModel makeNewModel(String host, String path) {
+		return makeNewModel(host, 80, path);
+	}
+
 	public UrlModel makeNewModel(String host, int port, String path) {
 		UrlModel returned = newInstance(UrlModel.class);
 		returned.setHost(host);
