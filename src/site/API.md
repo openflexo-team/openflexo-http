@@ -1,17 +1,7 @@
-<!--markpress-opt
-{
-	"layout": "horizontal",
-	"autoSplit": true,
-	"sanitize": false,
-	"theme": "light",
-	"noEmbed": false
-}
-markpress-opt-->
 
 # OpenFlexo HTTP services
 
-> Project `openflexo-server` adds to OpenFlexo a set of HTTP capabilities including a HTTP REST server and serveral clients.
-
+Project `openflexo-server` adds to OpenFlexo a set of HTTP capabilities including a HTTP REST server and serveral clients.
 
 # REST Server
 
