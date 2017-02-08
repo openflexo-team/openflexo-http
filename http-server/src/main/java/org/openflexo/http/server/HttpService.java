@@ -11,6 +11,7 @@ import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,7 +19,7 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 /**
- * Created by charlie on 17/01/2017.
+ * HTTP Service for OpenFlexo
  */
 public class HttpService extends FlexoServiceImpl implements FlexoService {
 
@@ -66,6 +67,9 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
 
 		router.get("/resource/:rid/contents").handler(this::serveResourceContents);
+
+		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
+		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
 		router.get("/*").handler(StaticHandler.create());
 
@@ -152,6 +156,29 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		}
 	}
 
+	private void serveTechnologyAdapterList(RoutingContext context) {
+		JsonArray result = new JsonArray();
+		for (TechnologyAdapter technologyAdapter : getServiceManager().getTechnologyAdapterService().getTechnologyAdapters()) {
+			result.add(JsonUtils.getTechnologyAdapterDescription(technologyAdapter));
+		}
+		context.response().end(result.encodePrettily());
+	}
+
+	private void serveTechnologyAdapter(RoutingContext context) {
+		String id = context.request().getParam(("taid"));
+		try {
+			Class<? extends TechnologyAdapter> taClass = (Class<? extends TechnologyAdapter>) getClass().getClassLoader().loadClass(id);
+			TechnologyAdapter technologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(taClass);
+			if (technologyAdapter != null) {
+				context.response().end(JsonUtils.getTechnologyAdapterDescription(technologyAdapter).encodePrettily());
+			}
+			else {
+				notFound(context);
+			}
+		} catch (ClassNotFoundException e) {
+			notFound(context);
+		}
+	}
 
 	private void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();

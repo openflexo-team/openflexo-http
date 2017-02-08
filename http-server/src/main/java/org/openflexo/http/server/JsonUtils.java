@@ -3,6 +3,7 @@ package org.openflexo.http.server;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
 /**
  * Utility methods for JSON handling
@@ -34,6 +35,16 @@ public class JsonUtils {
 		resourceDescription.put("resourceCenterUrl", "/rc/"+centerId);
 		resourceDescription.put("url", "/resource/" + id);
 		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
+		return resourceDescription;
+	}
+
+	public static JsonObject getTechnologyAdapterDescription(TechnologyAdapter adapter) {
+		String id = adapter.getClass().getName();
+		JsonObject resourceDescription = new JsonObject();
+		resourceDescription.put("name", adapter.getName());
+		resourceDescription.put("type", "TechnologyAdapter");
+		resourceDescription.put("id", id);
+		resourceDescription.put("url", "/ta/" + id);
 		return resourceDescription;
 	}
 
