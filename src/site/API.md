@@ -5,6 +5,8 @@ Project `openflexo-server` adds to OpenFlexo a set of HTTP capabilities includin
 
 # REST Server
 
+The OpenFlexo's HTTP server provides a REST API to access:
+
 - resources in all resources centers
 - apis from technology adapters:
 	- federated models `FML`/`FML-RT` 
@@ -12,7 +14,7 @@ Project `openflexo-server` adds to OpenFlexo a set of HTTP capabilities includin
 	- diagrams `Diana`
 - connie expressions
 
-# Resource Centers
+## Resource Centers
 
 - **`/center`:** List of resource centers
 
@@ -38,7 +40,7 @@ Example results for `/center/347d5ab625ede4b9d7`:
 }
 ```
 
-# Resources lists for center
+## Resources lists for center
 
 - **`/center/{center_id}/resource{path}`:** List of resources for resource center with given id.
 
@@ -64,7 +66,7 @@ Example results for `/center/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`
 ]
 ```
 
-# Resources list
+## Resources list
 
 - **`/resource`:** List of all resources
 
@@ -83,7 +85,7 @@ Example results for `/resource`:
 ]
 ```
 
-# Resources
+## Resources
 
 - **`/resource/{resource_id}`:** Information for resource with given id in the given resource center.
 
@@ -111,7 +113,7 @@ Example results for `/resource/af8bca0b3983d28a03/contents`:
 ...
 ```
 
-# Technology adapters
+## Technology adapters
 
 - **`/ta`:** List of technology adapters
 
@@ -133,6 +135,22 @@ Example results for `/ta/fml`:
   "name": "FML technology adapter", "id": "fml", "url": "/ta/fml"
 }
 ```
+
+Each technology adapter presents a series of standard entries.
+
+**ToDo**
+
+A technology adapter can also provide new API entries using the interface `To Be Defined`
+
+## FML
+
+## FML@runtime
+
+## Gina
+
+## Diana
+
+## Excel
 
 # REST Client
 
