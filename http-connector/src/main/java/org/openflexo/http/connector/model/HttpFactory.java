@@ -85,7 +85,7 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 	}
 
 	public UrlModel makeNewModel(String host, String path) {
-		return makeNewModel(host, 80, path);
+		return makeNewModel(host, -1, path);
 	}
 
 	public UrlModel makeNewModel(String host, int port, String path) {

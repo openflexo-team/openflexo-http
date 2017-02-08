@@ -16,7 +16,7 @@ public class UrlModelTest {
 	public void testGetFlexoConcepts() throws ModelDefinitionException, IOException {
 		HttpFactory factory = new HttpFactory();
 		// https://api.github.com/resource
-		UrlModel urlModel = factory.makeNewModel("http://api.github.com", "/users/openflexo-team/repos");
+		UrlModel urlModel = factory.makeNewModel("https://api.github.com", "/users/openflexo-team/repos");
 		List<FlexoConceptInstance> result = urlModel.retrieveConcepts(null);
 		System.out.println(result);
 	}
