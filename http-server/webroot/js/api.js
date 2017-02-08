@@ -17,7 +17,7 @@ var openflexo;
         console.log("Error can't access " + url + '", check that it exists and is accessible');
     }
     function centers(callback) {
-        call("http://localhost:8080/center", callback);
+        call("http://localhost:8080/rc", callback);
     }
     openflexo.centers = centers;
     function resources(callback) {

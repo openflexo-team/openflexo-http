@@ -24,7 +24,7 @@ module openflexo {
     }
 
     export function centers(callback: (centers: Center[]) => void) {
-        call("http://localhost:8080/center", callback);
+        call("http://localhost:8080/rc", callback);
     }
 
     export function resources(callback: (resources: ResourceCenter[]) => void) {

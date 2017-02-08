@@ -56,14 +56,16 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	@Override
 	public void initialize() {
 		router = Router.router(vertx);
-		router.get("/center").produces(JSON).handler(this::serveCenterList);
-		router.get("/center/:cid").produces(JSON).handler(this::serveCenter);
+		router.get("/rc").produces(JSON).handler(this::serveCenterList);
+		router.get("/rc/:rcid").produces(JSON).handler(this::serveCenter);
 
 		// TODO add support for path
-		router.get("/center/:cid/resource").produces(JSON).handler(this::serveCenterResourceList);
+		router.get("/rc/:rcid/resource").produces(JSON).handler(this::serveCenterResourceList);
 
 		router.get("/resource").produces(JSON).handler(this::serveResourceList);
 		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
+
+		router.get("/resource/:rid/contents").handler(this::serveResourceContents);
 
 		router.get("/*").handler(StaticHandler.create());
 
@@ -91,7 +93,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	}
 
 	private void serveCenter(RoutingContext context) {
-		String centerId = context.request().getParam(("cid"));
+		String centerId = context.request().getParam(("rcid"));
 		String uri = IdUtils.decodeId(centerId);
 
 		FlexoResourceCenter<?> resourceCenter = getServiceManager().getResourceCenterService().getFlexoResourceCenter(uri);
@@ -103,7 +105,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	}
 
 	private void serveCenterResourceList(RoutingContext context) {
-		String centerId = context.request().getParam(("cid"));
+		String centerId = context.request().getParam(("rcid"));
 		String centerUri = IdUtils.decodeId(centerId);
 
 		FlexoResourceCenter<?> resourceCenter = getServiceManager().getResourceCenterService().getFlexoResourceCenter(centerUri);
@@ -133,6 +135,18 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		FlexoResource<?> resource = getServiceManager().getResourceManager().getResource(uri);
 		if (resource != null) {
 			context.response().end(JsonUtils.getResourceDescription(resource).encodePrettily());
+		} else {
+			notFound(context);
+		}
+	}
+
+	private void serveResourceContents(RoutingContext context) {
+		String id = context.request().getParam(("rid"));
+		String uri = IdUtils.decodeId(id);
+
+		FlexoResource<?> resource = getServiceManager().getResourceManager().getResource(uri);
+		if (resource != null) {
+			context.response().end("TODO contents");
 		} else {
 			notFound(context);
 		}

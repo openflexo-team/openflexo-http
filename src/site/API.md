@@ -16,25 +16,25 @@ The OpenFlexo's HTTP server provides a REST API to access:
 
 ## Resource Centers
 
-- **`/center`:** List of resource centers
+- **`/rc`:** List of resource centers
 
 ```json
 [ 
   { "name": "Demo resource center", "uri": "http://www.openflexo.org/demos-rc", 
-    "id": "347d5ab625ede4b9d7", "url":"/center/347d5ab625ede4b9d7" },
+    "id": "347d5ab625ede4b9d7", "url":"/rc/347d5ab625ede4b9d7" },
   { "name": "Demo resource center", "uri": "http://www.openflexo.org/http", 
-    "id": "2e7661e55f3631cbce", "url":"/center/2e7661e55f3631cbce" }  
+    "id": "2e7661e55f3631cbce", "url":"/rc/2e7661e55f3631cbce" }  
 ]
 ```
 
-- **`/center/{center_id}`:** Information for resource center with given id.
+- **`/rc/{rc_id}`:** Information for resource center with given id.
 
-Example results for `/center/347d5ab625ede4b9d7`:
+Example results for `/rc/347d5ab625ede4b9d7`:
 
 ```json
 { 
   "name": "Demo resource center", "uri": "http://www.openflexo.org/demos-rc",
-  "id": "347d5ab625ede4b9d7", "url":"/center/347d5ab625ede4b9d7",
+  "id": "347d5ab625ede4b9d7", "url":"/rc/347d5ab625ede4b9d7",
   "enable_resource_center": false, "allows_edit": true, 
   "allows_publish": true, "watch_resource_center_every": 2
 }
@@ -42,27 +42,27 @@ Example results for `/center/347d5ab625ede4b9d7`:
 
 ## Resources lists for center
 
-- **`/center/{center_id}/resource{path}`:** List of resources for resource center with given id.
+- **`/rc/{rc_id}/resource{path}`:** List of resources for resource center with given id.
 
-Example results for `/center/347d5ab625ede4b9d7/resource`:
+Example results for `/rc/347d5ab625ede4b9d7/resource`:
 
 ```json
 [ 
   { "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
+    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
   { "name": "People.diagram", "uri": "http://people", "version": "0.5", "type": "Diagram",
-    "id": "db835d8f1a32e5234c", "url": "/center/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
+    "id": "db835d8f1a32e5234c", "url": "/rc/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
 ]
 ```
 
-Example results for `/center/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`:
+Example results for `/rc/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`:
 
 ```json
 [ 
   { "name": "CityMapping", "uri": "http://simpleVP/CityMapping", "version": "0.2", "type": "EMF",
-    "id": "f455f327a9f3a57de0", "url": "/center/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
+    "id": "f455f327a9f3a57de0", "url": "/rc/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
   { "name": "CityViews", "uri": "http://simpleVP/CityViews", "version": "0.2", "type": "EMF",
-    "id": "890822e1ec66f5b1a6", "url": "/center/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
+    "id": "890822e1ec66f5b1a6", "url": "/rc/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
 ]
 ```
 
@@ -75,13 +75,13 @@ Example results for `/resource`:
 ```json
 [ 
   { "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
+    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
   { "name": "People.diagram", "uri": "http://people", "version": "0.5", "type": "Diagram",
-    "id": "db835d8f1a32e5234c", "url": "/center/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
+    "id": "db835d8f1a32e5234c", "url": "/rc/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
   { "name": "CityMapping", "uri": "http://simpleVP/CityMapping", "version": "0.2", "type": "EMF",
-    "id": "f455f327a9f3a57de0", "url": "/center/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
+    "id": "f455f327a9f3a57de0", "url": "/rc/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
   { "name": "CityViews", "uri": "http://simpleVP/CityViews", "version": "0.2", "type": "EMF",
-    "id": "890822e1ec66f5b1a6", "url": "/center/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
+    "id": "890822e1ec66f5b1a6", "url": "/rc/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
 ]
 ```
 
@@ -89,12 +89,13 @@ Example results for `/resource`:
 
 - **`/resource/{resource_id}`:** Information for resource with given id in the given resource center.
 
-Example results for `/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03`:
+Example results for `/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03`:
 
 ```json 
 {
     "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/center/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" 
+    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03",
+    "contentUrl": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03/contents"
 }
 ```
 
@@ -136,7 +137,7 @@ Example results for `/ta/fml`:
 }
 ```
 
-Each technology adapter presents a series of standard entries.
+Each technology adapter presents a series of standard entries for resources, actions and models...
 
 **ToDo**
 

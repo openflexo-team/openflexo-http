@@ -17,7 +17,7 @@ public class JsonUtils {
 		centerDescription.put("type", "ResourceCenter");
 		centerDescription.put("uri", uri);
 		centerDescription.put("id", id);
-		centerDescription.put("url", "/center/" + id);
+		centerDescription.put("url", "/rc/" + id);
 		return centerDescription;
 	}
 
@@ -31,8 +31,9 @@ public class JsonUtils {
 		resourceDescription.put("uri", uri);
 		resourceDescription.put("id", id);
 		resourceDescription.put("resourceCenterId", centerId);
-		resourceDescription.put("resourceCenterUrl", "/center/"+centerId);
+		resourceDescription.put("resourceCenterUrl", "/rc/"+centerId);
 		resourceDescription.put("url", "/resource/" + id);
+		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
 		return resourceDescription;
 	}
 
