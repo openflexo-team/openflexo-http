@@ -5,9 +5,8 @@ dependencies {
     compile 'io.vertx:vertx-core:3.3.3'
     compile 'io.vertx:vertx-web:3.3.3'
 
-    compile 'com.j2html:j2html:0.7'
-
     testCompile testUtils()
     testCompile flexoFoundationTest()
-
+    
+    runtime owlConnector()
 }

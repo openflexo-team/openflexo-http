@@ -12,14 +12,6 @@ var openflexo;
         return Description;
     }());
     openflexo.Description = Description;
-    var Center = (function (_super) {
-        __extends(Center, _super);
-        function Center() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        return Center;
-    }(Description));
-    openflexo.Center = Center;
     var ResourceCenter = (function (_super) {
         __extends(ResourceCenter, _super);
         function ResourceCenter() {
@@ -28,6 +20,14 @@ var openflexo;
         return ResourceCenter;
     }(Description));
     openflexo.ResourceCenter = ResourceCenter;
+    var Resource = (function (_super) {
+        __extends(Resource, _super);
+        function Resource() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        return Resource;
+    }(Description));
+    openflexo.Resource = Resource;
     var TechnologyAdapter = (function (_super) {
         __extends(TechnologyAdapter, _super);
         function TechnologyAdapter() {
@@ -39,10 +39,10 @@ var openflexo;
     function error(url) {
         console.log("Error can't access " + url + '", check that it exists and is accessible');
     }
-    function centers(callback) {
+    function resourceCenters(callback) {
         call("http://localhost:8080/rc", callback);
     }
-    openflexo.centers = centers;
+    openflexo.resourceCenters = resourceCenters;
     function resources(callback) {
         call("http://localhost:8080/resource", callback);
     }
@@ -97,6 +97,10 @@ function createDescriptionElement(source) {
     a.href = source.url;
     a.text = source.name;
     description.appendChild(a);
+    var type = document.createElement("span");
+    type.className = 'type';
+    type.innerText = " (" + source.type + ")";
+    description.appendChild(type);
     return description;
 }
 openflexo.technologyAdapters(function (tas) {
@@ -106,7 +110,7 @@ openflexo.technologyAdapters(function (tas) {
         div.appendChild(createDescriptionElement(ta));
     }
 });
-openflexo.centers(function (centers) {
+openflexo.resourceCenters(function (centers) {
     var div = document.querySelector("#centers");
     for (var _i = 0, centers_1 = centers; _i < centers_1.length; _i++) {
         var center = centers_1[_i];

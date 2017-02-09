@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 
 /**
  * Utility methods for JSON handling
@@ -28,13 +29,18 @@ public class JsonUtils {
 		String centerId = IdUtils.encoreUri(resource.getResourceCenter().getDefaultBaseURI());
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", resource.getName());
-		resourceDescription.put("type", "Resource");
+		resourceDescription.put("type", /*"Resource"*/ resource.getClass().getInterfaces()[0].getSimpleName());
 		resourceDescription.put("uri", uri);
 		resourceDescription.put("id", id);
 		resourceDescription.put("resourceCenterId", centerId);
 		resourceDescription.put("resourceCenterUrl", "/rc/"+centerId);
 		resourceDescription.put("url", "/resource/" + id);
 		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
+		if (resource instanceof TechnologyAdapterResource) {
+			String taId = ((TechnologyAdapterResource) resource).getTechnologyAdapter().getClass().getName();
+			resourceDescription.put("technologyAdapterId", taId);
+			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
+		}
 		return resourceDescription;
 	}
 
@@ -44,6 +50,7 @@ public class JsonUtils {
 		resourceDescription.put("name", adapter.getName());
 		resourceDescription.put("type", "TechnologyAdapter");
 		resourceDescription.put("id", id);
+		resourceDescription.put("activated", adapter.isActivated());
 		resourceDescription.put("url", "/ta/" + id);
 		return resourceDescription;
 	}

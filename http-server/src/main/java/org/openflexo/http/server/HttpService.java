@@ -1,21 +1,28 @@
 package org.openflexo.http.server;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
 import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
+import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -23,7 +30,7 @@ import java.util.logging.Logger;
  */
 public class HttpService extends FlexoServiceImpl implements FlexoService {
 
-	private static final String JSON = "application/json";
+	public static final String JSON = "application/json";
 
 	private static Logger logger = Logger.getLogger(HttpService.class.getPackage().getName());
 
@@ -70,6 +77,14 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
+
+		try {
+			FMLTechnologyAdapter fmlTechnologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
+			FMLRestService fmlRestService = new FMLRestService(fmlTechnologyAdapter);
+			fmlRestService.addRoutes("/ta/" + FMLTechnologyAdapter.class.getName(), router);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Could not start FML REST services", e);
+		}
 
 		router.get("/*").handler(StaticHandler.create());
 
@@ -150,7 +165,19 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		FlexoResource<?> resource = getServiceManager().getResourceManager().getResource(uri);
 		if (resource != null) {
-			context.response().end("TODO contents");
+			try (InputStream inputStream = new BufferedInputStream(resource.openInputStream())) {
+				Buffer buffer = Buffer.buffer();
+				int read = inputStream.read();
+				while (read >= 0) {
+					buffer.appendByte((byte) read);
+					read = inputStream.read();
+				}
+				HttpServerResponse response = context.response();
+				response.putHeader("Content-Length", Integer.toString(buffer.length()));
+				response.end(buffer);
+			} catch (IOException e) {
+				context.fail(e);
+			}
 		} else {
 			notFound(context);
 		}

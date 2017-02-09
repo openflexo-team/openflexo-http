@@ -6,6 +6,8 @@
     
     margin: 5px;
     padding: 10px;
+}
 
-    
+.type {
+    font-style: italic;
 }

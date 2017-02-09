@@ -7,13 +7,14 @@ module openflexo {
         name: string;
         id: string;
         url: string;
+        type: string;
     }
 
-    export class Center extends Description {
+    export class ResourceCenter extends Description {
         uri: string;
     }
 
-    export class ResourceCenter extends Description{
+    export class Resource extends Description{
         uri: string;
         resourceCenterId: string;
         resourceCenterUrl: string;
@@ -26,11 +27,11 @@ module openflexo {
         console.log("Error can't access " + url + '", check that it exists and is accessible');
     }
 
-    export function centers(callback: (centers: Center[]) => void) {
+    export function resourceCenters(callback: (centers: ResourceCenter[]) => void) {
         call("http://localhost:8080/rc", callback);
     }
 
-    export function resources(callback: (resources: ResourceCenter[]) => void) {
+    export function resources(callback: (resources: Resource[]) => void) {
         call("http://localhost:8080/resource", callback);
     }
 
@@ -84,8 +85,13 @@ function createDescriptionElement(source: openflexo.Description) {
     let a = <HTMLAnchorElement> document.createElement("a");
     a.href = source.url;
     a.text = source.name;
-
     description.appendChild(a);
+
+    let type = <HTMLSpanElement> document.createElement("span");
+    type.className = 'type';
+    type.innerText = ` (${source.type})`;
+    description.appendChild(type);
+
     return description;
 }
 
@@ -96,7 +102,7 @@ openflexo.technologyAdapters((tas) => {
     }
 });
 
-openflexo.centers((centers) => {
+openflexo.resourceCenters((centers) => {
     let div = document.querySelector("#centers");
     for (let center of centers) {
         div.appendChild(createDescriptionElement(center));

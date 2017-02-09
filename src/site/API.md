@@ -121,19 +121,25 @@ Example results for `/resource/af8bca0b3983d28a03/contents`:
 Example results for `/ta`:
 
 ```json
-[ { "name": "FML technology adapter", "id": "fml", "url": "/ta/fml"},
-  { "name": "FML@runtime technology adapter", "id": "fml-rt", "url": "/ta/fml-rt"},
-  { "name": "GINA Technology Adapter", "id": "gina", "url": "/ta/gina"},
-  { "name": "Excel technology adapter", "id": "xls", "url": "/ta/xls"}]
+[ 
+  { "name": "FML technology adapter", "id": "org.openflexo.foundation.fml.FMLTechnologyAdapter", 
+    "type" : "TechnologyAdapter", "url": "/ta/org.openflexo.foundation.fml.FMLTechnologyAdapter"},
+  { "name": "FML@runtime technology adapter", "id": "org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter", 
+    "type" : "TechnologyAdapter", "url": "/ta/org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter"},
+  { "name" : "DocX Technology Adapter", "id" : "org.openflexo.technologyadapter.docx.DocXTechnologyAdapter",
+    "type" : "TechnologyAdapter", "url" : "/ta/org.openflexo.technologyadapter.docx.DocXTechnologyAdapter" }
+]
 ```
 
 - **`/ta/{id}`:** Information for the technology adapter of given id
 
-Example results for `/ta/fml`:
+Example results for `/ta/org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter`:
 
 ```json
 {
-  "name": "FML technology adapter", "id": "fml", "url": "/ta/fml"
+  "name": "FML technology adapter", "id": "org.openflexo.foundation.fml.FMLTechnologyAdapter",
+  "url": "/ta/org.openflexo.foundation.fml.FMLTechnologyAdapter", "activated": true,
+  "type" : "TechnologyAdapter"
 }
 ```
 
@@ -144,6 +150,8 @@ Each technology adapter presents a series of standard entries for resources, act
 A technology adapter can also provide new API entries using the interface `To Be Defined`
 
 ## FML
+
+
 
 ## FML@runtime
 
