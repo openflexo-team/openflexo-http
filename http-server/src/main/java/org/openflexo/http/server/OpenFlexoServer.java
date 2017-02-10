@@ -8,6 +8,7 @@ import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.resource.DirectoryResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.logging.FlexoLoggingManager;
 
@@ -16,7 +17,7 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 /**
- * Created by charlie on 17/01/2017.
+ * Main class for OpenFlexo server
  */
 public class OpenFlexoServer {
 
@@ -62,6 +63,11 @@ public class OpenFlexoServer {
 		FlexoLoggingManager.initialize(-1, true, null, options.verbose ? Level.INFO : Level.WARNING, null);
 
 		FlexoServiceManager manager = createServiceManager(options);
+		for (TechnologyAdapter ta : manager.getTechnologyAdapterService().getTechnologyAdapters()) {
+			System.out.println("Activating " + ta.getName());
+			ta.activate();
+		}
+
 		manager.registerService(new HttpService(options.serverOptions));
 	}
 }
