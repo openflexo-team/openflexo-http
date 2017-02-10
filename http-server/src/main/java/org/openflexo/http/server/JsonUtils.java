@@ -15,7 +15,7 @@ public class JsonUtils {
 		String uri = center.getDefaultBaseURI();
 		String id = IdUtils.encoreUri(uri);
 		JsonObject centerDescription = new JsonObject();
-		centerDescription.put("name", center.getName());
+		centerDescription.put("name", center.getDisplayableName());
 		centerDescription.put("type", "ResourceCenter");
 		centerDescription.put("uri", uri);
 		centerDescription.put("id", id);
@@ -26,14 +26,18 @@ public class JsonUtils {
 	public static JsonObject getResourceDescription(FlexoResource<?> resource) {
 		String uri = resource.getURI();
 		String id = IdUtils.encoreUri(uri);
-		String centerId = IdUtils.encoreUri(resource.getResourceCenter().getDefaultBaseURI());
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", resource.getName());
-		resourceDescription.put("type", /*"Resource"*/ resource.getClass().getInterfaces()[0].getSimpleName());
+		resourceDescription.put("type", "Resource");
 		resourceDescription.put("uri", uri);
 		resourceDescription.put("id", id);
-		resourceDescription.put("resourceCenterId", centerId);
-		resourceDescription.put("resourceCenterUrl", "/rc/"+centerId);
+		if (resource.getResourceCenter() != null) {
+			String centerId = IdUtils.encoreUri(resource.getResourceCenter().getDefaultBaseURI());
+			resourceDescription.put("resourceCenterId", centerId);
+			resourceDescription.put("resourceCenterUrl", "/rc/" + centerId);
+		} else {
+			System.out.println("Resource '"+ resource.getName() + "' has no rc.");
+		}
 		resourceDescription.put("url", "/resource/" + id);
 		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
 		if (resource instanceof TechnologyAdapterResource) {
