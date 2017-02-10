@@ -64,11 +64,11 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	@Override
 	public void initialize() {
 		router = Router.router(vertx);
-		router.get("/rc").produces(JSON).handler(this::serveCenterList);
-		router.get("/rc/:rcid").produces(JSON).handler(this::serveCenter);
+		router.get("/rc").produces(JSON).handler(this::serveResourceCenterList);
+		router.get("/rc/:rcid").produces(JSON).handler(this::serveResourceCenter);
 
 		// TODO add support for path
-		router.get("/rc/:rcid/resource").produces(JSON).handler(this::serveCenterResourceList);
+		router.get("/rc/:rcid/resource").produces(JSON).handler(this::serveResourceCenterResourceList);
 
 		router.get("/resource").produces(JSON).handler(this::serveResourceList);
 		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
@@ -103,7 +103,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		return result;
 	}
 
-	private void serveCenterList(RoutingContext context) {
+	private void serveResourceCenterList(RoutingContext context) {
 		JsonArray result = new JsonArray();
 		for (FlexoResourceCenter<?> center : getServiceManager().getResourceCenterService().getResourceCenters()) {
 			result.add(JsonUtils.getCenterDescription(center));
@@ -111,7 +111,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		context.response().end(result.encodePrettily());
 	}
 
-	private void serveCenter(RoutingContext context) {
+	private void serveResourceCenter(RoutingContext context) {
 		String centerId = context.request().getParam(("rcid"));
 		String uri = IdUtils.decodeId(centerId);
 
@@ -123,7 +123,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		}
 	}
 
-	private void serveCenterResourceList(RoutingContext context) {
+	private void serveResourceCenterResourceList(RoutingContext context) {
 		String centerId = context.request().getParam(("rcid"));
 		String centerUri = IdUtils.decodeId(centerId);
 
