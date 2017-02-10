@@ -8,5 +8,4 @@ dependencies {
     testCompile testUtils()
     testCompile flexoFoundationTest()
     
-    runtime owlConnector()
 }
