@@ -1,4 +1,4 @@
-package org.openflexo.http.server;
+package org.openflexo.http.server.core;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
@@ -6,6 +6,7 @@ import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.server.RestService;
 
 /**
  * Created by charlie on 11/02/2017.

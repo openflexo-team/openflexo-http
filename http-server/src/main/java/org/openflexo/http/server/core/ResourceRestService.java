@@ -1,4 +1,4 @@
-package org.openflexo.http.server;
+package org.openflexo.http.server.core;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.http.HttpServerResponse;
@@ -11,6 +11,8 @@ import java.io.InputStream;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
+import org.openflexo.http.server.IdUtils;
+import org.openflexo.http.server.RestService;
 
 /**
  * Created by charlie on 11/02/2017.

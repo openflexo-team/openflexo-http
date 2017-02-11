@@ -1,10 +1,11 @@
-package org.openflexo.http.server;
+package org.openflexo.http.server.core;
 
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
+import org.openflexo.http.server.IdUtils;
 
 /**
  * Utility methods for JSON handling

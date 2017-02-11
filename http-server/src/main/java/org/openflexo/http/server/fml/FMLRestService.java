@@ -1,4 +1,4 @@
-package org.openflexo.http.server;
+package org.openflexo.http.server.fml;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
@@ -8,6 +8,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
+import org.openflexo.http.server.RestService;
 
 /**
  * Created by charlie on 08/02/2017.
