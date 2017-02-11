@@ -1,0 +1,4 @@
+org.openflexo.http.server.ResourceCenterRestService
+org.openflexo.http.server.ResourceRestService
+org.openflexo.http.server.TechnologyAdapterRestService
+org.openflexo.http.server.FMLRestService

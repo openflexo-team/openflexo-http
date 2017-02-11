@@ -3,30 +3,32 @@ package org.openflexo.http.server;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
-import org.openflexo.model.exceptions.ModelDefinitionException;
 
 /**
  * Created by charlie on 08/02/2017.
  */
-public class FMLRestService {
+public class FMLRestService implements RestService {
 
-	private final FlexoServiceManager serviceManager;
-	private final FMLTechnologyAdapter technologyAdapter;
+	private final String namespace = "/ta/" + FMLTechnologyAdapter.class.getName();
 
-	private final PamelaJsonSerializer viewPointConverter;
+	private FMLTechnologyAdapter technologyAdapter;
 
-	public FMLRestService(FMLTechnologyAdapter technologyAdapter) throws ModelDefinitionException {
-		this.technologyAdapter = technologyAdapter;
-		this.serviceManager = technologyAdapter.getServiceManager();
-		this.viewPointConverter = new PamelaJsonSerializer(new FMLModelFactory(null, serviceManager));
+	private PamelaJsonSerializer viewPointConverter;
+
+	@Override
+	public void initialize(FlexoServiceManager serviceManager) throws Exception {
+		technologyAdapter = serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
+		if (technologyAdapter == null) throw new FlexoException("FML Technology adpater must be present to start FML Rest service");
+		viewPointConverter = new PamelaJsonSerializer(new FMLModelFactory(null, serviceManager));
 	}
 
-	public void addRoutes(String prefix, Router router) {
-		router.get(prefix + "/viewpoint").produces(HttpService.JSON).handler(this::serveViewPointList);
+	public void addRoutes(Router router) {
+		router.get(namespace + "/viewpoint").produces(JSON).handler(this::serveViewPointList);
 	}
 
 	private void serveViewPointList(RoutingContext context) {
