@@ -9,21 +9,21 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
+import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
-
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * HTTP Service for OpenFlexo
@@ -63,12 +63,29 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	@Override
 	public void initialize() {
+
+		// initializes technology adapter standalone and for each resource center.
+		FlexoServiceManager serviceManager = getServiceManager();
+		List<TechnologyAdapter> technologyAdapters = serviceManager.getTechnologyAdapterService().getTechnologyAdapters();
+		for (TechnologyAdapter ta : technologyAdapters) {
+			System.out.println("Activating " + ta.getName());
+			ta.activate();
+		}
+
+		for (FlexoResourceCenter<?> resourceCenter : serviceManager.getResourceCenterService().getResourceCenters()) {
+			for (TechnologyAdapter technologyAdapter : technologyAdapters) {
+				System.out.println("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
+				resourceCenter.activateTechnology(technologyAdapter);
+			}
+		}
+
 		router = Router.router(vertx);
 		router.get("/rc").produces(JSON).handler(this::serveResourceCenterList);
 		router.get("/rc/:rcid").produces(JSON).handler(this::serveResourceCenter);
 
 		// TODO add support for path
 		router.get("/rc/:rcid/resource").produces(JSON).handler(this::serveResourceCenterResourceList);
+		router.get("/rc/:rcid/resource/*").produces(JSON).handler(this::serveResourceCenterResourceFolderList);
 
 		router.get("/resource").produces(JSON).handler(this::serveResourceList);
 		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
@@ -79,7 +96,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
 		try {
-			FMLTechnologyAdapter fmlTechnologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
+			FMLTechnologyAdapter fmlTechnologyAdapter = serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
 			FMLRestService fmlRestService = new FMLRestService(fmlTechnologyAdapter);
 			fmlRestService.addRoutes("/ta/" + FMLTechnologyAdapter.class.getName(), router);
 		} catch (Exception e) {
@@ -93,14 +110,6 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
-	}
-
-	private Path resolveWebPath(String relativePath) {
-		// trim "/" a the beginning
-		Path result = webPath.resolve(relativePath.substring(1));
-		// ensure that result is child of web path and that the file exists
-		if (!result.startsWith(webPath) || !Files.exists(result)) return null;
-		return result;
 	}
 
 	private void serveResourceCenterList(RoutingContext context) {
@@ -134,6 +143,62 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 				result.add(JsonUtils.getResourceDescription(resource));
 			}
 			context.response().end(result.encodePrettily());
+		} else {
+			notFound(context);
+		}
+	}
+
+	private void serveResourceCenterResourceFolderList(RoutingContext context) {
+		String centerId = context.request().getParam(("rcid"));
+		String centerUri = IdUtils.decodeId(centerId);
+
+		String path = context.request().path();
+		String pathFragment = "resource/";
+		String folder = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
+		String[] fragments = folder.split("/");
+
+		FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) getServiceManager().getResourceCenterService().getFlexoResourceCenter(centerUri);
+		if (resourceCenter != null) {
+			Object current = resourceCenter.getBaseArtefact();
+			if (folder.length() > 0) {
+				for (String fragment : fragments) {
+					List<Object> children = resourceCenter.getContents(current);
+					boolean found = false;
+					for (Object child : children) {
+						if (fragment.equals(resourceCenter.retrieveName(child))) {
+							current = child;
+							found = true;
+							break;
+						}
+					}
+
+					if (!found) {
+						current = null;
+						break;
+					}
+				}
+			}
+
+			if (current != null) {
+				JsonArray result = new JsonArray();
+				List<Object> children = resourceCenter.getContents(current);
+				for (Object child : children) {
+					String name = resourceCenter.retrieveName(child);
+					if (resourceCenter.isDirectory(child)) {
+						result.add(JsonUtils.getFolderDescription(name, folder, "/rc/" + centerId + "/resource/"));
+					}
+					else {
+						FlexoResource resource = resourceCenter.getResource(child, FlexoResource.class);
+						if (resource != null) {
+							result.add(JsonUtils.getResourceDescription(resource));
+						}
+					}
+				}
+				context.response().end(result.encodePrettily());
+			} else {
+				notFound(context);
+			}
+
 		} else {
 			notFound(context);
 		}
@@ -215,6 +280,5 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	public void stop() {
 		server.close();
 	}
-
 
 }

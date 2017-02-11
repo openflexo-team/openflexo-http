@@ -15,12 +15,21 @@ public class JsonUtils {
 		String uri = center.getDefaultBaseURI();
 		String id = IdUtils.encoreUri(uri);
 		JsonObject centerDescription = new JsonObject();
-		centerDescription.put("name", center.getDisplayableName());
+		centerDescription.put("name", center.getName());
 		centerDescription.put("type", "ResourceCenter");
 		centerDescription.put("uri", uri);
 		centerDescription.put("id", id);
 		centerDescription.put("url", "/rc/" + id);
+		centerDescription.put("resourceUrl", "/rc/" + id + "/resource");
 		return centerDescription;
+	}
+
+	public static JsonObject getFolderDescription(String name, String path, String urlPrefix) {
+		JsonObject object = new JsonObject();
+		object.put("name", name);
+		object.put("type", "Folder");
+		object.put("url", urlPrefix + path + (path.endsWith("/") ? "" : "/") + name);
+		return object;
 	}
 
 	public static JsonObject getResourceDescription(FlexoResource<?> resource) {

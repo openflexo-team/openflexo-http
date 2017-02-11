@@ -6,6 +6,9 @@
     
     margin: 5px;
     padding: 10px;
+
+    width:fit-content; width:-webkit-fit-content; width:-moz-fit-content;
+    display: none;
 }
 
 .type {
