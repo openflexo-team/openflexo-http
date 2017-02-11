@@ -3,3 +3,4 @@
 **/build/
 
 http-server/rc/*
+*.js.map

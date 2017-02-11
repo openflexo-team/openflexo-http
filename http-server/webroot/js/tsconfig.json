@@ -1,3 +1,7 @@
 {
-  "sourceMap": true
+    "compilerOptions": {
+        "module": "amd",
+        "noImplicitAny": false,
+        "sourceMap": true
+    }
 }
