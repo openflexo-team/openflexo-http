@@ -2,6 +2,9 @@ package org.openflexo.http.server;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
@@ -9,10 +12,6 @@ import org.openflexo.model.exceptions.InvalidDataException;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
 import org.openflexo.model.factory.ProxyMethodHandler;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by charlie on 08/02/2017.
@@ -72,6 +71,8 @@ public class PamelaJsonSerializer {
 							//TODO
 							break;
 						}
+						default:
+							break;
 					}
 					String propertyName = property.getPropertyIdentifier(); //property.getXMLAttribute().xmlTag();
 					result.put(propertyName, transformed);

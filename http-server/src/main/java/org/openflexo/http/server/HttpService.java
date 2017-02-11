@@ -12,8 +12,6 @@ import io.vertx.ext.web.handler.StaticHandler;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,31 +32,24 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	private static Logger logger = Logger.getLogger(HttpService.class.getPackage().getName());
 
-	public static class Options {
-		public int port = 8080;
-
-		public String host = "localhost";
-
-		public String webDirectory = "./webroot";
-	}
-
 	private final int port;
 	private final String host;
-
-	private final Path webPath;
 
 	private final Vertx vertx = Vertx.vertx();
 	private final HttpServerOptions serverOptions;
 
 	private HttpServer server = null;
-	private Router router = null;
+
+	public static class Options {
+		public int port = 8080;
+
+		public String host = "localhost";
+	}
 
 	public HttpService(Options options) {
 		this.port = options.port;
 		this.host = options.host;
 		serverOptions = new HttpServerOptions();
-
-		this.webPath = Paths.get(options.webDirectory);
 	}
 
 	@Override
@@ -79,7 +70,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 			}
 		}
 
-		router = Router.router(vertx);
+		Router router = Router.router(vertx);
 		router.get("/rc").produces(JSON).handler(this::serveResourceCenterList);
 		router.get("/rc/:rcid").produces(JSON).handler(this::serveResourceCenter);
 
