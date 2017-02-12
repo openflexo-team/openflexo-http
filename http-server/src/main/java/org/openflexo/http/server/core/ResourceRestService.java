@@ -61,6 +61,7 @@ public class ResourceRestService implements RestService {
 
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
+			context.response().putHeader("Content-Disposition", "filename=\"" + resource.getName() +"\"");
 			try (InputStream inputStream = new BufferedInputStream(resource.openInputStream())) {
 				Buffer buffer = Buffer.buffer();
 				int read = inputStream.read();

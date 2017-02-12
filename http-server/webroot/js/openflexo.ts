@@ -1,21 +1,58 @@
-export class Description {
+export interface Description {
     name: string;
     id: string;
     url: string;
     type: string;
 }
 
-export class ResourceCenter extends Description {
-    uri: string;
+export class ResourceCenter implements Description {
+    constructor(
+        public name: string,
+        public id: string,
+        public url: string,
+        public type: string,
+        public uri: string,
+        public resourceUrl: string
+    ) {  }
 }
 
-export class Resource extends Description{
-    uri: string;
+export interface ContainedByResourceCenter extends Description {
     resourceCenterId: string;
     resourceCenterUrl: string;
 }
 
-export class TechnologyAdapter extends Description {
+export class Resource implements ContainedByResourceCenter {
+    constructor(
+        public name: string,
+        public id: string,
+        public url: string,
+        public type: string,
+        public uri: string,
+        public resourceCenterId: string,
+        public resourceCenterUrl: string,
+        public contentUrl: string
+    ) {  }
+}
+
+export class Folder implements ContainedByResourceCenter {
+    constructor(
+        public name: string,
+        public id: string,
+        public url: string,
+        public type: string,
+        public resourceCenterId: string,
+        public resourceCenterUrl: string
+    ) {  }
+}
+
+export class TechnologyAdapter implements Description {
+    constructor(
+        public name: string,
+        public id: string,
+        public url: string,
+        public type: string
+    ) {  }
+
 }
 
 function error(url: string) {
@@ -39,7 +76,8 @@ export function call<T>(url: string, callback: (result: T) => void) {
     request.open("get", url);
     request.onload = (ev) => {
         if (request.status >= 200 && request.status < 300) {
-            callback(<T>JSON.parse(request.responseText));
+            let json = JSON.parse(request.responseText);
+            callback(<T>json);
         }
     }
     request.onerror = (ev) => {

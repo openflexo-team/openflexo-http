@@ -1,39 +1,52 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    var Description = (function () {
-        function Description() {
-        }
-        return Description;
-    }());
-    exports.Description = Description;
-    var ResourceCenter = (function (_super) {
-        __extends(ResourceCenter, _super);
-        function ResourceCenter() {
-            return _super !== null && _super.apply(this, arguments) || this;
+    var ResourceCenter = (function () {
+        function ResourceCenter(name, id, url, type, uri, resourceUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.uri = uri;
+            this.resourceUrl = resourceUrl;
         }
         return ResourceCenter;
-    }(Description));
+    }());
     exports.ResourceCenter = ResourceCenter;
-    var Resource = (function (_super) {
-        __extends(Resource, _super);
-        function Resource() {
-            return _super !== null && _super.apply(this, arguments) || this;
+    var Resource = (function () {
+        function Resource(name, id, url, type, uri, resourceCenterId, resourceCenterUrl, contentUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.uri = uri;
+            this.resourceCenterId = resourceCenterId;
+            this.resourceCenterUrl = resourceCenterUrl;
+            this.contentUrl = contentUrl;
         }
         return Resource;
-    }(Description));
+    }());
     exports.Resource = Resource;
-    var TechnologyAdapter = (function (_super) {
-        __extends(TechnologyAdapter, _super);
-        function TechnologyAdapter() {
-            return _super !== null && _super.apply(this, arguments) || this;
+    var Folder = (function () {
+        function Folder(name, id, url, type, resourceCenterId, resourceCenterUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.resourceCenterId = resourceCenterId;
+            this.resourceCenterUrl = resourceCenterUrl;
+        }
+        return Folder;
+    }());
+    exports.Folder = Folder;
+    var TechnologyAdapter = (function () {
+        function TechnologyAdapter(name, id, url, type) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
         }
         return TechnologyAdapter;
-    }(Description));
+    }());
     exports.TechnologyAdapter = TechnologyAdapter;
     function error(url) {
         console.log("Error can't access " + url + '", check that it exists and is accessible');
@@ -55,7 +68,8 @@ define(["require", "exports"], function (require, exports) {
         request.open("get", url);
         request.onload = function (ev) {
             if (request.status >= 200 && request.status < 300) {
-                callback(JSON.parse(request.responseText));
+                var json = JSON.parse(request.responseText);
+                callback(json);
             }
         };
         request.onerror = function (ev) {

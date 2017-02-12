@@ -72,15 +72,17 @@ public class ResourceCenterRestService implements RestService {
 		String centerUri = IdUtils.decodeId(centerId);
 
 		String path = context.request().path();
-		String pathFragment = "resource/";
+		String pathFragment = "resource";
 		String folder = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
 		String[] fragments = folder.split("/");
 
 		FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
 		if (resourceCenter != null) {
 			Object current = resourceCenter.getBaseArtefact();
-			if (folder.length() > 0) {
+			if (fragments.length > 0) {
 				for (String fragment : fragments) {
+					if (fragment.length() == 0) continue;
+
 					List<Object> children = resourceCenter.getContents(current);
 					boolean found = false;
 					for (Object child : children) {
@@ -104,7 +106,7 @@ public class ResourceCenterRestService implements RestService {
 				for (Object child : children) {
 					String name = resourceCenter.retrieveName(child);
 					if (resourceCenter.isDirectory(child)) {
-						result.add(JsonUtils.getFolderDescription(name, folder, "/rc/" + centerId + "/resource/"));
+						result.add(JsonUtils.getFolderDescription(name, folder, centerId));
 					}
 					else {
 						FlexoResource resource = resourceCenter.getResource(child, FlexoResource.class);

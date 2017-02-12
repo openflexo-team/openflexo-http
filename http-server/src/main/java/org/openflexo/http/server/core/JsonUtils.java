@@ -25,12 +25,18 @@ public class JsonUtils {
 		return centerDescription;
 	}
 
-	public static JsonObject getFolderDescription(String name, String path, String urlPrefix) {
-		JsonObject object = new JsonObject();
-		object.put("name", name);
-		object.put("type", "Folder");
-		object.put("url", urlPrefix + path + (path.endsWith("/") ? "" : "/") + name);
-		return object;
+	public static JsonObject getFolderDescription(String name, String path, String rcId) {
+		JsonObject folderDescription = new JsonObject();
+		folderDescription.put("name", name);
+		folderDescription.put("type", "Folder");
+		String id = path + (path.endsWith("/") ? "" : "/") + name;
+		folderDescription.put("id", id);
+
+		String rcUrl = "/rc/" + rcId;
+		folderDescription.put("url", rcUrl + "/resource" + id);
+		folderDescription.put("resourceCenterId", rcId);
+		folderDescription.put("resourceCenterUrl", rcUrl);
+		return folderDescription;
 	}
 
 	public static JsonObject getResourceDescription(FlexoResource<?> resource) {
