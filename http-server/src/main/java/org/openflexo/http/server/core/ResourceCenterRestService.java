@@ -1,5 +1,6 @@
 package org.openflexo.http.server.core;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -8,7 +9,6 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
-import org.openflexo.http.server.IdUtils;
 import org.openflexo.http.server.RestService;
 
 /**
@@ -24,7 +24,7 @@ public class ResourceCenterRestService implements RestService {
 	}
 
 	@Override
-	public void addRoutes(Router router) {
+	public void addRoutes(Vertx vertx, Router router) {
 		router.get("/rc").produces(JSON).handler(this::serveResourceCenterList);
 		router.get("/rc/:rcid").produces(JSON).handler(this::serveResourceCenter);
 		router.get("/rc/:rcid/resource").produces(JSON).handler(this::serveResourceCenterResourceList);

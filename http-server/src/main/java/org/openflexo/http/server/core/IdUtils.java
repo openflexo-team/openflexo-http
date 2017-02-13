@@ -1,4 +1,4 @@
-package org.openflexo.http.server;
+package org.openflexo.http.server.core;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

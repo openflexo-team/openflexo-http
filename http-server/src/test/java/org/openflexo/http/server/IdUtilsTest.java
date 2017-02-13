@@ -2,6 +2,7 @@ package org.openflexo.http.server;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.openflexo.http.server.core.IdUtils;
 
 /**
  * Tests for IdUtils

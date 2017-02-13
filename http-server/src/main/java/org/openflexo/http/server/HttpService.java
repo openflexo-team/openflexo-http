@@ -80,7 +80,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		// adds routes for initialized service
 		for (RestService restService : initializedServices) {
-			restService.addRoutes(router);
+			restService.addRoutes(vertx, router);
 		}
 
 		// adds static content

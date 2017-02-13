@@ -1,5 +1,6 @@
 package org.openflexo.http.server.core;
 
+import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -21,10 +22,11 @@ public class TechnologyAdapterRestService implements RestService {
 	}
 
 	@Override
-	public void addRoutes(Router router) {
+	public void addRoutes(Vertx vertx, Router router) {
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 	}
+
 	private void serveTechnologyAdapterList(RoutingContext context) {
 		JsonArray result = new JsonArray();
 		for (TechnologyAdapter technologyAdapter : technologyAdapterService.getTechnologyAdapters()) {
