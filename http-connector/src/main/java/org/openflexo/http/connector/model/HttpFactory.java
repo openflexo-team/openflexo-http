@@ -66,9 +66,7 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 		super(UrlModel.class);
 		this.resource = resource;
 		setEditingContext(editingContext);
-		if(resource!=null){
-			addConverter(new RelativePathResourceConverter(resource));
-		}
+		addConverter(new RelativePathResourceConverter(null));
 	}
 
 	@Override
