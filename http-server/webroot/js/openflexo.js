@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    exports.host = "";
     var ResourceCenter = (function () {
         function ResourceCenter(name, id, url, type, uri, resourceUrl) {
             this.name = name;
@@ -52,20 +53,20 @@ define(["require", "exports"], function (require, exports) {
         console.log("Error can't access " + url + '", check that it exists and is accessible');
     }
     function resourceCenters(callback) {
-        call("http://localhost:8080/rc", callback);
+        call(exports.host + "/rc", callback);
     }
     exports.resourceCenters = resourceCenters;
     function resources(callback) {
-        call("http://localhost:8080/resource", callback);
+        call(exports.host + "/resource", callback);
     }
     exports.resources = resources;
     function technologyAdapters(callback) {
-        call("http://localhost:8080/ta", callback);
+        call(exports.host + "/ta", callback);
     }
     exports.technologyAdapters = technologyAdapters;
-    function call(url, callback) {
+    function call(path, callback) {
         var request = new XMLHttpRequest();
-        request.open("get", url);
+        request.open("get", exports.host + path);
         request.onload = function (ev) {
             if (request.status >= 200 && request.status < 300) {
                 var json = JSON.parse(request.responseText);
@@ -73,7 +74,7 @@ define(["require", "exports"], function (require, exports) {
             }
         };
         request.onerror = function (ev) {
-            error(url);
+            error(path);
         };
         request.send();
     }

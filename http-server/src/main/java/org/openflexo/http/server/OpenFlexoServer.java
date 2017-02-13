@@ -59,8 +59,16 @@ public class OpenFlexoServer {
 		Options options = new Options();
 
 		// Args 1 is host if given
-		if (args.length == 1) {
+		if (args.length >= 1) {
 			options.serverOptions.host = args[0];
+		}
+		if (args.length >= 2) {
+			try {
+				options.serverOptions.port = Integer.parseInt(args[1]);
+			} catch (NumberFormatException e) {
+				System.err.println("Can't read port '" + args[1] + "', exiting");
+				System.exit(1);
+			}
 		}
 
 		FlexoLoggingManager.initialize(-1, true, null, options.verbose ? Level.INFO : Level.WARNING, null);

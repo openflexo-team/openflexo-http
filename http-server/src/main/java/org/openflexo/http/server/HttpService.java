@@ -84,7 +84,9 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		}
 
 		// adds static content
-		router.get("/*").handler(StaticHandler.create());
+		StaticHandler staticHandler = StaticHandler.create();
+		staticHandler.setCachingEnabled(false);
+		router.get("/*").handler(staticHandler);
 
 		server = vertx.createHttpServer(serverOptions);
 		server.requestHandler(router::accept);

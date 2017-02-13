@@ -1,3 +1,5 @@
+export let host = "";
+
 export interface Description {
     name: string;
     id: string;
@@ -60,20 +62,20 @@ function error(url: string) {
 }
 
 export function resourceCenters(callback: (centers: ResourceCenter[]) => void) {
-    call("http://localhost:8080/rc", callback);
+    call(host + "/rc", callback);
 }
 
 export function resources(callback: (resources: Resource[]) => void) {
-    call("http://localhost:8080/resource", callback);
+    call(host + "/resource", callback);
 }
 
 export function technologyAdapters(callback: (tas: TechnologyAdapter[]) => void) {
-    call("http://localhost:8080/ta", callback);
+    call(host + "/ta", callback);
 }
 
-export function call<T>(url: string, callback: (result: T) => void) {
+export function call<T>(path: string, callback: (result: T) => void) {
     let request = new XMLHttpRequest();
-    request.open("get", url);
+    request.open("get", host + path);
     request.onload = (ev) => {
         if (request.status >= 200 && request.status < 300) {
             let json = JSON.parse(request.responseText);
@@ -81,7 +83,7 @@ export function call<T>(url: string, callback: (result: T) => void) {
         }
     }
     request.onerror = (ev) => {
-        error(url);
+        error(path);
     };
     request.send();
 }
