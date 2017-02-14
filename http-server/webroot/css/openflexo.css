@@ -1,3 +1,14 @@
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; }
+.material-icons.md-48 { font-size: 48px; }
+
+.material-icons/*.md-dark*/ { 
+    color: rgba(0, 0, 0, 0.54); 
+    padding-top: 5px;
+}
+
+.material-icons/*.md-dark*/.md-inactive { color: rgba(0, 0, 0, 0.26); }
 
 .details {
     border-radius: 5px;
@@ -24,7 +35,19 @@
     font-size: normal;
 }
 
+.label > .status {
+    display: inline-block;
+    width: 30px;
+}
+
 .item > .children {
     margin-left: 15px;
 }
 
+.label > .material-icons {
+    display: inline;
+}
+
+.label > span {
+    vertical-align: middle;
+}

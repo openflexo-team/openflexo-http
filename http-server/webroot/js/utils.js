@@ -2,7 +2,8 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     function icon(name) {
         var span = document.createElement("span");
-        span.className = "material-icons";
+        span.classList.add("material-icons");
+        //span.classList.add("md-18");
         span.innerText = name;
         return span;
     }

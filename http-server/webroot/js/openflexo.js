@@ -14,7 +14,7 @@ define(["require", "exports"], function (require, exports) {
     }());
     exports.ResourceCenter = ResourceCenter;
     var Resource = (function () {
-        function Resource(name, id, url, type, uri, resourceCenterId, resourceCenterUrl, contentUrl) {
+        function Resource(name, id, url, type, uri, resourceCenterId, resourceCenterUrl, contentUrl, technologyAdapterId, technologyAdapterUrl) {
             this.name = name;
             this.id = id;
             this.url = url;
@@ -23,6 +23,8 @@ define(["require", "exports"], function (require, exports) {
             this.resourceCenterId = resourceCenterId;
             this.resourceCenterUrl = resourceCenterUrl;
             this.contentUrl = contentUrl;
+            this.technologyAdapterId = technologyAdapterId;
+            this.technologyAdapterUrl = technologyAdapterUrl;
         }
         return Resource;
     }());

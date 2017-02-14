@@ -67,6 +67,7 @@ function createFolderItem(label: string, url: string):HTMLDivElement {
     item.appendChild(itemIcon);
 
     let itemLabel = document.createElement("span");
+    itemLabel.className = "text";
     itemLabel.innerText = label;
     item.appendChild(itemLabel);
     
@@ -78,17 +79,25 @@ function createResourceItem(source: openflexo.Resource):HTMLDivElement {
     let tree = document.createElement("div");
     tree.className = "item";
     
-    let item = document.createElement("a");
-    item.href = source.contentUrl;
+    let item = document.createElement("div");
     item.className = "label";
+
+    let treeStatus = document.createElement("span");
+    treeStatus.className = "status";
+    item.appendChild(treeStatus);
 
     let itemIcon = utils.icon("cloud_download");
     item.appendChild(itemIcon);
 
-    let itemLabel = document.createElement("span");
+    let itemLabel = document.createElement("a");
+    itemLabel.href = source.contentUrl;
     itemLabel.innerText = source.name;
     item.appendChild(itemLabel);
     
+    let itemType = document.createElement("span");
+    itemType.innerText = ` (${source.technologyAdapterId.substring(source.technologyAdapterId.lastIndexOf('.')+1)})`;
+    item.appendChild(itemType);
+
     tree.appendChild(item);
     return tree;
 }

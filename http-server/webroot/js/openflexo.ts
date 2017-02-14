@@ -32,7 +32,9 @@ export class Resource implements ContainedByResourceCenter {
         public uri: string,
         public resourceCenterId: string,
         public resourceCenterUrl: string,
-        public contentUrl: string
+        public contentUrl: string,
+        public technologyAdapterId: string,
+        public technologyAdapterUrl: string
     ) {  }
 }
 

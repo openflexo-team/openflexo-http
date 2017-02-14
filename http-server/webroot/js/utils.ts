@@ -1,6 +1,7 @@
 export function icon(name: string): HTMLSpanElement {
     let span = document.createElement("span");
-    span.className = "material-icons";
+    span.classList.add("material-icons");
+    //span.classList.add("md-18");
     span.innerText = name;
     return span;
 }

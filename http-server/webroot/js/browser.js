@@ -57,6 +57,7 @@ define(["require", "exports", "./openflexo", "./utils"], function (require, expo
         var itemIcon = utils.icon("folder_open");
         item.appendChild(itemIcon);
         var itemLabel = document.createElement("span");
+        itemLabel.className = "text";
         itemLabel.innerText = label;
         item.appendChild(itemLabel);
         tree.appendChild(item);
@@ -65,14 +66,20 @@ define(["require", "exports", "./openflexo", "./utils"], function (require, expo
     function createResourceItem(source) {
         var tree = document.createElement("div");
         tree.className = "item";
-        var item = document.createElement("a");
-        item.href = source.contentUrl;
+        var item = document.createElement("div");
         item.className = "label";
+        var treeStatus = document.createElement("span");
+        treeStatus.className = "status";
+        item.appendChild(treeStatus);
         var itemIcon = utils.icon("cloud_download");
         item.appendChild(itemIcon);
-        var itemLabel = document.createElement("span");
+        var itemLabel = document.createElement("a");
+        itemLabel.href = source.contentUrl;
         itemLabel.innerText = source.name;
         item.appendChild(itemLabel);
+        var itemType = document.createElement("span");
+        itemType.innerText = " (" + source.technologyAdapterId.substring(source.technologyAdapterId.lastIndexOf('.') + 1) + ")";
+        item.appendChild(itemType);
         tree.appendChild(item);
         return tree;
     }
