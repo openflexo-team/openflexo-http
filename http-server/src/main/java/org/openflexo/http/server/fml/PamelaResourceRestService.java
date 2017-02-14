@@ -1,16 +1,12 @@
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javassist.util.proxy.ProxyObject;
+
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.http.server.RestService;
@@ -23,6 +19,12 @@ import org.openflexo.model.exceptions.InvalidDataException;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
 import org.openflexo.model.factory.ProxyMethodHandler;
+
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+import javassist.util.proxy.ProxyObject;
 
 /**
  * Creates REST entry point to serve Pamela models of a given root type.
@@ -38,13 +40,8 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 
 	private final Class<?> rootClass;
 
-	public PamelaResourceRestService(
-			String prefix,
-			Supplier<Collection<T>> supplier,
-			Function<String, T> finder,
-			Class<T> rootClass, ModelFactory factory
-		) throws ModelDefinitionException
-	{
+	public PamelaResourceRestService(String prefix, Supplier<Collection<T>> supplier, Function<String, T> finder, Class<T> rootClass,
+			ModelFactory factory) throws ModelDefinitionException {
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
@@ -100,7 +97,8 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 	}
 
 	private Object toJson(Object object) throws ModelDefinitionException, InvalidDataException {
-		if (object == null) return null;
+		if (object == null)
+			return null;
 
 		Class<?> type = object.getClass();
 		if (type.isPrimitive() || type.isAssignableFrom(String.class)) {
@@ -117,7 +115,7 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
 			ModelEntity<?> modelEntity = handler.getModelEntity();
 			JsonObject result = new JsonObject();
-			Iterator<ModelProperty<?>> iterator = (Iterator<ModelProperty<?>>) modelEntity.getProperties();
+			Iterator<ModelProperty<?>> iterator = (Iterator) modelEntity.getProperties();
 			while (iterator.hasNext()) {
 				ModelProperty property = iterator.next();
 				if (property.isSerializable()) {
@@ -132,7 +130,8 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 						case SINGLE: {
 							if (reference && propertyValue instanceof FlexoObject) {
 								transformed = ((FlexoObject) propertyValue).getFlexoID();
-							} else {
+							}
+							else {
 								transformed = toJson(propertyValue);
 							}
 							break;
@@ -140,9 +139,10 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 						case LIST: {
 							List<Object> collected = new ArrayList<>();
 							for (Object child : (List) propertyValue) {
- 								if (reference && child instanceof FlexoObject) {
+								if (reference && child instanceof FlexoObject) {
 									collected.add(((FlexoObject) child).getFlexoID());
-								} else {
+								}
+								else {
 									collected.add(toJson(child));
 								}
 							}
@@ -150,7 +150,7 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 							break;
 						}
 						case MAP: {
-							//TODO
+							// TODO
 							break;
 						}
 						default:
@@ -159,8 +159,10 @@ public class PamelaResourceRestService<T extends PamelaResource> {
 
 					String propertyName = property.getPropertyIdentifier();
 					XMLAttribute xmlAttribute = property.getXMLAttribute();
-					if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0) propertyName = xmlAttribute.xmlTag();
-					if (xmlElement != null && xmlElement.xmlTag().length() > 0) propertyName = xmlElement.xmlTag();
+					if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0)
+						propertyName = xmlAttribute.xmlTag();
+					if (xmlElement != null && xmlElement.xmlTag().length() > 0)
+						propertyName = xmlElement.xmlTag();
 					result.put(propertyName, transformed);
 				}
 			}
