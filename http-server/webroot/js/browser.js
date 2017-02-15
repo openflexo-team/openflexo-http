@@ -21,15 +21,18 @@ define(["require", "exports", "./openflexo", "./utils"], function (require, expo
                 status_1.innerText = arrow_right;
             }
             else {
+                status_1.innerText = arrow_down;
+                var div_1 = document.createElement("div");
+                div_1.className = 'children';
+                item.appendChild(div_1);
+                var waiting_1 = utils.icon("autorenew");
+                div_1.appendChild(waiting_1);
                 openflexo.call(item.getAttribute("data-url"), function (children) {
-                    var div = document.createElement("div");
-                    div.className = 'children';
+                    div_1.removeChild(waiting_1);
                     for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
                         var child = children_1[_i];
-                        div.appendChild(createItemFromSource(child));
+                        div_1.appendChild(createItemFromSource(child));
                     }
-                    item.appendChild(div);
-                    status_1.innerText = arrow_down;
                 });
             }
         }

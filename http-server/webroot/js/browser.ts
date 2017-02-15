@@ -25,15 +25,23 @@ function expand(event: MouseEvent) {
             item.removeChild(itemChidlren);
             status.innerText = arrow_right;
         } else {
+            status.innerText = arrow_down;
+
+            let div = document.createElement("div");
+            div.className = 'children';
+            item.appendChild(div);
+            
+            let waiting = utils.icon("autorenew");
+            div.appendChild(waiting);
+
             openflexo.call<openflexo.ContainedByResourceCenter[]>(item.getAttribute("data-url"), (children) => {
-                let div = document.createElement("div");
-                div.className = 'children';
+                div.removeChild(waiting);
+                
                 for (let child of children) {
                     div.appendChild(createItemFromSource(child));
                 }
-                item.appendChild(div);
-               status.innerText = arrow_down;
             });
+
         }
     }
 }
