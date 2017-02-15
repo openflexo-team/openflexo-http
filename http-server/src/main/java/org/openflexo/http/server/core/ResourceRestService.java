@@ -13,6 +13,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
 import org.openflexo.http.server.RestService;
+import org.openflexo.rm.Resource;
 
 /**
  * Created by charlie on 11/02/2017.
@@ -61,7 +62,8 @@ public class ResourceRestService implements RestService {
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
 			context.response().putHeader("Content-Disposition", "filename=\"" + resource.getName() +"\"");
-			try (InputStream inputStream = new BufferedInputStream(resource.getFlexoIODelegate().getSerializationArtefactAsResource().openInputStream())) {
+			Resource artefactAsResource = resource.getIODelegate().getSerializationArtefactAsResource();
+			try (InputStream inputStream = new BufferedInputStream(artefactAsResource.openInputStream())) {
 				Buffer buffer = Buffer.buffer();
 				int read = inputStream.read();
 				while (read >= 0) {
