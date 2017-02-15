@@ -1,5 +1,7 @@
 package org.openflexo.http.server.core;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Base64.Decoder;
@@ -19,6 +21,15 @@ public class IdUtils {
 
 	public static String decodeId(String encoded) {
 		return new String(urlDecoder.decode(encoded), StandardCharsets.ISO_8859_1);
+	}
+
+	public static String decodeUrlSpecialCharacters(String url) {
+		try {
+			return URLDecoder.decode(url, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			/* can't happen */
+			return url;
+		}
 	}
 
 }

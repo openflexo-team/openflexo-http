@@ -74,7 +74,8 @@ public class ResourceCenterRestService implements RestService {
 		String path = context.request().path();
 		String pathFragment = "resource";
 		String folder = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
-		String[] fragments = folder.split("/");
+
+		String[] fragments = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
 
 		FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
 		if (resourceCenter != null) {
