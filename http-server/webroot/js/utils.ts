@@ -6,6 +6,12 @@ export function icon(name: string): HTMLSpanElement {
     return span;
 }
 
+export function spinner(): HTMLSpanElement {
+    let spinner = icon("autorenew");
+    spinner.classList.add("rotate");
+    return spinner;
+}
+
 export function findElementWithAttributeInHierarchy(element: HTMLElement, attributeName: string):HTMLElement {
     let current = element;
     let attribute = current.getAttribute(attributeName);

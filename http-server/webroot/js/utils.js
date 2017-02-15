@@ -8,6 +8,12 @@ define(["require", "exports"], function (require, exports) {
         return span;
     }
     exports.icon = icon;
+    function spinner() {
+        var spinner = icon("autorenew");
+        spinner.classList.add("rotate");
+        return spinner;
+    }
+    exports.spinner = spinner;
     function findElementWithAttributeInHierarchy(element, attributeName) {
         var current = element;
         var attribute = current.getAttribute(attributeName);

@@ -31,11 +31,10 @@ function expand(event: MouseEvent) {
             div.className = 'children';
             item.appendChild(div);
             
-            let waiting = utils.icon("autorenew");
-            div.appendChild(waiting);
+            div.appendChild(utils.spinner());
 
             openflexo.call<openflexo.ContainedByResourceCenter[]>(item.getAttribute("data-url"), (children) => {
-                div.removeChild(waiting);
+                div.removeChild(div.firstChild);
                 
                 for (let child of children) {
                     div.appendChild(createItemFromSource(child));

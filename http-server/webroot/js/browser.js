@@ -25,10 +25,9 @@ define(["require", "exports", "./openflexo", "./utils"], function (require, expo
                 var div_1 = document.createElement("div");
                 div_1.className = 'children';
                 item.appendChild(div_1);
-                var waiting_1 = utils.icon("autorenew");
-                div_1.appendChild(waiting_1);
+                div_1.appendChild(utils.spinner());
                 openflexo.call(item.getAttribute("data-url"), function (children) {
-                    div_1.removeChild(waiting_1);
+                    div_1.removeChild(div_1.firstChild);
                     for (var _i = 0, children_1 = children; _i < children_1.length; _i++) {
                         var child = children_1[_i];
                         div_1.appendChild(createItemFromSource(child));
