@@ -204,7 +204,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		}
 		else if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
-			ModelEntity<?> modelEntity = handler.getModelEntity();
+			@SuppressWarnings({"unchecked", "rawtype"})
+			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 			JsonObject result = new JsonObject();
 
 			// adds id and url for object
@@ -221,7 +222,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				result.put("url", xmlTag + "/" + id);
 			}
 
-			Iterator<ModelProperty<?>> iterator = (Iterator<ModelProperty<?>>) modelEntity.getProperties();
+			Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
 			while (iterator.hasNext()) {
 				ModelProperty property = iterator.next();
 				if (true || property.isSerializable()) {
