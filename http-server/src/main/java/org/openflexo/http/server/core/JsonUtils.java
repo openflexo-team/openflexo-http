@@ -15,7 +15,7 @@ public class JsonUtils {
 		String uri = center.getDefaultBaseURI();
 		String id = IdUtils.encoreUri(uri);
 		JsonObject centerDescription = new JsonObject();
-		centerDescription.put("name", center.getName());
+		centerDescription.put("name", center.getDisplayableName());
 		centerDescription.put("type", "ResourceCenter");
 		centerDescription.put("uri", uri);
 		centerDescription.put("id", id);
