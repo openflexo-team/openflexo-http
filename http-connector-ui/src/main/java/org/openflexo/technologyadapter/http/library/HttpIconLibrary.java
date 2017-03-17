@@ -65,15 +65,11 @@ import org.openflexo.rm.ResourceLocator;
 public class HttpIconLibrary {
 	private static final Logger logger = Logger.getLogger(HttpIconLibrary.class.getPackage().getName());
 
-	public static final ImageIcon JDBC_TECHNOLOGY_BIG_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-text_big.gif"));
-	public static final ImageIcon JDBC_TECHNOLOGY_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-text.gif"));
-	public static final ImageIcon JDBC_FILE_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-text.gif"));
-
-	public static final ImageIcon JDBC_SCHEMA_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-text.gif"));
-	public static final ImageIcon JDBC_TABLE_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-table.png"));
-	public static final ImageIcon JDBC_COLUMN_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/jdbc-column.png"));
+	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_BIG_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accesspoint-big.png"));
+	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accespoint.png"));
+	public static final ImageIcon ACCESSPOINT_FILE_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accespoint.png"));
 
 	public static ImageIcon iconForObject(Class<? extends TechnologyObject> objectClass) {
-		return JDBC_TECHNOLOGY_ICON;
+		return ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 }

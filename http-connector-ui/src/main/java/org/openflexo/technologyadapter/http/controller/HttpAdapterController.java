@@ -99,27 +99,27 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
     @Override
 	public ImageIcon getTechnologyBigIcon() {
-		return HttpIconLibrary.JDBC_TECHNOLOGY_BIG_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_BIG_ICON;
 	}
 
 	@Override
 	public ImageIcon getTechnologyIcon() {
-		return HttpIconLibrary.JDBC_TECHNOLOGY_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 
 	@Override
 	public ImageIcon getModelIcon() {
-		return HttpIconLibrary.JDBC_FILE_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 
 	@Override
 	public ImageIcon getMetaModelIcon() {
-		return HttpIconLibrary.JDBC_FILE_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 
 	@Override
 	public ImageIcon getIconForTechnologyObject(final Class<? extends TechnologyObject<?>> objectClass) {
-		return HttpIconLibrary.JDBC_TECHNOLOGY_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
     @Override
     public ImageIcon getIconForFlexoRole(Class<? extends FlexoRole<?>> flexoRoleClass) {
-		return HttpIconLibrary.JDBC_TECHNOLOGY_ICON;
+		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
     }
 
 	@Override
