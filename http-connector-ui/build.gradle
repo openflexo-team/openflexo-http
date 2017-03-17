@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':http-connector')
+    compile flexoUi()
+}

@@ -23,10 +23,10 @@ package org.openflexo.http.connector.rm;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.model.UrlModel;
+import org.openflexo.http.connector.model.AccessPoint;
 
 public class HttpResourceRepository<I> extends
-        TechnologyAdapterResourceRepository<HttpResource, HttpTechnologyAdapter, UrlModel, I>
+        TechnologyAdapterResourceRepository<AccessPointResource, HttpTechnologyAdapter, AccessPoint, I>
 {
     private static final String DEFAULT_BASE_URI = "http://www.openflexo.org/JDBCTechnologyAdapter/Models";
 

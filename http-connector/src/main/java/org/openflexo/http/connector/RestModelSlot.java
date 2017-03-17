@@ -20,16 +20,15 @@
 
 package org.openflexo.http.connector;
 
+import java.lang.reflect.Type;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.action.ModelSlotInstanceConfiguration;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
-import org.openflexo.http.connector.model.UrlModel;
-import org.openflexo.http.connector.rm.HttpResource;
-
-import java.lang.reflect.Type;
+import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.rm.AccessPointResource;
 
 /**
  * REST model slot for Http technology adapter
@@ -37,12 +36,12 @@ import java.lang.reflect.Type;
  *
  *
  */
-public interface RestModelSlot extends FreeModelSlot<UrlModel> {
+public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 
     @Override
     HttpTechnologyAdapter getModelSlotTechnologyAdapter();
 
-    abstract class RestModelSlotImpl extends FreeModelSlotImpl<UrlModel> implements RestModelSlot {
+    abstract class RestModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements RestModelSlot {
 
         @Override
         public Class<HttpTechnologyAdapter> getTechnologyAdapterClass() {
@@ -57,7 +56,7 @@ public interface RestModelSlot extends FreeModelSlot<UrlModel> {
 
         @Override
         public Type getType() {
-            return UrlModel.class;
+            return AccessPoint.class;
         }
 
         @Override
@@ -66,20 +65,20 @@ public interface RestModelSlot extends FreeModelSlot<UrlModel> {
         }
 
         @Override
-        public ModelSlotInstanceConfiguration<? extends FreeModelSlot<UrlModel>, UrlModel> createConfiguration(
+        public ModelSlotInstanceConfiguration<? extends FreeModelSlot<AccessPoint>, AccessPoint> createConfiguration(
                 AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc
         ) {
             return new HttpModelSlotInstanceConfiguration(this, virtualModelInstance, rc);
         }
 
         @Override
-        public HttpResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
+        public AccessPointResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
             // TODO create empty resource
             return null;
         }
 
         @Override
-        public HttpResource createSharedEmptyResource(
+        public AccessPointResource createSharedEmptyResource(
                 FlexoResourceCenter<?> resourceCenter,
                 String relativePath, String filename, String modelUri
         ) {

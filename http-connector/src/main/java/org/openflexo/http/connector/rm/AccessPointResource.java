@@ -25,22 +25,20 @@ import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.HttpTechnologyContextManager;
+import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.HttpFactory;
-import org.openflexo.http.connector.model.UrlModel;
 import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLElement;
 
 @ModelEntity
-@ImplementationClass(HttpResourceImpl.class)
 @XMLElement
-public interface HttpResource
+public interface AccessPointResource
 extends
-        PamelaResource<UrlModel, HttpFactory>,
-        FlexoResource<UrlModel>,
-        TechnologyAdapterResource<UrlModel, HttpTechnologyAdapter>
+        PamelaResource<AccessPoint, HttpFactory>,
+        FlexoResource<AccessPoint>,
+        TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter>
 {
     
     String TECHNOLOGY_CONTEXT_MANAGER = "technologyContextManager";
@@ -49,9 +47,20 @@ extends
     HttpTechnologyContextManager getTechnologyContextManager();
 
     @Setter(TECHNOLOGY_CONTEXT_MANAGER)
-    void setTechnologyContextManager(HttpTechnologyContextManager paramJDBCTechnologyContextManager);
+    void setTechnologyContextManager(HttpTechnologyContextManager contextManager);
 
     // TODO connect to model
     @Getter("model")
-    UrlModel getModel();
+	AccessPoint getModel();
+
+    default HttpTechnologyAdapter getTechnologyAdapter() {
+        if (getServiceManager() != null) {
+            return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+        }
+        return null;
+    }
+
+    default Class<AccessPoint> getResourceDataClass() {
+        return AccessPoint.class;
+    }
 }

@@ -7,13 +7,13 @@ import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterBindingFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
-import org.openflexo.http.connector.rm.HttpResourceFactory;
+import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 
 /**
  * Created by charlie on 02/02/2017.
  */
-@DeclareModelSlots({RestModelSlot.class})
-@DeclareResourceTypes({HttpResourceFactory.class})
+@DeclareModelSlots({XmlRpcModelSlot.class})
+@DeclareResourceTypes({AccessPointResourceFactory.class})
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 
 	@Override

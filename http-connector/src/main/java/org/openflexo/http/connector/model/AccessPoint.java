@@ -2,6 +2,9 @@ package org.openflexo.http.connector.model;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -12,7 +15,7 @@ import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.model.UrlModel.UrlModelImpl;
+import org.openflexo.http.connector.model.AccessPoint.AccessPointImpl;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -20,16 +23,12 @@ import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  */
 @ModelEntity
 @XMLElement
-@ImplementationClass(UrlModelImpl.class)
-public interface UrlModel extends TechnologyObject<HttpTechnologyAdapter>, ResourceData<UrlModel> {
+@ImplementationClass(AccessPointImpl.class)
+public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, ResourceData<AccessPoint> {
 
 	String HOST = "host";
 	String PORT = "port";
@@ -57,7 +56,7 @@ public interface UrlModel extends TechnologyObject<HttpTechnologyAdapter>, Resou
 
 	List<FlexoConceptInstance> retrieveConcepts(FlexoConcept concept) throws IOException;
 
-	abstract class UrlModelImpl extends FlexoObjectImpl implements UrlModel {
+	abstract class AccessPointImpl extends FlexoObjectImpl implements AccessPoint {
 
 		@Override
 		public String getUrl() {

@@ -42,7 +42,7 @@ import org.openflexo.fge.FGEModelFactoryImpl;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
-import org.openflexo.http.connector.rm.HttpResource;
+import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
@@ -51,9 +51,9 @@ import org.openflexo.model.factory.EditingContext;
  * @author charlie
  *
  */
-public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceModelFactory<HttpResource> {
+public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
 
-	private final HttpResource resource;
+	private final AccessPointResource resource;
 
 	private FlexoUndoManager undoManager = null;
 	private IgnoreLoadingEdits ignoreHandler = null;
@@ -62,15 +62,15 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 		this(null, null);
 	}
 
-	public HttpFactory(HttpResource resource, EditingContext editingContext) throws ModelDefinitionException {
-		super(UrlModel.class);
+	public HttpFactory(AccessPointResource resource, EditingContext editingContext) throws ModelDefinitionException {
+		super(AccessPoint.class);
 		this.resource = resource;
 		setEditingContext(editingContext);
 		addConverter(new RelativePathResourceConverter(null));
 	}
 
 	@Override
-	public HttpResource getResource() {
+	public AccessPointResource getResource() {
 		return resource;
 	}
 
@@ -78,16 +78,16 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 	 * Creates empty model that needs to be initialized
 	 * @return the created model
 	 */
-	public UrlModel makeEmptyModel() {
-		return newInstance(UrlModel.class);
+	public AccessPoint makeEmptyModel() {
+		return newInstance(AccessPoint.class);
 	}
 
-	public UrlModel makeNewModel(String host, String path) {
+	public AccessPoint makeNewModel(String host, String path) {
 		return makeNewModel(host, -1, path);
 	}
 
-	public UrlModel makeNewModel(String host, int port, String path) {
-		UrlModel returned = newInstance(UrlModel.class);
+	public AccessPoint makeNewModel(String host, int port, String path) {
+		AccessPoint returned = newInstance(AccessPoint.class);
 		returned.setHost(host);
 		returned.setPort(port);
 		returned.setPath(path);
