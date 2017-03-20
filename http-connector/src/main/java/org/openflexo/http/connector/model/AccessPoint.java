@@ -15,19 +15,17 @@ import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.model.AccessPoint.AccessPointImpl;
 import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
+ * AccessPoint to an HTTP service
  */
 @ModelEntity
 @XMLElement
-@ImplementationClass(AccessPointImpl.class)
 public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, ResourceData<AccessPoint> {
 
 	String HOST = "host";
@@ -52,35 +50,26 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	@Setter(PATH)
 	void setPath(String path);
 
-	String getUrl();
+	default String getUrl() {
+		String port = getPort() >= 0 ? ":" + getPort() : "";
+		return getHost() + port + getPath();
+	}
 
-	List<FlexoConceptInstance> retrieveConcepts(FlexoConcept concept) throws IOException;
+	default List<FlexoConceptInstance> retrieveConcepts(FlexoConcept concept) throws IOException {
+		List<FlexoConceptInstance> instances = new ArrayList<>();
+		try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
 
-	abstract class AccessPointImpl extends FlexoObjectImpl implements AccessPoint {
+			HttpGet get = new HttpGet(getUrl());
+			CloseableHttpResponse response = httpClient.execute(get);
+			HttpEntity entity = response.getEntity();
 
-		@Override
-		public String getUrl() {
-			String port = getPort() >= 0 ? ":" + getPort() : "";
-			return getHost() + port + getPath();
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode node = mapper.readTree(entity.getContent());
+			System.out.println(node);
+
 		}
 
-		@Override
-		public List<FlexoConceptInstance> retrieveConcepts(FlexoConcept concept) throws IOException {
-			List<FlexoConceptInstance> instances = new ArrayList<>();
-			try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
-
-				HttpGet get = new HttpGet(getUrl());
-				CloseableHttpResponse response = httpClient.execute(get);
-				HttpEntity entity = response.getEntity();
-
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode node = mapper.readTree(entity.getContent());
-				System.out.println(node);
-
-			}
-
-			return instances;
-		}
+		return instances;
 	}
 
 }
