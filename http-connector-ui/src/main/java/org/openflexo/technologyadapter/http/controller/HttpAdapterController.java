@@ -72,7 +72,7 @@ import org.openflexo.view.controller.model.FlexoPerspective;
 
 public class HttpAdapterController extends TechnologyAdapterController<HttpTechnologyAdapter> {
     
-	private InspectorGroup jdbcInspectorGroup;
+	private InspectorGroup httpInspectorGroup;
 
 
 	@Override
@@ -86,15 +86,13 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
     @Override
     protected void initializeInspectors(FlexoController controller) {
-		//jdbcInspectorGroup = controller.loadInspectorGroup("JDBC", getTechnologyAdapter().getLocales(), getFMLTechnologyAdapterInspectorGroup());
-
-		jdbcInspectorGroup = controller.loadInspectorGroup("JDBC", getTechnologyAdapter().getLocales(), getFMLTechnologyAdapterInspectorGroup());
+		httpInspectorGroup = controller.loadInspectorGroup("HTTP", getTechnologyAdapter().getLocales(), getFMLTechnologyAdapterInspectorGroup());
 
 	}
 
     @Override
     public InspectorGroup getTechnologyAdapterInspectorGroup() {
-        return jdbcInspectorGroup;
+        return httpInspectorGroup;
     }
 
     @Override

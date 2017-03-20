@@ -41,6 +41,7 @@ package org.openflexo.http.connector.model;
 import org.openflexo.fge.FGEModelFactoryImpl;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
@@ -51,18 +52,18 @@ import org.openflexo.model.factory.EditingContext;
  * @author charlie
  *
  */
-public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
+public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
 
 	private final AccessPointResource resource;
 
 	private FlexoUndoManager undoManager = null;
 	private IgnoreLoadingEdits ignoreHandler = null;
 
-	public HttpFactory() throws ModelDefinitionException {
+	public AccessPointFactory() throws ModelDefinitionException {
 		this(null, null);
 	}
 
-	public HttpFactory(AccessPointResource resource, EditingContext editingContext) throws ModelDefinitionException {
+	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext) throws ModelDefinitionException {
 		super(AccessPoint.class);
 		this.resource = resource;
 		setEditingContext(editingContext);
@@ -82,16 +83,11 @@ public class HttpFactory extends FGEModelFactoryImpl implements PamelaResourceMo
 		return newInstance(AccessPoint.class);
 	}
 
-	public AccessPoint makeNewModel(String host, String path) {
-		return makeNewModel(host, -1, path);
-	}
-
-	public AccessPoint makeNewModel(String host, int port, String path) {
-		AccessPoint returned = newInstance(AccessPoint.class);
-		returned.setHost(host);
-		returned.setPort(port);
-		returned.setPath(path);
-		return returned;
+	public void initializeNewModel(AccessPoint accessPoint, String url, VirtualModel virtualModel) {
+		accessPoint.setURL(url);
+		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class);
+		virtualModelInstance.setVirtualModel(virtualModel);
+		accessPoint.setVirtualModelInstance(virtualModelInstance);
 	}
 
 	@Override

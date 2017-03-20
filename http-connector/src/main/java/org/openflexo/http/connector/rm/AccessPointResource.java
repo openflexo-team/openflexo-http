@@ -22,21 +22,25 @@ package org.openflexo.http.connector.rm;
 
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.PamelaResource;
+import org.openflexo.foundation.resource.PamelaResourceImpl;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.HttpTechnologyContextManager;
 import org.openflexo.http.connector.model.AccessPoint;
-import org.openflexo.http.connector.model.HttpFactory;
+import org.openflexo.http.connector.model.AccessPointFactory;
+import org.openflexo.http.connector.rm.AccessPointResource.AccessPointResourceImpl;
 import org.openflexo.model.annotations.Getter;
+import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLElement;
 
 @ModelEntity
 @XMLElement
+@ImplementationClass(AccessPointResourceImpl.class)
 public interface AccessPointResource
 extends
-        PamelaResource<AccessPoint, HttpFactory>,
+        PamelaResource<AccessPoint, AccessPointFactory>,
         FlexoResource<AccessPoint>,
         TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter>
 {
@@ -53,14 +57,17 @@ extends
     @Getter("model")
 	AccessPoint getModel();
 
-    default HttpTechnologyAdapter getTechnologyAdapter() {
-        if (getServiceManager() != null) {
-            return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
-        }
-        return null;
-    }
+    abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
 
-    default Class<AccessPoint> getResourceDataClass() {
-        return AccessPoint.class;
+        public HttpTechnologyAdapter getTechnologyAdapter() {
+            if (getServiceManager() != null) {
+                return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+            }
+            return null;
+        }
+
+        public Class<AccessPoint> getResourceDataClass() {
+            return AccessPoint.class;
+        }
     }
 }

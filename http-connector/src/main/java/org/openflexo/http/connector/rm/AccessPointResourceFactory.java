@@ -7,7 +7,7 @@ import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
-import org.openflexo.http.connector.model.HttpFactory;
+import org.openflexo.http.connector.model.AccessPointFactory;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.toolbox.StringUtils;
 
@@ -15,7 +15,7 @@ import org.openflexo.toolbox.StringUtils;
  *
  */
 public class AccessPointResourceFactory
-    extends PamelaResourceFactory<AccessPointResource, AccessPoint, HttpTechnologyAdapter, HttpFactory>
+    extends PamelaResourceFactory<AccessPointResource, AccessPoint, HttpTechnologyAdapter, AccessPointFactory>
 {
 
     public static final String URL_EXTENSION = ".url";
@@ -25,8 +25,8 @@ public class AccessPointResourceFactory
     }
 
     @Override
-    public HttpFactory makeResourceDataFactory(AccessPointResource resource, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
-        return new HttpFactory(resource, technologyContextManager.getServiceManager().getEditingContext()) ;
+    public AccessPointFactory makeResourceDataFactory(AccessPointResource resource, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
+        return new AccessPointFactory(resource, technologyContextManager.getServiceManager().getEditingContext()) ;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class AccessPointResourceFactory
         return StringUtils.hasExtension(name, URL_EXTENSION);
     }
 
-    public <I> AccessPointResource makeJDBCResource(String baseName, RepositoryFolder<AccessPointResource, I> folder, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager)
+    public <I> AccessPointResource makeAccessPointResource(String baseName, RepositoryFolder<AccessPointResource, I> folder, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager)
         throws SaveResourceException, ModelDefinitionException {
 
         FlexoResourceCenter<I> rc = folder.getResourceRepository().getResourceCenter();
