@@ -35,7 +35,14 @@
 
 package org.openflexo.http.connector.fml.editionaction;
 
+import java.util.Vector;
+import org.openflexo.connie.BindingEvaluationContext;
+import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.fml.AbstractActionScheme;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
 import org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior.HttpRequestBehaviorImpl;
 import org.openflexo.http.connector.model.UrlBuilder;
 import org.openflexo.model.annotations.Embedded;
@@ -61,20 +68,42 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 	@Setter(URLBUILDER_KEY)
 	void setBuilder(UrlBuilder builder);
 
+	Object execute(BindingEvaluationContext context) throws Exception;
+
 	abstract class HttpRequestBehaviorImpl extends AbstractActionSchemeImpl implements HttpRequestBehavior {
 
 		// TODO find a better method !!!!!!!!!!!!!!!!!!!!!!!!!
-		private boolean builerBuilt = false;
+		private boolean builderBuilt = false;
 
 		@Override
 		public UrlBuilder getBuilder() {
 			UrlBuilder builder = (UrlBuilder) performSuperGetter(URLBUILDER_KEY);
-			if (builder == null && !builerBuilt) {
-				builerBuilt = true;
+			if (builder == null && !builderBuilt) {
+				builderBuilt = true;
 				builder = getFMLModelFactory().newInstance(UrlBuilder.class);
 				performSuperSetter(URLBUILDER_KEY, builder);
 			}
 			return builder;
 		}
+
+		@Override
+		public ActionSchemeActionType getActionType(FlexoConceptInstance fci) {
+			return new ActionSchemeActionType(this, fci) {
+				@Override
+				public ActionSchemeAction makeNewAction(
+						FlexoConceptInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor
+				) {
+					return new HttpBehaviorAction(this, focusedObject, globalSelection, editor);
+				}
+			};
+		}
+
+		public Object execute(BindingEvaluationContext context) throws Exception {
+			UrlBuilder builder = getBuilder();
+			String url = builder.evaluateUrl(context);
+			System.out.println("URL is '" + url + "'");
+			return url;
+		}
+
 	}
 }

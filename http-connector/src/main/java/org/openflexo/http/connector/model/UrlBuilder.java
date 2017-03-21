@@ -36,6 +36,11 @@
 package org.openflexo.http.connector.model;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.openflexo.connie.BindingEvaluationContext;
+import org.openflexo.connie.DataBinding;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -76,4 +81,25 @@ public interface UrlBuilder {
 	@Remover(PARAMETER_KEY)
 	void removeFromParameters(UrlParameter aParameter);
 
+	default String evaluateUrl(BindingEvaluationContext context) throws Exception {
+		StringBuilder url = new StringBuilder();
+		// evaluates pattern
+		Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");
+		String template = getTemplate();
+		if (template != null) {
+			Matcher matcher = pattern.matcher(template);
+			int current = 0;
+			while (matcher.find(current)) {
+				url.append(template.substring(current, matcher.start()));
+
+				String expression = matcher.group(1);
+				DataBinding binding = new DataBinding(expression);
+				Object value = binding.getBindingValue(context);
+				url.append(Objects.toString(value, ""));
+
+				current = matcher.end();
+			}
+		}
+		return url.toString();
+	}
 }
