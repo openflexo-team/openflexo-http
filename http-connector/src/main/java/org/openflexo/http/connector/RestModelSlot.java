@@ -26,6 +26,7 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
@@ -36,6 +37,7 @@ import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
 import org.openflexo.http.connector.RestModelSlot.RestModelSlotImpl;
+import org.openflexo.http.connector.fml.AccessPointType;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
 import org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior;
 import org.openflexo.http.connector.model.AccessPoint;
@@ -107,7 +109,8 @@ public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 
         @Override
         public Type getType() {
-            return AccessPoint.class;
+            VirtualModelInstanceType instanceType = VirtualModelInstanceType.getVirtualModelInstanceType(getAccessedVirtualModel());
+            return new AccessPointType(getModelSlotTechnologyAdapter(), instanceType);
         }
 
         @Override

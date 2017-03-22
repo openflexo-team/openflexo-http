@@ -87,7 +87,7 @@ public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaRes
 		accessPoint.setURL(url);
 		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class);
 		virtualModelInstance.setVirtualModel(virtualModel);
-		accessPoint.setVirtualModelInstance(virtualModelInstance);
+		accessPoint.setInstance(virtualModelInstance);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(AccessPointImpl.class)
 public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, ResourceData<AccessPoint> {
 
-	String VIRTUAL_MODEL_INSTANCE_KEY = "virtualModelInstance";
+	String VIRTUAL_MODEL_INSTANCE_KEY = "instance";
 	String URL_KEY = "url";
 
 	@Getter(value = URL_KEY) @XMLAttribute
@@ -32,10 +32,10 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	void setURL(String url);
 
 	@Getter(VIRTUAL_MODEL_INSTANCE_KEY)
-	HttpVirtualModelInstance getVirtualModelInstance();
+	HttpVirtualModelInstance getInstance();
 
 	@Setter(VIRTUAL_MODEL_INSTANCE_KEY)
-	void setVirtualModelInstance(HttpVirtualModelInstance instance);
+	void setInstance(HttpVirtualModelInstance instance);
 
 	abstract class AccessPointImpl extends FlexoObjectImpl implements AccessPoint {
 		@Override

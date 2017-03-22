@@ -43,6 +43,7 @@ import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
 /**
  * Created by charlie on 21/03/2017.
@@ -66,15 +67,18 @@ public class HttpBehaviorAction extends ActionSchemeAction {
 	@Override
 	protected void doAction(Object context) throws FlexoException {
 		HttpRequestBehavior actionScheme = getActionScheme();
-		if (actionScheme != null) {
+		FlexoConceptInstance instance = getFlexoConceptInstance();
+		if (actionScheme != null && instance instanceof HttpVirtualModelInstance) {
 			logger.fine("Perform HTTP request on " + actionScheme.getBuilder().getTemplate());
 			try {
-				actionScheme.execute(getFlexoConceptInstance());
+				returnedValue = actionScheme.execute((HttpVirtualModelInstance) instance, this);
 			} catch (FlexoException e) {
 				throw e;
 			} catch (Exception e) {
 				throw new FlexoException(e);
 			}
+		} else {
+			logger.warning("Could not perform action " + actionScheme + " on " + instance);
 		}
 	}
 }
