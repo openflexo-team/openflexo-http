@@ -36,13 +36,22 @@
 package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
+import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
  */
 @ModelEntity
+@ImplementationClass(HttpVirtualModelInstanceImpl.class)
 public interface HttpVirtualModelInstance extends VirtualModelInstance {
 
 
+	abstract class HttpVirtualModelInstanceImpl implements HttpVirtualModelInstance {
+		@Override
+		public String toString() {
+			return "HttpVirtualModelInstance:" + super.toString();
+		}
+	}
 }

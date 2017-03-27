@@ -20,6 +20,11 @@
 
 package org.openflexo.http.connector.rm;
 
+import org.openflexo.foundation.IOFlexoException;
+import org.openflexo.foundation.InconsistentDataException;
+import org.openflexo.foundation.InvalidModelDefinitionException;
+import org.openflexo.foundation.InvalidXMLException;
+import org.openflexo.foundation.resource.FlexoFileNotFoundException;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.PamelaResourceImpl;
@@ -34,6 +39,7 @@ import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.toolbox.IProgress;
 
 @ModelEntity
 @XMLElement
@@ -57,6 +63,8 @@ extends
     @Getter("model")
 	AccessPoint getModel();
 
+
+
     abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
 
         public HttpTechnologyAdapter getTechnologyAdapter() {
@@ -68,6 +76,16 @@ extends
 
         public Class<AccessPoint> getResourceDataClass() {
             return AccessPoint.class;
+        }
+
+        @Override
+        public AccessPoint loadResourceData(IProgress progress)
+                throws FlexoFileNotFoundException, IOFlexoException,
+                InvalidXMLException, InconsistentDataException,
+                InvalidModelDefinitionException {
+            AccessPoint accessPoint = super.loadResourceData(progress);
+            getFactory().initializeModel(accessPoint);
+            return accessPoint;
         }
     }
 }

@@ -35,6 +35,7 @@
 
 package org.openflexo.http.connector.fml.editionaction;
 
+import java.lang.reflect.Type;
 import java.util.Vector;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.foundation.FlexoEditor;
@@ -71,7 +72,7 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 	default Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 		UrlBuilder builder = getBuilder();
-		String url = builder.evaluateUrl(modelInstance, context);
+		String url = builder.evaluateUrl(this, context);
 		System.out.println("URL is '" + url + "'");
 		return url;
 	}
@@ -80,6 +81,12 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 		// TODO find a better method !!!!!!!!!!!!!!!!!!!!!!!!!
 		private boolean builderBuilt = false;
+
+		@Override
+		public Type getReturnType() {
+			// TODO select correct type
+			return String.class;
+		}
 
 		@Override
 		public UrlBuilder getBuilder() {
@@ -93,7 +100,7 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 		}
 
 		@Override
-		public ActionSchemeActionType getActionType(FlexoConceptInstance fci) {
+		public ActionSchemeActionType getActionFactory(FlexoConceptInstance fci) {
 			return new ActionSchemeActionType(this, fci) {
 				@Override
 				public ActionSchemeAction makeNewAction(

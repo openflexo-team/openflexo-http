@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
@@ -82,7 +83,7 @@ public interface UrlBuilder {
 	@Remover(PARAMETER_KEY)
 	void removeFromParameters(UrlParameter aParameter);
 
-	default String evaluateUrl(HttpVirtualModelInstance bindable, BindingEvaluationContext context) throws Exception {
+	default String evaluateUrl(Bindable bindable, BindingEvaluationContext context) throws Exception {
 		StringBuilder url = new StringBuilder();
 		// evaluates pattern
 		Pattern pattern = Pattern.compile("\\{([^\\}]+)\\}");

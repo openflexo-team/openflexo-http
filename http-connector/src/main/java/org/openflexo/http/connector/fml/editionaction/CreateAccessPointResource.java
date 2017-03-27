@@ -130,11 +130,9 @@ public interface CreateAccessPointResource extends AbstractCreateResource<RestMo
 				FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
 				if (flexoProperty instanceof RestModelSlot) {
 					RestModelSlot restModelSlot = (RestModelSlot) flexoProperty;
-					newResource.getFactory().initializeNewModel(
-							data,
-							restModelSlot.getUrl(),
-							restModelSlot.getAccessedVirtualModel()
-						);
+					data.setUrl(restModelSlot.getUrl());
+					data.setVirtualModel(restModelSlot.getAccessedVirtualModel());
+					newResource.getFactory().initializeModel(data);
 				} else {
 					throw new InvalidArgumentException("AccessPoint creation must be affected to a RestModelSlot");
 				}
