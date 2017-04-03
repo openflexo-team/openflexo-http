@@ -44,6 +44,7 @@ import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
@@ -112,8 +113,7 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 		@Override
 		public Type getReturnType() {
-			// TODO select correct type using FlexoConceptInstanceType
-			return FlexoConceptInstance.class;
+			return FlexoConceptInstanceType.getFlexoConceptInstanceType(getReturnedFlexoConcept());
 		}
 
 		@Override
@@ -144,7 +144,6 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 			String flexoConceptURI = getReturnedFlexoConceptURI();
 			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing()) {
 				try {
-					System.out.println("getFlexoConcept for "+ this.getName() +"<" + flexoConceptURI + ">");
 					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
 					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
 					this.flexoConcept = technologyAdapter.getViewPointLibrary().getFlexoConcept(flexoConceptURI, false);

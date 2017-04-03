@@ -35,15 +35,28 @@
 
 package org.openflexo.http.connector.model;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Stack;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.AbstractProperty;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
 import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.Parameter;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
@@ -52,16 +65,27 @@ import org.openflexo.model.annotations.ModelEntity;
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
 public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
+	@Initializer
+	void initialize(@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept, String url);
+
 	abstract class HttpFlexoConceptInstanceImpl
 			extends FlexoConceptInstanceImpl
 			implements HttpFlexoConceptInstance
 	{
-
 		private final Map<String, Object> values = new HashMap<>();
+		private String url;
+
+		private long lastUpdated = System.currentTimeMillis();
+		private final CloseableHttpClient httpclient = HttpClients.createDefault();
+
+		public boolean needUpdate() {
+			return System.currentTimeMillis() - lastUpdated > 20000;
+		}
 
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
 			if (flexoProperty instanceof AbstractProperty) {
+				update();
 				Object value = values.get(flexoProperty.getName());
 				return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
 			} else {
@@ -86,6 +110,54 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		@Override
 		public String toString() {
 			return super.toString();
+		}
+
+		@Override
+		public void initialize(FlexoConcept concept,String url)  {
+			this.url = url;
+			setFlexoConcept(concept);
+			update();
+		}
+
+		private void update() {
+			if (needUpdate()) {
+				HttpGet httpGet = new HttpGet(url);
+				try (	CloseableHttpResponse response = httpclient.execute(httpGet);
+						InputStream stream = response.getEntity().getContent()
+				) {
+					JsonParser parser = new JsonFactory().createParser(stream);
+
+					// creates field stack to deserialize, it contains the root field
+					Stack<String> fieldStack = new Stack<>();
+					fieldStack.push("");
+
+					while (!parser.isClosed()) {
+						JsonToken token = parser.nextToken();
+
+						if (token != null) {
+							switch (token) {
+								case START_OBJECT:
+								case START_ARRAY:
+									break;
+								case END_OBJECT:
+								case END_ARRAY:
+									fieldStack.pop();
+									break;
+								case FIELD_NAME:
+									fieldStack.push(parser.getValueAsString());
+									break;
+								default:
+									values.put(fieldStack.pop(), /*parser.getCurrentValue()*/ parser.getValueAsString());
+									break;
+							}
+						}
+					}
+				} catch (IOException e) {
+
+				} finally {
+					lastUpdated = System.currentTimeMillis();
+				}
+			}
 		}
 	}
 }
