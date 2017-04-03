@@ -35,23 +35,125 @@
 
 package org.openflexo.http.connector.model;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
+import org.openflexo.http.connector.rm.AccessPointResource;
+import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.Import;
+import org.openflexo.model.annotations.Imports;
+import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.Parameter;
+import org.openflexo.model.annotations.Setter;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
  */
 @ModelEntity
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
+@Imports( @Import(HttpFlexoConceptInstance.class) )
 public interface HttpVirtualModelInstance extends VirtualModelInstance {
 
+	String ACCESS_POINT = "accessPoint";
+
+	@Initializer
+	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint);
+
+	@Getter(ACCESS_POINT)
+	AccessPoint getAccessPoint();
+
+	@Setter(ACCESS_POINT)
+	void setAccessPoint(AccessPoint accessPoint);
+
+	HttpFlexoConceptInstance getFlexoConceptInstance(String url, FlexoConcept concept);
 
 	abstract class HttpVirtualModelInstanceImpl implements HttpVirtualModelInstance {
+
+		private static final Logger logger = Logger.getLogger(AccessPoint.class.getPackage().getName());
+
+		private final Map<String, FlexoConceptInstanceInfo> instances = new HashMap<>();
+		private final CloseableHttpClient httpclient = HttpClients.createDefault();
+
+		@Override
+		public HttpFlexoConceptInstance getFlexoConceptInstance(String url, FlexoConcept concept) {
+			FlexoConceptInstanceInfo info = instances.computeIfAbsent(
+				url, (newUrl) -> new FlexoConceptInstanceInfo(url, concept)
+			);
+			return info.update();
+		}
+
+		public AccessPointFactory getAccessPointFactory() {
+			return ((AccessPointResource) this.getAccessPoint().getResource()).getFactory();
+		}
+
 		@Override
 		public String toString() {
 			return "HttpVirtualModelInstance:" + super.toString();
+		}
+
+		class FlexoConceptInstanceInfo {
+			final String url;
+			HttpFlexoConceptInstance instance;
+			FlexoConcept concept;
+			long lastUpdated;
+
+			FlexoConceptInstanceInfo(String url, FlexoConcept concept) {
+				this.url = url;
+				this.concept = concept;
+				lastUpdated = System.currentTimeMillis();
+			}
+
+			boolean needUpdate() {
+				// TODO implement
+				return true;
+			}
+
+			HttpFlexoConceptInstance update() {
+				if (needUpdate()) {
+					AccessPointFactory factory = getAccessPointFactory();
+					instance = factory.newInstance(HttpFlexoConceptInstance.class);
+					instance.setFlexoConcept(concept);
+
+					HttpGet httpGet = new HttpGet(url);
+					try (
+						CloseableHttpResponse response = httpclient.execute(httpGet);
+						InputStream stream = response.getEntity().getContent())
+					{
+						JsonParser parser = new JsonFactory().createParser(stream);
+						while (!parser.isClosed()) {
+							JsonToken token = parser.nextToken();
+							System.out.println(token);
+						}
+
+						for (FlexoProperty<?> property : concept.getFlexoProperties()) {
+							if (property.getType() == String.class) {
+								instance.setFlexoPropertyValue((FlexoProperty<String>) property, "toto");
+							}
+						}
+
+						System.out.println(instance);
+					} catch (IOException e) {
+						logger.log(Level.WARNING, "Can't retrieve concept from '" + url + "'", e);
+					}
+				}
+				return instance;
+			}
 		}
 	}
 }

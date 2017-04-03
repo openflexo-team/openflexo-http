@@ -37,14 +37,21 @@ package org.openflexo.http.connector.fml.editionaction;
 
 import java.lang.reflect.Type;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.fml.AbstractActionScheme;
+import org.openflexo.foundation.fml.FMLTechnologyAdapter;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior.HttpRequestBehaviorImpl;
+import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.UrlBuilder;
 import org.openflexo.model.annotations.Embedded;
@@ -52,6 +59,7 @@ import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
+import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
@@ -61,20 +69,36 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(HttpRequestBehaviorImpl.class)
 public interface HttpRequestBehavior extends AbstractActionScheme {
 
-	String URLBUILDER_KEY = "urlbuilder";
+	String URL_BUILDER_KEY = "urlBuilder";
+	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
+	String RETURNED_FLEXO_CONCEPT_URI_KEY = "returnedFlexoConceptURI";
 
-	@Getter(URLBUILDER_KEY)
+	@Getter(URL_BUILDER_KEY)
 	@XMLElement @Embedded
 	UrlBuilder getBuilder();
 
-	@Setter(URLBUILDER_KEY)
+	@Setter(URL_BUILDER_KEY)
 	void setBuilder(UrlBuilder builder);
+
+	@Getter(RETURNED_FLEXO_CONCEPT_URI_KEY) @XMLAttribute
+	String getReturnedFlexoConceptURI();
+
+	@Setter(RETURNED_FLEXO_CONCEPT_URI_KEY)
+	void setReturnedFlexoConceptURI(String flexoConceptURI);
+
+	@Getter(RETURNED_FLEXO_CONCEPT_KEY)
+	FlexoConcept getReturnedFlexoConcept();
+
+	@Setter(RETURNED_FLEXO_CONCEPT_KEY)
+	void setReturnedFlexoConcept(FlexoConcept flexoConcept);
+
 
 	default Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 		UrlBuilder builder = getBuilder();
 		String url = builder.evaluateUrl(this, context);
 		System.out.println("URL is '" + url + "'");
-		return url;
+		HttpFlexoConceptInstance conceptInstance = modelInstance.getFlexoConceptInstance(url, getReturnedFlexoConcept());
+		return conceptInstance;
 	}
 
 	abstract class HttpRequestBehaviorImpl extends AbstractActionSchemeImpl implements HttpRequestBehavior {
@@ -82,19 +106,23 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 		// TODO find a better method !!!!!!!!!!!!!!!!!!!!!!!!!
 		private boolean builderBuilt = false;
 
+		private static final Logger logger = Logger.getLogger(AccessPoint.class.getPackage().getName());
+
+		private FlexoConcept flexoConcept;
+
 		@Override
 		public Type getReturnType() {
-			// TODO select correct type
-			return String.class;
+			// TODO select correct type using FlexoConceptInstanceType
+			return FlexoConceptInstance.class;
 		}
 
 		@Override
 		public UrlBuilder getBuilder() {
-			UrlBuilder builder = (UrlBuilder) performSuperGetter(URLBUILDER_KEY);
+			UrlBuilder builder = (UrlBuilder) performSuperGetter(URL_BUILDER_KEY);
 			if (builder == null && !builderBuilt) {
 				builderBuilt = true;
 				builder = getFMLModelFactory().newInstance(UrlBuilder.class);
-				performSuperSetter(URLBUILDER_KEY, builder);
+				performSuperSetter(URL_BUILDER_KEY, builder);
 			}
 			return builder;
 		}
@@ -111,5 +139,30 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 			};
 		}
 
+		@Override
+		public FlexoConcept getReturnedFlexoConcept() {
+			String flexoConceptURI = getReturnedFlexoConceptURI();
+			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing()) {
+				try {
+					System.out.println("getFlexoConcept for "+ this.getName() +"<" + flexoConceptURI + ">");
+					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
+					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
+					this.flexoConcept = technologyAdapter.getViewPointLibrary().getFlexoConcept(flexoConceptURI, false);
+				} catch (Exception e) {
+					logger.log(Level.SEVERE, "Can't find virtual model '"+ flexoConceptURI +"'", e);
+				}
+			}
+			return flexoConcept;
+		}
+
+		@Override
+		public void setReturnedFlexoConcept(FlexoConcept flexoConcept) {
+			FlexoConcept oldVirtualModel = this.flexoConcept;
+			if (oldVirtualModel != flexoConcept) {
+				this.flexoConcept = flexoConcept;
+				getPropertyChangeSupport().firePropertyChange(RETURNED_FLEXO_CONCEPT_KEY, oldVirtualModel, flexoConcept);
+				setReturnedFlexoConceptURI(flexoConcept != null ? flexoConcept.getURI() : null);
+			}
+		}
 	}
 }

@@ -63,8 +63,6 @@ extends
     @Getter("model")
 	AccessPoint getModel();
 
-
-
     abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
 
         public HttpTechnologyAdapter getTechnologyAdapter() {
