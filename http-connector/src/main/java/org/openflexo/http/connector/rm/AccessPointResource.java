@@ -25,7 +25,6 @@ import org.openflexo.foundation.InconsistentDataException;
 import org.openflexo.foundation.InvalidModelDefinitionException;
 import org.openflexo.foundation.InvalidXMLException;
 import org.openflexo.foundation.resource.FlexoFileNotFoundException;
-import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.PamelaResourceImpl;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
@@ -47,7 +46,6 @@ import org.openflexo.toolbox.IProgress;
 public interface AccessPointResource
 extends
         PamelaResource<AccessPoint, AccessPointFactory>,
-        FlexoResource<AccessPoint>,
         TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter>
 {
     
