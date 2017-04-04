@@ -43,20 +43,20 @@ import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * Parameter for an UrlBuilder
+ * Parameter for an PathBuilder
  */
 @ModelEntity @XMLElement
-public interface UrlParameter {
+public interface PathParameter {
 
 	String BUILDER_KEY = "builder";
 	String NAME_KEY = "name";
 	String VALUE_KEY = "value";
 
 	@Getter(BUILDER_KEY)
-	UrlBuilder getBuilder();
+	PathBuilder getBuilder();
 
 	@Setter(BUILDER_KEY)
-	void setBuilder(UrlBuilder builder);
+	void setBuilder(PathBuilder builder);
 
 	@Getter(NAME_KEY) @XMLAttribute
 	DataBinding<String> getName();

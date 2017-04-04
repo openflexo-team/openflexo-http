@@ -43,6 +43,7 @@ import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
+import org.openflexo.foundation.utils.FlexoProjectUtil;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -59,7 +60,7 @@ import org.openflexo.model.annotations.XMLElement;
  */
 @ModelEntity
 @XMLElement
-public interface UrlBuilder {
+public interface PathBuilder {
 
 	String TEMPLATE_KEY = "template";
 	String PARAMETER_KEY = "parameter";
@@ -70,18 +71,23 @@ public interface UrlBuilder {
 	@Setter(TEMPLATE_KEY)
 	void setTemplate(String template);
 
-	@Getter(value = PARAMETER_KEY, cardinality = Cardinality.LIST, inverse = UrlParameter.BUILDER_KEY)
+	@Getter(value = PARAMETER_KEY, cardinality = Cardinality.LIST, inverse = PathParameter.BUILDER_KEY)
 	@Embedded @XMLElement
-	List<UrlParameter> getParameters();
+	List<PathParameter> getParameters();
 
 	@Setter(PARAMETER_KEY)
-	void setParameters(List<UrlParameter> parameters);
+	void setParameters(List<PathParameter> parameters);
 
 	@Adder(PARAMETER_KEY) @PastingPoint
-	void addToParameters(UrlParameter aParameter);
+	void addToParameters(PathParameter aParameter);
 
 	@Remover(PARAMETER_KEY)
-	void removeFromParameters(UrlParameter aParameter);
+	void removeFromParameters(PathParameter aParameter);
+
+	default void addNewParameter() {
+		FlexoProjectUtil
+	}
+
 
 	default String evaluateUrl(Bindable bindable, BindingEvaluationContext context) throws Exception {
 		StringBuilder url = new StringBuilder();

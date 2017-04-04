@@ -54,7 +54,7 @@ import org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior.HttpRe
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.http.connector.model.UrlBuilder;
+import org.openflexo.http.connector.model.PathBuilder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -76,10 +76,10 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 	@Getter(URL_BUILDER_KEY)
 	@XMLElement @Embedded
-	UrlBuilder getBuilder();
+	PathBuilder getBuilder();
 
 	@Setter(URL_BUILDER_KEY)
-	void setBuilder(UrlBuilder builder);
+	void setBuilder(PathBuilder builder);
 
 	@Getter(RETURNED_FLEXO_CONCEPT_URI_KEY) @XMLAttribute
 	String getReturnedFlexoConceptURI();
@@ -95,7 +95,7 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 
 	default Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
-		UrlBuilder builder = getBuilder();
+		PathBuilder builder = getBuilder();
 		String url = builder.evaluateUrl(this, context);
 		System.out.println("URL is '" + url + "'");
 		HttpFlexoConceptInstance conceptInstance = modelInstance.getFlexoConceptInstance(url, getReturnedFlexoConcept());
@@ -117,11 +117,11 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 		}
 
 		@Override
-		public UrlBuilder getBuilder() {
-			UrlBuilder builder = (UrlBuilder) performSuperGetter(URL_BUILDER_KEY);
+		public PathBuilder getBuilder() {
+			PathBuilder builder = (PathBuilder) performSuperGetter(URL_BUILDER_KEY);
 			if (builder == null && !builderBuilt) {
 				builderBuilt = true;
-				builder = getFMLModelFactory().newInstance(UrlBuilder.class);
+				builder = getFMLModelFactory().newInstance(PathBuilder.class);
 				performSuperSetter(URL_BUILDER_KEY, builder);
 			}
 			return builder;
