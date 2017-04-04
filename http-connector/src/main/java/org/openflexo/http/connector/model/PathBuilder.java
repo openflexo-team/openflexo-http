@@ -43,7 +43,6 @@ import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
-import org.openflexo.foundation.utils.FlexoProjectUtil;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -85,7 +84,6 @@ public interface PathBuilder {
 	void removeFromParameters(PathParameter aParameter);
 
 	default void addNewParameter() {
-		FlexoProjectUtil
 	}
 
 
