@@ -1,7 +1,10 @@
 package org.openflexo.http.connector.model;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModel;
@@ -30,12 +33,26 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	String VIRTUAL_MODEL_URI_KEY = "virtualModelUri";
 	String VIRTUAL_MODEL_INSTANCE_KEY = "instance";
 	String URL_KEY = "url";
+	String USER_KEY = "user";
+	String PASSWORD_KEY = "password";
 
 	@Getter(URL_KEY) @XMLAttribute
-	String getURL();
+	String getUrl();
 
 	@Setter(URL_KEY)
 	void setUrl(String url);
+
+	@Getter(USER_KEY) @XMLAttribute
+	String getUser();
+
+	@Setter(USER_KEY)
+	void setUser(String user);
+
+	@Getter(PASSWORD_KEY) @XMLAttribute
+	String getPassword();
+
+	@Setter(PASSWORD_KEY)
+	void setPassword(String password);
 
 	@Getter(VIRTUAL_MODEL_URI_KEY) @XMLAttribute
 	String getVirtualModelURI();
@@ -54,6 +71,8 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 
 	@Setter(VIRTUAL_MODEL_INSTANCE_KEY)
 	void setInstance(HttpVirtualModelInstance instance);
+
+	void contributeHeaders(HttpUriRequest request);
 
 	abstract class AccessPointImpl extends FlexoObjectImpl implements AccessPoint {
 
@@ -95,6 +114,19 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 				return serviceManager.getService(TechnologyAdapterService.class).getTechnologyAdapter(HttpTechnologyAdapter.class);
 			}
 			return null;
+		}
+
+		@Override
+		public void contributeHeaders(HttpUriRequest request) {
+			String user = getUser();
+			String password = getPassword();
+			if (user != null && user.length() > 0 && password != null && password.length() > 0) {
+				StringBuilder value = new StringBuilder();
+				value.append("Basic ");
+				String authentication = user + ":" + password;
+				value.append(Base64.getEncoder().encodeToString(authentication.getBytes(StandardCharsets.UTF_8)));
+				request.addHeader("Authorization", value.toString());
+			}
 		}
 	}
 }

@@ -71,14 +71,14 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 
 	HttpFlexoConceptInstance getFlexoConceptInstance(String url, FlexoConcept concept);
 
-	abstract class HttpVirtualModelInstanceImpl implements HttpVirtualModelInstance {
+	abstract class HttpVirtualModelInstanceImpl extends VirtualModelInstanceImpl implements HttpVirtualModelInstance {
 
 		private final Map<String, HttpFlexoConceptInstance> instances = new HashMap<>();
 
 		@Override
 		public HttpFlexoConceptInstance getFlexoConceptInstance(String url, FlexoConcept concept) {
 			return instances.computeIfAbsent(
-				url, (newUrl) ->  getAccessPointFactory().newInstance(HttpFlexoConceptInstance.class, concept, url)
+				url, (newUrl) ->  getAccessPointFactory().newFlexoConceptInstance(this, concept, url)
 			);
 		}
 
@@ -90,5 +90,6 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 		public String toString() {
 			return "HttpVirtualModelInstance:" + super.toString();
 		}
+
 	}
 }

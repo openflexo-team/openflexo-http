@@ -37,10 +37,10 @@ package org.openflexo.http.connector.fml.editionaction;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
-import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.InvalidArgumentException;
 import org.openflexo.foundation.fml.FlexoProperty;
+import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
@@ -49,14 +49,13 @@ import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.RestModelSlot;
+import org.openflexo.http.connector.fml.AccessPointType;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource.CreateAccessPointResourceImpl;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.http.connector.rm.AccessPointResourceFactory;
-import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 
@@ -72,46 +71,22 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @FML("CreateHTTPResource")
 public interface CreateAccessPointResource extends AbstractCreateResource<RestModelSlot, AccessPoint, HttpTechnologyAdapter> {
 
-	String URL = "url";
-	String VIRTUAL_MODEL = "virtualModel";
-
-	@Getter(URL)
-	DataBinding<String> getURL();
-
-	@Setter(URL)
-	void setURL(DataBinding<String> url);
-
 	abstract class CreateAccessPointResourceImpl
 			extends AbstractCreateResourceImpl<RestModelSlot, AccessPoint, HttpTechnologyAdapter>
 			implements CreateAccessPointResource
 	{
-		private DataBinding<String> address;
 
 		@Override
 		public Type getAssignableType() {
-			return AccessPoint.class;
-		}
-
-		@Override
-		public DataBinding<String> getURL() {
-			if (address == null) {
-				address = new DataBinding<>(this, String.class, DataBinding.BindingDefinitionType.GET);
-				address.setBindingName(URL);
+			FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
+			if (flexoProperty instanceof RestModelSlot) {
+				RestModelSlot restModelSlot = (RestModelSlot) flexoProperty;
+				HttpTechnologyAdapter technologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+				return new AccessPointType(technologyAdapter, (VirtualModelInstanceType) restModelSlot.getAccessedVirtualModel().getInstanceType());
+			} else {
+				return AccessPoint.class;
 			}
-			return address;
 		}
-
-		@Override
-		public void setURL(DataBinding<String> address) {
-			if (address != null) {
-				address.setOwner(this);
-				address.setDeclaredType(String.class);
-				address.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
-				address.setBindingName(URL);
-			}
-			this.address = address;
-		}
-
 
 		@Override
 		public AccessPoint execute(RunTimeEvaluationContext evaluationContext) throws FlexoException {
@@ -131,6 +106,8 @@ public interface CreateAccessPointResource extends AbstractCreateResource<RestMo
 				if (flexoProperty instanceof RestModelSlot) {
 					RestModelSlot restModelSlot = (RestModelSlot) flexoProperty;
 					data.setUrl(restModelSlot.getUrl());
+					data.setUser(restModelSlot.getUser());
+					data.setPassword(restModelSlot.getPassword());
 					data.setVirtualModel(restModelSlot.getAccessedVirtualModel());
 					newResource.getFactory().initializeModel(data);
 				} else {
@@ -141,7 +118,6 @@ public interface CreateAccessPointResource extends AbstractCreateResource<RestMo
 			} catch (ModelDefinitionException |FileNotFoundException | ResourceLoadingCancelledException e) {
 				throw new FlexoException(e);
 			}
-
 
 		}
 	}

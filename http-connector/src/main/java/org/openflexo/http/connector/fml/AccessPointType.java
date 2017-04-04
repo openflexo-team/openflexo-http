@@ -110,5 +110,4 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 	public void resolve(CustomTypeFactory<?> factory) {
 		System.out.println("-------> Resolving " + instanceType + " with factory " + factory);
 	}
-
 }

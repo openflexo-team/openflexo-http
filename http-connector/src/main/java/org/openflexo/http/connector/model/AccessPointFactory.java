@@ -41,6 +41,7 @@ package org.openflexo.http.connector.model;
 import org.openflexo.fge.FGEModelFactoryImpl;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
@@ -86,6 +87,12 @@ public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaRes
 		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint);
 		virtualModelInstance.setVirtualModel(accessPoint.getVirtualModel());
 		accessPoint.setInstance(virtualModelInstance);
+	}
+
+	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, FlexoConcept concept, String url) {
+		HttpFlexoConceptInstance httpFlexoConceptInstance = newInstance(HttpFlexoConceptInstance.class, concept, url);
+		httpFlexoConceptInstance.setOwningVirtualModelInstance(owner);
+		return httpFlexoConceptInstance;
 	}
 
 	@Override

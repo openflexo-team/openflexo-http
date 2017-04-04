@@ -62,16 +62,22 @@ import org.openflexo.toolbox.StringUtils;
 public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 
     @PropertyIdentifier(type = String.class)
-    String VIRTUAL_MODEL_URI_KEY = "virtualModelURI";
+    String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
 
     @PropertyIdentifier(type = String.class)
     String URL_KEY = "url";
 
-    @Getter(value = VIRTUAL_MODEL_URI_KEY)
-    @XMLAttribute(xmlTag = "virtualModelURI")
+    @PropertyIdentifier(type = String.class)
+    String USER_KEY = "user";
+
+    @PropertyIdentifier(type = String.class)
+    String PASSWORD_KEY = "password";
+
+    @Getter(value = ACCESSED_VIRTUAL_MODEL_URI_KEY)
+    @XMLAttribute(xmlTag = "accessedVirtualModelURI")
     String getAccessedVirtualModelURI();
 
-    @Setter(VIRTUAL_MODEL_URI_KEY)
+    @Setter(ACCESSED_VIRTUAL_MODEL_URI_KEY)
     void setAccessedVirtualModelURI(String virtualModelURI);
 
     VirtualModelResource getAccessedVirtualModelResource();
@@ -87,6 +93,19 @@ public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 
     @Setter(URL_KEY)
     void setUrl(String url);
+
+    @Getter(USER_KEY) @XMLAttribute
+    String getUser();
+
+    @Setter(USER_KEY)
+    void setUser(String user);
+
+    @Getter(PASSWORD_KEY) @XMLAttribute
+    String getPassword();
+
+    @Setter(PASSWORD_KEY)
+    void setPassword(String password);
+
 
     @Override
     HttpTechnologyAdapter getModelSlotTechnologyAdapter();

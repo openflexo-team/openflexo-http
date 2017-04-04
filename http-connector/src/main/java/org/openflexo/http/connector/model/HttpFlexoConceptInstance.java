@@ -75,11 +75,11 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		private final Map<String, Object> values = new HashMap<>();
 		private String url;
 
-		private long lastUpdated = System.currentTimeMillis();
+		private long lastUpdated = System.nanoTime();
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		public boolean needUpdate() {
-			return System.currentTimeMillis() - lastUpdated > 20000;
+			return (System.nanoTime() - lastUpdated) > (60 * 1_000_000_000l);
 		}
 
 		@Override
@@ -95,6 +95,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
 		@Override
 		public <T> void setFlexoPropertyValue(FlexoProperty<T> flexoProperty, T value) {
+			// TODO create patch action
 			if (flexoProperty instanceof AbstractProperty) {
 				T oldValue = getFlexoPropertyValue(flexoProperty);
 				if ((value == null && oldValue != null) || (value != null && !value.equals(oldValue))) {
@@ -105,6 +106,11 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			} else {
 				super.setFlexoPropertyValue(flexoProperty, value);
 			}
+		}
+
+		@Override
+		public HttpVirtualModelInstance getVirtualModelInstance() {
+			return (HttpVirtualModelInstance) super.getVirtualModelInstance();
 		}
 
 		@Override
@@ -121,41 +127,47 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
 		private void update() {
 			if (needUpdate()) {
-				HttpGet httpGet = new HttpGet(url);
-				try (	CloseableHttpResponse response = httpclient.execute(httpGet);
-						InputStream stream = response.getEntity().getContent()
-				) {
-					JsonParser parser = new JsonFactory().createParser(stream);
+				synchronized (this) {
+					if (needUpdate()) {
+						System.out.println("----> Updating concept from '" + url + "' <----");
 
-					// creates field stack to deserialize, it contains the root field
-					Stack<String> fieldStack = new Stack<>();
-					fieldStack.push("");
+						HttpGet httpGet = new HttpGet(url);
+						getVirtualModelInstance().getAccessPoint().contributeHeaders(httpGet);
+						try (CloseableHttpResponse response = httpclient.execute(httpGet); InputStream stream = response.getEntity().getContent()) {
+							JsonParser parser = new JsonFactory().createParser(stream);
 
-					while (!parser.isClosed()) {
-						JsonToken token = parser.nextToken();
+							// creates field stack to deserialize, it contains the root field
+							Stack<String> fieldStack = new Stack<>();
+							fieldStack.push("");
 
-						if (token != null) {
-							switch (token) {
-								case START_OBJECT:
-								case START_ARRAY:
-									break;
-								case END_OBJECT:
-								case END_ARRAY:
-									fieldStack.pop();
-									break;
-								case FIELD_NAME:
-									fieldStack.push(parser.getValueAsString());
-									break;
-								default:
-									values.put(fieldStack.pop(), /*parser.getCurrentValue()*/ parser.getValueAsString());
-									break;
+							while (!parser.isClosed()) {
+								JsonToken token = parser.nextToken();
+
+								if (token != null) {
+									switch (token) {
+										case START_OBJECT:
+										case START_ARRAY:
+											break;
+										case END_OBJECT:
+										case END_ARRAY:
+											fieldStack.pop();
+											break;
+										case FIELD_NAME:
+											fieldStack.push(parser.getValueAsString());
+											break;
+										default:
+											values.put(fieldStack.pop(), /*parser.getCurrentValue()*/ parser.getValueAsString());
+											break;
+									}
+								}
 							}
+						} catch (IOException e) {
+							// TODO log
+							e.printStackTrace();
+						} finally {
+							lastUpdated = System.nanoTime();
 						}
 					}
-				} catch (IOException e) {
-
-				} finally {
-					lastUpdated = System.currentTimeMillis();
 				}
 			}
 		}
