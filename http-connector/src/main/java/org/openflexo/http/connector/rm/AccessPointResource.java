@@ -20,10 +20,12 @@
 
 package org.openflexo.http.connector.rm;
 
+import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.IOFlexoException;
 import org.openflexo.foundation.InconsistentDataException;
 import org.openflexo.foundation.InvalidModelDefinitionException;
 import org.openflexo.foundation.InvalidXMLException;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.resource.FlexoFileNotFoundException;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.PamelaResourceImpl;
@@ -82,6 +84,14 @@ extends
             AccessPoint accessPoint = super.loadResourceData(progress);
             getFactory().initializeModel(accessPoint);
             return accessPoint;
+        }
+
+        @Override
+        public FlexoObject findObject(String objectIdentifier, String userIdentifier, String typeIdentifier) {
+            System.out.println(("Trying to find object '" + objectIdentifier + "'"));
+            AccessPoint accessPoint = getLoadedResourceData();
+            FlexoConcept concept = accessPoint.getVirtualModel().getFlexoConcept(typeIdentifier);
+            return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, concept);
         }
     }
 }
