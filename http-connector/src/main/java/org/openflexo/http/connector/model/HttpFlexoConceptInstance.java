@@ -52,6 +52,7 @@ import org.openflexo.foundation.fml.AbstractProperty;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.utils.FlexoObjectReference;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
@@ -66,16 +67,20 @@ import org.openflexo.model.annotations.Parameter;
 public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
 	@Initializer
-	void initialize(@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept, String url);
+	void initialize(
+		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
+		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept,
+		String path
+	);
 
 	abstract class HttpFlexoConceptInstanceImpl
 			extends FlexoConceptInstanceImpl
 			implements HttpFlexoConceptInstance
 	{
 		private final Map<String, Object> values = new HashMap<>();
-		private String url;
+		private String path;
 
-		private long lastUpdated = System.nanoTime();
+		private long lastUpdated = -1l;
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		public boolean needUpdate() {
@@ -119,9 +124,10 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(FlexoConcept concept,String url)  {
-			this.url = url;
+		public void initialize(HttpVirtualModelInstance owner, FlexoConcept concept, String path)  {
+			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
+			this.path = path;
 			update();
 		}
 
@@ -129,10 +135,10 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			if (needUpdate()) {
 				synchronized (this) {
 					if (needUpdate()) {
-						System.out.println("----> Updating concept from '" + url + "' <----");
+						AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 
-						HttpGet httpGet = new HttpGet(url);
-						getVirtualModelInstance().getAccessPoint().contributeHeaders(httpGet);
+						HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
+						accessPoint.contributeHeaders(httpGet);
 						try (CloseableHttpResponse response = httpclient.execute(httpGet); InputStream stream = response.getEntity().getContent()) {
 							JsonParser parser = new JsonFactory().createParser(stream);
 
@@ -156,7 +162,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 											fieldStack.push(parser.getValueAsString());
 											break;
 										default:
-											values.put(fieldStack.pop(), /*parser.getCurrentValue()*/ parser.getValueAsString());
+											values.put(fieldStack.pop(), parser.getValueAsString());
 											break;
 									}
 								}
@@ -170,6 +176,13 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 					}
 				}
 			}
+		}
+
+		@Override
+		public String getReferenceForSerialization(boolean serializeClassName) {
+			AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
+			String resourceURI = accessPoint.getResource().getURI();
+			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), path, null);
 		}
 	}
 }

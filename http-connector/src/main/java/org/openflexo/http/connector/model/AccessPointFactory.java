@@ -90,9 +90,7 @@ public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaRes
 	}
 
 	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, FlexoConcept concept, String url) {
-		HttpFlexoConceptInstance httpFlexoConceptInstance = newInstance(HttpFlexoConceptInstance.class, concept, url);
-		httpFlexoConceptInstance.setOwningVirtualModelInstance(owner);
-		return httpFlexoConceptInstance;
+		return newInstance(HttpFlexoConceptInstance.class, owner, concept, url);
 	}
 
 	@Override
