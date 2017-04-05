@@ -35,8 +35,20 @@
 
 package org.openflexo.http.connector.model;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
@@ -69,17 +81,60 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 	@Setter(ACCESS_POINT)
 	void setAccessPoint(AccessPoint accessPoint);
 
-	HttpFlexoConceptInstance getFlexoConceptInstance(String url, FlexoConcept concept);
+	List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
+
+	HttpFlexoConceptInstance getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
+
+	CloseableHttpClient getHttpclient();
 
 	abstract class HttpVirtualModelInstanceImpl extends VirtualModelInstanceImpl implements HttpVirtualModelInstance {
+
+		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		private final Map<String, HttpFlexoConceptInstance> instances = new HashMap<>();
 
 		@Override
-		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, FlexoConcept concept) {
+		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
 			return instances.computeIfAbsent(
-				path, (newPath) ->  getAccessPointFactory().newFlexoConceptInstance(this, concept, path)
+				path, (newPath) ->  getAccessPointFactory().newFlexoConceptInstance(this, path, pointer, concept)
 			);
+		}
+
+		public CloseableHttpClient getHttpclient() {
+			return httpclient;
+		}
+
+		public List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
+			AccessPoint accessPoint = getAccessPoint();
+			HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
+			accessPoint.contributeHeaders(httpGet);
+			try (
+				CloseableHttpResponse response = httpclient.execute(httpGet);
+				InputStream stream = response.getEntity().getContent()
+			) {
+
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode node = mapper.readTree(stream);
+				if (pointer != null) {
+					node = node.at(pointer);
+				}
+
+				if (node instanceof ArrayNode) {
+					List<HttpFlexoConceptInstance> result = new ArrayList<>();
+					for (JsonNode child : node) {
+						String url = child.get("url").textValue();
+						result.add(getAccessPointFactory().newFlexoConceptInstance(this, url, null, concept));
+					}
+					return result;
+
+				} else {
+					log("Read json isn't an array (" + node + ")", LogLevel.SEVERE, this, null);
+				}
+
+			} catch (IOException e) {
+				log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);
+			}
+			return Collections.emptyList();
 		}
 
 		public AccessPointFactory getAccessPointFactory() {

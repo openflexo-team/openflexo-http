@@ -91,7 +91,7 @@ extends
             System.out.println(("Trying to find object '" + objectIdentifier + "'"));
             AccessPoint accessPoint = getLoadedResourceData();
             FlexoConcept concept = accessPoint.getVirtualModel().getFlexoConcept(typeIdentifier);
-            return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, concept);
+            return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, null, concept);
         }
     }
 }

@@ -3,8 +3,8 @@
   <TabPanel id="1" constraints="border(location=center)" name="Tab">
     <Tab id="2" title="Basic" align="left" borderTop="0" borderTitle="Request" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="0" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="BasicTab">
       <Panel id="3" align="left" borderTop="0" borderTitle="Request" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="titled" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,10" layout="twocols" borderRight="0" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=center)" name="request_panel">
-        <Label id="4" label="Concept" align="left" localize="true" index="0" constraints="twocols(expandHorizontally=true;expandVertically=false;index=0;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="ConceptLabel" />
-        <Custom id="5" componentClassName="org.openflexo.fml.controller.widget.FIBFlexoConceptSelector" dataClassForComponent="org.openflexo.foundation.fml.FlexoConcept" localize="true" manageDynamicModel="true" data="data.returnedFlexoConcept" opaque="false" index="1" minWidth="200" constraints="twocols(expandHorizontally=true;expandVertically=false;index=1;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" minHeight="25" name="ContainerSelector">
+        <Label id="4" label="Concept" align="left" localize="true" index="0" constraints="twocols(expandHorizontally=true;expandVertically=false;index=0;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="concept_label" />
+        <Custom id="5" componentClassName="org.openflexo.fml.controller.widget.FIBFlexoConceptSelector" dataClassForComponent="org.openflexo.foundation.fml.FlexoConcept" localize="true" manageDynamicModel="true" data="data.returnedFlexoConcept" opaque="false" index="1" minWidth="200" constraints="twocols(expandHorizontally=true;expandVertically=false;index=1;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" minHeight="25" name="concept_filed">
           <Assignment id="6" variable="component.viewPointLibrary" mandatory="true" />
           <Assignment id="7" variable="component.viewPoint" mandatory="true" />
           <Assignment id="8" variable="component.serviceManager" mandatory="true" />
@@ -12,31 +12,35 @@
           <Assignment id="10" variable="component.selectableCondition" mandatory="true" />
           <Assignment id="11" variable="component.virtualModel" value="data.owningVirtualModel" mandatory="true" />
         </Custom>
-        <Label id="12" label="template" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="template_label" />
-        <TextField id="13" columns="7" data="data.builder.template" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="template_textfield" />
-        <Label id="14" label="parameters" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="parameters_label" />
-        <Table id="15" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" backgroundSecondarySelectionColor="178,215,255" iteratorClassName="org.openflexo.http.connector.fml.editionaction.PathParameter" showFooter="true" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.builder.parameters" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="parameters_table">
-          <IconColumn id="20" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
-          <CustomColumn id="16" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.name" resizable="true" title="name" displayTitle="true" columnWidth="80" showIcon="false" name="name">
-            <ColumnAssignment id="17" variable="component.bindable" value="data" mandatory="true" />
+        <Label id="12" label="mutiple" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="multiple_label" />
+        <CheckBox id="13" selected="true" data="data.multiple" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="multiple_field" />
+        <Label id="14" label="template" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="template_label" />
+        <TextField id="15" columns="7" data="data.builder.template" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="template_textfield" />
+        <Label id="16" label="parameters" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="parameters_label" />
+        <Table id="17" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" backgroundSecondarySelectionColor="178,215,255" iteratorClassName="org.openflexo.http.connector.fml.editionaction.PathParameter" showFooter="true" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.builder.parameters" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="parameters_table">
+          <IconColumn id="18" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
+          <CustomColumn id="19" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.name" resizable="true" title="name" displayTitle="true" columnWidth="80" showIcon="false" name="name">
+            <ColumnAssignment id="20" variable="component.bindable" value="data" mandatory="true" />
           </CustomColumn>
-          <CustomColumn id="18" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.value" resizable="true" title="value" displayTitle="true" columnWidth="80" showIcon="false" name="value">
-            <ColumnAssignment id="19" variable="component.bindable" value="data" mandatory="true" />
+          <CustomColumn id="21" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.value" resizable="true" title="value" displayTitle="true" columnWidth="80" showIcon="false" name="value">
+            <ColumnAssignment id="22" variable="component.bindable" value="data" mandatory="true" />
           </CustomColumn>
-          <AddAction id="21" method="data.builder.addNewParameter()" name="add_action" />
-          <RemoveAction id="22" isAvailable="(selected != null)" method="data.builder.removeFromParameters(selected)" name="delete_action" />
+          <AddAction id="23" method="data.builder.addNewParameter()" name="add_action" />
+          <RemoveAction id="24" isAvailable="(selected != null)" method="data.builder.removeFromParameters(selected)" name="delete_action" />
         </Table>
+        <Label id="25" label="pointer" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="pointer_label" />
+        <TextField id="26" columns="7" data="data.pointer" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="pointer_field" />
       </Panel>
     </Tab>
-    <Tab id="23" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab" />
+    <Tab id="27" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab" />
   </TabPanel>
-  <FIBVariable id="24" type="org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior" name="data" />
-  <LocalizedDictionary id="25">
-    <Localized id="26" lang="French" value="Avancé" key="Advanced" />
-    <Localized id="27" lang="French" value="Basique" key="Basic" />
-    <Localized id="28" lang="English" value="Name" key="name" />
-    <Localized id="29" lang="French" value="Nom" key="name" />
-    <Localized id="30" lang="Dutch" value="Name" key="name" />
+  <FIBVariable id="28" type="org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior" name="data" />
+  <LocalizedDictionary id="29">
+    <Localized id="30" lang="French" value="Avancé" key="Advanced" />
+    <Localized id="31" lang="French" value="Basique" key="Basic" />
+    <Localized id="32" lang="English" value="Name" key="name" />
+    <Localized id="33" lang="French" value="Nom" key="name" />
+    <Localized id="34" lang="Dutch" value="Name" key="name" />
   </LocalizedDictionary>
-  <Parameter id="31" name="title" value="Http Request Scheme" />
+  <Parameter id="35" name="title" value="Http Request Scheme" />
 </Inspector>

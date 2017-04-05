@@ -35,18 +35,16 @@
 
 package org.openflexo.http.connector.model;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.AbstractProperty;
 import org.openflexo.foundation.fml.FlexoConcept;
@@ -69,19 +67,19 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 	@Initializer
 	void initialize(
 		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
-		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept,
-		String path
+		String path, String pointer,
+		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept
 	);
 
 	abstract class HttpFlexoConceptInstanceImpl
 			extends FlexoConceptInstanceImpl
 			implements HttpFlexoConceptInstance
 	{
-		private final Map<String, Object> values = new HashMap<>();
+		private ObjectNode source;
+		private JsonPointer pointer;
 		private String path;
 
 		private long lastUpdated = -1l;
-		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		public boolean needUpdate() {
 			return (System.nanoTime() - lastUpdated) > (60 * 1_000_000_000l);
@@ -91,11 +89,13 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
 			if (flexoProperty instanceof AbstractProperty) {
 				update();
-				Object value = values.get(flexoProperty.getName());
-				return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
-			} else {
-				return super.getFlexoPropertyValue(flexoProperty);
+				// TODO work on conversion
+				if (source != null) {
+					Object value = source.get(flexoProperty.getName()).textValue();
+					return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
+				}
 			}
+			return super.getFlexoPropertyValue(flexoProperty);
 		}
 
 		@Override
@@ -104,7 +104,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			if (flexoProperty instanceof AbstractProperty) {
 				T oldValue = getFlexoPropertyValue(flexoProperty);
 				if ((value == null && oldValue != null) || (value != null && !value.equals(oldValue))) {
-					values.put(flexoProperty.getName(), value);
+					source.set(flexoProperty.getName(), value != null ? TextNode.valueOf(value.toString()) : NullNode.getInstance());
 					setIsModified();
 					getPropertyChangeSupport().firePropertyChange(flexoProperty.getPropertyName(), oldValue, value);
 				}
@@ -124,10 +124,11 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance owner, FlexoConcept concept, String path)  {
+		public void initialize(HttpVirtualModelInstance owner, String path, String pointer, FlexoConcept concept)  {
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
 			this.path = path;
+			this.pointer = pointer != null ? JsonPointer.compile(pointer) : null;
 			update();
 		}
 
@@ -139,37 +140,26 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
 						HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
 						accessPoint.contributeHeaders(httpGet);
-						try (CloseableHttpResponse response = httpclient.execute(httpGet); InputStream stream = response.getEntity().getContent()) {
-							JsonParser parser = new JsonFactory().createParser(stream);
+						try (
+							CloseableHttpResponse response = getVirtualModelInstance().getHttpclient().execute(httpGet);
+							InputStream stream = response.getEntity().getContent()
+						) {
 
-							// creates field stack to deserialize, it contains the root field
-							Stack<String> fieldStack = new Stack<>();
-							fieldStack.push("");
-
-							while (!parser.isClosed()) {
-								JsonToken token = parser.nextToken();
-
-								if (token != null) {
-									switch (token) {
-										case START_OBJECT:
-										case START_ARRAY:
-											break;
-										case END_OBJECT:
-										case END_ARRAY:
-											fieldStack.pop();
-											break;
-										case FIELD_NAME:
-											fieldStack.push(parser.getValueAsString());
-											break;
-										default:
-											values.put(fieldStack.pop(), parser.getValueAsString());
-											break;
-									}
-								}
+							ObjectMapper mapper = new ObjectMapper();
+							JsonNode node = mapper.readTree(stream);
+							if (pointer != null) {
+								node = node.at(pointer);
 							}
+
+							if (node instanceof ObjectNode) {
+								source = (ObjectNode) node;
+							} else {
+								log("Read json isn't an object (" + node + ")", LogLevel.SEVERE, this, null);
+							}
+
 						} catch (IOException e) {
-							// TODO log
 							e.printStackTrace();
+							log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);
 						} finally {
 							lastUpdated = System.nanoTime();
 						}

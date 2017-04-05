@@ -89,8 +89,15 @@ public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaRes
 		accessPoint.setInstance(virtualModelInstance);
 	}
 
-	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, FlexoConcept concept, String url) {
-		return newInstance(HttpFlexoConceptInstance.class, owner, concept, url);
+	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, String url, String pointer, FlexoConcept concept) {
+		if (owner != null && url != null) {
+			String baseUrl = owner.getAccessPoint().getUrl();
+			if (url.startsWith(baseUrl)) {
+				url = url.substring(baseUrl.length());
+			}
+			return newInstance(HttpFlexoConceptInstance.class, owner, url, pointer, concept);
+		}
+		return null;
 	}
 
 	@Override
