@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.model;
+package org.openflexo.http.connector.fml.editionaction;
 
 import java.util.List;
 import java.util.Objects;
@@ -43,6 +43,7 @@ import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
+import org.openflexo.foundation.fml.FlexoConceptObject;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -53,16 +54,18 @@ import org.openflexo.model.annotations.Remover;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.model.factory.ModelFactory;
 
 /**
  * Allows to build an URL from a template and a series of binding
  */
-@ModelEntity
-@XMLElement
+@ModelEntity @XMLElement
 public interface PathBuilder {
 
 	String TEMPLATE_KEY = "template";
 	String PARAMETER_KEY = "parameter";
+	String OWNER = "owner";
 
 	@Getter(TEMPLATE_KEY) @XMLAttribute
 	String getTemplate();
@@ -83,9 +86,22 @@ public interface PathBuilder {
 	@Remover(PARAMETER_KEY)
 	void removeFromParameters(PathParameter aParameter);
 
-	default void addNewParameter() {
-	}
+	@Getter(OWNER) @XMLElement
+	FlexoConceptObject getOwner();
 
+	@Setter(OWNER)
+	void setOwner(FlexoConceptObject model);
+
+	default void addNewParameter() {
+		try {
+			PathParameter parameter = new ModelFactory(PathBuilder.class).newInstance(PathParameter.class);
+			parameter.setName(new DataBinding("\"param1\"", getOwner(), String.class, BindingDefinitionType.GET));
+			parameter.setValue(new DataBinding("\"value1\"", getOwner(), String.class, BindingDefinitionType.GET));
+			addToParameters(parameter);
+		} catch (ModelDefinitionException e) {
+			// todo
+		}
+	}
 
 	default String evaluateUrl(Bindable bindable, BindingEvaluationContext context) throws Exception {
 		StringBuilder url = new StringBuilder();
@@ -106,6 +122,24 @@ public interface PathBuilder {
 				current = matcher.end();
 			}
 			url.append(template.substring(current));
+		}
+
+		StringBuilder parameters = new StringBuilder("?");
+		for (PathParameter parameter : getParameters()) {
+			String name = parameter.getName().getBindingValue(context);
+			String value = parameter.getValue().getBindingValue(context);
+			if (name != null && name.length() > 0 && value != null && value.length() > 0) {
+				if (parameters.length() > 1) {
+					parameters.append("&");
+				}
+				parameters.append(name);
+				parameters.append("=");
+				parameters.append(value);
+			}
+		}
+
+		if (parameters.length() > 1) {
+			url.append(parameters);
 		}
 		return url.toString();
 	}

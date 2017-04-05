@@ -1,5 +1,6 @@
 HttpRequestBehavior=HttpRequestBehavior
 HttpRequestBehavior$HttpRequestBehaviorImpl_$$_jvst235_80=HttpRequestBehavior$HttpRequestBehaviorImpl $$ jvst235 80
+Request=Request
 define_popup_size=Define popup size
 object_type=Object type
 skip_confirmation_panel_when_possible=Skip confirmation panel when possible

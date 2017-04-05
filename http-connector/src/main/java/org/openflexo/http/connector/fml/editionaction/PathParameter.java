@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.model;
+package org.openflexo.http.connector.fml.editionaction;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.model.annotations.Getter;
@@ -64,9 +64,10 @@ public interface PathParameter {
 	@Setter(NAME_KEY)
 	void setName(DataBinding<String> name);
 
-	@Getter(VALUE_KEY)
+	@Getter(VALUE_KEY) @XMLAttribute
 	DataBinding<String> getValue();
 
 	@Setter(VALUE_KEY)
 	void setValue(DataBinding<String> value);
+
 }

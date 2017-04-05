@@ -54,10 +54,11 @@ import org.openflexo.http.connector.fml.editionaction.HttpRequestBehavior.HttpRe
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.http.connector.model.PathBuilder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.Initialize;
+import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
@@ -74,8 +75,11 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
 	String RETURNED_FLEXO_CONCEPT_URI_KEY = "returnedFlexoConceptURI";
 
+	@Initializer
+	void initialize();
+
 	@Getter(URL_BUILDER_KEY)
-	@XMLElement @Embedded
+	@XMLElement @Embedded @Initialize
 	PathBuilder getBuilder();
 
 	@Setter(URL_BUILDER_KEY)
@@ -96,16 +100,16 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 
 	default Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 		PathBuilder builder = getBuilder();
-		String url = builder.evaluateUrl(this, context);
-		System.out.println("URL is '" + url + "'");
-		HttpFlexoConceptInstance conceptInstance = modelInstance.getFlexoConceptInstance(url, getReturnedFlexoConcept());
-		return conceptInstance;
+		if (builder != null) {
+			String url = builder.evaluateUrl(this, context);
+			System.out.println("URL is '" + url + "'");
+			HttpFlexoConceptInstance conceptInstance = modelInstance.getFlexoConceptInstance(url, getReturnedFlexoConcept());
+			return conceptInstance;
+		}
+		return null;
 	}
 
 	abstract class HttpRequestBehaviorImpl extends AbstractActionSchemeImpl implements HttpRequestBehavior {
-
-		// TODO find a better method !!!!!!!!!!!!!!!!!!!!!!!!!
-		private boolean builderBuilt = false;
 
 		private static final Logger logger = Logger.getLogger(AccessPoint.class.getPackage().getName());
 
@@ -114,17 +118,6 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 		@Override
 		public Type getReturnType() {
 			return FlexoConceptInstanceType.getFlexoConceptInstanceType(getReturnedFlexoConcept());
-		}
-
-		@Override
-		public PathBuilder getBuilder() {
-			PathBuilder builder = (PathBuilder) performSuperGetter(URL_BUILDER_KEY);
-			if (builder == null && !builderBuilt) {
-				builderBuilt = true;
-				builder = getFMLModelFactory().newInstance(PathBuilder.class);
-				performSuperSetter(URL_BUILDER_KEY, builder);
-			}
-			return builder;
 		}
 
 		@Override
@@ -162,6 +155,15 @@ public interface HttpRequestBehavior extends AbstractActionScheme {
 				getPropertyChangeSupport().firePropertyChange(RETURNED_FLEXO_CONCEPT_KEY, oldVirtualModel, flexoConcept);
 				setReturnedFlexoConceptURI(flexoConcept != null ? flexoConcept.getURI() : null);
 			}
+		}
+
+		@Override
+		public PathBuilder getBuilder() {
+			PathBuilder builder = (PathBuilder) performSuperGetter(URL_BUILDER_KEY);
+			if (builder != null) {
+				builder.setOwner(this);
+			}
+			return builder;
 		}
 	}
 }
