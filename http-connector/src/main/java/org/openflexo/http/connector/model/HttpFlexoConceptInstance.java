@@ -129,7 +129,6 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			setFlexoConcept(concept);
 			this.path = path;
 			this.pointer = pointer != null ? JsonPointer.compile(pointer) : null;
-			update();
 		}
 
 		private void update() {

@@ -50,7 +50,12 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.ViewPoint;
+import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.ViewResource;
+import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.annotations.Getter;
@@ -114,7 +119,8 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 			) {
 
 				ObjectMapper mapper = new ObjectMapper();
-				JsonNode node = mapper.readTree(stream);
+				JsonNode source = mapper.readTree(stream);
+				JsonNode node = source;
 				if (pointer != null) {
 					node = node.at(pointer);
 				}
@@ -128,7 +134,7 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 					return result;
 
 				} else {
-					log("Read json isn't an array (" + node + ")", LogLevel.SEVERE, this, null);
+					log("Read json isn't an array (" + source + ")", LogLevel.SEVERE, this, null);
 				}
 
 			} catch (IOException e) {
@@ -137,8 +143,32 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 			return Collections.emptyList();
 		}
 
+		public AccessPointResource getAccessPointResource() {
+			return (AccessPointResource) this.getAccessPoint().getResource();
+		}
+
 		public AccessPointFactory getAccessPointFactory() {
-			return ((AccessPointResource) this.getAccessPoint().getResource()).getFactory();
+			return getAccessPointResource().getFactory();
+		}
+
+		@Override
+		public ViewPoint getViewPoint() {
+			return getView().getViewPoint();
+		}
+
+		@Override
+		public View getView() {
+			AccessPointResource resource = getAccessPointResource();
+			if (resource != null && resource.getContainer() instanceof ViewResource) {
+				return ((ViewResource) resource.getContainer()).getView();
+			}
+			return null;
+		}
+
+		@Override
+		public FlexoResourceCenter<?> getResourceCenter() {
+			FlexoResource<AccessPoint> resource = getAccessPoint().getResource();
+			return resource != null ? resource.getResourceCenter() :  null;
 		}
 
 		@Override
