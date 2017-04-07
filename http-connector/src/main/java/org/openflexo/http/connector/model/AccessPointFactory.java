@@ -38,6 +38,7 @@
 
 package org.openflexo.http.connector.model;
 
+import java.util.function.Function;
 import org.openflexo.fge.FGEModelFactoryImpl;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
@@ -52,20 +53,19 @@ import org.openflexo.model.factory.EditingContext;
  * @author charlie
  *
  */
-public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
+public class AccessPointFactory<T> extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
 
 	private final AccessPointResource resource;
 
 	private FlexoUndoManager undoManager = null;
 	private IgnoreLoadingEdits ignoreHandler = null;
 
-	public AccessPointFactory() throws ModelDefinitionException {
-		this(null, null);
-	}
+	private final Function<T, String> urlFinder;
 
-	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext) throws ModelDefinitionException {
+	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext, Function<T, String> urlFinder) throws ModelDefinitionException {
 		super(AccessPoint.class);
 		this.resource = resource;
+		this.urlFinder = urlFinder;
 		setEditingContext(editingContext);
 		addConverter(new RelativePathResourceConverter(null));
 	}
@@ -89,13 +89,13 @@ public class AccessPointFactory extends FGEModelFactoryImpl implements PamelaRes
 		accessPoint.setInstance(virtualModelInstance);
 	}
 
-	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, String url, String pointer, FlexoConcept concept) {
-		if (owner != null && url != null) {
-			String baseUrl = owner.getAccessPoint().getUrl();
-			if (url.startsWith(baseUrl)) {
-				url = url.substring(baseUrl.length());
+	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, T object, String url, String pointer, FlexoConcept concept) {
+		if (owner != null) {
+			if (object != null && url == null) {
+				url = urlFinder.apply(object);
 			}
-			return newInstance(HttpFlexoConceptInstance.class, owner, url, pointer, concept);
+			// HttpVirtualModelInstance owner, ObjectNode support, String path, String pointer, FlexoConcept concept
+			return newInstance(HttpFlexoConceptInstance.class, owner, object, url, pointer, concept);
 		}
 		return null;
 	}

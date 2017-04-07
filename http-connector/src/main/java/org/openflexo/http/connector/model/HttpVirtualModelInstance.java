@@ -38,6 +38,7 @@ package org.openflexo.http.connector.model;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -101,7 +102,7 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 		@Override
 		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
 			return instances.computeIfAbsent(
-				path, (newPath) ->  getAccessPointFactory().newFlexoConceptInstance(this, path, pointer, concept)
+				path, (newPath) ->  getAccessPointFactory().newFlexoConceptInstance(this, null, path, pointer, concept)
 			);
 		}
 
@@ -128,8 +129,9 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 				if (node instanceof ArrayNode) {
 					List<HttpFlexoConceptInstance> result = new ArrayList<>();
 					for (JsonNode child : node) {
-						String url = child.get("url").textValue();
-						result.add(getAccessPointFactory().newFlexoConceptInstance(this, url, null, concept));
+						if (child instanceof ObjectNode) {
+							result.add(getAccessPointFactory().newFlexoConceptInstance(this, child, null, null, concept));
+						}
 					}
 					return result;
 

@@ -62,23 +62,24 @@ import org.openflexo.model.annotations.Parameter;
  */
 @ModelEntity
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
-public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
+public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 
 	@Initializer
 	void initialize(
 		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
-		String path, String pointer,
+		T support, String path, String pointer,
 		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept
 	);
 
 	abstract class HttpFlexoConceptInstanceImpl
 			extends FlexoConceptInstanceImpl
-			implements HttpFlexoConceptInstance
+			implements HttpFlexoConceptInstance<ObjectNode>
 	{
 		private ObjectNode source;
 		private JsonPointer pointer;
 		private String path;
 
+		private boolean notComplete = false;
 		private long lastUpdated = -1l;
 
 		public boolean needUpdate() {
@@ -88,14 +89,27 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
 			if (flexoProperty instanceof AbstractProperty) {
-				update();
-				// TODO work on conversion
+				update(false);
 				if (source != null) {
-					Object value = source.get(flexoProperty.getName()).textValue();
-					return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
+					JsonNode node = source.get(flexoProperty.getName());
+					if (node != null) {
+						return convertNode(flexoProperty, node);
+					} else if (notComplete) {
+						update(true);
+						node = source.get(flexoProperty.getName());
+						if (node != null) {
+							return convertNode(flexoProperty, node);
+						}
+					}
 				}
 			}
 			return super.getFlexoPropertyValue(flexoProperty);
+		}
+
+		private <T> T convertNode(FlexoProperty<T> flexoProperty, JsonNode node) {
+			// TODO work on conversion
+			Object value = node.textValue();
+			return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
 		}
 
 		@Override
@@ -124,17 +138,22 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance owner, String path, String pointer, FlexoConcept concept)  {
+		public void initialize(HttpVirtualModelInstance owner, ObjectNode support, String path, String pointer, FlexoConcept concept)  {
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
+			this.source = support;
 			this.path = path;
 			this.pointer = pointer != null ? JsonPointer.compile(pointer) : null;
+			if (source != null) {
+				lastUpdated = System.nanoTime();
+			}
+			notComplete = source != null;
 		}
 
-		private void update() {
-			if (needUpdate()) {
+		private void update(boolean force) {
+			if (needUpdate() || force) {
 				synchronized (this) {
-					if (needUpdate()) {
+					if (needUpdate() || force) {
 						AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 
 						HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
@@ -160,6 +179,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 							e.printStackTrace();
 							log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);
 						} finally {
+							notComplete = true;
 							lastUpdated = System.nanoTime();
 						}
 					}

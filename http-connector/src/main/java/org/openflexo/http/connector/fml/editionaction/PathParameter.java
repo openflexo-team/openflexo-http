@@ -35,6 +35,7 @@
 
 package org.openflexo.http.connector.fml.editionaction;
 
+import org.openflexo.connie.Bindable;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.http.connector.fml.editionaction.PathParameter.PathParameterImpl;
@@ -56,7 +57,7 @@ public interface PathParameter extends FlexoObject {
 	String NAME_KEY = "name";
 	String VALUE_KEY = "value";
 
-	@Getter(BUILDER_KEY)
+	@Getter(BUILDER_KEY) @XMLAttribute
 	PathBuilder getBuilder();
 
 	@Setter(BUILDER_KEY)
@@ -79,36 +80,42 @@ public interface PathParameter extends FlexoObject {
 		private DataBinding<String> name;
 		private DataBinding<String> value;
 
+		private Bindable getOwner() {
+			return  getBuilder() !=null ? getBuilder().getOwner() : null;
+		}
+
 		@Override
 		public DataBinding<String> getName() {
-			if (name == null && getBuilder() != null) {
-				name = new DataBinding<>(getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+			if (name == null) {
+				name = new DataBinding<>(getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				name.setBindingName("name");
 			}
+			name.setOwner(getOwner());
 			return name;
 		}
 
 		@Override
 		public void setName(DataBinding<String> name) {
-			if (name != null && getBuilder() != null) {
-				this.name = new DataBinding<>(name.toString(), getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+			if (name != null) {
+				this.name = new DataBinding<>(name.toString(), getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				this.name.setBindingName("name");
 			}
 		}
 
 		@Override
 		public DataBinding<String> getValue() {
-			if (value == null && getBuilder() != null) {
-				value = new DataBinding<>(getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+			if (value == null) {
+				value = new DataBinding<>(getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				value.setBindingName("value");
 			}
+			value.setOwner(getOwner());
 			return value;
 		}
 
 		@Override
 		public void setValue(DataBinding<String> value) {
-			if (value != null && getBuilder() != null) {
-				this.value = new DataBinding<>(value.toString(), getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+			if (value != null) {
+				this.value = new DataBinding<>(value.toString(),getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				this.value.setBindingName("value");
 			}
 		}
