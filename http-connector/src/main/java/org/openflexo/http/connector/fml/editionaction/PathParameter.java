@@ -36,7 +36,10 @@
 package org.openflexo.http.connector.fml.editionaction;
 
 import org.openflexo.connie.DataBinding;
+import org.openflexo.foundation.FlexoObject;
+import org.openflexo.http.connector.fml.editionaction.PathParameter.PathParameterImpl;
 import org.openflexo.model.annotations.Getter;
+import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
@@ -46,7 +49,8 @@ import org.openflexo.model.annotations.XMLElement;
  * Parameter for an PathBuilder
  */
 @ModelEntity @XMLElement
-public interface PathParameter {
+@ImplementationClass(PathParameterImpl.class)
+public interface PathParameter extends FlexoObject {
 
 	String BUILDER_KEY = "builder";
 	String NAME_KEY = "name";
@@ -70,4 +74,45 @@ public interface PathParameter {
 	@Setter(VALUE_KEY)
 	void setValue(DataBinding<String> value);
 
+	abstract class PathParameterImpl extends FlexoObjectImpl implements PathParameter {
+
+		private DataBinding<String> name;
+		private DataBinding<String> value;
+
+		@Override
+		public DataBinding<String> getName() {
+			if (name == null && getBuilder() != null) {
+				name = new DataBinding<>(getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				name.setBindingName("name");
+			}
+			return name;
+		}
+
+		@Override
+		public void setName(DataBinding<String> name) {
+			if (name != null && getBuilder() != null) {
+				this.name = new DataBinding<>(name.toString(), getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				this.name.setBindingName("name");
+			}
+		}
+
+		@Override
+		public DataBinding<String> getValue() {
+			if (value == null && getBuilder() != null) {
+				value = new DataBinding<>(getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				value.setBindingName("value");
+			}
+			return value;
+		}
+
+		@Override
+		public void setValue(DataBinding<String> value) {
+			if (value != null && getBuilder() != null) {
+				this.value = new DataBinding<>(value.toString(), getBuilder().getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				this.value.setBindingName("value");
+			}
+		}
+
+
+	}
 }

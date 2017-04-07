@@ -23,7 +23,7 @@
             <ColumnAssignment id="20" variable="component.bindable" value="data" mandatory="true" />
           </CustomColumn>
           <CustomColumn id="21" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.value" resizable="true" title="value" displayTitle="true" columnWidth="80" showIcon="false" name="value">
-            <ColumnAssignment id="22" variable="component.bindable" value="data" mandatory="true" />
+            <ColumnAssignment id="22" variable="component.bindable" value="data.owner" mandatory="true" />
           </CustomColumn>
           <AddAction id="23" method="data.builder.addNewParameter()" name="add_action" />
           <RemoveAction id="24" isAvailable="(selected != null)" method="data.builder.removeFromParameters(selected)" name="delete_action" />
