@@ -22,6 +22,7 @@ package org.openflexo.http.connector;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
+
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPointLibrary;
@@ -30,7 +31,7 @@ import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.action.ModelSlotInstanceConfiguration;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -55,164 +56,162 @@ import org.openflexo.toolbox.StringUtils;
  * REST model slot for Http technology adapter
  *
  */
-@ModelEntity @XMLElement
+@ModelEntity
+@XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
-@DeclareEditionActions({ CreateAccessPointResource.class})
-@DeclareFlexoBehaviours( {HttpRequestBehavior.class} )
+@DeclareEditionActions({ CreateAccessPointResource.class })
+@DeclareFlexoBehaviours({ HttpRequestBehavior.class })
 public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 
-    @PropertyIdentifier(type = String.class)
-    String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
+	@PropertyIdentifier(type = String.class)
+	String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
 
-    @PropertyIdentifier(type = String.class)
-    String URL_KEY = "url";
+	@PropertyIdentifier(type = String.class)
+	String URL_KEY = "url";
 
-    @PropertyIdentifier(type = String.class)
-    String USER_KEY = "user";
+	@PropertyIdentifier(type = String.class)
+	String USER_KEY = "user";
 
-    @PropertyIdentifier(type = String.class)
-    String PASSWORD_KEY = "password";
+	@PropertyIdentifier(type = String.class)
+	String PASSWORD_KEY = "password";
 
-    @Getter(value = ACCESSED_VIRTUAL_MODEL_URI_KEY)
-    @XMLAttribute(xmlTag = "accessedVirtualModelURI")
-    String getAccessedVirtualModelURI();
+	@Getter(value = ACCESSED_VIRTUAL_MODEL_URI_KEY)
+	@XMLAttribute(xmlTag = "accessedVirtualModelURI")
+	String getAccessedVirtualModelURI();
 
-    @Setter(ACCESSED_VIRTUAL_MODEL_URI_KEY)
-    void setAccessedVirtualModelURI(String virtualModelURI);
+	@Setter(ACCESSED_VIRTUAL_MODEL_URI_KEY)
+	void setAccessedVirtualModelURI(String virtualModelURI);
 
-    VirtualModelResource getAccessedVirtualModelResource();
+	VirtualModelResource getAccessedVirtualModelResource();
 
-    void setAccessedVirtualModelResource(VirtualModelResource virtualModelResource);
+	void setAccessedVirtualModelResource(VirtualModelResource virtualModelResource);
 
-    VirtualModel getAccessedVirtualModel();
+	VirtualModel getAccessedVirtualModel();
 
-    void setAccessedVirtualModel(VirtualModel aVirtualModel);
+	void setAccessedVirtualModel(VirtualModel aVirtualModel);
 
-    @Getter(URL_KEY) @XMLAttribute
-    String getUrl();
+	@Getter(URL_KEY)
+	@XMLAttribute
+	String getUrl();
 
-    @Setter(URL_KEY)
-    void setUrl(String url);
+	@Setter(URL_KEY)
+	void setUrl(String url);
 
-    @Getter(USER_KEY) @XMLAttribute
-    String getUser();
+	@Getter(USER_KEY)
+	@XMLAttribute
+	String getUser();
 
-    @Setter(USER_KEY)
-    void setUser(String user);
+	@Setter(USER_KEY)
+	void setUser(String user);
 
-    @Getter(PASSWORD_KEY) @XMLAttribute
-    String getPassword();
+	@Getter(PASSWORD_KEY)
+	@XMLAttribute
+	String getPassword();
 
-    @Setter(PASSWORD_KEY)
-    void setPassword(String password);
+	@Setter(PASSWORD_KEY)
+	void setPassword(String password);
 
+	@Override
+	HttpTechnologyAdapter getModelSlotTechnologyAdapter();
 
-    @Override
-    HttpTechnologyAdapter getModelSlotTechnologyAdapter();
+	abstract class RestModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements RestModelSlot {
 
-    abstract class RestModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements RestModelSlot {
+		private VirtualModelResource virtualModelResource;
+		private String virtualModelURI;
 
-        private VirtualModelResource virtualModelResource;
-        private String virtualModelURI;
+		@Override
+		public Class<HttpTechnologyAdapter> getTechnologyAdapterClass() {
+			return HttpTechnologyAdapter.class;
+		}
 
+		@Override
+		public <PR extends FlexoRole<?>> String defaultFlexoRoleName(Class<PR> patternRoleClass) {
+			return "";
+		}
 
-        @Override
-        public Class<HttpTechnologyAdapter> getTechnologyAdapterClass() {
-            return HttpTechnologyAdapter.class;
-        }
+		@Override
+		public Type getType() {
+			VirtualModelInstanceType instanceType = VirtualModelInstanceType.getVirtualModelInstanceType(getAccessedVirtualModel());
+			return new AccessPointType(getModelSlotTechnologyAdapter(), instanceType);
+		}
 
-        @Override
-        public <PR extends FlexoRole<?>> String defaultFlexoRoleName(Class<PR> patternRoleClass) {
-            return "";
-        }
+		@Override
+		public HttpTechnologyAdapter getModelSlotTechnologyAdapter() {
+			return (HttpTechnologyAdapter) super.getModelSlotTechnologyAdapter();
+		}
 
-        @Override
-        public Type getType() {
-            VirtualModelInstanceType instanceType = VirtualModelInstanceType.getVirtualModelInstanceType(getAccessedVirtualModel());
-            return new AccessPointType(getModelSlotTechnologyAdapter(), instanceType);
-        }
+		@Override
+		public ModelSlotInstanceConfiguration<? extends FreeModelSlot<AccessPoint>, AccessPoint> createConfiguration(
+				FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
+			return new HttpModelSlotInstanceConfiguration(this, fci, rc);
+		}
 
-        @Override
-        public HttpTechnologyAdapter getModelSlotTechnologyAdapter() {
-            return (HttpTechnologyAdapter) super.getModelSlotTechnologyAdapter();
-        }
+		@Override
+		public AccessPointResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
+			// TODO create empty resource
+			return null;
+		}
 
-        @Override
-        public ModelSlotInstanceConfiguration<? extends FreeModelSlot<AccessPoint>, AccessPoint> createConfiguration(
-                AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc
-        ) {
-            return new HttpModelSlotInstanceConfiguration(this, virtualModelInstance, rc);
-        }
+		@Override
+		public AccessPointResource createSharedEmptyResource(FlexoResourceCenter<?> resourceCenter, String relativePath, String filename,
+				String modelUri) {
+			// TODO create empty resource
+			return null;
+		}
 
-        @Override
-        public AccessPointResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
-            // TODO create empty resource
-            return null;
-        }
+		@Override
+		public VirtualModelResource getAccessedVirtualModelResource() {
+			ViewPointLibrary viewPointLibrary = getViewPointLibrary();
+			if (virtualModelResource == null && StringUtils.isNotEmpty(virtualModelURI) && viewPointLibrary != null) {
+				virtualModelResource = viewPointLibrary.getVirtualModelResource(virtualModelURI);
+			}
+			return virtualModelResource;
+		}
 
-        @Override
-        public AccessPointResource createSharedEmptyResource(
-                FlexoResourceCenter<?> resourceCenter,
-                String relativePath, String filename, String modelUri
-        ) {
-            // TODO create empty resource
-            return null;
-        }
+		@Override
+		public void setAccessedVirtualModelResource(VirtualModelResource virtualModelResource) {
+			this.virtualModelResource = virtualModelResource;
+		}
 
-        @Override
-        public VirtualModelResource getAccessedVirtualModelResource() {
-            ViewPointLibrary viewPointLibrary = getViewPointLibrary();
-            if (virtualModelResource == null && StringUtils.isNotEmpty(virtualModelURI) && viewPointLibrary != null) {
-                virtualModelResource = viewPointLibrary.getVirtualModelResource(virtualModelURI);
-            }
-            return virtualModelResource;
-        }
+		@Override
+		public String getAccessedVirtualModelURI() {
+			if (virtualModelResource != null) {
+				return virtualModelResource.getURI();
+			}
+			return virtualModelURI;
+		}
 
-        @Override
-        public void setAccessedVirtualModelResource(VirtualModelResource virtualModelResource) {
-            this.virtualModelResource = virtualModelResource;
-        }
+		@Override
+		public void setAccessedVirtualModelURI(String metaModelURI) {
+			this.virtualModelURI = metaModelURI;
+		}
 
-        @Override
-        public String getAccessedVirtualModelURI() {
-            if (virtualModelResource != null) {
-                return virtualModelResource.getURI();
-            }
-            return virtualModelURI;
-        }
+		/**
+		 * Return addressed virtual model (the virtual model this model slot specifically addresses, not the one in which it is defined)
+		 *
+		 * @return
+		 */
+		@Override
+		public final VirtualModel getAccessedVirtualModel() {
+			if (getAccessedVirtualModelResource() != null) {
+				try {
+					return getAccessedVirtualModelResource().getResourceData(null);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				} catch (ResourceLoadingCancelledException e) {
+					e.printStackTrace();
+				} catch (FlexoException e) {
+					e.printStackTrace();
+				}
+			}
+			return null;
+		}
 
-        @Override
-        public void setAccessedVirtualModelURI(String metaModelURI) {
-            this.virtualModelURI = metaModelURI;
-        }
+		@Override
+		public void setAccessedVirtualModel(VirtualModel aVirtualModel) {
+			this.virtualModelURI = aVirtualModel.getURI();
+			notifyResultingTypeChanged();
+		}
 
-        /**
-         * Return addressed virtual model (the virtual model this model slot specifically addresses, not the one in which it is defined)
-         *
-         * @return
-         */
-        @Override
-        public final VirtualModel getAccessedVirtualModel() {
-            if (getAccessedVirtualModelResource() != null) {
-                try {
-                    return getAccessedVirtualModelResource().getResourceData(null);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (ResourceLoadingCancelledException e) {
-                    e.printStackTrace();
-                } catch (FlexoException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public void setAccessedVirtualModel(VirtualModel aVirtualModel) {
-            this.virtualModelURI = aVirtualModel.getURI();
-            notifyResultingTypeChanged();
-        }
-
-
-    }
+	}
 }

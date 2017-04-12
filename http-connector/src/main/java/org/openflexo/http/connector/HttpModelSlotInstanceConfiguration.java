@@ -18,24 +18,23 @@
  *
  */
 
-
 package org.openflexo.http.connector;
 
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.FreeModelSlotInstanceConfiguration;
 import org.openflexo.http.connector.model.AccessPoint;
 
 public class HttpModelSlotInstanceConfiguration extends FreeModelSlotInstanceConfiguration<AccessPoint, RestModelSlot> {
 
-    protected HttpModelSlotInstanceConfiguration(RestModelSlot ms, AbstractVirtualModelInstance<?, ?> virtualModelInstance, FlexoResourceCenter<?> rc) {
-        super(ms, virtualModelInstance, rc);
-    }
+	protected HttpModelSlotInstanceConfiguration(RestModelSlot ms, FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
+		super(ms, fci, rc);
+	}
 
-    @Override
-    public void setOption(ModelSlotInstanceConfigurationOption option) {
-        super.setOption(option);
-        // TODO : add specific options here address, user and password (watch before)
-    }
+	@Override
+	public void setOption(ModelSlotInstanceConfigurationOption option) {
+		super.setOption(option);
+		// TODO : add specific options here address, user and password (watch before)
+	}
 
 }
