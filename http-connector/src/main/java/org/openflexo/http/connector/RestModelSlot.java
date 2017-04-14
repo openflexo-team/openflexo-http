@@ -22,7 +22,6 @@ package org.openflexo.http.connector;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
-
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPointLibrary;
@@ -33,7 +32,6 @@ import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
-import org.openflexo.foundation.fml.rt.action.ModelSlotInstanceConfiguration;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
@@ -141,8 +139,7 @@ public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 		}
 
 		@Override
-		public ModelSlotInstanceConfiguration<? extends FreeModelSlot<AccessPoint>, AccessPoint> createConfiguration(
-				FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
+		public HttpModelSlotInstanceConfiguration createConfiguration(FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
 			return new HttpModelSlotInstanceConfiguration(this, fci, rc);
 		}
 
