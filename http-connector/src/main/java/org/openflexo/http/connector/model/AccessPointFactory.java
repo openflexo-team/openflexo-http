@@ -39,7 +39,6 @@
 package org.openflexo.http.connector.model;
 
 import java.util.function.Function;
-import org.openflexo.fge.FGEModelFactoryImpl;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.FlexoConcept;
@@ -48,12 +47,13 @@ import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
+import org.openflexo.model.factory.ModelFactory;
 
 /**
  * @author charlie
  *
  */
-public class AccessPointFactory<T> extends FGEModelFactoryImpl implements PamelaResourceModelFactory<AccessPointResource> {
+public class AccessPointFactory<T> extends ModelFactory implements PamelaResourceModelFactory<AccessPointResource> {
 
 	private final AccessPointResource resource;
 
