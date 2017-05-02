@@ -1,9 +1,5 @@
 
-# OpenFlexo HTTP services
-
-Project `openflexo-server` adds to OpenFlexo a set of HTTP capabilities including a HTTP REST server and serveral clients.
-
-# REST Server
+# OpenFlexo REST API
 
 The OpenFlexo's HTTP server provides a REST API to access:
 
@@ -160,11 +156,3 @@ A technology adapter can also provide new API entries using the interface `To Be
 ## Diana
 
 ## Excel
-
-# REST Client
-
-- retrieves `FML` objects from URLs
-
-# XML-RPC Client
-
-TODO
