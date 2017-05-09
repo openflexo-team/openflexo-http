@@ -1,30 +1,34 @@
-dependencies {
 
+dependencies {
     runtime project(":http-server")
 
-    runtime flexoDiagram()
-    runtime ginaConnector()
-
-    runtime openflexo("csvconnector")
     runtime docxConnector()
-    runtime emfConnector()
     runtime excelConnector()
-    runtime freePlaneConnector()
-    runtime odtConnector()
-    runtime oslcConnector()
-    runtime owlConnector()
     runtime pdfConnector()
     runtime powerpointConnector()
-    runtime xmlConnector()
+    runtime openflexo("jdbcconnector")
+    runtime openflexo("kafkaconnector")
 
+
+    //runtime openflexo("flexodiagram-test-rc")
     runtime openflexo("docxconnector-test-rc")
-    runtime openflexo("emfconnector-test-rc")
     runtime openflexo("excelconnector-test-rc")
-    runtime openflexo("flexodiagram-test-rc")
-    runtime openflexo("freeplaneconnector-test-rc")
-    runtime openflexo("owlconnector-test-rc")
+    //runtime openflexo("owlconnector-test-rc")
     runtime openflexo("pdfconnector-test-rc")
     runtime openflexo("powerpointconnector-test-rc")
-    runtime openflexo("xmlconnector-test-rc")
 
 }
+
+def deployDir = "/Users/charlie/Documents/dev/openflexo/openshift/openflexo";
+
+task copyWebResources(type: Copy) {
+    from "../http-server/webroot"
+    into deployDir + "/openflexo/webroot"
+}
+
+task copyJars (type: Copy) {
+    from configurations.runtime.resolve()
+    into deployDir + "/openflexo/libs"
+}
+
+task deploy (dependsOn: ["copyJars", "copyWebResources"])
