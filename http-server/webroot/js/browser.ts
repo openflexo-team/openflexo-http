@@ -1,14 +1,21 @@
-import openflexo = require("./openflexo")
-import utils = require("./utils")
+import {
+    ResourceCenter, ContainedByResourceCenter, Resource,
+    call, resourceCenters
+} from "./openflexo";
+
+
+import {
+    findElementWithAttributeInHierarchy, spinner, icon
+} from "./utils";
 
 const arrow_right = "keyboard_arrow_right";
 const arrow_down = "keyboard_arrow_down";
 
 function getDataUrlElement(element: HTMLElement): HTMLElement {
-    return utils.findElementWithAttributeInHierarchy(element, "data-url");
+    return findElementWithAttributeInHierarchy(element, "data-url");
 }
 
-function createTitle(rc: openflexo.ResourceCenter): HTMLDivElement {
+function createTitle(rc: ResourceCenter): HTMLDivElement {
     let title = document.createElement("div")
     title.className = 'title';
     title.innerText = rc.name
@@ -31,9 +38,9 @@ function expand(event: MouseEvent) {
             div.className = 'children';
             item.appendChild(div);
             
-            div.appendChild(utils.spinner());
+            div.appendChild(spinner());
 
-            openflexo.call<openflexo.ContainedByResourceCenter[]>(item.getAttribute("data-url"), (children) => {
+            call<ContainedByResourceCenter[]>(item.getAttribute("data-url"), (children) => {
                 div.removeChild(div.firstChild);
                 
                 for (let child of children) {
@@ -45,16 +52,16 @@ function expand(event: MouseEvent) {
     }
 }
 
-function createRoot(rc: openflexo.ResourceCenter):HTMLDivElement {
+function createRoot(rc: ResourceCenter):HTMLDivElement {
     return createFolderItem('/', rc.resourceUrl + '/');
 }
 
-function createItemFromSource(source: openflexo.ContainedByResourceCenter):HTMLDivElement {
+function createItemFromSource(source: ContainedByResourceCenter):HTMLDivElement {
     switch (source.type) {
         case 'Folder':
             return createFolderItem(source.name, source.url);
         case 'Resource':
-            return createResourceItem(<openflexo.Resource>source);
+            return createResourceItem(<Resource>source);
     }
 }
 
@@ -66,11 +73,11 @@ function createFolderItem(label: string, url: string):HTMLDivElement {
     let item = document.createElement("div");
     item.className = "label";
 
-    let treeStatus = utils.icon(arrow_right);
+    let treeStatus = icon(arrow_right);
     treeStatus.onclick = expand;
     item.appendChild(treeStatus);
     
-    let itemIcon = utils.icon("folder_open");
+    let itemIcon = icon("folder_open");
     item.appendChild(itemIcon);
 
     let itemLabel = document.createElement("span");
@@ -82,7 +89,7 @@ function createFolderItem(label: string, url: string):HTMLDivElement {
     return tree;
 }
 
-function createResourceItem(source: openflexo.Resource):HTMLDivElement {
+function createResourceItem(source: Resource):HTMLDivElement {
     let tree = document.createElement("div");
     tree.className = "item";
     
@@ -93,7 +100,7 @@ function createResourceItem(source: openflexo.Resource):HTMLDivElement {
     treeStatus.className = "status";
     item.appendChild(treeStatus);
 
-    let itemIcon = utils.icon("cloud_download");
+    let itemIcon = icon("cloud_download");
     item.appendChild(itemIcon);
 
     let itemLabel = document.createElement("a");
@@ -109,7 +116,7 @@ function createResourceItem(source: openflexo.Resource):HTMLDivElement {
     return tree;
 }
 
-openflexo.resourceCenters((resourceCenters) => {
+resourceCenters((resourceCenters) => {
     let div = document.querySelector("#rcs");
     for (let rc of resourceCenters) {
         div.appendChild(document.createElement("hr"));

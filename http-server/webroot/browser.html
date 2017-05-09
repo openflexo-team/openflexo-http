@@ -4,13 +4,19 @@
 
     <link href="/css/openflexo.css" rel="stylesheet"/>
 
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="/bower_components/system.js/dist/system.js"></script>
+  
 </head>
 <body>
     <h1> Resource Centers</h1>
     <div id="rcs"></div>
 
-    <script src='/js/require.js' data-main='/js/browser'></script>
 
+  <script>
+    SystemJS.config({ packages: { '.': { defaultExtension: 'js' } } });
+    SystemJS.import('js/browser').then(null, console.error.bind(console));
+  </script>
 </body>
 </html>
