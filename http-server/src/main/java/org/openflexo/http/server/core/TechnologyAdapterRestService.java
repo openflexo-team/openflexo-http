@@ -4,6 +4,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import java.util.HashMap;
+import java.util.Map;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
@@ -16,9 +18,15 @@ public class TechnologyAdapterRestService implements RestService {
 
 	private TechnologyAdapterService technologyAdapterService;
 
+	private final Map<String, TechnologyAdapter> technologyAdapterMap = new HashMap<>();
+
 	@Override
 	public void initialize(FlexoServiceManager serviceManager) throws Exception {
 		technologyAdapterService = serviceManager.getTechnologyAdapterService();
+		for (TechnologyAdapter technologyAdapter : technologyAdapterService.getTechnologyAdapters()) {
+			String identifier = IdUtils.getTechnologyAdapterId(technologyAdapter);
+			technologyAdapterMap.put(identifier, technologyAdapter);
+		}
 	}
 
 	@Override
@@ -37,16 +45,11 @@ public class TechnologyAdapterRestService implements RestService {
 
 	private void serveTechnologyAdapter(RoutingContext context) {
 		String id = context.request().getParam(("taid"));
-		try {
-			Class<? extends TechnologyAdapter> taClass = (Class<? extends TechnologyAdapter>) getClass().getClassLoader().loadClass(id);
-			TechnologyAdapter technologyAdapter = technologyAdapterService.getTechnologyAdapter(taClass);
-			if (technologyAdapter != null) {
-				context.response().end(JsonUtils.getTechnologyAdapterDescription(technologyAdapter).encodePrettily());
-			}
-			else {
-				notFound(context);
-			}
-		} catch (ClassNotFoundException e) {
+		TechnologyAdapter technologyAdapter = technologyAdapterMap.get(id);
+		if (technologyAdapter != null) {
+			context.response().end(JsonUtils.getTechnologyAdapterDescription(technologyAdapter).encodePrettily());
+		}
+		else {
 			notFound(context);
 		}
 	}

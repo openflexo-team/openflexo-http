@@ -56,7 +56,7 @@ public class JsonUtils {
 		resourceDescription.put("url", "/resource/" + id);
 		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
 		if (resource instanceof TechnologyAdapterResource) {
-			String taId = ((TechnologyAdapterResource) resource).getTechnologyAdapter().getClass().getName();
+			String taId = IdUtils.getTechnologyAdapterId(((TechnologyAdapterResource) resource).getTechnologyAdapter());
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 		}
@@ -64,7 +64,7 @@ public class JsonUtils {
 	}
 
 	public static JsonObject getTechnologyAdapterDescription(TechnologyAdapter adapter) {
-		String id = adapter.getClass().getName();
+		String id = IdUtils.getTechnologyAdapterId(adapter);
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", adapter.getName());
 		resourceDescription.put("type", "TechnologyAdapter");

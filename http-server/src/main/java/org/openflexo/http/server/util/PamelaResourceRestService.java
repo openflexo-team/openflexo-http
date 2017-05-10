@@ -1,32 +1,59 @@
-package org.openflexo.http.server.fml;
+/*
+ * Copyright (c) 2013-2017, Openflexo
+ *
+ * This file is part of Flexo-foundation, a component of the software infrastructure
+ * developed at Openflexo.
+ *
+ * Openflexo is dual-licensed under the European Union Public License (EUPL, either
+ * version 1.1 of the License, or any later version ), which is available at
+ * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
+ * and the GNU General Public License (GPL, either version 3 of the License, or any
+ * later version), which is available at http://www.gnu.org/licenses/gpl.html .
+ *
+ * You can redistribute it and/or modify under the terms of either of these licenses
+ *
+ * If you choose to redistribute it and/or modify under the terms of the GNU GPL, you
+ * must include the following additional permission.
+ *
+ *           Additional permission under GNU GPL version 3 section 7
+ *           If you modify this Program, or any covered work, by linking or
+ *           combining it with software containing parts covered by the terms
+ *           of EPL 1.0, the licensors of this Program grant you additional permission
+ *           to convey the resulting work.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * See http://www.openflexo.org/license.html for details.
+ *
+ *
+ * Please contact Openflexo (openflexo-contacts@openflexo.org)
+ * or visit www.openflexo.org if you need additional information.
+ *
+ */
+
+package org.openflexo.http.server.util;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import javassist.util.proxy.ProxyObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RestService;
 import org.openflexo.http.server.core.IdUtils;
-import org.openflexo.http.server.core.JsonUtils;
 import org.openflexo.model.ModelEntity;
-import org.openflexo.model.ModelProperty;
-import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.model.exceptions.InvalidDataException;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
 import org.openflexo.model.factory.ModelFactory;
-import org.openflexo.model.factory.ProxyMethodHandler;
 
 /**
  * Creates REST entry point to serveRoot Pamela models of a given root type.
@@ -43,6 +70,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private final Class<?> rootClass;
 
+	private final JsonSerializer serializer;
+
 	public PamelaResourceRestService(
 			String prefix,
 			Supplier<Collection<R>> supplier,
@@ -57,6 +86,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		this.postLoader = postLoader;
 		this.rootClass = rootClass;
 		this.factory = factory;
+		this.serializer = new JsonSerializer(factory);
 	}
 
 	public void addRoutes(Router router) {
@@ -68,7 +98,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		while (entities.hasNext()) {
 			ModelEntity<?> entity = entities.next();
 			if (entity != rootEntity && entity.getXMLTag() != null) {
-				String path = prefix + "/:id/" + entity.getXMLTag().toLowerCase();
+ 				String path = prefix + "/:id/" + entity.getXMLTag().toLowerCase();
 				router.get(path).produces(RestService.JSON).handler((context) -> serveEntityList(entity, context));
 				router.get(path + "/:eid").produces(RestService.JSON).handler((context) -> serveEntity(entity, context));
 			}
@@ -82,7 +112,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			for (R served : supplier.get()) {
 				String id = IdUtils.encoreUri(served.getURI());
 				String url = context.request().path() + "/" + id;
-				Object vpJson = toJson(served, id, url);
+				Object vpJson = serializer.toJson(served, id, url);
 				result.add(vpJson);
 			}
 			context.response().end(result.encodePrettily());
@@ -121,7 +151,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			R resource = getLoadedResource(id);
 			if (resource != null) {
 				D data = resource.getResourceData(null);
-				JsonObject vpJson = (JsonObject) toJson(data, id, context.request().path());
+				JsonObject vpJson = (JsonObject) serializer.toJson(data, id, context.request().path());
 				context.response().end(vpJson.encodePrettily());
 			} else {
 				notFound(context);
@@ -140,7 +170,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				JsonArray result = new JsonArray();
 				for (Object object : embeddedObjects) {
 					// TODO check type
-					result.add(toJson(object, null, null));
+					result.add(serializer.toJson(object, null, null));
 
 				}
 				context.response().end(result.encodePrettily());
@@ -148,7 +178,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			} else {
 				notFound(context);
 			}
-			JsonObject vpJson = (JsonObject) toJson(resource, id, context.request().path());
+			JsonObject vpJson = (JsonObject) serializer.toJson(resource, id, context.request().path());
 			context.response().end(vpJson.encodePrettily());
 		} catch (NumberFormatException e) {
 			notFound(context);
@@ -170,7 +200,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				FlexoObject object = resource.getFlexoObject(entityId, "FLX");
 				if (object != null) {
 					// TODO check type
-					JsonObject vpJson = (JsonObject) toJson(object, id, /*context.request().path()*/ null);
+					JsonObject vpJson = (JsonObject) serializer.toJson(object, id, /*context.request().path()*/ null);
 					context.response().end(vpJson.encodePrettily());
 				} else {
 					notFound(context);
@@ -179,7 +209,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			} else {
 				notFound(context);
 			}
-			JsonObject vpJson = (JsonObject) toJson(resource, id, context.request().path());
+			JsonObject vpJson = (JsonObject) serializer.toJson(resource, id, context.request().path());
 			context.response().end(vpJson.encodePrettily());
 		} catch (NumberFormatException e) {
 			notFound(context);
@@ -188,103 +218,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		}
 	}
 
-	public Object toJson(Object object, String id, String url) throws ModelDefinitionException, InvalidDataException {
-		if (object == null) return null;
 
-		Class<?> type = object.getClass();
-		if (type.isPrimitive() || type.isAssignableFrom(String.class)) {
-			// no transformation needed
-			return object;
-		}
-		else if (factory.getStringEncoder().isConvertable(type)) {
-			return factory.getStringEncoder().toString(object);
-		}
-		else if (type.isEnum() || type.getSuperclass().isEnum()) {
-			return object.toString();
-		}
-		else if (object instanceof ProxyObject) {
-			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
-			@SuppressWarnings({"unchecked", "rawtype"})
-			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
-			JsonObject result = new JsonObject();
-
-			// adds id and url for object
-			if (id != null) result.put("id", id);
-
-			String xmlTag = modelEntity.getXMLTag();
-			if (xmlTag != null) {
-				xmlTag = xmlTag.toLowerCase();
-				result.put("type", xmlTag);
-			}
-			if (url != null) {
-				result.put("url", url);
-			} else {
-				result.put("url", xmlTag + "/" + id);
-			}
-
-			Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
-			while (iterator.hasNext()) {
-				ModelProperty property = iterator.next();
-				if (true || property.isSerializable()) {
-					XMLAttribute xmlAttribute = property.getXMLAttribute();
-					XMLElement xmlElement = property.getXMLElement();
-
-					boolean reference = xmlAttribute == null;
-					Object propertyValue = handler.invokeGetter(property);
-					Object transformed = null;
-					switch (property.getCardinality()) {
-						case SINGLE: {
-							transformed = toJsonInternalObject(propertyValue, reference);
-							break;
-						}
-						case LIST: {
-							List<Object> collected = new ArrayList<>();
-							for (Object child : (List) propertyValue) {
-								collected.add(toJsonInternalObject(child, reference));
-							}
-							transformed = new JsonArray(collected);
-							break;
-						}
-						case MAP: {
-							//TODO
-							break;
-						}
-						default:
-							break;
-					}
-
-					String propertyName = property.getPropertyIdentifier();
-					if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0) propertyName = xmlAttribute.xmlTag();
-					if (xmlElement != null && xmlElement.xmlTag().length() > 0) propertyName = xmlElement.xmlTag();
-					result.put(propertyName, transformed);
-				}
-			}
-			return result;
-		}
-		else {
-			throw new InvalidDataException("Can't transform " + object + " to JSON");
-		}
-	}
-
-	private Object toJsonInternalObject(Object value, boolean reference) throws InvalidDataException, ModelDefinitionException {
-		if (value instanceof ResourceData) {
-			/*JsonObject result = new JsonObject();
-			ResourceData data = (ResourceData) value;*/
-			return JsonUtils.getResourceDescription(((ResourceData) value).getResource());
-		} else if (value instanceof FlexoObject) {
-			FlexoObject flexoObject = (FlexoObject) value;
-			String id = Long.toString(flexoObject.getFlexoID());
-			String url = "";
-			return reference ? flexoObject.getFlexoID() : toJson(value, id, url);
-		} else if (!reference) {
-			return toJson(value, null, null);
-		} else if (value == null) {
-			return null;
-		} else {
-			//throw new InvalidDataException("Can't reference '" + value + "'");
-			return null;
-		}
-	}
 
 	private void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();
