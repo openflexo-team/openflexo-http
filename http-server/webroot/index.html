@@ -3,11 +3,11 @@
     <title>OpenFlexo Server</title>
 
     <link href="/css/openflexo.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
     <script src="/bower_components/system.js/dist/system.js"></script>
 </head>
 <body>
-
     <h1>Result for <input id='url' type="text" size="80" value='/'></input></h1>
     <div id='result'></div>
 
@@ -24,6 +24,5 @@
     SystemJS.config({ packages: { '.': { defaultExtension: 'js' } } });
     SystemJS.import('js/index').then(null, console.error.bind(console));
     </script>
-
 </body>
 </html>

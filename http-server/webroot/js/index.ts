@@ -100,7 +100,7 @@ function createJsonElement(source: any): HTMLElement {
 
                 all.appendChild(element);
             }
-            }
+            
         }
         return all;
     } else {

@@ -91,13 +91,13 @@ function createJsonElement(source) {
                 all.appendChild(element);
             }
         }
+        return all;
     }
-    return all;
-}
-{
-    var valueCode = document.createElement("code");
-    valueCode.innerText = source;
-    return valueCode;
+    else {
+        var valueCode = document.createElement("code");
+        valueCode.innerText = source;
+        return valueCode;
+    }
 }
 function setUrl(url) {
     if (url.match("^http://localhost:8080")) {
