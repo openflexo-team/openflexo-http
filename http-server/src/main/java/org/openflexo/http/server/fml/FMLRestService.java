@@ -38,15 +38,14 @@ public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechno
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
 			viewPointLibrary::getViewPointResource,
-			(ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded(),
 			ViewPoint.class, factory
 		);
+		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
 
 		virtualModelConverter = new PamelaResourceRestService<>(
 			"/virtualmodel",
 			() -> Collections.emptyList(),
 			viewPointLibrary::getVirtualModelResource,
-			(VirtualModel vm) -> {},
 			VirtualModel.class, factory
 		);
 	}

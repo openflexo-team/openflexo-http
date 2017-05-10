@@ -64,7 +64,7 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 
 	private TechnologyAdapterService technologyAdapterService;
 
-	private final Map<String, TechnologyAdapter> technologyAdapterMap = new HashMap<>();
+	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
 	private final Map<String, TechnologyAdapterRestComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
 
 	@Override
@@ -115,8 +115,9 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 
 	private void serveTechnologyAdapterList(RoutingContext context) {
 		JsonArray result = new JsonArray();
-		for (TechnologyAdapter technologyAdapter : technologyAdapterService.getTechnologyAdapters()) {
-			result.add(JsonUtils.getTechnologyAdapterDescription(technologyAdapter));
+		for (Map.Entry<String, TechnologyAdapter> entry : technologyAdapterMap.entrySet()) {
+			String id = entry.getKey();
+			result.add(JsonUtils.getTechnologyAdapterDescription(id, entry.getValue(), complementMap.get(id)));
 		}
 		context.response().end(result.encodePrettily());
 	}
@@ -125,12 +126,8 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		String id = context.request().getParam(("taid"));
 		TechnologyAdapter technologyAdapter = technologyAdapterMap.get(id);
 		if (technologyAdapter != null) {
-			JsonObject object = JsonUtils.getTechnologyAdapterDescription(technologyAdapter);
-			TechnologyAdapterRestComplement complement = complementMap.get(id);
-			object.put("complemented", complement != null);
-			if (complement != null) {
-				complement.complementRoot(context.request().path(), object);
-			}
+			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, complementMap.get(id));
+
 			context.response().end(object.encodePrettily());
 		}
 		else {

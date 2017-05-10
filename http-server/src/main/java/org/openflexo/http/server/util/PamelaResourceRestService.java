@@ -63,8 +63,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	private final String prefix;
 
 	private final Supplier<Collection<R>> supplier;
+
 	private final Function<String, R> finder;
-	private final Consumer<D> postLoader;
 
 	private final ModelFactory factory;
 
@@ -72,21 +72,25 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private final JsonSerializer serializer;
 
+	private Consumer<D> postLoader = null;
+
 	public PamelaResourceRestService(
 			String prefix,
 			Supplier<Collection<R>> supplier,
 			Function<String, R> finder,
-			Consumer<D> postLoader,
 			Class<D> rootClass, ModelFactory factory
 		) throws ModelDefinitionException
 	{
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
-		this.postLoader = postLoader;
 		this.rootClass = rootClass;
 		this.factory = factory;
 		this.serializer = new JsonSerializer(factory);
+	}
+
+	public void setPostLoader(Consumer<D> postLoader) {
+		this.postLoader = postLoader;
 	}
 
 	public void addRoutes(Router router) {
@@ -138,7 +142,9 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			if (!served.isLoaded()) {
 				// load data if needed
 				served.loadResourceData(null);
-				postLoader.accept(served.getLoadedResourceData());
+				if (postLoader != null) {
+					postLoader.accept(served.getLoadedResourceData());
+				}
 			}
 		}
 

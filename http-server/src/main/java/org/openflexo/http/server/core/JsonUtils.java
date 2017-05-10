@@ -5,6 +5,7 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
 
 /**
  * Utility methods for JSON handling
@@ -63,14 +64,20 @@ public class JsonUtils {
 		return resourceDescription;
 	}
 
-	public static JsonObject getTechnologyAdapterDescription(TechnologyAdapter adapter) {
-		String id = IdUtils.getTechnologyAdapterId(adapter);
+	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRestComplement complement) {
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", adapter.getName());
 		resourceDescription.put("type", "TechnologyAdapter");
+
 		resourceDescription.put("id", id);
 		resourceDescription.put("activated", adapter.isActivated());
-		resourceDescription.put("url", "/ta/" + id);
+
+		String url = "/ta/" + id;
+		resourceDescription.put("url", url);
+		resourceDescription.put("complemented", complement != null);
+		if (complement != null) {
+			complement.complementRoot(url, resourceDescription);
+		}
 		return resourceDescription;
 	}
 
