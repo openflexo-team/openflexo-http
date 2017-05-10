@@ -14,7 +14,7 @@ import org.openflexo.http.server.RestService;
 /**
  * Created by charlie on 11/02/2017.
  */
-public class ResourceCenterRestService implements RestService {
+public class ResourceCenterRestService implements RestService<FlexoServiceManager> {
 
 	private FlexoResourceCenterService resourceCenterService;
 

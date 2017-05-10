@@ -37,37 +37,36 @@ package org.openflexo.http.server.fml;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
 import org.openflexo.http.server.RestService;
 import org.openflexo.http.server.core.IdUtils;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
 import org.openflexo.http.server.util.JsonSerializer;
 
 /**
  * Created by charlie on 08/02/2017.
  */
-public class FMLRtRestService implements RestService {
-
-	private final String namespace = "/ta/fmlrt";
+public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTechnologyAdapter> {
 
 	private FMLRTTechnologyAdapter technologyAdapter;
 
 	private JsonSerializer serializer;
 
 	@Override
-	public void initialize(FlexoServiceManager serviceManager) throws Exception {
-		technologyAdapter = serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLRTTechnologyAdapter.class);
-		if (technologyAdapter == null) throw new FlexoException("FML RT Technology adpater must be present to start FML Rest service");
+	public Class<FMLRTTechnologyAdapter> getTechnologyAdapterClass() {
+		return FMLRTTechnologyAdapter.class;
+	}
+	@Override
+	public void initialize(FMLRTTechnologyAdapter technologyAdapter) throws Exception {
+		this.technologyAdapter = technologyAdapter;
 		serializer = new JsonSerializer(technologyAdapter.getViewResourceFactory());
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
-		Router subRouter = Router.router(vertx);
-		router.mountSubRouter(namespace, subRouter);
 		router.get("/libraries").produces(RestService.JSON).handler(this::serveLibraryList);
 	}
 
@@ -88,4 +87,8 @@ public class FMLRtRestService implements RestService {
 		}
 	}
 
+	@Override
+	public void complementRoot(String url, JsonObject object) {
+		object.put("librariesUrl", url + "/libraries");
+	}
 }

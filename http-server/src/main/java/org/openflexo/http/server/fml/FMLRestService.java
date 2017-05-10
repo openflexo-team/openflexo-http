@@ -1,10 +1,9 @@
 package org.openflexo.http.server.fml;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import java.util.Collections;
-import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.ViewPoint;
@@ -12,14 +11,13 @@ import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.IdUtils;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
  * Created by charlie on 08/02/2017.
  */
-public class FMLRestService implements RestService {
+public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechnologyAdapter> {
 
 	private FMLTechnologyAdapter technologyAdapter;
 
@@ -27,12 +25,15 @@ public class FMLRestService implements RestService {
 	private PamelaResourceRestService<VirtualModel, VirtualModelResource> virtualModelConverter;
 
 	@Override
-	public void initialize(FlexoServiceManager serviceManager) throws Exception {
-		technologyAdapter = serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
-		if (technologyAdapter == null) throw new FlexoException("FML Technology adpater must be present to start FML Rest service");
+	public Class<FMLTechnologyAdapter> getTechnologyAdapterClass() {
+		return FMLTechnologyAdapter.class;
+	}
 
+	@Override
+	public void initialize(FMLTechnologyAdapter technologyAdapter) throws Exception {
+		this.technologyAdapter = technologyAdapter;
 		ViewPointLibrary viewPointLibrary = technologyAdapter.getViewPointLibrary();
-		FMLModelFactory factory = new FMLModelFactory(null, serviceManager);
+		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
 		viewPointConverter = new PamelaResourceRestService<>(
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
@@ -51,12 +52,13 @@ public class FMLRestService implements RestService {
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
-		Router subRouter = Router.router(vertx);
-		router.mountSubRouter("/ta/" + IdUtils.getTechnologyAdapterId(technologyAdapter), subRouter);
-
-		viewPointConverter.addRoutes(subRouter);
-		virtualModelConverter.addRoutes(subRouter);
+		viewPointConverter.addRoutes(router);
+		virtualModelConverter.addRoutes(router);
 	}
 
-
+	@Override
+	public void complementRoot(String url, JsonObject object) {
+		object.put("viewpointUrl", url + "/viewpoint");
+		object.put("virtualmodelUrl", url + "/virtualmodel");
+	}
 }

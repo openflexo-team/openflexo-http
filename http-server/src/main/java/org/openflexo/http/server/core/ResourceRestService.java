@@ -18,7 +18,7 @@ import org.openflexo.rm.Resource;
 /**
  * Created by charlie on 11/02/2017.
  */
-public class ResourceRestService implements RestService {
+public class ResourceRestService implements RestService<FlexoServiceManager> {
 
 	private ResourceManager resourceManager;
 
