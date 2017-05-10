@@ -26,3 +26,12 @@ function findElementWithAttributeInHierarchy(element, attributeName) {
     return current;
 }
 exports.findElementWithAttributeInHierarchy = findElementWithAttributeInHierarchy;
+function clearElement(element) {
+    var child = element.firstChild;
+    while (child !== null) {
+        element.removeChild(child);
+        child = element.firstChild;
+    }
+}
+exports.clearElement = clearElement;
+//# sourceMappingURL=utils.js.map

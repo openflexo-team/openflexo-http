@@ -95,3 +95,4 @@ openflexo_1.resourceCenters(function (resourceCenters) {
         div.appendChild(createRoot(rc));
     }
 });
+//# sourceMappingURL=browser.js.map

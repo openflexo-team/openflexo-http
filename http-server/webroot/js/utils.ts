@@ -22,3 +22,11 @@ export function findElementWithAttributeInHierarchy(element: HTMLElement, attrib
     }
     return current;   
 }
+
+export function clearElement(element: HTMLElement) {
+    var child = element.firstChild;
+    while (child !== null) {
+        element.removeChild(child);
+        child = element.firstChild;
+    }
+}

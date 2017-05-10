@@ -4,8 +4,13 @@
 
     <link href="/css/openflexo.css" rel="stylesheet"/>
 
+    <script src="/bower_components/system.js/dist/system.js"></script>
 </head>
 <body>
+
+    <h1>Result for <input id='url' type="text" size="80" value='/'></input></h1>
+    <div id='result'></div>
+
     <h1>Technologies adapters</h1>
     <div id="tas"></div>
 
@@ -15,7 +20,10 @@
     <h1>Resources </h1>
     <div id="resources"></div>
 
-    <script src='/js/require.js' data-main='/js/index'></script>
+    <script>
+    SystemJS.config({ packages: { '.': { defaultExtension: 'js' } } });
+    SystemJS.import('js/index').then(null, console.error.bind(console));
+    </script>
 
 </body>
 </html>

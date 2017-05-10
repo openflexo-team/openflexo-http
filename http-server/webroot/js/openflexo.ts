@@ -75,18 +75,25 @@ export function technologyAdapters(callback: (tas: TechnologyAdapter[]) => void)
     call(host + "/ta", callback);
 }
 
-export function call<T>(path: string, callback: (result: T) => void) {
+export function call<T>(
+    path: string, callback: (result: T) => void, 
+    errorCallback: (ev) => void = (ev) => { error(path); }) 
+{
     let request = new XMLHttpRequest();
     request.open("get", host + path);
     request.onload = (ev) => {
         if (request.status >= 200 && request.status < 300) {
-            let json = JSON.parse(request.responseText);
-            callback(<T>json);
+            var first = request.responseText.charAt(0);
+            if (first === '{' || first === '[' ) {
+                let json = JSON.parse(request.responseText);
+                callback(<T>json);
+            }
+            
+        } else {
+            errorCallback(ev);
         }
     }
-    request.onerror = (ev) => {
-        error(path);
-    };
+    request.onerror = errorCallback;
     request.send();
 }
 

@@ -65,18 +65,24 @@ function technologyAdapters(callback) {
     call(exports.host + "/ta", callback);
 }
 exports.technologyAdapters = technologyAdapters;
-function call(path, callback) {
+function call(path, callback, errorCallback) {
+    if (errorCallback === void 0) { errorCallback = function (ev) { error(path); }; }
     var request = new XMLHttpRequest();
     request.open("get", exports.host + path);
     request.onload = function (ev) {
         if (request.status >= 200 && request.status < 300) {
-            var json = JSON.parse(request.responseText);
-            callback(json);
+            var first = request.responseText.charAt(0);
+            if (first === '{' || first === '[') {
+                var json = JSON.parse(request.responseText);
+                callback(json);
+            }
+        }
+        else {
+            errorCallback(ev);
         }
     };
-    request.onerror = function (ev) {
-        error(path);
-    };
+    request.onerror = errorCallback;
     request.send();
 }
 exports.call = call;
+//# sourceMappingURL=openflexo.js.map
