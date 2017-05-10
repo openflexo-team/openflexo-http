@@ -70,7 +70,6 @@ function createHiddenElement(source: any) {
 function createJsonElement(source: any): HTMLElement {
     if (source !== null && typeof source === "object") {
         var all = document.createElement("div");
-    
         if (source["length"] != null) {
             for (let item of source) {
                 all.appendChild(createJsonElement(item));    
@@ -101,6 +100,7 @@ function createJsonElement(source: any): HTMLElement {
 
                 all.appendChild(element);
             }
+            }
         }
         return all;
     } else {
@@ -111,7 +111,11 @@ function createJsonElement(source: any): HTMLElement {
     
 }
 
-function setUrl(url: string) {
+function setUrl(url: string) { 
+    if (url.match("^http://localhost:8080")) {
+        url = url.substring("http://localhost:8080".length);
+    }
+
     var urlInput = <HTMLInputElement>document.getElementById("url");
     urlInput.value = url;
 }

@@ -91,15 +91,18 @@ function createJsonElement(source) {
                 all.appendChild(element);
             }
         }
-        return all;
     }
-    else {
-        var valueCode = document.createElement("code");
-        valueCode.innerText = source;
-        return valueCode;
-    }
+    return all;
+}
+{
+    var valueCode = document.createElement("code");
+    valueCode.innerText = source;
+    return valueCode;
 }
 function setUrl(url) {
+    if (url.match("^http://localhost:8080")) {
+        url = url.substring("http://localhost:8080".length);
+    }
     var urlInput = document.getElementById("url");
     urlInput.value = url;
 }
