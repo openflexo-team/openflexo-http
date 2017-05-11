@@ -49,7 +49,6 @@ import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.IdUtils;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;

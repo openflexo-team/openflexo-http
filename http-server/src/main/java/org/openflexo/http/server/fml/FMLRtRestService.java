@@ -43,8 +43,8 @@ import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
 import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.IdUtils;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
+import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.JsonSerializer;
 
 /**

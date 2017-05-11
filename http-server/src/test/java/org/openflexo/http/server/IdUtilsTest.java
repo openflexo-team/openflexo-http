@@ -2,7 +2,7 @@ package org.openflexo.http.server;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openflexo.http.server.core.IdUtils;
+import org.openflexo.http.server.util.IdUtils;
 
 /**
  * Tests for IdUtils
@@ -21,5 +21,19 @@ public class IdUtilsTest {
 		String encoded = IdUtils.encoreUri(uri);
 		Assert.assertNotNull(encoded);
 		Assert.assertEquals(uri, IdUtils.decodeId(encoded));
+	}
+
+	@Test
+	public void testSanitized() {
+		checkSanitized("FML", "fml");
+		checkSanitized("FML@RT", "fmlrt");
+		checkSanitized("Hello World for test !?!", "helloworldfortest!!");
+	}
+
+
+	private void checkSanitized(String id, String expected) {
+		String sanitized = IdUtils.sanitiseId(id);
+		Assert.assertNotNull(sanitized);
+		Assert.assertEquals(sanitized, expected);
 	}
 }

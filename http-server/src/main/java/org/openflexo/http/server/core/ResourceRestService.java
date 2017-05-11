@@ -13,6 +13,8 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
 import org.openflexo.http.server.RestService;
+import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.JsonUtils;
 import org.openflexo.rm.Resource;
 
 /**

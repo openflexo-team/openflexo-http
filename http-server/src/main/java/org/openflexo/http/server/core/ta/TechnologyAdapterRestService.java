@@ -40,10 +40,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
@@ -52,8 +50,8 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.IdUtils;
-import org.openflexo.http.server.core.JsonUtils;
+import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.JsonUtils;
 
 /**
  * Created by charlie on 11/02/2017.
@@ -81,7 +79,6 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		ServiceLoader<TechnologyAdapterRestComplement> complements = ServiceLoader.load(TechnologyAdapterRestComplement.class);
 
 		// initializes complements
-		List<TechnologyAdapterRestComplement> initializedServices = new ArrayList<>();
 		for (TechnologyAdapterRestComplement<TechnologyAdapter> complement : complements) {
 
 			String name = complement.getClass().getName();
