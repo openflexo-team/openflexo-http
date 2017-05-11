@@ -40,7 +40,7 @@ task copyJars (type: Copy) {
     into appDir.canonicalPath + "/libs"
 }
 
-task deploy (dependsOn: ["cleanApp", "copyJars", "copyWebResources"], type: Sync) {
+task deploy (dependsOn: [":http-server:assemble", "cleanApp", "copyJars", "copyWebResources"], type: Sync) {
     from appDir
     into deployDir
 }
