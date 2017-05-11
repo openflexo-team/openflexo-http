@@ -112,8 +112,8 @@ function createJsonElement(source: any): HTMLElement {
 }
 
 function setUrl(url: string) { 
-    if (url.match("^http://localhost:8080")) {
-        url = url.substring("http://localhost:8080".length);
+    if (url.match(document.location.origin)) {
+        url = url.substring(document.location.origin.length);
     }
 
     var urlInput = <HTMLInputElement>document.getElementById("url");
@@ -121,8 +121,6 @@ function setUrl(url: string) {
 }
 
 function retreiveUrl(url: string) {
-    console.log("Url is " + url);
-
     var urlInput = <HTMLInputElement>document.getElementById("url");
     var result = <HTMLDivElement>document.getElementById("result");
     clearElement(result);

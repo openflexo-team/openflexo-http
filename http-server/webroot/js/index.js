@@ -100,14 +100,13 @@ function createJsonElement(source) {
     }
 }
 function setUrl(url) {
-    if (url.match("^http://localhost:8080")) {
-        url = url.substring("http://localhost:8080".length);
+    if (url.match(document.location.origin)) {
+        url = url.substring(document.location.origin.length);
     }
     var urlInput = document.getElementById("url");
     urlInput.value = url;
 }
 function retreiveUrl(url) {
-    console.log("Url is " + url);
     var urlInput = document.getElementById("url");
     var result = document.getElementById("result");
     utils_1.clearElement(result);
