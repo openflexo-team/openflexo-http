@@ -42,10 +42,11 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
+import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RestService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
-import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.http.server.util.JsonSerializer;
+import org.openflexo.http.server.util.JsonUtils;
 
 /**
  * Created by charlie on 08/02/2017.
@@ -54,20 +55,18 @@ public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTe
 
 	private FMLRTTechnologyAdapter technologyAdapter;
 
-	private JsonSerializer serializer;
-
 	@Override
 	public Class<FMLRTTechnologyAdapter> getTechnologyAdapterClass() {
 		return FMLRTTechnologyAdapter.class;
 	}
+
 	@Override
-	public void initialize(FMLRTTechnologyAdapter technologyAdapter) throws Exception {
+	public void initialize(HttpService service, FMLRTTechnologyAdapter technologyAdapter) throws Exception {
 		this.technologyAdapter = technologyAdapter;
-		serializer = new JsonSerializer(technologyAdapter.getViewResourceFactory());
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
-		router.get("/libraries").produces(RestService.JSON).handler(this::serveLibraryList);
+		router.get("/library").produces(RestService.JSON).handler(this::serveLibraryList);
 	}
 
 
@@ -75,9 +74,7 @@ public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTe
 		try {
 			JsonArray result = new JsonArray();
 			for (ViewLibrary served : technologyAdapter.getViewLibraries()) {
-				String id = IdUtils.encoreUri(served.getDefaultBaseURI());
-				String url = context.request().path() + "/" + id;
-				Object vpJson = serializer.toJson(served, id, url);
+				Object vpJson = JsonUtils.getRepositoryDescription(served);
 				result.add(vpJson);
 			}
 			context.response().end(result.encodePrettily());
@@ -90,5 +87,10 @@ public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTe
 	@Override
 	public void complementRoot(String url, JsonObject object) {
 		object.put("librariesUrl", url + "/libraries");
+	}
+
+	@Override
+	public void complementResource(TechnologyAdapterResource resource, JsonObject object) {
+
 	}
 }

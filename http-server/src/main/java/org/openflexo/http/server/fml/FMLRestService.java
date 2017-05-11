@@ -11,7 +11,11 @@ import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
+import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
@@ -30,15 +34,17 @@ public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechno
 	}
 
 	@Override
-	public void initialize(FMLTechnologyAdapter technologyAdapter) throws Exception {
+	public void initialize(HttpService service,FMLTechnologyAdapter technologyAdapter) throws Exception {
 		this.technologyAdapter = technologyAdapter;
 		ViewPointLibrary viewPointLibrary = technologyAdapter.getViewPointLibrary();
 		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
+
+		TechnologyAdapterRestService taService = service.getTechnologyAdapterRestService();
 		viewPointConverter = new PamelaResourceRestService<>(
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
 			viewPointLibrary::getViewPointResource,
-			ViewPoint.class, factory
+			ViewPoint.class, taService, factory
 		);
 		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
 
@@ -46,7 +52,7 @@ public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechno
 			"/virtualmodel",
 			() -> Collections.emptyList(),
 			viewPointLibrary::getVirtualModelResource,
-			VirtualModel.class, factory
+			VirtualModel.class, taService, factory
 		);
 	}
 
@@ -59,5 +65,14 @@ public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechno
 	public void complementRoot(String url, JsonObject object) {
 		object.put("viewpointUrl", url + "/viewpoint");
 		object.put("virtualmodelUrl", url + "/virtualmodel");
+	}
+
+	@Override
+	public void complementResource(TechnologyAdapterResource resource, JsonObject object) {
+		if (resource instanceof ViewPointResource) {
+			object.put("modelUrl", "/ta/fml/viewpoint/" + IdUtils.encoreUri(resource.getURI()));
+		} else if (resource instanceof VirtualModelResource) {
+			object.put("modelUrl", "/ta/fml/virtualmodel/" + IdUtils.encoreUri(resource.getURI()));
+		}
 	}
 }

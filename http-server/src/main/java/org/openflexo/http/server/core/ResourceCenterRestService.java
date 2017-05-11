@@ -9,7 +9,9 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
+import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.JsonUtils;
 
@@ -20,9 +22,12 @@ public class ResourceCenterRestService implements RestService<FlexoServiceManage
 
 	private FlexoResourceCenterService resourceCenterService;
 
+	private TechnologyAdapterRestService technologyAdapterRestService;
+
 	@Override
-	public void initialize(FlexoServiceManager serviceManager) throws Exception {
+	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
 		resourceCenterService = serviceManager.getResourceCenterService();
+		technologyAdapterRestService = service.getTechnologyAdapterRestService();
 	}
 
 	@Override
@@ -61,7 +66,7 @@ public class ResourceCenterRestService implements RestService<FlexoServiceManage
 		if (resourceCenter != null) {
 			JsonArray result = new JsonArray();
 			for (FlexoResource<?> resource : resourceCenter.getAllResources(null)) {
-				result.add(JsonUtils.getResourceDescription(resource));
+				result.add(JsonUtils.getResourceDescription(resource, technologyAdapterRestService));
 			}
 			context.response().end(result.encodePrettily());
 		} else {
@@ -114,7 +119,7 @@ public class ResourceCenterRestService implements RestService<FlexoServiceManage
 					else {
 						FlexoResource resource = resourceCenter.getResource(child, FlexoResource.class);
 						if (resource != null) {
-							result.add(JsonUtils.getResourceDescription(resource));
+							result.add(JsonUtils.getResourceDescription(resource, technologyAdapterRestService));
 						}
 					}
 				}

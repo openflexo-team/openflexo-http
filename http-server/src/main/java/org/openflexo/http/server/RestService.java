@@ -11,7 +11,7 @@ public interface RestService<Context> {
 
 	String JSON = "application/json";
 
-	void initialize(Context context) throws Exception;
+	void initialize(HttpService service, Context context) throws Exception;
 
 	void addRoutes(Vertx vertx, Router router);
 

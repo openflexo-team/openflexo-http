@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RestService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.JsonUtils;
@@ -63,10 +64,10 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 	private TechnologyAdapterService technologyAdapterService;
 
 	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
-	private final Map<String, TechnologyAdapterRestComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
+	private final Map<TechnologyAdapter, TechnologyAdapterRestComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
 
 	@Override
-	public void initialize(FlexoServiceManager serviceManager) throws Exception {
+	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
 		technologyAdapterService = serviceManager.getTechnologyAdapterService();
 
 		Map<TechnologyAdapter, String> ids = new HashMap<>();
@@ -88,9 +89,9 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 				TechnologyAdapter technologyAdapter = technologyAdapterService.getTechnologyAdapter(technologyAdapterClass);
 				if (technologyAdapter != null) {
 					logger.log(Level.INFO, "Initializing Technology Adapter complement " + name);
-					complement.initialize(technologyAdapter);
+					complement.initialize(service, technologyAdapter);
 
-					complementMap.put(ids.get(technologyAdapter), complement);
+					complementMap.put(technologyAdapter, complement);
 				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Unable to initialize Technology Adapter complement " + name, e);
@@ -98,14 +99,20 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		}
 	}
 
+	public TechnologyAdapterRestComplement<TechnologyAdapter> getComplement(TechnologyAdapter adapter) {
+		if (adapter == null) return null;
+		return complementMap.get(adapter);
+	}
+
 	@Override
 	public void addRoutes(Vertx vertx, Router router) {
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
-		for (Map.Entry<String, TechnologyAdapterRestComplement<TechnologyAdapter>> entry : complementMap.entrySet()) {
+		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRestComplement<TechnologyAdapter>> entry : complementMap.entrySet()) {
 			Router subRouter = Router.router(vertx);
-			router.mountSubRouter("/ta/" + entry.getKey(), subRouter);
+			String route = "/ta/" + IdUtils.getTechnologyAdapterId(entry.getKey());
+			router.mountSubRouter(route, subRouter);
 			entry.getValue().addRoutes(vertx, subRouter);
 		}
 	}
@@ -113,8 +120,8 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 	private void serveTechnologyAdapterList(RoutingContext context) {
 		JsonArray result = new JsonArray();
 		for (Map.Entry<String, TechnologyAdapter> entry : technologyAdapterMap.entrySet()) {
-			String id = entry.getKey();
-			result.add(JsonUtils.getTechnologyAdapterDescription(id, entry.getValue(), complementMap.get(id)));
+			TechnologyAdapter technologyAdapter = entry.getValue();
+			result.add(JsonUtils.getTechnologyAdapterDescription(entry.getKey(), technologyAdapter, complementMap.get(technologyAdapter)));
 		}
 		context.response().end(result.encodePrettily());
 	}
@@ -123,8 +130,7 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		String id = context.request().getParam(("taid"));
 		TechnologyAdapter technologyAdapter = technologyAdapterMap.get(id);
 		if (technologyAdapter != null) {
-			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, complementMap.get(id));
-
+			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, complementMap.get(technologyAdapter));
 			context.response().end(object.encodePrettily());
 		}
 		else {

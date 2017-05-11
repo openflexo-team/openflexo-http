@@ -43,6 +43,7 @@ import java.util.List;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.ResourceData;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
 import org.openflexo.model.annotations.XMLAttribute;
@@ -58,9 +59,12 @@ import org.openflexo.model.factory.ProxyMethodHandler;
  */
 public class JsonSerializer {
 
+	private final TechnologyAdapterRestService service;
+
 	private final ModelFactory factory;
 
-	public JsonSerializer(ModelFactory factory) {
+	public JsonSerializer(TechnologyAdapterRestService service, ModelFactory factory) {
+		this.service = service;
 		this.factory = factory;
 	}
 
@@ -145,7 +149,7 @@ public class JsonSerializer {
 		if (value instanceof ResourceData) {
 			/*JsonObject result = new JsonObject();
 			ResourceData data = (ResourceData) value;*/
-			return JsonUtils.getResourceDescription(((ResourceData) value).getResource());
+			return JsonUtils.getResourceDescription(((ResourceData) value).getResource(), service);
 		} else if (value instanceof FlexoObject) {
 			FlexoObject flexoObject = (FlexoObject) value;
 			String id = Long.toString(flexoObject.getFlexoID());

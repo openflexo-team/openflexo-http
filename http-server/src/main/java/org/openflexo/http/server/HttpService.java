@@ -15,6 +15,7 @@ import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
 
 /**
  * HTTP Service for OpenFlexo
@@ -30,6 +31,8 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	private final HttpServerOptions serverOptions;
 
 	private HttpServer server = null;
+
+	private TechnologyAdapterRestService technologyAdapterRestService = null;
 
 	public static class Options {
 		public int port = 8080;
@@ -49,13 +52,13 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		FlexoServiceManager serviceManager = getServiceManager();
 		List<TechnologyAdapter> technologyAdapters = serviceManager.getTechnologyAdapterService().getTechnologyAdapters();
 		for (TechnologyAdapter ta : technologyAdapters) {
-			System.out.println("Activating " + ta.getName());
+			logger.info("Activating " + ta.getName());
 			ta.activate();
 		}
 
 		for (FlexoResourceCenter<?> resourceCenter : serviceManager.getResourceCenterService().getResourceCenters()) {
 			for (TechnologyAdapter technologyAdapter : technologyAdapters) {
-				System.out.println("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
+				logger.info("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
 				resourceCenter.activateTechnology(technologyAdapter);
 			}
 		}
@@ -65,14 +68,29 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		// gets REST services
 		ServiceLoader<RestService> restServices = ServiceLoader.load(RestService.class);
 
+		// searches for technology adapter service
+		for (RestService restService : restServices) {
+			if (restService instanceof TechnologyAdapterRestService) {
+				technologyAdapterRestService = (TechnologyAdapterRestService) restService;
+			}
+		}
+
+		if (technologyAdapterRestService == null) {
+			throw new RuntimeException("Fatal error: TechnologyAdapterRestService isn't present in the classpath");
+		}
+
 		// initializes REST services
 		List<RestService> initializedServices = new ArrayList<>();
 		for (RestService restService : restServices) {
 			String name = restService.getClass().getName();
 			try {
 				logger.log(Level.INFO, "Initializing REST service " + name);
-				restService.initialize(serviceManager);
+				restService.initialize(this, serviceManager);
 				initializedServices.add(restService);
+
+				if (restService instanceof TechnologyAdapterRestService) {
+					technologyAdapterRestService = (TechnologyAdapterRestService) restService;
+				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Unable to initialize REST service " + name, e);
 			}
@@ -93,6 +111,10 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
+	}
+
+	public TechnologyAdapterRestService getTechnologyAdapterRestService() {
+		return technologyAdapterRestService;
 	}
 
 	@Override

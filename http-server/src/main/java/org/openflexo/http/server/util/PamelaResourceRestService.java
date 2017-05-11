@@ -49,6 +49,7 @@ import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
@@ -74,18 +75,19 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	private Consumer<D> postLoader = null;
 
 	public PamelaResourceRestService(
-			String prefix,
-			Supplier<Collection<R>> supplier,
-			Function<String, R> finder,
-			Class<D> rootClass, ModelFactory factory
-		) throws ModelDefinitionException
-	{
+		String prefix,
+		Supplier<Collection<R>> supplier,
+		Function<String, R> finder,
+		Class<D> rootClass,
+		TechnologyAdapterRestService service,
+		ModelFactory factory
+	) throws ModelDefinitionException {
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
 		this.rootClass = rootClass;
 		this.factory = factory;
-		this.serializer = new JsonSerializer(factory);
+		this.serializer = new JsonSerializer(service, factory);
 	}
 
 	public void setPostLoader(Consumer<D> postLoader) {

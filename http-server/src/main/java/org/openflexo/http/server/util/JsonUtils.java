@@ -38,9 +38,12 @@ package org.openflexo.http.server.util;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
 
 /**
  * Utility methods for JSON handling
@@ -60,6 +63,25 @@ public class JsonUtils {
 		return centerDescription;
 	}
 
+	public static JsonObject getRepositoryDescription(ResourceRepository<?,?> repository) {
+		String uri = repository.getDefaultBaseURI();
+		String id = IdUtils.encoreUri(uri);
+		JsonObject description = new JsonObject();
+		description.put("name", repository.getDisplayableName());
+		description.put("type", "ResourceRepository");
+		description.put("uri", uri);
+		description.put("id", id);
+		description.put("url", "/rc/" + id);
+		description.put("resourceUrl", "/rc/" + id + "/resource");
+		if (repository instanceof TechnologyAdapterResourceRepository) {
+			String taId = IdUtils.getTechnologyAdapterId(((TechnologyAdapterResourceRepository) repository).getTechnologyAdapter());
+			description.put("technologyAdapterId", taId);
+			description.put("technologyAdapterUrl", "/ta/"+taId);
+		}
+		return description;
+
+	}
+
 	public static JsonObject getFolderDescription(String name, String path, String rcId) {
 		JsonObject folderDescription = new JsonObject();
 		folderDescription.put("name", name);
@@ -74,7 +96,7 @@ public class JsonUtils {
 		return folderDescription;
 	}
 
-	public static JsonObject getResourceDescription(FlexoResource<?> resource) {
+	public static JsonObject getResourceDescription(FlexoResource<?> resource, TechnologyAdapterRestService service) {
 		String uri = resource.getURI();
 		String id = IdUtils.encoreUri(uri);
 		JsonObject resourceDescription = new JsonObject();
@@ -92,9 +114,16 @@ public class JsonUtils {
 		resourceDescription.put("url", "/resource/" + id);
 		resourceDescription.put("contentUrl", "/resource/" + id + "/contents");
 		if (resource instanceof TechnologyAdapterResource) {
-			String taId = IdUtils.getTechnologyAdapterId(((TechnologyAdapterResource) resource).getTechnologyAdapter());
+			TechnologyAdapterResource technologyAdapterResource = (TechnologyAdapterResource) resource;
+			TechnologyAdapter technologyAdapter = technologyAdapterResource.getTechnologyAdapter();
+			String taId = IdUtils.getTechnologyAdapterId(technologyAdapter);
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
+
+			TechnologyAdapterRestComplement complement = service.getComplement(technologyAdapter);
+			if (complement != null) {
+				complement.complementResource(technologyAdapterResource, resourceDescription);
+			}
 		}
 		return resourceDescription;
 	}

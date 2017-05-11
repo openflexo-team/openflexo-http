@@ -37,6 +37,7 @@ package org.openflexo.http.server.core.ta;
 
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.RestService;
 
 /**
@@ -47,4 +48,6 @@ public interface TechnologyAdapterRestComplement<TA extends TechnologyAdapter> e
 	Class<TA> getTechnologyAdapterClass();
 
 	void complementRoot(String url, JsonObject object);
+
+	void complementResource(TechnologyAdapterResource resource, JsonObject object);
 }
