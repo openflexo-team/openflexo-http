@@ -41,7 +41,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javassist.util.proxy.ProxyObject;
-import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.model.ModelEntity;
@@ -68,7 +67,7 @@ public class JsonSerializer {
 		this.factory = factory;
 	}
 
-	public Object toJson(Object object, String id, String url) throws ModelDefinitionException, InvalidDataException {
+	public Object toJson(Object object, String baseUrl) throws ModelDefinitionException, InvalidDataException {
 		if (object == null) return null;
 
 		Class<?> type = object.getClass();
@@ -83,23 +82,11 @@ public class JsonSerializer {
 			return object.toString();
 		}
 		else if (object instanceof ProxyObject) {
+			JsonObject result = new JsonObject();
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
 			@SuppressWarnings({"unchecked", "rawtype"}) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
-			JsonObject result = new JsonObject();
 
-			// adds id and url for object
-			if (id != null) result.put("id", id);
-
-			String xmlTag = modelEntity.getXMLTag();
-			if (xmlTag != null) {
-				xmlTag = xmlTag.toLowerCase();
-				result.put("type", xmlTag);
-			}
-			if (url != null) {
-				result.put("url", url);
-			} else {
-				result.put("url", xmlTag + "/" + id);
-			}
+			identifyFlexoObject(result, object, baseUrl);
 
 			Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
 			while (iterator.hasNext()) {
@@ -108,18 +95,17 @@ public class JsonSerializer {
 					XMLAttribute xmlAttribute = property.getXMLAttribute();
 					XMLElement xmlElement = property.getXMLElement();
 
-					boolean reference = xmlAttribute == null;
 					Object propertyValue = handler.invokeGetter(property);
 					Object transformed = null;
 					switch (property.getCardinality()) {
 						case SINGLE: {
-							transformed = toJsonInternalObject(propertyValue, reference);
+							transformed = toJsonInternalObject(propertyValue, baseUrl);
 							break;
 						}
 						case LIST: {
 							List<Object> collected = new ArrayList<>();
 							for (Object child : (List) propertyValue) {
-								collected.add(toJsonInternalObject(child, reference));
+								collected.add(toJsonInternalObject(child, baseUrl));
 							}
 							transformed = new JsonArray(collected);
 							break;
@@ -145,23 +131,37 @@ public class JsonSerializer {
 		}
 	}
 
-	private Object toJsonInternalObject(Object value, boolean reference) throws InvalidDataException, ModelDefinitionException {
-		if (value instanceof ResourceData) {
-			/*JsonObject result = new JsonObject();
-			ResourceData data = (ResourceData) value;*/
+	private Object toJsonInternalObject(Object value, String baseUrl) throws InvalidDataException, ModelDefinitionException {
+		if (value == null) {
+			return null;
+		} else if (value instanceof ResourceData) {
 			return JsonUtils.getResourceDescription(((ResourceData) value).getResource(), service);
-		} else if (value instanceof FlexoObject) {
-			FlexoObject flexoObject = (FlexoObject) value;
-			String id = Long.toString(flexoObject.getFlexoID());
-			String url = "";
-			return reference ? flexoObject.getFlexoID() : toJson(value, id, url);
-		} else if (!reference) {
-			return toJson(value, null, null);
-		} else if (value == null) {
-			return null;
+		} else if (factory.getStringEncoder().isConvertable(value.getClass())) {
+			return factory.getStringEncoder().toString(value);
+		} else if (value instanceof ProxyObject){
+			JsonObject result = new JsonObject();
+			identifyFlexoObject(result, value, baseUrl);
+			return result;
 		} else {
-			//throw new InvalidDataException("Can't reference '" + value + "'");
-			return null;
+			return IdUtils.getId(value);
+		}
+	}
+
+	private void identifyFlexoObject(JsonObject result, Object object, String baseUrl) {
+		ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
+		@SuppressWarnings({"unchecked", "rawtype"}) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
+
+		String id = IdUtils.getId(object);
+		if (id != null) result.put("id", id);
+
+		String xmlTag = modelEntity.getXMLTag();
+		if (xmlTag != null) {
+			xmlTag = xmlTag.toLowerCase();
+			result.put("type", xmlTag);
+		}
+
+		if (baseUrl != null && id != null) {
+			result.put("baseUrl", baseUrl + "/" + id);
 		}
 	}
 }

@@ -44,6 +44,8 @@ import java.util.Base64.Encoder;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import org.openflexo.foundation.FlexoObject;
+import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
 /**
@@ -53,6 +55,17 @@ public class IdUtils {
 
 	private final static Encoder encoder = Base64.getUrlEncoder().withoutPadding();
 	private final static Decoder urlDecoder = Base64.getUrlDecoder();
+
+
+	public static String getId(Object object) {
+		if (object instanceof FlexoResource) {
+			return IdUtils.encoreUri(((FlexoResource) object).getURI());
+		}
+		if (object instanceof FlexoObject) {
+			return Long.toString(((FlexoObject) object).getFlexoID());
+		}
+		return null;
+	}
 
 	public static String encoreUri(String uri) {
 		return encoder.encodeToString(uri.getBytes(StandardCharsets.ISO_8859_1));

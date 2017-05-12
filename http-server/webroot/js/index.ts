@@ -105,7 +105,7 @@ function createJsonElement(source: any): HTMLElement {
         return all;
     } else {
         let valueCode = document.createElement("code");
-        valueCode.innerText = source;
+        valueCode.innerText = source + " ";
        return valueCode;
     }
     

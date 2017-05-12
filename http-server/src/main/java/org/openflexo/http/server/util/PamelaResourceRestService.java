@@ -40,7 +40,6 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -50,7 +49,6 @@ import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
-import org.openflexo.model.ModelEntity;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
 import org.openflexo.model.factory.ModelFactory;
@@ -97,28 +95,15 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	public void addRoutes(Router router) {
 		router.get(prefix).produces(RouteService.JSON).handler(this::serveResourceList);
 		router.get(prefix + "/:id").produces(RouteService.JSON).handler(this::serveRoot);
-
-		ModelEntity<?> rootEntity = factory.getModelContext().getModelEntity(rootClass);
-		Iterator<ModelEntity> entities = factory.getModelContext().getEntities();
-		while (entities.hasNext()) {
-			ModelEntity<?> entity = entities.next();
-			if (entity != rootEntity && entity.getXMLTag() != null) {
- 				String path = prefix + "/:id/" + entity.getXMLTag().toLowerCase();
-				router.get(path).produces(RouteService.JSON).handler((context) -> serveEntityList(entity, context));
-				router.get(path + "/:eid").produces(RouteService.JSON).handler((context) -> serveEntity(entity, context));
-			}
-
-		}
+		router.get(prefix + "/:id/object").produces(RouteService.JSON).handler(this::serveEntityList);
+		router.get(prefix + "/:id/object/:eid").produces(RouteService.JSON).handler(this::serveEntity);
 	}
 
 	private void serveResourceList(RoutingContext context) {
 		try {
 			JsonArray result = new JsonArray();
 			for (R served : supplier.get()) {
-				String id = IdUtils.encoreUri(served.getURI());
-				String url = context.request().path() + "/" + id;
-				Object vpJson = serializer.toJson(served, id, url);
-				result.add(vpJson);
+				result.add(serializer.toJson(served, context.request().path()));
 			}
 			context.response().end(result.encodePrettily());
 
@@ -158,7 +143,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			R resource = getLoadedResource(id);
 			if (resource != null) {
 				D data = resource.getResourceData(null);
-				JsonObject vpJson = (JsonObject) serializer.toJson(data, id, context.request().path());
+				JsonObject vpJson = (JsonObject) serializer.toJson(data, context.request().path());
 				context.response().end(vpJson.encodePrettily());
 			} else {
 				notFound(context);
@@ -168,7 +153,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		}
 	}
 
-	private void serveEntityList(ModelEntity entity, RoutingContext context) {
+	private void serveEntityList(RoutingContext context) {
 		try {
 			String id = context.request().getParam(("id"));
 			PamelaResource resource = getLoadedResource(id);
@@ -176,27 +161,21 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				List<Object> embeddedObjects = resource.getFactory().getEmbeddedObjects(resource.getLoadedResourceData(), EmbeddingType.CLOSURE);
 				JsonArray result = new JsonArray();
 				for (Object object : embeddedObjects) {
-					// TODO check type
-					result.add(serializer.toJson(object, null, null));
-
+					result.add(serializer.toJson(object, context.request().path()));
 				}
 				context.response().end(result.encodePrettily());
 
 			} else {
 				notFound(context);
 			}
-			JsonObject vpJson = (JsonObject) serializer.toJson(resource, id, context.request().path());
-			context.response().end(vpJson.encodePrettily());
 		} catch (NumberFormatException e) {
 			notFound(context);
 		} catch (Exception e) {
 			context.fail(e);
 		}
-
-		//context.response().end("{ 'message': 'complete entity list not supported' }");
 	}
 
-	private void serveEntity(ModelEntity entity, RoutingContext context) {
+	private void serveEntity(RoutingContext context) {
 		try {
 			String id = context.request().getParam(("id"));
 			String eid = context.request().getParam(("eid"));
@@ -207,7 +186,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				FlexoObject object = resource.getFlexoObject(entityId, "FLX");
 				if (object != null) {
 					// TODO check type
-					JsonObject vpJson = (JsonObject) serializer.toJson(object, id, /*context.request().path()*/ null);
+					JsonObject vpJson = (JsonObject) serializer.toJson(object, getBaseUrl(context));
 					context.response().end(vpJson.encodePrettily());
 				} else {
 					notFound(context);
@@ -216,8 +195,6 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			} else {
 				notFound(context);
 			}
-			JsonObject vpJson = (JsonObject) serializer.toJson(resource, id, context.request().path());
-			context.response().end(vpJson.encodePrettily());
 		} catch (NumberFormatException e) {
 			notFound(context);
 		} catch (Exception e) {
@@ -225,7 +202,10 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		}
 	}
 
-
+	private String getBaseUrl(RoutingContext context) {
+		String path = context.request().path();
+		return path.substring(0, path.lastIndexOf('/'));
+	}
 
 	private void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();
