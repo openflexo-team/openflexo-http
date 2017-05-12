@@ -44,14 +44,14 @@ import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
+import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.util.JsonUtils;
 
 /**
  * Created by charlie on 08/02/2017.
  */
-public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTechnologyAdapter> {
+public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRTTechnologyAdapter> {
 
 	private FMLRTTechnologyAdapter technologyAdapter;
 
@@ -66,7 +66,7 @@ public class FMLRtRestService implements TechnologyAdapterRestComplement<FMLRTTe
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
-		router.get("/library").produces(RestService.JSON).handler(this::serveLibraryList);
+		router.get("/library").produces(RouteService.JSON).handler(this::serveLibraryList);
 	}
 
 

@@ -42,8 +42,8 @@ import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 
 /**
  * Utility methods for JSON handling
@@ -96,7 +96,7 @@ public class JsonUtils {
 		return folderDescription;
 	}
 
-	public static JsonObject getResourceDescription(FlexoResource<?> resource, TechnologyAdapterRestService service) {
+	public static JsonObject getResourceDescription(FlexoResource<?> resource, TechnologyAdapterRouteService service) {
 		String uri = resource.getURI();
 		String id = IdUtils.encoreUri(uri);
 		JsonObject resourceDescription = new JsonObject();
@@ -120,7 +120,7 @@ public class JsonUtils {
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 
-			TechnologyAdapterRestComplement complement = service.getComplement(technologyAdapter);
+			TechnologyAdapterRouteComplement complement = service.getComplement(technologyAdapter);
 			if (complement != null) {
 				complement.complementResource(technologyAdapterResource, resourceDescription);
 			}
@@ -128,7 +128,7 @@ public class JsonUtils {
 		return resourceDescription;
 	}
 
-	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRestComplement complement) {
+	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRouteComplement complement) {
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", adapter.getName());
 		resourceDescription.put("type", "TechnologyAdapter");

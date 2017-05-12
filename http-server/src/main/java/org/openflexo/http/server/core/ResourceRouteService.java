@@ -13,8 +13,8 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.JsonUtils;
 import org.openflexo.rm.Resource;
@@ -22,11 +22,11 @@ import org.openflexo.rm.Resource;
 /**
  * Created by charlie on 11/02/2017.
  */
-public class ResourceRestService implements RestService<FlexoServiceManager> {
+public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 
 	private ResourceManager resourceManager;
 
-	private TechnologyAdapterRestService technologyAdapterRestService;
+	private TechnologyAdapterRouteService technologyAdapterRestService;
 
 	@Override
 	public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {

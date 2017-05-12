@@ -43,7 +43,7 @@ import java.util.List;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.ResourceData;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
 import org.openflexo.model.annotations.XMLAttribute;
@@ -59,11 +59,11 @@ import org.openflexo.model.factory.ProxyMethodHandler;
  */
 public class JsonSerializer {
 
-	private final TechnologyAdapterRestService service;
+	private final TechnologyAdapterRouteService service;
 
 	private final ModelFactory factory;
 
-	public JsonSerializer(TechnologyAdapterRestService service, ModelFactory factory) {
+	public JsonSerializer(TechnologyAdapterRouteService service, ModelFactory factory) {
 		this.service = service;
 		this.factory = factory;
 	}

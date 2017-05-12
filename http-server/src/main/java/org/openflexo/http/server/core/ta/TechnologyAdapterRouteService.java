@@ -50,21 +50,21 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.RestService;
+import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.JsonUtils;
 
 /**
  * Created by charlie on 11/02/2017.
  */
-public class TechnologyAdapterRestService implements RestService<FlexoServiceManager> {
+public class TechnologyAdapterRouteService implements RouteService<FlexoServiceManager> {
 
-	private static Logger logger = Logger.getLogger(TechnologyAdapterRestService.class.getPackage().getName());
+	private static Logger logger = Logger.getLogger(TechnologyAdapterRouteService.class.getPackage().getName());
 
 	private TechnologyAdapterService technologyAdapterService;
 
 	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
-	private final Map<TechnologyAdapter, TechnologyAdapterRestComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
+	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
 
 	@Override
 	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
@@ -77,10 +77,10 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 			ids.put(technologyAdapter, identifier);
 		}
 
-		ServiceLoader<TechnologyAdapterRestComplement> complements = ServiceLoader.load(TechnologyAdapterRestComplement.class);
+		ServiceLoader<TechnologyAdapterRouteComplement> complements = ServiceLoader.load(TechnologyAdapterRouteComplement.class);
 
 		// initializes complements
-		for (TechnologyAdapterRestComplement<TechnologyAdapter> complement : complements) {
+		for (TechnologyAdapterRouteComplement<TechnologyAdapter> complement : complements) {
 
 			String name = complement.getClass().getName();
 			try {
@@ -99,7 +99,7 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		}
 	}
 
-	public TechnologyAdapterRestComplement<TechnologyAdapter> getComplement(TechnologyAdapter adapter) {
+	public TechnologyAdapterRouteComplement<TechnologyAdapter> getComplement(TechnologyAdapter adapter) {
 		if (adapter == null) return null;
 		return complementMap.get(adapter);
 	}
@@ -109,7 +109,7 @@ public class TechnologyAdapterRestService implements RestService<FlexoServiceMan
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
-		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRestComplement<TechnologyAdapter>> entry : complementMap.entrySet()) {
+		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> entry : complementMap.entrySet()) {
 			Router subRouter = Router.router(vertx);
 			String route = "/ta/" + IdUtils.getTechnologyAdapterId(entry.getKey());
 			router.mountSubRouter(route, subRouter);

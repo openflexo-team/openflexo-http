@@ -7,7 +7,7 @@ import io.vertx.ext.web.RoutingContext;
 /**
  * Interface allowing to extends HTTP REST service
  */
-public interface RestService<Context> {
+public interface RouteService<Context> {
 
 	String JSON = "application/json";
 

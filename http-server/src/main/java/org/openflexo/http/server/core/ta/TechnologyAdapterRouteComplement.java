@@ -38,12 +38,12 @@ package org.openflexo.http.server.core.ta;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
-import org.openflexo.http.server.RestService;
+import org.openflexo.http.server.RouteService;
 
 /**
  * Interface allowing to extends Technology Adapter REST service
  */
-public interface TechnologyAdapterRestComplement<TA extends TechnologyAdapter> extends RestService<TA> {
+public interface TechnologyAdapterRouteComplement<TA extends TechnologyAdapter> extends RouteService<TA> {
 
 	Class<TA> getTechnologyAdapterClass();
 

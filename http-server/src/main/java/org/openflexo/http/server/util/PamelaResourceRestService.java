@@ -48,8 +48,8 @@ import java.util.function.Supplier;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
-import org.openflexo.http.server.RestService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
@@ -79,7 +79,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		Supplier<Collection<R>> supplier,
 		Function<String, R> finder,
 		Class<D> rootClass,
-		TechnologyAdapterRestService service,
+		TechnologyAdapterRouteService service,
 		ModelFactory factory
 	) throws ModelDefinitionException {
 		this.prefix = prefix;
@@ -95,8 +95,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	}
 
 	public void addRoutes(Router router) {
-		router.get(prefix).produces(RestService.JSON).handler(this::serveResourceList);
-		router.get(prefix + "/:id").produces(RestService.JSON).handler(this::serveRoot);
+		router.get(prefix).produces(RouteService.JSON).handler(this::serveResourceList);
+		router.get(prefix + "/:id").produces(RouteService.JSON).handler(this::serveRoot);
 
 		ModelEntity<?> rootEntity = factory.getModelContext().getModelEntity(rootClass);
 		Iterator<ModelEntity> entities = factory.getModelContext().getEntities();
@@ -104,8 +104,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			ModelEntity<?> entity = entities.next();
 			if (entity != rootEntity && entity.getXMLTag() != null) {
  				String path = prefix + "/:id/" + entity.getXMLTag().toLowerCase();
-				router.get(path).produces(RestService.JSON).handler((context) -> serveEntityList(entity, context));
-				router.get(path + "/:eid").produces(RestService.JSON).handler((context) -> serveEntity(entity, context));
+				router.get(path).produces(RouteService.JSON).handler((context) -> serveEntityList(entity, context));
+				router.get(path + "/:eid").produces(RouteService.JSON).handler((context) -> serveEntity(entity, context));
 			}
 
 		}

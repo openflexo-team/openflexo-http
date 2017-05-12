@@ -13,15 +13,15 @@ import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestComplement;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
  * Created by charlie on 08/02/2017.
  */
-public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechnologyAdapter> {
+public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTechnologyAdapter> {
 
 	private FMLTechnologyAdapter technologyAdapter;
 
@@ -39,7 +39,7 @@ public class FMLRestService implements TechnologyAdapterRestComplement<FMLTechno
 		ViewPointLibrary viewPointLibrary = technologyAdapter.getViewPointLibrary();
 		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
 
-		TechnologyAdapterRestService taService = service.getTechnologyAdapterRestService();
+		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 		viewPointConverter = new PamelaResourceRestService<>(
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,

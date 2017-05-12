@@ -15,7 +15,7 @@ import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRestService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 
 /**
  * HTTP Service for OpenFlexo
@@ -32,7 +32,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	private HttpServer server = null;
 
-	private TechnologyAdapterRestService technologyAdapterRestService = null;
+	private TechnologyAdapterRouteService technologyAdapterRestService = null;
 
 	public static class Options {
 		public int port = 8080;
@@ -66,30 +66,30 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		Router router = Router.router(vertx);
 
 		// gets REST services
-		ServiceLoader<RestService> restServices = ServiceLoader.load(RestService.class);
+		ServiceLoader<RouteService> restServices = ServiceLoader.load(RouteService.class);
 
 		// searches for technology adapter service
-		for (RestService restService : restServices) {
-			if (restService instanceof TechnologyAdapterRestService) {
-				technologyAdapterRestService = (TechnologyAdapterRestService) restService;
+		for (RouteService routeService : restServices) {
+			if (routeService instanceof TechnologyAdapterRouteService) {
+				technologyAdapterRestService = (TechnologyAdapterRouteService) routeService;
 			}
 		}
 
 		if (technologyAdapterRestService == null) {
-			throw new RuntimeException("Fatal error: TechnologyAdapterRestService isn't present in the classpath");
+			throw new RuntimeException("Fatal error: TechnologyAdapterRouteService isn't present in the classpath");
 		}
 
 		// initializes REST services
-		List<RestService> initializedServices = new ArrayList<>();
-		for (RestService restService : restServices) {
-			String name = restService.getClass().getName();
+		List<RouteService> initializedServices = new ArrayList<>();
+		for (RouteService routeService : restServices) {
+			String name = routeService.getClass().getName();
 			try {
 				logger.log(Level.INFO, "Initializing REST service " + name);
-				restService.initialize(this, serviceManager);
-				initializedServices.add(restService);
+				routeService.initialize(this, serviceManager);
+				initializedServices.add(routeService);
 
-				if (restService instanceof TechnologyAdapterRestService) {
-					technologyAdapterRestService = (TechnologyAdapterRestService) restService;
+				if (routeService instanceof TechnologyAdapterRouteService) {
+					technologyAdapterRestService = (TechnologyAdapterRouteService) routeService;
 				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Unable to initialize REST service " + name, e);
@@ -97,8 +97,8 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		}
 
 		// adds routes for initialized service
-		for (RestService restService : initializedServices) {
-			restService.addRoutes(vertx, router);
+		for (RouteService routeService : initializedServices) {
+			routeService.addRoutes(vertx, router);
 		}
 
 		// adds static content
@@ -113,7 +113,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		server.listen(port, host);
 	}
 
-	public TechnologyAdapterRestService getTechnologyAdapterRestService() {
+	public TechnologyAdapterRouteService getTechnologyAdapterRestService() {
 		return technologyAdapterRestService;
 	}
 
