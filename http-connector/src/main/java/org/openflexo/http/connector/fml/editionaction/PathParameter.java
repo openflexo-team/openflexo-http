@@ -57,7 +57,7 @@ public interface PathParameter extends FlexoObject {
 	String NAME_KEY = "name";
 	String VALUE_KEY = "value";
 
-	@Getter(BUILDER_KEY) @XMLAttribute
+	@Getter(BUILDER_KEY)
 	PathBuilder getBuilder();
 
 	@Setter(BUILDER_KEY)
