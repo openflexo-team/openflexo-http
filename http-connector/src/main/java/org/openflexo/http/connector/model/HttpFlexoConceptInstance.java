@@ -43,6 +43,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.connie.type.TypeUtils;
@@ -52,6 +54,7 @@ import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.utils.FlexoObjectReference;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
+import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
@@ -75,11 +78,14 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 			extends FlexoConceptInstanceImpl
 			implements HttpFlexoConceptInstance<ObjectNode>
 	{
+
+		private static final Logger logger = FlexoLogger.getLogger(HttpFlexoConceptInstance.class.getPackage().toString());
+
 		private ObjectNode source;
 		private JsonPointer pointer;
 		private String path;
 
-		private boolean notComplete = false;
+		private boolean complete = false;
 		private long lastUpdated = -1l;
 
 		public boolean needUpdate() {
@@ -94,7 +100,7 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 					JsonNode node = source.get(flexoProperty.getName());
 					if (node != null) {
 						return convertNode(flexoProperty, node);
-					} else if (notComplete) {
+					} else if (!complete) {
 						update(true);
 						node = source.get(flexoProperty.getName());
 						if (node != null) {
@@ -147,7 +153,7 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 			if (source != null) {
 				lastUpdated = System.nanoTime();
 			}
-			notComplete = source != null;
+			complete = source != null;
 		}
 
 		private void update(boolean force) {
@@ -156,30 +162,35 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 					if (needUpdate() || force) {
 						AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 
-						HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
+						String url = accessPoint.getUrl() + path;
+						HttpGet httpGet = new HttpGet(url);
 						accessPoint.contributeHeaders(httpGet);
 						try (
 							CloseableHttpResponse response = getVirtualModelInstance().getHttpclient().execute(httpGet);
 							InputStream stream = response.getEntity().getContent()
 						) {
 
-							ObjectMapper mapper = new ObjectMapper();
-							JsonNode node = mapper.readTree(stream);
-							if (pointer != null) {
-								node = node.at(pointer);
-							}
+							if (response.getStatusLine().getStatusCode() == 200) {
+								ObjectMapper mapper = new ObjectMapper();
+								JsonNode node = mapper.readTree(stream);
+								if (pointer != null) {
+									node = node.at(pointer);
+								}
 
-							if (node instanceof ObjectNode) {
-								source = (ObjectNode) node;
+								if (node instanceof ObjectNode) {
+									source = (ObjectNode) node;
+								}
+								else {
+									logger.log(Level.SEVERE, "Read json from '"+ url +"' isn't an object (" + node + ")");
+								}
 							} else {
-								log("Read json isn't an object (" + node + ")", LogLevel.SEVERE, this, null);
+								logger.log(Level.SEVERE, "Can't access '"+ url +"': " + response.getStatusLine());
 							}
 
 						} catch (IOException e) {
-							e.printStackTrace();
-							log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);
+							logger.log(Level.SEVERE, "Can't read '"+ url +"'", e);
 						} finally {
-							notComplete = true;
+							complete = true;
 							lastUpdated = System.nanoTime();
 						}
 					}
