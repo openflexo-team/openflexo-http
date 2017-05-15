@@ -12,7 +12,7 @@
           <Assignment id="10" variable="component.selectableCondition" mandatory="true" />
           <Assignment id="11" variable="component.virtualModel" value="data.owningVirtualModel" mandatory="true" />
         </Custom>
-        <Label id="12" label="mutiple" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="multiple_label" />
+        <Label id="12" label="multiple" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="multiple_label" />
         <CheckBox id="13" selected="true" data="data.multiple" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="multiple_field" />
         <Label id="14" label="template" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="template_label" />
         <TextField id="15" columns="7" data="data.builder.template" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="template_textfield" />
