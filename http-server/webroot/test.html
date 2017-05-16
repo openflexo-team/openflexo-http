@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>OpenFlexo Server</title>
+
+    <link href="/css/test.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <script src="/bower_components/system.js/dist/system.js"></script>
+</head>
+<body>
+    <h1>Result for <input id='url' type="text" size="140" value='/'></input></h1>
+    <div id='result'></div>
+
+    <h1>Technologies adapters</h1>
+    <div id="tas"></div>
+
+    <h1>Resource Centers</h1>
+    <div id="centers"></div>
+
+    <h1>Resources </h1>
+    <div id="resources"></div>
+
+    <script>
+    SystemJS.config({ packages: { '.': { defaultExtension: 'js' } } });
+    SystemJS.import('js/test').then(null, console.error.bind(console));
+    </script>
+</body>
+</html>

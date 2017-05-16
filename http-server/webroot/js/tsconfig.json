@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
         "noImplicitAny": false,
-        "sourceMap": true,
         "inlineSourceMap": true
     }
 }
