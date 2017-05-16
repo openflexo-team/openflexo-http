@@ -19,15 +19,21 @@ dependencies {
 
 }
 
-def deployDir = "/Users/charlie/Documents/dev/openflexo/openshift/openflexo/app";
+def deployDir = "/Users/charlie/Documents/dev/openflexo/deploy/home";
 def appDir = file(buildDir.canonicalPath + "/app");
 
 task cleanApp() {
     doLast {
-        if (!appDir.exists()) {
+        if (appDir.exists()) {
             appDir.deleteDir();
         }
     }
+}
+
+task copyDockerfile(type: Copy) {
+    from "../http-server/deploy/Dockerfile"
+    from "../http-server/deploy/start.sh"
+    into appDir.canonicalPath
 }
 
 task copyWebResources(type: Copy) {
@@ -40,7 +46,7 @@ task copyJars (type: Copy) {
     into appDir.canonicalPath + "/libs"
 }
 
-task deploy (dependsOn: [":http-server:assemble", "cleanApp", "copyJars", "copyWebResources"], type: Sync) {
+task deploy (dependsOn: [":http-server:assemble", "cleanApp", "copyJars", "copyWebResources", "copyDockerfile"], type: Sync) {
     from appDir
     into deployDir
 }
