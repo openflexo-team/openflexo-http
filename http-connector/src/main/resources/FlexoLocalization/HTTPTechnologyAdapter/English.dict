@@ -8,6 +8,6 @@ define_popup_size=Define popup size
 object_type=Object type
 skip_confirmation_panel_when_possible=Skip confirmation panel when possible
 visibility=Visibility
-baseurl=Base URL
+base_url=Base URL
 user=User
 password=Password

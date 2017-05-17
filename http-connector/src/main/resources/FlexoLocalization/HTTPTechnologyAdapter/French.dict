@@ -8,6 +8,6 @@ define_popup_size=define_popup_size
 object_type=object_type
 skip_confirmation_panel_when_possible=skip_confirmation_panel_when_possible
 visibility=visibility
-baseurl=URL de base
+base_url=URL de base
 user=Utilisateur
 password=Mot de passe
