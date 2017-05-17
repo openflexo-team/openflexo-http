@@ -22,7 +22,7 @@ dependencies {
 def deployDir = "/Users/charlie/Documents/dev/openflexo/deploy/home";
 def appDir = file(buildDir.canonicalPath + "/app");
 
-task cleanApp() {
+task cleanApp(group: "deployement" ) {
     doLast {
         if (appDir.exists()) {
             appDir.deleteDir();
@@ -30,7 +30,7 @@ task cleanApp() {
     }
 }
 
-task copyDockerfile(type: Copy) {
+task copyDockerfile(type: Copy, group: "deployement") {
     from "../http-server/deploy/Dockerfile"
     from "../http-server/deploy/start.sh"
     into appDir.canonicalPath
@@ -41,12 +41,12 @@ task copyWebResources(type: Copy) {
     into appDir.canonicalPath + "/webroot"
 }
 
-task copyJars (type: Copy) {
+task copyJars (type: Copy, group: "deployement") {
     from configurations.runtime.resolve()
     into appDir.canonicalPath + "/libs"
 }
 
-task deploy (dependsOn: [":http-server:assemble", "cleanApp", "copyJars", "copyWebResources", "copyDockerfile"], type: Sync) {
+task deploy (dependsOn: [":http-server:assemble", "cleanApp", "copyJars", "copyWebResources", "copyDockerfile"], type: Sync, group: "deployement") {
     from appDir
     into deployDir
 }
