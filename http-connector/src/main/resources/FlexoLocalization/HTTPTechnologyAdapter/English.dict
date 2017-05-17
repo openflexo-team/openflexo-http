@@ -1,5 +1,13 @@
+Configuration=Configuration
 HttpRequestBehavior=HttpRequestBehavior
+Private=Private
+Protected=Protected
+Public=Public
 Request=Request
 define_popup_size=Define popup size
 object_type=Object type
 skip_confirmation_panel_when_possible=Skip confirmation panel when possible
+visibility=Visibility
+baseurl=Base URL
+user=User
+password=Password

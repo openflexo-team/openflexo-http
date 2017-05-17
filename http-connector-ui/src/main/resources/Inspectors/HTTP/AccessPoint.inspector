@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Inspector xmlns:p="http://www.openflexo.org/pamela/" id="0" p:modelEntity="org.openflexo.gina.utils.FIBInspector" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,12" layout="border" borderRight="0" controllerClassName="org.openflexo.fml.controller.FMLFIBInspectorController" font="SansSerif,0,12" name="Inspector">
+  <TabPanel id="1" constraints="border(location=center)" name="Tab">
+    <Tab id="2" title="Basic" align="left" borderTop="0" borderTitle="Request" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="0" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="BasicTab">
+      <Label id="3" label="baseurl" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="BaseUrlLabel" />
+      <TextField id="4" columns="7" data="data.url" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="BaseUrlTextField" />
+      <Label id="5" label="user" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="UserLabel" />
+      <TextField id="6" columns="7" data="data.userIdentifier" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="UserTextField" />
+      <Label id="7" label="password" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="PasswordLabel" />
+      <TextField id="8" passwd="true" columns="7" data="data.password" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="PasswordTextField" />
+      <LocalizedDictionary id="9" />
+    </Tab>
+  </TabPanel>
+  <FIBVariable id="10" type="org.openflexo.http.connector.model.AccessPoint" name="data" />
+  <LocalizedDictionary id="11" />
+</Inspector>
