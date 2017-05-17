@@ -1,20 +1,35 @@
 /*
- * (c) Copyright 2013- Openflexo
+ * Copyright (c) 2013-2017, Openflexo
  *
- * This file is part of OpenFlexo.
+ * This file is part of Flexo-foundation, a component of the software infrastructure
+ * developed at Openflexo.
  *
- * OpenFlexo is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Openflexo is dual-licensed under the European Union Public License (EUPL, either
+ * version 1.1 of the License, or any later version ), which is available at
+ * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
+ * and the GNU General Public License (GPL, either version 3 of the License, or any
+ * later version), which is available at http://www.gnu.org/licenses/gpl.html .
  *
- * OpenFlexo is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
+ * You can redistribute it and/or modify under the terms of either of these licenses
  *
- * You should have received a copy of the GNU General Public License
- * along with OpenFlexo. If not, see <http://www.gnu.org/licenses/>.
+ * If you choose to redistribute it and/or modify under the terms of the GNU GPL, you
+ * must include the following additional permission.
+ *
+ *           Additional permission under GNU GPL version 3 section 7
+ *           If you modify this Program, or any covered work, by linking or
+ *           combining it with software containing parts covered by the terms
+ *           of EPL 1.0, the licensors of this Program grant you additional permission
+ *           to convey the resulting work.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * See http://www.openflexo.org/license.html for details.
+ *
+ *
+ * Please contact Openflexo (openflexo-contacts@openflexo.org)
+ * or visit www.openflexo.org if you need additional information.
  *
  */
 
@@ -35,10 +50,9 @@ import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
-import org.openflexo.http.connector.RestModelSlot.RestModelSlotImpl;
 import org.openflexo.http.connector.fml.AccessPointType;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
-import org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour;
+import org.openflexo.http.connector.fml.editionaction.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.annotations.Getter;
@@ -56,10 +70,10 @@ import org.openflexo.toolbox.StringUtils;
  */
 @ModelEntity
 @XMLElement
-@ImplementationClass(RestModelSlotImpl.class)
+@ImplementationClass(XmlRpcModelSlot.XmlRpcModelSlotImpl.class)
 @DeclareEditionActions({ CreateAccessPointResource.class })
-@DeclareFlexoBehaviours({ JsonRequestBehaviour.class })
-public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
+@DeclareFlexoBehaviours({ XmlRpcRequestBehaviour.class })
+public interface XmlRpcModelSlot extends FreeModelSlot<AccessPoint> {
 
 	@PropertyIdentifier(type = String.class)
 	String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
@@ -112,7 +126,7 @@ public interface RestModelSlot extends FreeModelSlot<AccessPoint> {
 	@Override
 	HttpTechnologyAdapter getModelSlotTechnologyAdapter();
 
-	abstract class RestModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements RestModelSlot {
+	abstract class XmlRpcModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements XmlRpcModelSlot {
 
 		private VirtualModelResource virtualModelResource;
 		private String virtualModelURI;

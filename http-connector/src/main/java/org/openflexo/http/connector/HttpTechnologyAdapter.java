@@ -18,7 +18,7 @@ import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 /**
  * Created by charlie on 02/02/2017.
  */
-@DeclareModelSlots({RestModelSlot.class})
+@DeclareModelSlots({RestModelSlot.class, XmlRpcModelSlot.class})
 @DeclareResourceTypes({AccessPointResourceFactory.class})
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 

@@ -22,12 +22,13 @@ package org.openflexo.http.connector;
 
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.technologyadapter.FreeModelSlot;
 import org.openflexo.foundation.technologyadapter.FreeModelSlotInstanceConfiguration;
 import org.openflexo.http.connector.model.AccessPoint;
 
-public class HttpModelSlotInstanceConfiguration extends FreeModelSlotInstanceConfiguration<AccessPoint, RestModelSlot> {
+public class HttpModelSlotInstanceConfiguration<MS extends FreeModelSlot<AccessPoint>> extends FreeModelSlotInstanceConfiguration<AccessPoint, MS> {
 
-	protected HttpModelSlotInstanceConfiguration(RestModelSlot ms, FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
+	protected HttpModelSlotInstanceConfiguration(MS ms, FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
 		super(ms, fci, rc);
 	}
 
