@@ -35,26 +35,13 @@
 
 package org.openflexo.http.connector.model;
 
-import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.AbstractProperty;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.utils.FlexoObjectReference;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
-import org.openflexo.logging.FlexoLogger;
+import org.openflexo.http.connector.model.support.ContentSupport;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
@@ -65,58 +52,33 @@ import org.openflexo.model.annotations.Parameter;
  */
 @ModelEntity
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
-public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
+public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 
 	@Initializer
 	void initialize(
 		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
-		T support, String path, String pointer,
+		ContentSupport support,
+		String path,
 		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept
 	);
 
 	abstract class HttpFlexoConceptInstanceImpl
 			extends FlexoConceptInstanceImpl
-			implements HttpFlexoConceptInstance<ObjectNode>
+			implements HttpFlexoConceptInstance
 	{
 
-		private static final Logger logger = FlexoLogger.getLogger(HttpFlexoConceptInstance.class.getPackage().toString());
+		private ContentSupport support;
 
-		private ObjectNode source;
-		private JsonPointer pointer;
 		private String path;
-
-		private boolean complete = false;
-		private long lastUpdated = -1l;
-
-		public boolean needUpdate() {
-			return (System.nanoTime() - lastUpdated) > (60 * 1_000_000_000l);
-		}
 
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
 			if (flexoProperty instanceof AbstractProperty) {
-				update(false);
-				if (source != null) {
-					JsonNode node = source.get(flexoProperty.getName());
-					if (node != null) {
-						return convertNode(flexoProperty, node);
-					} else if (!complete) {
-						update(true);
-						node = source.get(flexoProperty.getName());
-						if (node != null) {
-							return convertNode(flexoProperty, node);
-						}
-					}
-				}
+				return support.getValue(flexoProperty.getName(), flexoProperty.getType());
 			}
 			return super.getFlexoPropertyValue(flexoProperty);
 		}
 
-		private <T> T convertNode(FlexoProperty<T> flexoProperty, JsonNode node) {
-			// TODO work on conversion
-			Object value = node.textValue();
-			return TypeUtils.isAssignableTo(value, flexoProperty.getType()) ? (T) value : null;
-		}
 
 		@Override
 		public <T> void setFlexoPropertyValue(FlexoProperty<T> flexoProperty, T value) {
@@ -124,7 +86,7 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 			if (flexoProperty instanceof AbstractProperty) {
 				T oldValue = getFlexoPropertyValue(flexoProperty);
 				if ((value == null && oldValue != null) || (value != null && !value.equals(oldValue))) {
-					source.set(flexoProperty.getName(), value != null ? TextNode.valueOf(value.toString()) : NullNode.getInstance());
+					support.setValue(flexoProperty.getName(), value);
 					setIsModified();
 					getPropertyChangeSupport().firePropertyChange(flexoProperty.getPropertyName(), oldValue, value);
 				}
@@ -144,58 +106,11 @@ public interface HttpFlexoConceptInstance<T> extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance owner, ObjectNode support, String path, String pointer, FlexoConcept concept)  {
+		public void initialize(HttpVirtualModelInstance owner, ContentSupport support, String path, FlexoConcept concept)  {
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
-			this.source = support;
+			this.support = support;
 			this.path = path;
-			this.pointer = pointer != null ? JsonPointer.compile(pointer) : null;
-			if (source != null) {
-				lastUpdated = System.nanoTime();
-			}
-			complete = source != null;
-		}
-
-		private void update(boolean force) {
-			if (needUpdate() || force) {
-				synchronized (this) {
-					if (needUpdate() || force) {
-						AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
-
-						String url = accessPoint.getUrl() + path;
-						HttpGet httpGet = new HttpGet(url);
-						accessPoint.contributeHeaders(httpGet);
-						try (
-							CloseableHttpResponse response = getVirtualModelInstance().getHttpclient().execute(httpGet);
-							InputStream stream = response.getEntity().getContent()
-						) {
-
-							if (response.getStatusLine().getStatusCode() == 200) {
-								ObjectMapper mapper = new ObjectMapper();
-								JsonNode node = mapper.readTree(stream);
-								if (pointer != null) {
-									node = node.at(pointer);
-								}
-
-								if (node instanceof ObjectNode) {
-									source = (ObjectNode) node;
-								}
-								else {
-									logger.log(Level.SEVERE, "Read json from '"+ url +"' isn't an object (" + node + ")");
-								}
-							} else {
-								logger.log(Level.SEVERE, "Can't access '"+ url +"': " + response.getStatusLine());
-							}
-
-						} catch (IOException e) {
-							logger.log(Level.SEVERE, "Can't read '"+ url +"'", e);
-						} finally {
-							complete = true;
-							lastUpdated = System.nanoTime();
-						}
-					}
-				}
-			}
 		}
 
 		@Override

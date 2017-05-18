@@ -35,6 +35,11 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	String URL_KEY = "url";
 	String USER_KEY = "user";
 	String PASSWORD_KEY = "password";
+	String FORMAT_KEY = "format";
+
+	enum Format {
+		json, xml
+	}
 
 	@Getter(URL_KEY) @XMLAttribute
 	String getUrl();
@@ -71,6 +76,12 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 
 	@Setter(VIRTUAL_MODEL_INSTANCE_KEY)
 	void setInstance(HttpVirtualModelInstance instance);
+
+	@Getter(FORMAT_KEY) @XMLAttribute
+	Format getFormat();
+
+	@Setter(FORMAT_KEY)
+	void setFormat(Format format);
 
 	void contributeHeaders(HttpUriRequest request);
 

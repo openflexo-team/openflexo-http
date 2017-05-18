@@ -43,6 +43,9 @@ import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
+import org.openflexo.http.connector.model.support.ContentSupport;
+import org.openflexo.http.connector.model.support.ContentSupportFactory;
+import org.openflexo.http.connector.model.support.JsonSupportFactory;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
 import org.openflexo.model.exceptions.ModelDefinitionException;
@@ -53,16 +56,16 @@ import org.openflexo.model.factory.ModelFactory;
  * @author charlie
  *
  */
-public class AccessPointFactory<T> extends ModelFactory implements PamelaResourceModelFactory<AccessPointResource> {
+public class AccessPointFactory extends ModelFactory implements PamelaResourceModelFactory<AccessPointResource> {
 
 	private final AccessPointResource resource;
 
 	private FlexoUndoManager undoManager = null;
 	private IgnoreLoadingEdits ignoreHandler = null;
 
-	private final Function<T, String> urlFinder;
+	private final Function<ContentSupport, String> urlFinder;
 
-	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext, Function<T, String> urlFinder) throws ModelDefinitionException {
+	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext, Function<ContentSupport, String> urlFinder) throws ModelDefinitionException {
 		super(AccessPoint.class);
 		this.resource = resource;
 		this.urlFinder = urlFinder;
@@ -84,18 +87,25 @@ public class AccessPointFactory<T> extends ModelFactory implements PamelaResourc
 	}
 
 	public void initializeModel(AccessPoint accessPoint) {
-		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint);
+		ContentSupportFactory<?> supportFactory = null;
+		AccessPoint.Format format = accessPoint.getFormat();
+		if (format == null || format == AccessPoint.Format.json) {
+			supportFactory = new JsonSupportFactory();
+		} else {
+			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
+		}
+
+		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint, supportFactory);
 		virtualModelInstance.setVirtualModel(accessPoint.getVirtualModel());
 		accessPoint.setInstance(virtualModelInstance);
 	}
 
-	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, T object, String url, String pointer, FlexoConcept concept) {
+	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, ContentSupport support, String url, FlexoConcept concept) {
 		if (owner != null) {
-			if (object != null && url == null) {
-				url = urlFinder.apply(object);
+			if (support != null && url == null) {
+				url = urlFinder.apply(support);
 			}
-			// HttpVirtualModelInstance owner, ObjectNode support, String path, String pointer, FlexoConcept concept
-			return newInstance(HttpFlexoConceptInstance.class, owner, object, url, pointer, concept);
+			return newInstance(HttpFlexoConceptInstance.class, owner, support, url, concept);
 		}
 		return null;
 	}

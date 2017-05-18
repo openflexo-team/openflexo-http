@@ -35,17 +35,13 @@
 
 package org.openflexo.http.connector.model;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -58,6 +54,8 @@ import org.openflexo.foundation.fml.rt.rm.ViewResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
+import org.openflexo.http.connector.model.support.ContentSupport;
+import org.openflexo.http.connector.model.support.ContentSupportFactory;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -74,12 +72,12 @@ import org.openflexo.model.annotations.Setter;
 @ModelEntity
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports( @Import(HttpFlexoConceptInstance.class) )
-public interface HttpVirtualModelInstance extends VirtualModelInstance {
+public interface HttpVirtualModelInstance<S extends ContentSupport> extends VirtualModelInstance {
 
 	String ACCESS_POINT = "accessPoint";
 
 	@Initializer
-	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint);
+	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, ContentSupportFactory<S> supportFactory);
 
 	@Getter(ACCESS_POINT)
 	AccessPoint getAccessPoint();
@@ -93,17 +91,27 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 
 	CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl extends VirtualModelInstanceImpl implements HttpVirtualModelInstance {
+	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport> extends VirtualModelInstanceImpl implements HttpVirtualModelInstance<S> {
 
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
 		private final Map<String, HttpFlexoConceptInstance> instances = new HashMap<>();
 
+		private ContentSupportFactory supportFactory;
+
+		@Override
+		public void initialize(AccessPoint accessPoint, ContentSupportFactory<S> supportFactory) {
+			performSuperSetter(ACCESS_POINT, accessPoint);
+			this.supportFactory = supportFactory;
+		}
+
 		@Override
 		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
 			return instances.computeIfAbsent(
-				path, (newPath) ->  getAccessPointFactory().newFlexoConceptInstance(this, null, path, pointer, concept)
-			);
+				path, (newPath) -> {
+					ContentSupport support = supportFactory.newSupport(this, concept, path, null, pointer);
+					return getAccessPointFactory().newFlexoConceptInstance(this, support, path, concept);
+				});
 		}
 
 		public CloseableHttpClient getHttpclient() {
@@ -119,25 +127,10 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance {
 				InputStream stream = response.getEntity().getContent()
 			) {
 
-				ObjectMapper mapper = new ObjectMapper();
-				JsonNode source = mapper.readTree(stream);
-				JsonNode node = source;
-				if (pointer != null) {
-					node = node.at(pointer);
-				}
-
-				if (node instanceof ArrayNode) {
-					List<HttpFlexoConceptInstance> result = new ArrayList<>();
-					for (JsonNode child : node) {
-						if (child instanceof ObjectNode) {
-							result.add(getAccessPointFactory().newFlexoConceptInstance(this, child, null, null, concept));
-						}
-					}
-					return result;
-
-				} else {
-					log("Read json isn't an array (" + source + ")", LogLevel.SEVERE, this, null);
-				}
+				List<S> supports = supportFactory.newSupports(this, concept, path, stream, pointer);
+				return supports.stream().map((s) ->
+					getAccessPointFactory().newFlexoConceptInstance(this, s, null, concept)
+				).collect(Collectors.toList());
 
 			} catch (IOException e) {
 				log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);

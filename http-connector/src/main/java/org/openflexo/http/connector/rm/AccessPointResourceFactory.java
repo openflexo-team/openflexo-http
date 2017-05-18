@@ -1,6 +1,5 @@
 package org.openflexo.http.connector.rm;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.openflexo.foundation.FlexoEditingContext;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.PamelaResourceFactory;
@@ -27,10 +26,10 @@ public class AccessPointResourceFactory
     }
 
     @Override
-    public AccessPointFactory<?> makeResourceDataFactory(AccessPointResource resource, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
+    public AccessPointFactory makeResourceDataFactory(AccessPointResource resource, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
         FlexoEditingContext editingContext = technologyContextManager.getServiceManager().getEditingContext();
-        return new AccessPointFactory<ObjectNode>(resource, editingContext, (node) -> {
-            String url = node.get("url").asText();
+        return new AccessPointFactory(resource, editingContext, (node) -> {
+            String url = node.getValue("url", String.class);
             String baseUrl = resource.getLoadedResourceData().getUrl();
             if (url.startsWith(baseUrl)) {
                 url = url.substring(baseUrl.length());
