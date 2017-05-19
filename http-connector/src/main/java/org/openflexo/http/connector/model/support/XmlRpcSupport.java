@@ -56,9 +56,9 @@ import org.openflexo.logging.FlexoLogger;
 /**
  * Created by charlie on 17/05/2017.
  */
-public class JsonSupport implements ContentSupport {
+public class XmlRpcSupport implements ContentSupport {
 
-	private static final Logger logger = FlexoLogger.getLogger(JsonSupport.class.getPackage().toString());
+	private static final Logger logger = FlexoLogger.getLogger(XmlRpcSupport.class.getPackage().toString());
 
 	private final HttpVirtualModelInstance owner;
 
@@ -69,7 +69,7 @@ public class JsonSupport implements ContentSupport {
 	private boolean complete = false;
 	private long lastUpdated = -1l;
 
-	public JsonSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
+	public XmlRpcSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
 		this.owner = owner;
 		if (path == null && source != null) {
 

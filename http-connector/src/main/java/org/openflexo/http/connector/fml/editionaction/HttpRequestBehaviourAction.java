@@ -48,11 +48,11 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 /**
  * Created by charlie on 21/03/2017.
  */
-public class JsonRequestBehaviourAction extends ActionSchemeAction {
+public class HttpRequestBehaviourAction extends ActionSchemeAction {
 
 	private static final Logger logger = Logger.getLogger(ActionSchemeAction.class.getPackage().getName());
 
-	public JsonRequestBehaviourAction(
+	public HttpRequestBehaviourAction(
 			ActionSchemeActionType actionType, FlexoConceptInstance focusedObject,
 			List<VirtualModelInstanceObject> globalSelection, FlexoEditor editor
 	) {
@@ -60,16 +60,15 @@ public class JsonRequestBehaviourAction extends ActionSchemeAction {
 	}
 
 	@Override
-	public JsonRequestBehaviour getActionScheme() {
-		return (JsonRequestBehaviour) super.getActionScheme();
+	public HttpRequestBehaviour getActionScheme() {
+		return (HttpRequestBehaviour) super.getActionScheme();
 	}
 
 	@Override
 	protected void doAction(Object context) throws FlexoException {
-		JsonRequestBehaviour actionScheme = getActionScheme();
+		HttpRequestBehaviour actionScheme = getActionScheme();
 		FlexoConceptInstance instance = getFlexoConceptInstance();
 		if (actionScheme != null && instance instanceof HttpVirtualModelInstance) {
-			logger.fine("Perform HTTP request on " + actionScheme.getBuilder().getTemplate());
 			try {
 				returnedValue = actionScheme.execute((HttpVirtualModelInstance) instance, this);
 			} catch (FlexoException e) {

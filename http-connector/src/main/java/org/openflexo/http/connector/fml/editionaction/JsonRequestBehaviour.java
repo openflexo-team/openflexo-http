@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.type.ParameterizedTypeImpl;
 import org.openflexo.foundation.FlexoEditor;
-import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
@@ -70,7 +69,7 @@ import org.openflexo.model.annotations.XMLElement;
  */
 @ModelEntity @XMLElement
 @ImplementationClass(JsonRequestBehaviourImpl.class)
-public interface JsonRequestBehaviour extends AbstractActionScheme {
+public interface JsonRequestBehaviour extends HttpRequestBehaviour {
 
 	String PATH_BUILDER_KEY = "pathBuilder";
 	String POINTER_KEY = "pointer";
@@ -145,7 +144,7 @@ public interface JsonRequestBehaviour extends AbstractActionScheme {
 				public ActionSchemeAction makeNewAction(
 						FlexoConceptInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor
 				) {
-					return new JsonRequestBehaviourAction(this, focusedObject, globalSelection, editor);
+					return new HttpRequestBehaviourAction(this, focusedObject, globalSelection, editor);
 				}
 			};
 		}

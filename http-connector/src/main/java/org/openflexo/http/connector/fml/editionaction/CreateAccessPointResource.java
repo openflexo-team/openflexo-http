@@ -47,8 +47,8 @@ import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
+import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.RestModelSlot;
 import org.openflexo.http.connector.fml.AccessPointType;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource.CreateAccessPointResourceImpl;
 import org.openflexo.http.connector.model.AccessPoint;
@@ -69,20 +69,20 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @ImplementationClass(CreateAccessPointResourceImpl.class)
 @XMLElement
 @FML("CreateHTTPResource")
-public interface CreateAccessPointResource extends AbstractCreateResource<RestModelSlot, AccessPoint, HttpTechnologyAdapter> {
+public interface CreateAccessPointResource extends AbstractCreateResource<HttpModelSlot, AccessPoint, HttpTechnologyAdapter> {
 
 	abstract class CreateAccessPointResourceImpl
-			extends AbstractCreateResourceImpl<RestModelSlot, AccessPoint, HttpTechnologyAdapter>
+			extends AbstractCreateResourceImpl<HttpModelSlot, AccessPoint, HttpTechnologyAdapter>
 			implements CreateAccessPointResource
 	{
 
 		@Override
 		public Type getAssignableType() {
 			FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
-			if (flexoProperty instanceof RestModelSlot) {
-				RestModelSlot restModelSlot = (RestModelSlot) flexoProperty;
+			if (flexoProperty instanceof HttpModelSlot) {
+				HttpModelSlot httpModelSlot = (HttpModelSlot) flexoProperty;
 				HttpTechnologyAdapter technologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
-				return new AccessPointType(technologyAdapter, (VirtualModelInstanceType) restModelSlot.getAccessedVirtualModel().getInstanceType());
+				return new AccessPointType(technologyAdapter, (VirtualModelInstanceType) httpModelSlot.getAccessedVirtualModel().getInstanceType());
 			} else {
 				return AccessPoint.class;
 			}
@@ -103,15 +103,15 @@ public interface CreateAccessPointResource extends AbstractCreateResource<RestMo
 				AccessPoint data = newResource.getResourceData(null);
 
 				FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
-				if (flexoProperty instanceof RestModelSlot) {
-					RestModelSlot restModelSlot = (RestModelSlot) flexoProperty;
-					data.setUrl(restModelSlot.getUrl());
-					data.setUser(restModelSlot.getUser());
-					data.setPassword(restModelSlot.getPassword());
-					data.setVirtualModel(restModelSlot.getAccessedVirtualModel());
+				if (flexoProperty instanceof HttpModelSlot) {
+					HttpModelSlot httpModelSlot = (HttpModelSlot) flexoProperty;
+					data.setUrl(httpModelSlot.getUrl());
+					data.setUser(httpModelSlot.getUser());
+					data.setPassword(httpModelSlot.getPassword());
+					data.setVirtualModel(httpModelSlot.getAccessedVirtualModel());
 					newResource.getFactory().initializeModel(data);
 				} else {
-					throw new InvalidArgumentException("AccessPoint creation must be affected to a RestModelSlot");
+					throw new InvalidArgumentException("AccessPoint creation must be affected to a HTTPModelSlot");
 				}
 
 				return data;

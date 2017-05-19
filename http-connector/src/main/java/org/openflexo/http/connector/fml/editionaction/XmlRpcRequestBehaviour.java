@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.type.ParameterizedTypeImpl;
 import org.openflexo.foundation.FlexoEditor;
-import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
@@ -54,10 +53,8 @@ import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.Initialize;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
@@ -69,29 +66,14 @@ import org.openflexo.model.annotations.XMLElement;
  */
 @ModelEntity @XMLElement
 @ImplementationClass(XmlRpcRequestBehaviour.XmlRpcRequestBehaviourImpl.class)
-public interface XmlRpcRequestBehaviour extends AbstractActionScheme {
+public interface XmlRpcRequestBehaviour extends HttpRequestBehaviour {
 
-	String PATH_BUILDER_KEY = "pathBuilder";
-	String POINTER_KEY = "pointer";
 	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
 	String RETURNED_FLEXO_CONCEPT_URI_KEY = "returnedFlexoConceptURI";
 	String MULTIPLE_KEY = "multiple";
 
 	@Initializer
 	void initialize();
-
-	@Getter(PATH_BUILDER_KEY)
-	@XMLElement @Embedded @Initialize
-	PathBuilder getBuilder();
-
-	@Setter(PATH_BUILDER_KEY)
-	void setBuilder(PathBuilder builder);
-
-	@Getter(POINTER_KEY) @XMLAttribute
-	String getPointer();
-
-	@Setter(POINTER_KEY)
-	void setPointer(String pointer);
 
 	@Getter(RETURNED_FLEXO_CONCEPT_URI_KEY) @XMLAttribute
 	String getReturnedFlexoConceptURI();
@@ -112,16 +94,6 @@ public interface XmlRpcRequestBehaviour extends AbstractActionScheme {
 	void setMultiple(boolean multiple);
 
 	default Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
-		PathBuilder builder = getBuilder();
-		if (builder != null) {
-			String url = builder.evaluateUrl(this, context);
-			if (isMultiple()) {
-				return modelInstance.getFlexoConceptInstances(url, getPointer(), getReturnedFlexoConcept());
-			} else {
-				return modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
-			}
-
-		}
 		return null;
 	}
 
@@ -144,7 +116,7 @@ public interface XmlRpcRequestBehaviour extends AbstractActionScheme {
 				public ActionSchemeAction makeNewAction(
 						FlexoConceptInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor
 				) {
-					return new JsonRequestBehaviourAction(this, focusedObject, globalSelection, editor);
+					return new HttpRequestBehaviourAction(this, focusedObject, globalSelection, editor);
 				}
 			};
 		}
@@ -172,15 +144,6 @@ public interface XmlRpcRequestBehaviour extends AbstractActionScheme {
 				getPropertyChangeSupport().firePropertyChange(RETURNED_FLEXO_CONCEPT_KEY, oldVirtualModel, flexoConcept);
 				setReturnedFlexoConceptURI(flexoConcept != null ? flexoConcept.getURI() : null);
 			}
-		}
-
-		@Override
-		public PathBuilder getBuilder() {
-			PathBuilder builder = (PathBuilder) performSuperGetter(PATH_BUILDER_KEY);
-			if (builder != null) {
-				builder.setOwner(this);
-			}
-			return builder;
 		}
 	}
 }
