@@ -8,9 +8,9 @@
       <TextField id="6" columns="7" data="data.user" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="UserTextField" />
       <Label id="7" label="password" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="PasswordLabel" />
       <TextField id="8" passwd="true" columns="7" data="data.password" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="PasswordTextField" />
-      <LocalizedDictionary id="9" />
     </Tab>
+    <Tab id="9" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab" />
   </TabPanel>
-  <FIBVariable id="10" type="org.openflexo.http.connector.model.AccessPoint" name="data" />
+  <FIBVariable id="10" type="org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource" name="data" />
   <LocalizedDictionary id="11" />
 </Inspector>

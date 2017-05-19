@@ -46,7 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;
@@ -58,9 +57,15 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 
 	private static final Logger logger = FlexoLogger.getLogger(HttpFlexoConceptInstance.class.getPackage().toString());
 
+	private final String urlPropertyName;
+
+	public JsonSupportFactory(String urlPropertyName) {
+		this.urlPropertyName = urlPropertyName;
+	}
+
 	@Override
 	public List<JsonSupport> newSupports(
-			HttpVirtualModelInstance owner, FlexoConcept concept, String path, InputStream stream, String pointer
+			HttpVirtualModelInstance owner, String path, InputStream stream, String pointer
 	) {
 
 		List<JsonSupport> result = new ArrayList<>();
@@ -76,7 +81,9 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 			if (node instanceof ArrayNode) {
 				for (JsonNode child : node) {
 					if (child instanceof ObjectNode) {
-						result.add(new JsonSupport(owner, null, (ObjectNode) child, null));
+						ObjectNode childNode = (ObjectNode) child;
+						String childPath = getPath(owner, childNode);
+						result.add(new JsonSupport(owner, childPath, childNode, null));
 					}
 				}
 
@@ -92,7 +99,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 		return result;
 	}
 
-	public JsonSupport newSupport(HttpVirtualModelInstance owner, FlexoConcept concept, String path, InputStream stream, String pointer) {
+	public JsonSupport newSupport(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer) {
 		JsonNode node = null;
 
 		// if the support contains the stream
@@ -115,6 +122,18 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 			}
 		}
 		return new JsonSupport(owner, path, (ObjectNode) node, pointer != null ? JsonPointer.compile(pointer) : null);
+	}
+
+	private String getPath(HttpVirtualModelInstance owner, ObjectNode node) {
+		JsonNode urlNode = node.get(urlPropertyName);
+		if (urlNode == null) return null;
+
+		String url = urlNode.asText();
+		String baseUrl = owner.getAccessPoint().getUrl();
+		if (url.startsWith(baseUrl)) {
+			url = url.substring(baseUrl.length());
+		}
+		return url;
 	}
 
 }

@@ -153,7 +153,7 @@ public interface JsonRequestBehaviour extends AbstractActionScheme {
 		@Override
 		public FlexoConcept getReturnedFlexoConcept() {
 			String flexoConceptURI = getReturnedFlexoConceptURI();
-			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing()) {
+			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing() && getServiceManager() != null) {
 				try {
 					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
 					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);

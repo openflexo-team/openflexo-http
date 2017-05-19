@@ -72,6 +72,9 @@ public class JsonSupport implements ContentSupport {
 
 	public JsonSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
 		this.owner = owner;
+		if (path == null && source != null) {
+
+		}
 		this.path = path;
 		this.source = source;
 		this.pointer = pointer;
@@ -83,6 +86,11 @@ public class JsonSupport implements ContentSupport {
 
 	private boolean needUpdate() {
 		return (System.nanoTime() - lastUpdated) > (60 * 1_000_000_000l);
+	}
+
+	@Override
+	public String getPath() {
+		return path;
 	}
 
 	@Override

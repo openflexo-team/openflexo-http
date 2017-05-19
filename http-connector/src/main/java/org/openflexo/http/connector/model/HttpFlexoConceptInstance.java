@@ -58,7 +58,6 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 	void initialize(
 		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
 		ContentSupport support,
-		String path,
 		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept
 	);
 
@@ -68,8 +67,6 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 	{
 
 		private ContentSupport support;
-
-		private String path;
 
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
@@ -106,11 +103,10 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance owner, ContentSupport support, String path, FlexoConcept concept)  {
+		public void initialize(HttpVirtualModelInstance owner, ContentSupport support, FlexoConcept concept)  {
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
 			this.support = support;
-			this.path = path;
 		}
 
 		@Override
@@ -118,7 +114,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 			String resourceURI = accessPoint.getResource().getURI();
 			String conceptName = getFlexoConcept().getName();
-			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), path, conceptName);
+			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), support.getPath(), conceptName);
 		}
 	}
 }

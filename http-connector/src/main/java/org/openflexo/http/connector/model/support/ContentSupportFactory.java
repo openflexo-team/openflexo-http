@@ -37,7 +37,6 @@ package org.openflexo.http.connector.model.support;
 
 import java.io.InputStream;
 import java.util.List;
-import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
 /**
@@ -45,8 +44,8 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance;
  */
 public interface ContentSupportFactory<S extends ContentSupport> {
 
-	List<S> newSupports(HttpVirtualModelInstance owner, FlexoConcept concept, String path, InputStream stream, String pointer);
+	List<S> newSupports(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer);
 
-	S newSupport(HttpVirtualModelInstance owner, FlexoConcept concept, String path, InputStream stream, String pointer);
+	S newSupport(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer);
 
 }

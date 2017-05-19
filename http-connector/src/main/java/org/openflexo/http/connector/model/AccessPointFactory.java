@@ -38,7 +38,6 @@
 
 package org.openflexo.http.connector.model;
 
-import java.util.function.Function;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.FlexoConcept;
@@ -63,12 +62,9 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 	private FlexoUndoManager undoManager = null;
 	private IgnoreLoadingEdits ignoreHandler = null;
 
-	private final Function<ContentSupport, String> urlFinder;
-
-	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext, Function<ContentSupport, String> urlFinder) throws ModelDefinitionException {
+	public AccessPointFactory(AccessPointResource resource, EditingContext editingContext) throws ModelDefinitionException {
 		super(AccessPoint.class);
 		this.resource = resource;
-		this.urlFinder = urlFinder;
 		setEditingContext(editingContext);
 		addConverter(new RelativePathResourceConverter(null));
 	}
@@ -90,7 +86,7 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 		ContentSupportFactory<?> supportFactory = null;
 		AccessPoint.Format format = accessPoint.getFormat();
 		if (format == null || format == AccessPoint.Format.json) {
-			supportFactory = new JsonSupportFactory();
+			supportFactory = new JsonSupportFactory("url");
 		} else {
 			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
 		}
@@ -100,14 +96,8 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 		accessPoint.setInstance(virtualModelInstance);
 	}
 
-	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, ContentSupport support, String url, FlexoConcept concept) {
-		if (owner != null) {
-			if (support != null && url == null) {
-				url = urlFinder.apply(support);
-			}
-			return newInstance(HttpFlexoConceptInstance.class, owner, support, url, concept);
-		}
-		return null;
+	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, ContentSupport support, FlexoConcept concept) {
+		return newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
 	}
 
 	@Override

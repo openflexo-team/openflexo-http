@@ -9,7 +9,6 @@ dependencies {
     runtime openflexo("jdbcconnector")
     runtime openflexo("kafkaconnector")
 
-
     //runtime openflexo("flexodiagram-test-rc")
     runtime openflexo("docxconnector-test-rc")
     runtime openflexo("excelconnector-test-rc")

@@ -42,6 +42,8 @@ import java.lang.reflect.Type;
  */
 public interface ContentSupport {
 
+	String getPath();
+
 	<T> T getValue(String name, Type type);
 
 	void setValue(String name, Object value);

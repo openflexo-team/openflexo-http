@@ -4,7 +4,7 @@
     <Label id="2" label="base_url" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="BaseUrlLabel" />
     <TextField id="3" columns="7" data="data.url" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="BaseUrlTextField" />
     <Label id="4" label="user" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="UserLabel" />
-    <TextField id="5" columns="7" data="data.userIdentifier" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="UserTextField" />
+    <TextField id="5" columns="7" data="data.user" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="UserTextField" />
     <Label id="6" label="password" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="PasswordLabel" />
     <TextField id="7" passwd="true" columns="7" data="data.password" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="PasswordTextField" />
     <LocalizedDictionary id="8" />

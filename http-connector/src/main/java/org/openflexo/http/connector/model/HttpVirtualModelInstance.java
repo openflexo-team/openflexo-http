@@ -109,8 +109,8 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
 			return instances.computeIfAbsent(
 				path, (newPath) -> {
-					ContentSupport support = supportFactory.newSupport(this, concept, path, null, pointer);
-					return getAccessPointFactory().newFlexoConceptInstance(this, support, path, concept);
+					ContentSupport support = supportFactory.newSupport(this, path, null, pointer);
+					return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
 				});
 		}
 
@@ -127,9 +127,9 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 				InputStream stream = response.getEntity().getContent()
 			) {
 
-				List<S> supports = supportFactory.newSupports(this, concept, path, stream, pointer);
+				List<S> supports = supportFactory.newSupports(this, path, stream, pointer);
 				return supports.stream().map((s) ->
-					getAccessPointFactory().newFlexoConceptInstance(this, s, null, concept)
+					getAccessPointFactory().newFlexoConceptInstance(this, s, concept)
 				).collect(Collectors.toList());
 
 			} catch (IOException e) {

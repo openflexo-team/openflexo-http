@@ -28,14 +28,7 @@ public class AccessPointResourceFactory
     @Override
     public AccessPointFactory makeResourceDataFactory(AccessPointResource resource, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
         FlexoEditingContext editingContext = technologyContextManager.getServiceManager().getEditingContext();
-        return new AccessPointFactory(resource, editingContext, (node) -> {
-            String url = node.getValue("url", String.class);
-            String baseUrl = resource.getLoadedResourceData().getUrl();
-            if (url.startsWith(baseUrl)) {
-                url = url.substring(baseUrl.length());
-            }
-            return url;
-        });
+        return new AccessPointFactory(resource, editingContext);
     }
 
     @Override
