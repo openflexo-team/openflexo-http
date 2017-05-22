@@ -92,7 +92,7 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 
-@ModelEntity
+@ModelEntity(isAbstract = true)
 public interface HttpRequestBehaviour extends AbstractActionScheme {
 
 	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
