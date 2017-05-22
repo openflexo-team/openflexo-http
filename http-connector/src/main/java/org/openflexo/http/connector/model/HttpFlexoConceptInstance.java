@@ -114,7 +114,7 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 			String resourceURI = accessPoint.getResource().getURI();
 			String conceptName = getFlexoConcept().getName();
-			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), support.getPath(), conceptName);
+			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), support.getIdentifier(), conceptName);
 		}
 	}
 }

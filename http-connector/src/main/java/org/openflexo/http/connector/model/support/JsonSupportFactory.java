@@ -99,7 +99,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 		return result;
 	}
 
-	public JsonSupport newSupport(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer) {
+	public JsonSupport newSupport(HttpVirtualModelInstance owner, String identifier, InputStream stream, String pointer) {
 		JsonNode node = null;
 
 		// if the support contains the stream
@@ -113,7 +113,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 				}
 
 				if (!(node instanceof ObjectNode)) {
-					logger.severe("Read json from '" + path + "(" + pointer + ")' isn't an object (" + source + ")");
+					logger.severe("Read json from '" + identifier + "(" + pointer + ")' isn't an object (" + source + ")");
 					return null;
 				}
 			} catch (IOException e) {
@@ -121,7 +121,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport> {
 
 			}
 		}
-		return new JsonSupport(owner, path, (ObjectNode) node, pointer != null ? JsonPointer.compile(pointer) : null);
+		return new JsonSupport(owner, identifier, (ObjectNode) node, pointer != null ? JsonPointer.compile(pointer) : null);
 	}
 
 	private String getPath(HttpVirtualModelInstance owner, ObjectNode node) {

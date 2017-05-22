@@ -88,7 +88,7 @@ public class JsonSupport implements ContentSupport {
 	}
 
 	@Override
-	public String getPath() {
+	public String getIdentifier() {
 		return path;
 	}
 

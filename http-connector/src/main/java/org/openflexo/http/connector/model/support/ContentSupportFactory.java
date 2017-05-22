@@ -40,12 +40,34 @@ import java.util.List;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
 /**
- * Created by charlie on 17/05/2017.
+ * A {@link ContentSupportFactory} instance is able to create {@link ContentSupport} for a given
+ * technology (JSON, XMLRPC, ...). A owning {@link HttpVirtualModelInstance} uses the factory
+ * to create {@link ContentSupport} for it's {@link org.openflexo.http.connector.model.HttpFlexoConceptInstance}.
  */
 public interface ContentSupportFactory<S extends ContentSupport> {
 
+	/**
+	 * Creates a list of supports using the given stream.
+	 *
+	 * @param owner the {@link HttpVirtualModelInstance} owner (never null).
+	 * @param path the request path (never null).
+	 * @param stream the {@link InputStream} to read (never null).
+	 * @param pointer when the result is read as a tree (like JSON or XML) the pointer allows to get
+	 *                a specific node in the tree for the result (may be null).
+	 * @return a list of {@link ContentSupport}, never null, may be empty.
+	 */
 	List<S> newSupports(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer);
 
-	S newSupport(HttpVirtualModelInstance owner, String path, InputStream stream, String pointer);
+	/**
+	 * Creates a support for the given identifier. The support may be empty if the stream is null.
+	 *
+	 * @param owner the {@link HttpVirtualModelInstance} owner (never null).
+	 * @param identifier the identifier for the object.
+	 * @param stream {@link InputStream} to read (<b>may be null</b>).
+	 * @param pointer when the result is read as a tree (like JSON or XML) the pointer allows to get
+	 *                a specific node in the tree for the result (may be null).
+	 * @return a support for the given object, never null.
+	 */
+	S newSupport(HttpVirtualModelInstance owner, String identifier, InputStream stream, String pointer);
 
 }
