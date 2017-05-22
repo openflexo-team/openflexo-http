@@ -41,6 +41,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -57,6 +59,7 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualMo
 import org.openflexo.http.connector.model.support.ContentSupport;
 import org.openflexo.http.connector.model.support.ContentSupportFactory;
 import org.openflexo.http.connector.rm.AccessPointResource;
+import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Import;
@@ -92,6 +95,8 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 	CloseableHttpClient getHttpclient();
 
 	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport> extends VirtualModelInstanceImpl implements HttpVirtualModelInstance<S> {
+
+		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
@@ -133,7 +138,7 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 				).collect(Collectors.toList());
 
 			} catch (IOException e) {
-				log("Can't read '"+ httpGet.getURI() +"': [" + e.getClass().getSimpleName() + "] " + e.getMessage(), LogLevel.SEVERE, this, null);
+				logger.log(Level.SEVERE, "Can't read '"+ httpGet.getURI(), e);
 			}
 			return Collections.emptyList();
 		}
