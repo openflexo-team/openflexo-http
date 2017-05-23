@@ -4,7 +4,7 @@ export class Grid implements Component {
 
     container: HTMLDivElement;
 
-    private readonly cells: GridCell[];
+    private cells: GridCell[] = [];
 
     constructor(
         private readonly spacing = true

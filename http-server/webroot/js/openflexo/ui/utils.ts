@@ -6,3 +6,13 @@ export function clearElement(element: HTMLElement) {
         child = element.firstChild;
     }
 }
+
+export function addCssIfNotAlreadyPresent(reference: string) {
+    if (document.head.querySelector("[href='"+ reference +"']") === null) {
+        let link = document.createElement("link");
+        link.href = reference;
+        link.rel = "stylesheet";
+
+        document.head.appendChild(link);
+    }
+}
