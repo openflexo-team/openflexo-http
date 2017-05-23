@@ -4,6 +4,7 @@
         "noImplicitAny": false,
         "inlineSourceMap": true,
         "lib": ["dom", "es2015.promise", "es5"],
-        "alwaysStrict": true
+        "alwaysStrict": true,
+        "strictNullChecks": true
     }
 }
