@@ -1,88 +1,90 @@
-"use strict";
-exports.host = "";
-var ResourceCenter = (function () {
-    function ResourceCenter(name, id, url, type, uri, resourceUrl) {
-        this.name = name;
-        this.id = id;
-        this.url = url;
-        this.type = type;
-        this.uri = uri;
-        this.resourceUrl = resourceUrl;
+define(["require", "exports"], function (require, exports) {
+    "use strict";
+    exports.host = "";
+    var ResourceCenter = (function () {
+        function ResourceCenter(name, id, url, type, uri, resourceUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.uri = uri;
+            this.resourceUrl = resourceUrl;
+        }
+        return ResourceCenter;
+    }());
+    exports.ResourceCenter = ResourceCenter;
+    var Resource = (function () {
+        function Resource(name, id, url, type, uri, resourceCenterId, resourceCenterUrl, contentUrl, technologyAdapterId, technologyAdapterUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.uri = uri;
+            this.resourceCenterId = resourceCenterId;
+            this.resourceCenterUrl = resourceCenterUrl;
+            this.contentUrl = contentUrl;
+            this.technologyAdapterId = technologyAdapterId;
+            this.technologyAdapterUrl = technologyAdapterUrl;
+        }
+        return Resource;
+    }());
+    exports.Resource = Resource;
+    var Folder = (function () {
+        function Folder(name, id, url, type, resourceCenterId, resourceCenterUrl) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.resourceCenterId = resourceCenterId;
+            this.resourceCenterUrl = resourceCenterUrl;
+        }
+        return Folder;
+    }());
+    exports.Folder = Folder;
+    var TechnologyAdapter = (function () {
+        function TechnologyAdapter(name, id, url, type) {
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+        }
+        return TechnologyAdapter;
+    }());
+    exports.TechnologyAdapter = TechnologyAdapter;
+    function error(url) {
+        console.log("Error can't access " + url + '", check that it exists and is accessible');
     }
-    return ResourceCenter;
-}());
-exports.ResourceCenter = ResourceCenter;
-var Resource = (function () {
-    function Resource(name, id, url, type, uri, resourceCenterId, resourceCenterUrl, contentUrl, technologyAdapterId, technologyAdapterUrl) {
-        this.name = name;
-        this.id = id;
-        this.url = url;
-        this.type = type;
-        this.uri = uri;
-        this.resourceCenterId = resourceCenterId;
-        this.resourceCenterUrl = resourceCenterUrl;
-        this.contentUrl = contentUrl;
-        this.technologyAdapterId = technologyAdapterId;
-        this.technologyAdapterUrl = technologyAdapterUrl;
+    function resourceCenters(callback) {
+        call(exports.host + "/rc", callback);
     }
-    return Resource;
-}());
-exports.Resource = Resource;
-var Folder = (function () {
-    function Folder(name, id, url, type, resourceCenterId, resourceCenterUrl) {
-        this.name = name;
-        this.id = id;
-        this.url = url;
-        this.type = type;
-        this.resourceCenterId = resourceCenterId;
-        this.resourceCenterUrl = resourceCenterUrl;
+    exports.resourceCenters = resourceCenters;
+    function resources(callback) {
+        call(exports.host + "/resource", callback);
     }
-    return Folder;
-}());
-exports.Folder = Folder;
-var TechnologyAdapter = (function () {
-    function TechnologyAdapter(name, id, url, type) {
-        this.name = name;
-        this.id = id;
-        this.url = url;
-        this.type = type;
+    exports.resources = resources;
+    function technologyAdapters(callback) {
+        call(exports.host + "/ta", callback);
     }
-    return TechnologyAdapter;
-}());
-exports.TechnologyAdapter = TechnologyAdapter;
-function error(url) {
-    console.log("Error can't access " + url + '", check that it exists and is accessible');
-}
-function resourceCenters(callback) {
-    call(exports.host + "/rc", callback);
-}
-exports.resourceCenters = resourceCenters;
-function resources(callback) {
-    call(exports.host + "/resource", callback);
-}
-exports.resources = resources;
-function technologyAdapters(callback) {
-    call(exports.host + "/ta", callback);
-}
-exports.technologyAdapters = technologyAdapters;
-function call(path, callback, errorCallback) {
-    if (errorCallback === void 0) { errorCallback = function (ev) { error(path); }; }
-    var request = new XMLHttpRequest();
-    request.open("get", exports.host + path);
-    request.onload = function (ev) {
-        if (request.status >= 200 && request.status < 300) {
-            var first = request.responseText.charAt(0);
-            if (first === '{' || first === '[') {
-                var json = JSON.parse(request.responseText);
-                callback(json);
+    exports.technologyAdapters = technologyAdapters;
+    function call(path, callback, errorCallback) {
+        if (errorCallback === void 0) { errorCallback = function (ev) { error(path); }; }
+        var request = new XMLHttpRequest();
+        request.open("get", exports.host + path);
+        request.onload = function (ev) {
+            if (request.status >= 200 && request.status < 300) {
+                var first = request.responseText.charAt(0);
+                if (first === '{' || first === '[') {
+                    var json = JSON.parse(request.responseText);
+                    callback(json);
+                }
             }
-        }
-        else {
-            errorCallback(ev);
-        }
-    };
-    request.onerror = errorCallback;
-    request.send();
-}
-exports.call = call;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoib3BlbmZsZXhvLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsib3BlbmZsZXhvLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7QUFBVyxRQUFBLElBQUksR0FBRyxFQUFFLENBQUM7QUFTckI7SUFDSSx3QkFDVyxJQUFZLEVBQ1osRUFBVSxFQUNWLEdBQVcsRUFDWCxJQUFZLEVBQ1osR0FBVyxFQUNYLFdBQW1CO1FBTG5CLFNBQUksR0FBSixJQUFJLENBQVE7UUFDWixPQUFFLEdBQUYsRUFBRSxDQUFRO1FBQ1YsUUFBRyxHQUFILEdBQUcsQ0FBUTtRQUNYLFNBQUksR0FBSixJQUFJLENBQVE7UUFDWixRQUFHLEdBQUgsR0FBRyxDQUFRO1FBQ1gsZ0JBQVcsR0FBWCxXQUFXLENBQVE7SUFDekIsQ0FBQztJQUNWLHFCQUFDO0FBQUQsQ0FBQyxBQVRELElBU0M7QUFUWSx3Q0FBYztBQWdCM0I7SUFDSSxrQkFDVyxJQUFZLEVBQ1osRUFBVSxFQUNWLEdBQVcsRUFDWCxJQUFZLEVBQ1osR0FBVyxFQUNYLGdCQUF3QixFQUN4QixpQkFBeUIsRUFDekIsVUFBa0IsRUFDbEIsbUJBQTJCLEVBQzNCLG9CQUE0QjtRQVQ1QixTQUFJLEdBQUosSUFBSSxDQUFRO1FBQ1osT0FBRSxHQUFGLEVBQUUsQ0FBUTtRQUNWLFFBQUcsR0FBSCxHQUFHLENBQVE7UUFDWCxTQUFJLEdBQUosSUFBSSxDQUFRO1FBQ1osUUFBRyxHQUFILEdBQUcsQ0FBUTtRQUNYLHFCQUFnQixHQUFoQixnQkFBZ0IsQ0FBUTtRQUN4QixzQkFBaUIsR0FBakIsaUJBQWlCLENBQVE7UUFDekIsZUFBVSxHQUFWLFVBQVUsQ0FBUTtRQUNsQix3QkFBbUIsR0FBbkIsbUJBQW1CLENBQVE7UUFDM0IseUJBQW9CLEdBQXBCLG9CQUFvQixDQUFRO0lBQ2xDLENBQUM7SUFDVixlQUFDO0FBQUQsQ0FBQyxBQWJELElBYUM7QUFiWSw0QkFBUTtBQWVyQjtJQUNJLGdCQUNXLElBQVksRUFDWixFQUFVLEVBQ1Ys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
+            else {
+                errorCallback(ev);
+            }
+        };
+        request.onerror = errorCallback;
+        request.send();
+    }
+    exports.call = call;
+});
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoib3BlbmZsZXhvLmpzIiwic291cmNlUm9vdCI6IiIsInNvdXJjZXMiOlsib3BlbmZsZXhvLnRzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0lBQVcsUUFBQSxJQUFJLEdBQUcsRUFBRSxDQUFDO0lBU3JCO1FBQ0ksd0JBQ1csSUFBWSxFQUNaLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLEdBQVcsRUFDWCxXQUFtQjtZQUxuQixTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osT0FBRSxHQUFGLEVBQUUsQ0FBUTtZQUNWLFFBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osUUFBRyxHQUFILEdBQUcsQ0FBUTtZQUNYLGdCQUFXLEdBQVgsV0FBVyxDQUFRO1FBQ3pCLENBQUM7UUFDVixxQkFBQztJQUFELENBQUMsQUFURCxJQVNDO0lBVFksd0NBQWM7SUFnQjNCO1FBQ0ksa0JBQ1csSUFBWSxFQUNaLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLEdBQVcsRUFDWCxnQkFBd0IsRUFDeEIsaUJBQXlCLEVBQ3pCLFVBQWtCLEVBQ2xCLG1CQUEyQixFQUMzQixvQkFBNEI7WUFUNUIsU0FBSSxHQUFKLElBQUksQ0FBUTtZQUNaLE9BQUUsR0FBRixFQUFFLENBQVE7WUFDVixRQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsU0FBSSxHQUFKLElBQUksQ0FBUTtZQUNaLFFBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxxQkFBZ0IsR0FBaEIsZ0JBQWdCLENBQVE7WUFDeEIsc0JBQWlCLEdBQWpCLGlCQUFpQixDQUFRO1lBQ3pCLGVBQVUsR0FBVixVQUFVLENBQVE7WUFDbEIsd0JBQW1CLEdBQW5CLG1CQUFtQixDQUFRO1lBQzNCLHlCQUFvQixHQUFwQixvQkFBb0IsQ0FBUTtRQUNsQyxDQUFDO1FBQ1YsZUFBQztJQUFELENBQUMsQUFiRCxJQWFDO0lBYlksNEJBQVE7SUFlckI7UUFDSSxnQkFDVyxJQUFZLEVBQ1osRUFBVSxFQUNW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

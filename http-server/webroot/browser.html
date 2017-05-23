@@ -2,20 +2,15 @@
 <head>
     <title>Resource Center Browser</title>
 
-    <link href="/css/openflexo.css" rel="stylesheet"/>
+    <link href="/css/test.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-    <script src="/bower_components/system.js/dist/system.js"></script>
-  
 </head>
 <body>
     <h1> Resource Centers</h1>
     <div id="rcs"></div>
 
 
-  <script>
-    SystemJS.config({ packages: { '.': { defaultExtension: 'js' } } });
-    SystemJS.import('js/browser').then(null, console.error.bind(console));
-  </script>
+    <script data-main="js/browser.js" src="/bower_components/requirejs/require.js"></script>
 </body>
 </html>
