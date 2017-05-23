@@ -14,9 +14,10 @@ export class TechnologyAdapterCard implements Component {
         this.ta = ta;
 
         addCssIfNotAlreadyPresent("/css/openflexo/ui/TechnologyAdapterCard.css");
+        this.create();
     }
 
-    initialize(): void {
+    private create(): void {
         this.container = document.createElement("div");
         this.container.classList.add("of-technologyadaptercard");
         this.container.classList.add("mdl-card");
@@ -36,10 +37,6 @@ export class TechnologyAdapterCard implements Component {
         text.innerText = this.ta.name + " description";
         this.container.appendChild(text);
     }    
-
-    dispose(): void {
-        
-    }
 }
 /*
   <div class="mdl-card__actions mdl-card--border">

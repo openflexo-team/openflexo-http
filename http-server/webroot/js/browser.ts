@@ -11,7 +11,7 @@ import {
 const arrow_right = "keyboard_arrow_right";
 const arrow_down = "keyboard_arrow_down";
 
-function getDataUrlElement(element: HTMLElement): HTMLElement {
+function getDataUrlElement(element: HTMLElement): HTMLElement|null {
     return findElementWithAttributeInHierarchy(element, "data-url");
 }
 
@@ -40,13 +40,18 @@ function expand(event: MouseEvent) {
             
             div.appendChild(spinner());
 
-            call<ContainedByResourceCenter[]>(item.getAttribute("data-url"), (children) => {
-                div.removeChild(div.firstChild);
-                
-                for (let child of children) {
-                    div.appendChild(createItemFromSource(child));
-                }
-            });
+            let url = item.getAttribute("data-url");
+            if (url) {
+                call<ContainedByResourceCenter[]>(url, (children) => {
+                    if (div.firstChild) {
+                        div.removeChild(div.firstChild);
+                    }
+                    
+                    for (let child of children) {
+                        div.appendChild(createItemFromSource(child));
+                    }
+                });
+            }
 
         }
     }
@@ -63,6 +68,9 @@ function createItemFromSource(source: ContainedByResourceCenter):HTMLDivElement 
         case 'Resource':
             return createResourceItem(<Resource>source);
     }
+    let error = document.createElement("div");
+
+    return error;
 }
 
 function createFolderItem(label: string, url: string):HTMLDivElement {
@@ -116,11 +124,39 @@ function createResourceItem(source: Resource):HTMLDivElement {
     return tree;
 }
 
+function createErrorItem():HTMLDivElement {
+    let tree = document.createElement("div");
+    tree.className = "item";
+    
+    let item = document.createElement("div");
+    item.className = "label";
+
+    let treeStatus = document.createElement("span");
+    treeStatus.className = "status";
+    item.appendChild(treeStatus);
+
+    let itemIcon = icon("error");
+    item.appendChild(itemIcon);
+
+    let itemLabel = document.createElement("a");
+    itemLabel.innerText = "<error>";
+    item.appendChild(itemLabel);
+    
+    let itemType = document.createElement("span");
+    itemType.innerText = "unknown";
+    item.appendChild(itemType);
+
+    tree.appendChild(item);
+    return tree;
+}
+
 resourceCenters((resourceCenters) => {
     let div = document.querySelector("#rcs");
-    for (let rc of resourceCenters) {
-        div.appendChild(document.createElement("hr"));
-        div.appendChild(createTitle(rc));
-        div.appendChild(createRoot(rc))
+    if (div) {
+        for (let rc of resourceCenters) {
+            div.appendChild(document.createElement("hr"));
+            div.appendChild(createTitle(rc));
+            div.appendChild(createRoot(rc))
+        }
     }
 });

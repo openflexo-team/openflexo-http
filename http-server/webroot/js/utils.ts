@@ -12,8 +12,8 @@ export function spinner(): HTMLSpanElement {
     return spinner;
 }
 
-export function findElementWithAttributeInHierarchy(element: HTMLElement, attributeName: string):HTMLElement {
-    let current = element;
+export function findElementWithAttributeInHierarchy(element: HTMLElement, attributeName: string):HTMLElement|null {
+    let current: HTMLElement|null = element;
     let attribute = current.getAttribute(attributeName);
     while (attribute === null) {
         current = current.parentElement;

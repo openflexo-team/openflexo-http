@@ -1,8 +1,5 @@
 export interface Component {
 
-    container : HTMLSpanElement | HTMLDivElement;
+    readonly container : HTMLSpanElement | HTMLDivElement;
 
-    initialize(): void;
-
-    dispose(): void; 
 }

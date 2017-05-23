@@ -10,7 +10,7 @@ import {
 
 
 function getDataUrl(element : HTMLElement) {
-    let current = element;
+    let current: HTMLElement|null = element;
     let dataUrl = current.getAttribute("data-url");
     while (dataUrl === null) {
         current = current.parentElement;
@@ -21,7 +21,7 @@ function getDataUrl(element : HTMLElement) {
 }
 
 function getDescriptionDiv(element: HTMLElement) {
-    let current = element;
+    let current: HTMLElement|null = element;
     let dataUrl = current.getAttribute("data-url");
     while (dataUrl === null) {
         current = current.parentElement;
@@ -33,11 +33,13 @@ function getDescriptionDiv(element: HTMLElement) {
 
 function showDetails(event: MouseEvent) {
     let description = getDescriptionDiv(<HTMLElement>event.target);
-    let details = <HTMLElement>description.nextSibling;
-    if (details.style.display === "block") {
-        details.style.display = 'none'
-    } else {
-        details.style.display = 'block'
+    if (description) {
+        let details = <HTMLElement>description.nextSibling;
+        if (details.style.display === "block") {
+            details.style.display = 'none'
+        } else {
+            details.style.display = 'block'
+        }
     }
     event.preventDefault();
 }
@@ -148,30 +150,35 @@ function initializeUrl() {
 
 technologyAdapters((tas) => {
     let div = document.querySelector("#tas");
-    div.appendChild(createCount(tas));
-    for (let ta of tas) {
-        div.appendChild(createDescriptionElement(ta));
-        div.appendChild(createHiddenElement(ta))
+    if (div) {
+        div.appendChild(createCount(tas));
+        for (let ta of tas) {
+            div.appendChild(createDescriptionElement(ta));
+            div.appendChild(createHiddenElement(ta))
+        }
     }
 });
 
 resourceCenters((centers) => {
     let div = document.querySelector("#centers");
-    div.appendChild(createCount(centers));
-    for (let center of centers) {
-        div.appendChild(createDescriptionElement(center));
-        div.appendChild(createHiddenElement(center))
+    if (div) {
+        div.appendChild(createCount(centers));
+        for (let center of centers) {
+            div.appendChild(createDescriptionElement(center));
+            div.appendChild(createHiddenElement(center))
+        }
     }
 });
 
 resources((resources) => {
     let div = document.querySelector("#resources");
-    div.appendChild(createCount(resources));
-    for (let resource of resources) {
-        div.appendChild(createDescriptionElement(resource));
-        div.appendChild(createHiddenElement(resource))
+    if (div) {
+        div.appendChild(createCount(resources));
+        for (let resource of resources) {
+            div.appendChild(createDescriptionElement(resource));
+            div.appendChild(createHiddenElement(resource))
+        }
     }
 });
-
 
 initializeUrl();

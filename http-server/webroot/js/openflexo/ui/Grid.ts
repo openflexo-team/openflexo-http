@@ -9,15 +9,26 @@ export class Grid implements Component {
     constructor(
         private readonly spacing = true
     ) {
+        this.create();
     }
 
     addCell(cell: GridCell) {
         this.cells.push(cell);
-
-        // TODO add container if grid already initialized
+        this.container.appendChild(cell.container);
     }
 
-    initialize(): void {
+    removeCell(cell: GridCell) {
+        let index = this.cells.indexOf(cell);
+        if (index >= 0) {
+            // removes from array
+            this.cells.splice(index, 1);
+
+            // removes from dom
+            this.container.removeChild(cell.container);
+        }
+    }
+
+    create(): void {
         this.container = document.createElement("div");
         this.container.classList.add("mdl-grid");
         if (!this.spacing) {
@@ -25,36 +36,32 @@ export class Grid implements Component {
         }
 
         for (let cell of this.cells) {
-            this.container.appendChild(cell.createCell());
+            this.container.appendChild(cell.container);
         }
     }    
-
-    dispose(): void {
-    }
 }
 
-export class GridCell {
+export class GridCell implements Component {
+
+    container: HTMLDivElement;
 
     constructor(
         private contents : Component|HTMLElement,
         private size: number = 4
     ) {
+        this.create();
     }
 
-    createCell(): HTMLDivElement {
-        let cell = document.createElement("div");
-        cell.classList.add("grid-cell");
-        cell.classList.add("mdl-cell--"+ this.size +"-col");
+    create() {
+        this.container = document.createElement("div");
+        this.container.classList.add("grid-cell");
+        this.container.classList.add("mdl-cell--"+ this.size +"-col");
         let contents = this.contents;
-        if ((<Component> contents).initialize) {
-            // it's a component
-            let component = (<Component> contents);
-            component.initialize();
-            cell.appendChild(component.container);
+        if ((<Component> contents).container) {
+            this.container.appendChild((<Component> contents).container);
         } else {
             // it's an html element
-            cell.appendChild(<HTMLElement> contents);
+            this.container.appendChild(<HTMLElement> contents);
         }
-        return cell;
     }
 }

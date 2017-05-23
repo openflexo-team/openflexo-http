@@ -16,19 +16,20 @@ export class Application implements AppContext {
         addCssIfNotAlreadyPresent("css/openflexo.css");
         addMdlScriptAndCssIfNotAlreadyPresent();
         
-        const adapters = document.querySelector("#adapters");        
-        const grid = new Grid();
+        const adapters = document.querySelector("#adapters");  
+        
+        if (adapters) {      
+            const grid = new Grid();
+            this.api.technologyAdapters().then(tas => {
+                for (let ta of tas) {
+                    console.log("TA " +  ta.name);
+                    const taUI = new TechnologyAdapterCard(ta);
+                    grid.addCell(new GridCell(taUI, 4));
+                }
 
-        this.api.technologyAdapters().then(tas => {
-            for (let ta of tas) {
-                console.log("TA " +  ta.name);
-                const taUI = new TechnologyAdapterCard(ta);
-                grid.addCell(new GridCell(taUI, 4));
-            }
-
-            grid.initialize();
-            adapters.appendChild(grid.container);
-        });
+                adapters.appendChild(grid.container);
+            });
+        }
 
     }
 }
