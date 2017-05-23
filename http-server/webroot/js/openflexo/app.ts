@@ -1,6 +1,7 @@
 import { Api } from "./api";
 import { Grid, GridCell } from "./ui/Grid";
 import { TechnologyAdapterCard } from "./ui/TechnologyAdapterCard";
+import { addMdlScriptAndCssIfNotAlreadyPresent, addCssIfNotAlreadyPresent } from "./ui/utils";
 
 export interface AppContext {
     api: Api;
@@ -12,7 +13,9 @@ export class Application implements AppContext {
 
     public start(): void {
         console.log("Starting OpenFlexo app");
-
+        addCssIfNotAlreadyPresent("css/openflexo.css");
+        addMdlScriptAndCssIfNotAlreadyPresent();
+        
         const adapters = document.querySelector("#adapters");        
         const grid = new Grid();
 
