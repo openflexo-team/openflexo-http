@@ -1,7 +1,7 @@
 import { Api } from "./api";
 import { Grid, GridCell } from "./ui/Grid";
 import { Tabs, Tab } from "./ui/Tabs";
-import { TechnologyAdapterCard } from "./ui/TechnologyAdapterCard";
+import { Card } from "./ui/Card";
 import { addMdlCssIfNotAlreadyPresent, addCssIfNotAlreadyPresent } from "./ui/utils";
 
 export interface AppContext {
@@ -21,16 +21,10 @@ export class Application implements AppContext {
         
         if (root) {      
             let tabs = new Tabs();
+            let tab = new Tab("adapters", "Technology Adapters", this.createTAGrid());    
+            tabs.addTab(tab);
+            tabs.selectTab(tab);        
             
-            for(let i=0; i<5; i++) {
-                let tab = new Tab("adapters" + i, "Technology Adapters", this.createTAGrid());
-                
-                tabs.addTab(tab);
-                tabs.selectTab(tab);        
-            }
-
-            //componentHandler.upgradeElements(tabs.container);
-
             root.appendChild(tabs.container);
         }
     }
@@ -40,7 +34,7 @@ export class Application implements AppContext {
         this.api.technologyAdapters().then(tas => {
             for (let ta of tas) {
                 console.log("TA " +  ta.name);
-                const taUI = new TechnologyAdapterCard(ta);
+                const taUI = new Card(ta.name, ta.name + " description");
                 grid.addCell(new GridCell(taUI, 4));
             }
         });

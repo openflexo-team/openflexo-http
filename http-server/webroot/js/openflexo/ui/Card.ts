@@ -4,22 +4,25 @@ import { Component } from "./component";
 
 import { TechnologyAdapter } from "../api";
 
-export class TechnologyAdapterCard implements Component {
+import { PhrasingCategory, FlowCategory, toElement } from "./category"
+
+export class Card implements Component {
 
     ta: TechnologyAdapter;
 
     container: HTMLDivElement;
 
-    constructor(ta: TechnologyAdapter) {
-        this.ta = ta;
-
-        addCssIfNotAlreadyPresent("/css/openflexo/ui/TechnologyAdapterCard.css");
+    constructor(
+        private title: PhrasingCategory,
+        private description: FlowCategory,
+    ) {
+        addCssIfNotAlreadyPresent("/css/openflexo/ui/Card.css");
         this.create();
     }
 
     private create(): void {
         this.container = document.createElement("div");
-        this.container.classList.add("of-technologyadaptercard");
+        this.container.classList.add("of-card");
         this.container.classList.add("mdl-card");
         this.container.classList.add("mdl-shadow--2dp");
 
@@ -28,13 +31,13 @@ export class TechnologyAdapterCard implements Component {
         
         let titleText = document.createElement("div");
         titleText.classList.add("mdl-card__title-text");
-        titleText.innerText = this.ta.name;
+        title.appendChild(toElement(this.title));
         title.appendChild(titleText);
         this.container.appendChild(title);
 
         let text = document.createElement("div");
         text.classList.add("mdl-card__supporting-text");
-        text.innerText = this.ta.name + " description";
+        text.appendChild(toElement(this.description));
         this.container.appendChild(text);
 
         mdlUpgradeElement(this.container);
