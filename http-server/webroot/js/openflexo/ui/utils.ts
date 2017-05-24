@@ -1,3 +1,4 @@
+/// <reference path="./mdl.d.ts" />
 
 export function clearElement(element: HTMLElement) {
     var child = element.firstChild;
@@ -7,9 +8,16 @@ export function clearElement(element: HTMLElement) {
     }
 }
 
-export function addMdlScriptAndCssIfNotAlreadyPresent() {
-    if (document.head.querySelector("[src='/bower_components/material-design-lite/material.min.js']") === null) {
-        addScript("/bower_components/material-design-lite/material.min.js");
+export function mdlUpgradeElement(element: HTMLElement) {
+    componentHandler.upgradeElements(element);
+}
+
+export function mdlDowngradeElement(element: HTMLElement) {
+    componentHandler.downgradeElements(element);
+}
+
+export function addMdlCssIfNotAlreadyPresent() {
+    if (document.head.querySelector("[href='css/mdl-openflexo.css']") === null) {
         addCss("css/mdl-openflexo.css");
         addCss("https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en");
         addCss("https://fonts.googleapis.com/icon?family=Material+Icons");
@@ -22,12 +30,6 @@ export function addCssIfNotAlreadyPresent(reference: string) {
     }
 }
 
-export function addScriptIfNotAlreadyPresent(src: string) {
-    if (document.head.querySelector("[src='"+ src +"']") === null) {
-        addScript(src);
-    }
-}
-
 function addCss(reference: string) {
     let link = document.createElement("link");
     link.href = reference;
@@ -36,8 +38,9 @@ function addCss(reference: string) {
     document.head.appendChild(link);
 }
 
-function addScript(src: string) {
-    let script = document.createElement("script");
-    script.src = src;
-    document.head.appendChild(script);
+// forEach method, could be shipped as part of an Object Literal/Module
+export function forEachNode(list: NodeList, callback:(i:number, n: HTMLElement)=>void) {
+    for (let i=0; i<list.length; i++) {
+        callback.call(callback, i, list.item(i));
+    }
 }

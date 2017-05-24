@@ -1,4 +1,4 @@
-import { addCssIfNotAlreadyPresent } from "./utils";
+import { addCssIfNotAlreadyPresent, mdlUpgradeElement } from "./utils";
 
 import { Component } from "./component";
 
@@ -36,6 +36,8 @@ export class TechnologyAdapterCard implements Component {
         text.classList.add("mdl-card__supporting-text");
         text.innerText = this.ta.name + " description";
         this.container.appendChild(text);
+
+        mdlUpgradeElement(this.container);
     }    
 }
 /*

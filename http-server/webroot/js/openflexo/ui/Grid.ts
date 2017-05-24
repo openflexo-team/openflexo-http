@@ -1,4 +1,5 @@
 import { Component } from "./Component";
+import { mdlUpgradeElement } from "./utils";
 
 export class Grid implements Component {
 
@@ -38,6 +39,8 @@ export class Grid implements Component {
         for (let cell of this.cells) {
             this.container.appendChild(cell.container);
         }
+
+        mdlUpgradeElement(this.container);
     }    
 }
 
@@ -63,5 +66,7 @@ export class GridCell implements Component {
             // it's an html element
             this.container.appendChild(<HTMLElement> contents);
         }
+
+        mdlUpgradeElement(this.container);
     }
 }
