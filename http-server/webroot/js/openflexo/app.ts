@@ -21,15 +21,17 @@ export class Application implements AppContext {
         
         if (root) {      
             let tabs = new Tabs();
-            let tab = new Tab("adapters", "Technology Adapters", this.createTAGrid());    
-            tabs.addTab(tab);
-            tabs.selectTab(tab);        
+            let selected = this.createAdaptersTab();
+            tabs.addTab(selected);
+            tabs.addTab(this.createCentersTab());
+            tabs.addTab(this.createResourcesTab());
             
+            tabs.selectTab(selected);
             root.appendChild(tabs.container);
         }
     }
 
-    private createTAGrid(): Grid {
+    private createAdaptersTab(): Tab {
         const grid = new Grid();
         this.api.technologyAdapters().then(tas => {
             for (let ta of tas) {
@@ -38,6 +40,30 @@ export class Application implements AppContext {
                 grid.addCell(new GridCell(taUI, 4));
             }
         });
-        return grid;
+        return new Tab("adapters", "Technology Adapters", grid);
+    }
+
+     private createCentersTab(): Tab {
+        const grid = new Grid();
+        this.api.resourceCenters().then(rcs => {
+            for (let rc of rcs) {
+                console.log("RC " +  rc.name);
+                const taUI = new Card(rc.name, rc.name + " description");
+                grid.addCell(new GridCell(taUI, 4));
+            }
+        });
+        return new Tab("centers", "Resource Centers", grid);
+    }
+
+    private createResourcesTab(): Tab {
+        const grid = new Grid();
+        this.api.resources().then(resources => {
+            for (let resource of resources) {
+                console.log("RC " +  resource.name);
+                const taUI = new Card(resource.name, resource.name + " description");
+                grid.addCell(new GridCell(taUI, 4));
+            }
+        });
+        return new Tab("resources", "Resources", grid);
     }
 }
