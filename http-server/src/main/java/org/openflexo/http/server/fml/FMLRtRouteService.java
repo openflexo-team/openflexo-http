@@ -36,18 +36,26 @@
 package org.openflexo.http.server.fml;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
+import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
+import org.openflexo.foundation.fml.rt.ViewModelFactory;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.rm.ViewResource;
+import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
-import org.openflexo.http.server.util.JsonUtils;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
  * Created by charlie on 08/02/2017.
@@ -55,6 +63,9 @@ import org.openflexo.http.server.util.JsonUtils;
 public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRTTechnologyAdapter> {
 
 	private FMLRTTechnologyAdapter technologyAdapter;
+
+	private PamelaResourceRestService<View, ViewResource> viewConverter;
+	private PamelaResourceRestService<VirtualModelInstance, VirtualModelInstanceResource> virtualModelInstanceConverter;
 
 	@Override
 	public Class<FMLRTTechnologyAdapter> getTechnologyAdapterClass() {
@@ -64,30 +75,63 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 	@Override
 	public void initialize(HttpService service, FMLRTTechnologyAdapter technologyAdapter) throws Exception {
 		this.technologyAdapter = technologyAdapter;
+
+		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
+		TechnologyAdapterService technologyAdapterService = technologyAdapter.getServiceManager().getTechnologyAdapterService();
+		ViewModelFactory viewFactory = new ViewModelFactory(null, null, technologyAdapterService);
+		viewConverter = new PamelaResourceRestService<>(
+				"/view",
+				this::getViewResources,
+				this::getViewResource,
+				ViewResource.class, taService, viewFactory
+		);
+
+		VirtualModelInstanceModelFactory vmiFactory = new VirtualModelInstanceModelFactory(null, null, technologyAdapterService);
+		virtualModelInstanceConverter = new PamelaResourceRestService<>(
+				"/vmi",
+				this::getVirtualModelInstanceResources,
+				this::getVirtualModelInstanceResource,
+				VirtualModelInstanceResource.class, taService, vmiFactory
+		);
+
+	}
+
+	private List<ViewResource> getViewResources() {
+		return Collections.emptyList();
+	}
+
+	private ViewResource getViewResource(String uri) {
+		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+			ViewResource view = viewLibrary.getView(uri);
+			if (view != null) return view;
+		}
+		return null;
+	}
+
+	private List<VirtualModelInstanceResource> getVirtualModelInstanceResources() {
+		return Collections.emptyList();
+	}
+
+	private VirtualModelInstanceResource getVirtualModelInstanceResource(String uri) {
+		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+			AbstractVirtualModelInstanceResource<?, ?> virtualModelInstance = viewLibrary.getVirtualModelInstance(uri);
+			if (virtualModelInstance instanceof VirtualModelInstanceResource) {
+				return (VirtualModelInstanceResource) virtualModelInstance;
+			}
+		}
+		return null;
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
-		router.get("/library").produces(RouteService.JSON).handler(this::serveLibraryList);
-	}
-
-
-	private void serveLibraryList(RoutingContext context) {
-		try {
-			JsonArray result = new JsonArray();
-			for (ViewLibrary served : technologyAdapter.getViewLibraries()) {
-				Object vpJson = JsonUtils.getRepositoryDescription(served);
-				result.add(vpJson);
-			}
-			context.response().end(result.encodePrettily());
-
-		} catch (Exception e) {
-			context.fail(e);
-		}
+		viewConverter.addRoutes(router);
+		virtualModelInstanceConverter.addRoutes(router);
 	}
 
 	@Override
 	public Map<Class<? extends FlexoResource<?>>, String> getResourceRoots() {
 		Map<Class<? extends FlexoResource<?>>, String> result = new HashMap<>();
+		result.put(viewConverter.getResourceClass(), viewConverter.getPrefix());
+		result.put(virtualModelInstanceConverter.getResourceClass(), virtualModelInstanceConverter.getPrefix());
 		return result;
 	}
 }
