@@ -71,14 +71,10 @@ public class JsonSerializer {
 	}
 
 	public Object toJson(Object object) throws InvalidDataException, ModelDefinitionException {
-		JsonObject result = new JsonObject();
-		identifyObject(object, result);
-		describeObject(object, result);
-		return result;
+		return toJson(object, false);
 	}
 
-
-	private Object toShortJson(Object object) throws InvalidDataException, ModelDefinitionException {
+	private Object toJson(Object object, boolean small) throws InvalidDataException, ModelDefinitionException {
 		if (object == null) return null;
 
 		Class<?> type = object.getClass();
@@ -93,10 +89,10 @@ public class JsonSerializer {
 			return object.toString();
 		} else {
 			JsonObject result = new JsonObject();
-			if (!identifyObject(object, result)) {
+			boolean identified = identifyObject(object, result);
+			if (!(small&&identified)) {
 				describeObject(object, result);
 			}
-
 			return result;
 		}
 	}
@@ -116,7 +112,8 @@ public class JsonSerializer {
 	private String getType(Object object) {
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
-			@SuppressWarnings({ "unchecked", "rawtype" }) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
+			@SuppressWarnings({ "unchecked", "rawtype" })
+			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 			return modelEntity.getXMLTag();
 		} else {
 			return object.getClass().getSimpleName();
@@ -166,15 +163,16 @@ public class JsonSerializer {
 
 				Object propertyValue = handler.invokeGetter(property);
 				Object transformed = null;
+				boolean small = property.getEmbedded() == null || propertyValue == object;
 				switch (property.getCardinality()) {
 					case SINGLE: {
-						transformed = toShortJson(propertyValue);
+						transformed = toJson(propertyValue, small);
 						break;
 					}
 					case LIST: {
 						List<Object> collected = new ArrayList<>();
 						for (Object child : (List) propertyValue) {
-							collected.add(toShortJson(child));
+							collected.add(toJson(child, small));
 						}
 						transformed = new JsonArray(collected);
 						break;
@@ -195,7 +193,6 @@ public class JsonSerializer {
 					propertyName = xmlElement.xmlTag();
 				}
 				result.put(propertyName, transformed);
-
 			}
 		}
 	}
