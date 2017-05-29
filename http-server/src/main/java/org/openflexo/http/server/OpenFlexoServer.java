@@ -2,6 +2,8 @@ package org.openflexo.http.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.DefaultFlexoServiceManager;
@@ -12,6 +14,8 @@ import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.resource.DirectoryResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.foundation.utils.ProjectInitializerException;
+import org.openflexo.foundation.utils.ProjectLoadingCancelledException;
 import org.openflexo.logging.FlexoLoggingManager;
 
 /**
@@ -28,6 +32,8 @@ public class OpenFlexoServer {
 		public boolean devMode = false;
 
 		public String resourceCenterUri = "http//org.openflexo.server/resourceCenter";
+
+		public final List<String> projectPaths = new ArrayList<>();
 
 	}
 
@@ -55,25 +61,107 @@ public class OpenFlexoServer {
 		return manager;
 	}
 
-	public static void main(String[] args) throws IOException {
+	private static void usage() {
+		StringBuilder usage = new StringBuilder();
+		usage.append("Usage: server [options]\n");
+		usage.append("\n");
+		usage.append("- -h|--help: show this help.\n");
+		usage.append("- -v|--verbose: verbose mode.\n");
+		usage.append("- --port port: server port.\n");
+		usage.append("- --host host: server host.\n");
+		usage.append("- (TODO) ---center path: resource center to register (may have several).\n");
+		usage.append("- --project path: path for a project to open (may have several).\n");
+		usage.append("\n");
+		usage.append("\n");
+
+		System.out.println(usage);
+		System.exit(0);
+	}
+
+
+	private static Options parseOptions(String[] args) {
 		Options options = new Options();
 
-		// Args 1 is host if given
-		if (args.length >= 1) {
-			options.serverOptions.host = args[0];
-		}
-		if (args.length >= 2) {
-			try {
-				options.serverOptions.port = Integer.parseInt(args[1]);
-			} catch (NumberFormatException e) {
-				System.err.println("Can't read port '" + args[1] + "', exiting");
-				System.exit(1);
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
+			switch(arg) {
+				case "--help":
+					usage();
+					break;
+				case "--verbose":
+					options.verbose = true;
+					break;
+				case "--port":
+					if (i+1 < args.length) {
+						try {
+							options.serverOptions.port = Integer.parseInt(args[++i]);
+						} catch (NumberFormatException e) {
+							System.err.println("Port must be an integer.");
+							System.exit(1);
+						}
+					} else {
+						System.err.println("Option "+ arg +" needs an argument.");
+						System.exit(1);
+					}
+					break;
+				case "--host":
+					if (i+1 < args.length) {
+						options.serverOptions.host = args[++i];
+					} else {
+						System.err.println("Option "+ arg +" needs an argument.");
+						System.exit(1);
+					}
+					break;
+				case "--project":
+					if (i+1 < args.length) {
+						options.projectPaths.add(args[++i]);
+					} else {
+						System.err.println("Option "+ arg +" needs an argument.");
+						System.exit(1);
+					}
+					break;
+				default: {
+					if (arg.length() >= 2 && arg.charAt(0) == '-' && arg.charAt(1) != '-') {
+						for (int j = 1; j < arg.length(); j++) {
+							switch (arg.charAt(j)) {
+								case 'h':
+									usage();
+									break;
+								case 'v':
+									options.verbose = true;
+									break;
+								default:
+									System.err.println("Unknown short option '"+ arg.charAt(j) +"'");
+									System.exit(1);
+
+							}
+						}
+					} else {
+						System.err.println("Unknown long option '"+ arg +"'");
+						System.exit(1);
+					}
+				}
+
 			}
 		}
+
+		return options;
+	}
+
+	public static void main(String[] args) throws IOException {
+		Options options = parseOptions(args);
 
 		FlexoLoggingManager.initialize(-1, true, null, options.verbose ? Level.INFO : Level.WARNING, null);
 
 		FlexoServiceManager manager = createServiceManager(options);
 		manager.registerService(new HttpService(options.serverOptions));
+
+		for (String path : options.projectPaths) {
+			try {
+				manager.getProjectLoaderService().loadProject(new File(path));
+			} catch (ProjectLoadingCancelledException | ProjectInitializerException e) {
+				System.err.println("[ERROR] Can't load project '" + path + "'.");
+			}
+		}
 	}
 }
