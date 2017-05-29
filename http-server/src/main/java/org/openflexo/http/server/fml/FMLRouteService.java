@@ -4,6 +4,8 @@ import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.ViewPoint;
@@ -11,6 +13,7 @@ import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
+import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
@@ -34,7 +37,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 	}
 
 	@Override
-	public void initialize(HttpService service,FMLTechnologyAdapter technologyAdapter) throws Exception {
+	public void initialize(HttpService service, FMLTechnologyAdapter technologyAdapter) throws Exception {
 		this.technologyAdapter = technologyAdapter;
 		ViewPointLibrary viewPointLibrary = technologyAdapter.getViewPointLibrary();
 		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
@@ -44,7 +47,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
 			viewPointLibrary::getViewPointResource,
-			ViewPoint.class, taService, factory
+			ViewPointResource.class, taService, factory
 		);
 		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
 
@@ -52,13 +55,21 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/virtualmodel",
 			() -> Collections.emptyList(),
 			viewPointLibrary::getVirtualModelResource,
-			VirtualModel.class, taService, factory
+			VirtualModelResource.class, taService, factory
 		);
 	}
 
 	public void addRoutes(Vertx vertx, Router router) {
 		viewPointConverter.addRoutes(router);
 		virtualModelConverter.addRoutes(router);
+	}
+
+	@Override
+	public Map<Class<? extends FlexoResource<?>>, String> getResourceRoots() {
+		Map<Class<? extends FlexoResource<?>>, String> result = new HashMap<>();
+		result.put(viewPointConverter.getResourceClass(), viewPointConverter.getPrefix());
+		result.put(virtualModelConverter.getResourceClass(), virtualModelConverter.getPrefix());
+		return result;
 	}
 
 	@Override

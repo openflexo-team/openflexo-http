@@ -40,8 +40,11 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import java.util.HashMap;
+import java.util.Map;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
+import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RouteService;
@@ -83,6 +86,13 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 			context.fail(e);
 		}
 	}
+
+	@Override
+	public Map<Class<? extends FlexoResource<?>>, String> getResourceRoots() {
+		Map<Class<? extends FlexoResource<?>>, String> result = new HashMap<>();
+		return result;
+	}
+
 
 	@Override
 	public void complementRoot(String url, JsonObject object) {

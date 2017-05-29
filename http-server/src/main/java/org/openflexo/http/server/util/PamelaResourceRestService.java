@@ -64,9 +64,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private final Function<String, R> finder;
 
-	private final ModelFactory factory;
-
-	private final Class<?> rootClass;
+	private final Class<R> resourceClass;
 
 	private final JsonSerializer serializer;
 
@@ -76,16 +74,23 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		String prefix,
 		Supplier<Collection<R>> supplier,
 		Function<String, R> finder,
-		Class<D> rootClass,
+		Class<R> resourceClass,
 		TechnologyAdapterRouteService service,
 		ModelFactory factory
 	) throws ModelDefinitionException {
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
-		this.rootClass = rootClass;
-		this.factory = factory;
+		this.resourceClass = resourceClass;
 		this.serializer = new JsonSerializer(service, factory);
+	}
+
+	public String getPrefix() {
+		return prefix;
+	}
+
+	public Class<R> getResourceClass() {
+		return resourceClass;
 	}
 
 	public void setPostLoader(Consumer<D> postLoader) {
@@ -103,7 +108,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		try {
 			JsonArray result = new JsonArray();
 			for (R served : supplier.get()) {
-				result.add(serializer.toJson(served, context.request().path()));
+				result.add(serializer.toJson(served));
 			}
 			context.response().end(result.encodePrettily());
 
@@ -143,7 +148,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			R resource = getLoadedResource(id);
 			if (resource != null) {
 				D data = resource.getResourceData(null);
-				JsonObject vpJson = (JsonObject) serializer.toJson(data, context.request().path());
+				JsonObject vpJson = (JsonObject) serializer.toJson(data);
 				context.response().end(vpJson.encodePrettily());
 			} else {
 				notFound(context);
@@ -161,7 +166,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				List<Object> embeddedObjects = resource.getFactory().getEmbeddedObjects(resource.getLoadedResourceData(), EmbeddingType.CLOSURE);
 				JsonArray result = new JsonArray();
 				for (Object object : embeddedObjects) {
-					result.add(serializer.toJson(object, context.request().path()));
+					result.add(serializer.toJson(object));
 				}
 				context.response().end(result.encodePrettily());
 
@@ -186,7 +191,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				FlexoObject object = resource.getFlexoObject(entityId, "FLX");
 				if (object != null) {
 					// TODO check type
-					JsonObject vpJson = (JsonObject) serializer.toJson(object, getBaseUrl(context));
+					JsonObject vpJson = (JsonObject) serializer.toJson(object);
 					context.response().end(vpJson.encodePrettily());
 				} else {
 					notFound(context);
@@ -200,11 +205,6 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		} catch (Exception e) {
 			context.fail(e);
 		}
-	}
-
-	private String getBaseUrl(RoutingContext context) {
-		String path = context.request().path();
-		return path.substring(0, path.lastIndexOf('/'));
 	}
 
 	private void notFound(RoutingContext context) {

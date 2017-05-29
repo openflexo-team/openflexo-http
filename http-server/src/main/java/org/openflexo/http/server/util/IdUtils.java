@@ -56,13 +56,13 @@ public class IdUtils {
 	private final static Encoder encoder = Base64.getUrlEncoder().withoutPadding();
 	private final static Decoder urlDecoder = Base64.getUrlDecoder();
 
-
 	public static String getId(Object object) {
 		if (object instanceof FlexoResource) {
 			return IdUtils.encoreUri(((FlexoResource) object).getURI());
 		}
 		if (object instanceof FlexoObject) {
-			return Long.toString(((FlexoObject) object).getFlexoID());
+			long flexoID = ((FlexoObject) object).getFlexoID();
+			return flexoID >= 0 ? Long.toString(flexoID) : null;
 		}
 		return null;
 	}

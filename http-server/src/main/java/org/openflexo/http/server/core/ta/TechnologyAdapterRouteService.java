@@ -40,13 +40,16 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.openflexo.foundation.FlexoServiceManager;
+import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
@@ -65,6 +68,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 
 	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
 	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
+	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(Comparator.comparing(Class::getSimpleName));
 
 	@Override
 	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
@@ -92,6 +96,12 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 					complement.initialize(service, technologyAdapter);
 
 					complementMap.put(technologyAdapter, complement);
+
+					String prefix = "/ta/" + IdUtils.getTechnologyAdapterId(technologyAdapter);
+					for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : complement.getResourceRoots().entrySet()) {
+						resourcePrefixes.put(entry.getKey(), prefix + entry.getValue());
+					}
+
 				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Unable to initialize Technology Adapter complement " + name, e);
@@ -115,6 +125,17 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 			router.mountSubRouter(route, subRouter);
 			entry.getValue().addRoutes(vertx, subRouter);
 		}
+	}
+
+	public String getPrefix(FlexoResource resource) {
+		if (resource == null) return null;
+		Class<? extends FlexoResource> resourceClass = resource.getClass();
+		for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : resourcePrefixes.entrySet()) {
+			if (entry.getKey().isAssignableFrom(resourceClass)) {
+				return entry.getValue();
+			}
+		}
+		return null;
 	}
 
 	private void serveTechnologyAdapterList(RoutingContext context) {
