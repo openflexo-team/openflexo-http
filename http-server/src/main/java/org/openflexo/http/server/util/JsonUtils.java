@@ -36,6 +36,7 @@
 package org.openflexo.http.server.util;
 
 import io.vertx.core.json.JsonObject;
+import java.util.Map;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceRepository;
@@ -120,15 +121,15 @@ public class JsonUtils {
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 
-			TechnologyAdapterRouteComplement complement = service.getComplement(technologyAdapter);
-			if (complement != null) {
-				complement.complementResource(technologyAdapterResource, resourceDescription);
+			String prefix = service.getPrefix(resource);
+			if (prefix != null) {
+				resourceDescription.put("modelUrl", prefix + "/" + id);
 			}
 		}
 		return resourceDescription;
 	}
 
-	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRouteComplement complement) {
+	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRouteService service) {
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", adapter.getName());
 		resourceDescription.put("type", "TechnologyAdapter");
@@ -138,9 +139,13 @@ public class JsonUtils {
 
 		String url = "/ta/" + id;
 		resourceDescription.put("url", url);
+
+		TechnologyAdapterRouteComplement<TechnologyAdapter> complement = service.getComplement(adapter);
 		resourceDescription.put("complemented", complement != null);
 		if (complement != null) {
-			complement.complementRoot(url, resourceDescription);
+			for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : complement.getResourceRoots().entrySet()) {
+				resourceDescription.put(entry.getKey().getSimpleName() + "Url", url + entry.getValue());
+			}
 		}
 		return resourceDescription;
 	}

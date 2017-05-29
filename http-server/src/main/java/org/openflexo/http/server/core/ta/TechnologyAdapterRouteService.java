@@ -129,7 +129,10 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 
 	public String getPrefix(FlexoResource resource) {
 		if (resource == null) return null;
-		Class<? extends FlexoResource> resourceClass = resource.getClass();
+		return getPrefix(resource.getClass());
+	}
+
+	public String getPrefix(Class<? extends FlexoResource> resourceClass) {
 		for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : resourcePrefixes.entrySet()) {
 			if (entry.getKey().isAssignableFrom(resourceClass)) {
 				return entry.getValue();
@@ -142,7 +145,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		JsonArray result = new JsonArray();
 		for (Map.Entry<String, TechnologyAdapter> entry : technologyAdapterMap.entrySet()) {
 			TechnologyAdapter technologyAdapter = entry.getValue();
-			result.add(JsonUtils.getTechnologyAdapterDescription(entry.getKey(), technologyAdapter, complementMap.get(technologyAdapter)));
+			result.add(JsonUtils.getTechnologyAdapterDescription(entry.getKey(), technologyAdapter, this));
 		}
 		context.response().end(result.encodePrettily());
 	}
@@ -151,7 +154,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		String id = context.request().getParam(("taid"));
 		TechnologyAdapter technologyAdapter = technologyAdapterMap.get(id);
 		if (technologyAdapter != null) {
-			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, complementMap.get(technologyAdapter));
+			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, this);
 			context.response().end(object.encodePrettily());
 		}
 		else {

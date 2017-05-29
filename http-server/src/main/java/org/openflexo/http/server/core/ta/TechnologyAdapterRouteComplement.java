@@ -35,11 +35,9 @@
 
 package org.openflexo.http.server.core.ta;
 
-import io.vertx.core.json.JsonObject;
 import java.util.Map;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
-import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.RouteService;
 
 /**
@@ -51,7 +49,4 @@ public interface TechnologyAdapterRouteComplement<TA extends TechnologyAdapter> 
 
 	Map<Class<? extends FlexoResource<?>>, String> getResourceRoots();
 
-	void complementRoot(String url, JsonObject object);
-
-	void complementResource(TechnologyAdapterResource resource, JsonObject object);
 }

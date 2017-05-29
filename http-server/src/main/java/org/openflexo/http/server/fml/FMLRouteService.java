@@ -1,7 +1,6 @@
 package org.openflexo.http.server.fml;
 
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,11 +13,9 @@ import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.resource.FlexoResource;
-import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
-import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
@@ -70,20 +67,5 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 		result.put(viewPointConverter.getResourceClass(), viewPointConverter.getPrefix());
 		result.put(virtualModelConverter.getResourceClass(), virtualModelConverter.getPrefix());
 		return result;
-	}
-
-	@Override
-	public void complementRoot(String url, JsonObject object) {
-		object.put("viewpointUrl", url + "/viewpoint");
-		object.put("virtualmodelUrl", url + "/virtualmodel");
-	}
-
-	@Override
-	public void complementResource(TechnologyAdapterResource resource, JsonObject object) {
-		if (resource instanceof ViewPointResource) {
-			object.put("modelUrl", "/ta/fml/viewpoint/" + IdUtils.encoreUri(resource.getURI()));
-		} else if (resource instanceof VirtualModelResource) {
-			object.put("modelUrl", "/ta/fml/virtualmodel/" + IdUtils.encoreUri(resource.getURI()));
-		}
 	}
 }

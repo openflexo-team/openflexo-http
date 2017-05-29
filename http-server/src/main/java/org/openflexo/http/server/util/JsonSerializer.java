@@ -108,7 +108,7 @@ public class JsonSerializer {
 			result.put("type", getType(object));
 			String url = getUrl(object);
 			if (url != null) { result.put("url", url); }
-			result.put("object", object.toString());
+			result.put("__debug_object__", object.toString());
 		}
 		return id != null;
 	}
