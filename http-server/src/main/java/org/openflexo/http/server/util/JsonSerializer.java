@@ -138,8 +138,11 @@ public class JsonSerializer {
 
 		if (resource == null) return null;
 
+		String prefix = service.getPrefix(resource);
+		if (prefix == null) return null;
+
 		StringBuilder url = new StringBuilder();
-		url.append(service.getPrefix(resource));
+		url.append(prefix);
 		url.append("/");
 		url.append(IdUtils.encoreUri(resource.getURI()));
 		if (id >= 0) {
