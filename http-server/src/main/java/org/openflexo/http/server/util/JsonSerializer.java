@@ -129,7 +129,8 @@ public class JsonSerializer {
 		} else if (object instanceof ResourceData) {
 			resource = ((ResourceData) object).getResource();
 		} else if (object instanceof InnerResourceData) {
-			resource = ((InnerResourceData) object).getResourceData().getResource();
+			ResourceData resourceData = ((InnerResourceData) object).getResourceData();
+			resource = resourceData != null ? resourceData.getResource() : null;
 		}
 
 		if (object instanceof FlexoObject) {
