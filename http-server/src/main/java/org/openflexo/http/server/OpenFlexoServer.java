@@ -5,9 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.DefaultFlexoServiceManager;
-import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
@@ -31,30 +29,14 @@ public class OpenFlexoServer {
 
 		public boolean devMode = false;
 
-		public String resourceCenterUri = "http//org.openflexo.server/resourceCenter";
+		public final List<String> centerPaths = new ArrayList<>();
 
 		public final List<String> projectPaths = new ArrayList<>();
 
 	}
 
 	public static FlexoServiceManager createServiceManager(Options options) {
-		FlexoServiceManager manager = new DefaultFlexoServiceManager(null, options.devMode) {
-			@Override
-			protected FlexoEditor createApplicationEditor() {
-				return new DefaultFlexoEditor(null, this);
-			}
-
-			@Override
-			protected FlexoResourceCenterService createResourceCenterService() {
-				FlexoResourceCenterService resourceCenterService = super.createResourceCenterService();
-				DirectoryResourceCenter resourceCenter = new DirectoryResourceCenter(
-						new File("./rc"), options.resourceCenterUri, resourceCenterService
-				);
-				resourceCenterService.addToResourceCenters(resourceCenter);
-				return resourceCenterService;
-			}
-		};
-
+		FlexoServiceManager manager = new DefaultFlexoServiceManager(null, options.devMode);
 		TechnologyAdapterService technologyAdapterService = manager.getTechnologyAdapterService();
 		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLTechnologyAdapter.class));
 		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLRTTechnologyAdapter.class));
@@ -69,7 +51,7 @@ public class OpenFlexoServer {
 		usage.append("- -v|--verbose: verbose mode.\n");
 		usage.append("- --port port: server port.\n");
 		usage.append("- --host host: server host.\n");
-		usage.append("- (TODO) ---center path: resource center to register (may have several).\n");
+		usage.append("- --center path: resource center to register (may have several).\n");
 		usage.append("- --project path: path for a project to open (may have several).\n");
 		usage.append("\n");
 		usage.append("\n");
@@ -77,7 +59,6 @@ public class OpenFlexoServer {
 		System.out.println(usage);
 		System.exit(0);
 	}
-
 
 	private static Options parseOptions(String[] args) {
 		Options options = new Options();
@@ -107,6 +88,14 @@ public class OpenFlexoServer {
 				case "--host":
 					if (i+1 < args.length) {
 						options.serverOptions.host = args[++i];
+					} else {
+						System.err.println("Option "+ arg +" needs an argument.");
+						System.exit(1);
+					}
+					break;
+				case "--center":
+					if (i+1 < args.length) {
+						options.centerPaths.add(args[++i]);
 					} else {
 						System.err.println("Option "+ arg +" needs an argument.");
 						System.exit(1);
@@ -155,6 +144,13 @@ public class OpenFlexoServer {
 
 		FlexoServiceManager manager = createServiceManager(options);
 		manager.registerService(new HttpService(options.serverOptions));
+
+		for (String path : options.centerPaths) {
+			FlexoResourceCenterService centerService = manager.getResourceCenterService();
+			DirectoryResourceCenter center = new DirectoryResourceCenter(new File(path), centerService);
+			centerService.addToResourceCenters(center);
+		}
+
 
 		for (String path : options.projectPaths) {
 			try {
