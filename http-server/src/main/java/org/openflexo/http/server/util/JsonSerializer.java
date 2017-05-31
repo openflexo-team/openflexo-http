@@ -104,7 +104,9 @@ public class JsonSerializer {
 			result.put("type", getType(object));
 			String url = getUrl(object);
 			if (url != null) { result.put("url", url); }
-			result.put("__debug_object__", object.toString());
+
+			// Used for debugging purposes
+			//result.put("__debug_object__", object.toString());
 		}
 		return id != null;
 	}
@@ -167,6 +169,7 @@ public class JsonSerializer {
 
 				Object propertyValue = handler.invokeGetter(property);
 				Object transformed = null;
+
 				boolean small = property.getEmbedded() == null || propertyValue == object;
 				switch (property.getCardinality()) {
 					case SINGLE: {
