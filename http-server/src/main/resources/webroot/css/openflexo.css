@@ -5,18 +5,22 @@ html, body {
   padding: 0;
 }
 
-
 .of-client .of-logo-image {
-  width: 103px;
   height: 127px;
 }
-
 
 .of-client .mdl-layout__header-row {
   padding-left: 40px;
 }
 .of-client .mdl-layout.is-small-screen .mdl-layout__header-row h3 {
   font-size: inherit;
+}
+
+/* ************************************************************* */
+/* Breadcrumbs */
+
+.of-client .of-breadcrumbs {
+  margin-left: 20px;
 }
 
 /* ************************************************************* */
@@ -109,13 +113,6 @@ html, body {
 /* ************************************************************* */
 /* TODO */
 
-.of-client #add {
-  position: absolute;
-  right: 40px;
-  top: 36px;
-  z-index: 999;
-}
-
 .of-client .mdl-layout__content section:not(:last-of-type) {
   position: relative;
   margin-bottom: 48px;
@@ -190,34 +187,6 @@ html, body {
 }
 .of-client .mdl-card .mdl-card__supporting-text > h3:first-child {
   margin-bottom: 24px;
-}
-.of-client .mdl-layout__tab-panel:not(#overview) {
-  background-color: white;
-}
-.of-client #features section {
-  margin-bottom: 72px;
-}
-.of-client #features h4, #features h5 {
-  margin-bottom: 16px;
-}
-.of-client .toc {
-  border-left: 4px solid #C1EEF4;
-  margin: 24px;
-  padding: 0;
-  padding-left: 8px;
-  display: flex;
-  flex-direction: column;
-}
-.of-client .toc h4 {
-  font-size: 0.9rem;
-  margin-top: 0;
-}
-.of-client .toc a {
-  color: #4DD0E1;
-  text-decoration: none;
-  font-size: 16px;
-  line-height: 28px;
-  display: block;
 }
 .of-client .mdl-menu__container {
   z-index: 99;

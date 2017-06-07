@@ -1,8 +1,6 @@
 import {
-    ResourceCenter, ContainedByResourceCenter, Resource,
-    call, resourceCenters
-} from "./openflexo";
-
+    ResourceCenter, ContainedByResourceCenter, Resource, Api
+} from "./openflexo/api";
 
 import {
     findElementWithAttributeInHierarchy, spinner, icon
@@ -10,6 +8,8 @@ import {
 
 const arrow_right = "keyboard_arrow_right";
 const arrow_down = "keyboard_arrow_down";
+
+const api = new Api();
 
 function getDataUrlElement(element: HTMLElement): HTMLElement|null {
     return findElementWithAttributeInHierarchy(element, "data-url");
@@ -42,7 +42,8 @@ function expand(event: MouseEvent) {
 
             let url = item.getAttribute("data-url");
             if (url) {
-                call<ContainedByResourceCenter[]>(url, (children) => {
+                let result = api.call<ContainedByResourceCenter[]>(url);
+                result.then(children => {
                     if (div.firstChild) {
                         div.removeChild(div.firstChild);
                     }
@@ -150,7 +151,8 @@ function createErrorItem():HTMLDivElement {
     return tree;
 }
 
-resourceCenters((resourceCenters) => {
+let resourceCenters = api.resourceCenters();
+resourceCenters.then(resourceCenters => {
     let div = document.querySelector("#rcs");
     if (div) {
         for (let rc of resourceCenters) {

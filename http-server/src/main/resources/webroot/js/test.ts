@@ -1,13 +1,13 @@
 import {
     ResourceCenter, ContainedByResourceCenter, Resource,
-    call, resourceCenters, Description, technologyAdapters,
-    resources
-} from "./openflexo";
+   Description, Api
+} from "./openflexo/api";
 
 import {
     spinner, clearElement
 } from "./utils";
 
+const api = new Api();
 
 function getDataUrl(element : HTMLElement) {
     let current: HTMLElement|null = element;
@@ -128,7 +128,8 @@ function retreiveUrl(url: string) {
     clearElement(result);
     result.appendChild(spinner());
 
-    call(url, (json) => {
+    let json = api.call(url);
+    json.then(json => {
         clearElement(result);       
         result.appendChild(createJsonElement(json));
         window.scrollTo(0, 0);
@@ -148,7 +149,8 @@ function initializeUrl() {
     urlInput.addEventListener("input", (e) => retreiveUrl(urlInput.value));
 }
 
-technologyAdapters((tas) => {
+let technologyAdapters = api.technologyAdapters();
+technologyAdapters.then(tas => {
     let div = document.querySelector("#tas");
     if (div) {
         div.appendChild(createCount(tas));
@@ -159,7 +161,7 @@ technologyAdapters((tas) => {
     }
 });
 
-resourceCenters((centers) => {
+api.resourceCenters().then(centers => {
     let div = document.querySelector("#centers");
     if (div) {
         div.appendChild(createCount(centers));
@@ -170,7 +172,7 @@ resourceCenters((centers) => {
     }
 });
 
-resources((resources) => {
+api.resources().then(resources => {
     let div = document.querySelector("#resources");
     if (div) {
         div.appendChild(createCount(resources));
