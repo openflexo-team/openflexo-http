@@ -34,6 +34,6 @@
              useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2"
              horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab"/>
     </TabPanel>
-    <FIBVariable id="13" type="org.openflexo.http.connector.XmlRpcModelSlot" name="data"/>
+    <FIBVariable id="13" type="org.openflexo.http.connector.XMLRPCModelSlot" name="data"/>
     <LocalizedDictionary id="14"/>
 </Inspector>

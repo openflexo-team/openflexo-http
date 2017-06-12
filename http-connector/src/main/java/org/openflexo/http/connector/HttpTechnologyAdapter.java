@@ -1,6 +1,7 @@
 package org.openflexo.http.connector;
 
 import java.util.List;
+
 import org.openflexo.connie.binding.BindingPathElement;
 import org.openflexo.connie.binding.SimplePathElement;
 import org.openflexo.foundation.fml.TechnologySpecificType;
@@ -18,8 +19,8 @@ import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 /**
  * Created by charlie on 02/02/2017.
  */
-@DeclareModelSlots({HttpModelSlot.class})
-@DeclareResourceTypes({AccessPointResourceFactory.class})
+@DeclareModelSlots({ RestModelSlot.class, XMLRPCModelSlot.class })
+@DeclareResourceTypes({ AccessPointResourceFactory.class })
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 
 	private TechnologyAdapterBindingFactory bindingFactory;
@@ -62,7 +63,8 @@ public class HttpTechnologyAdapter extends TechnologyAdapter {
 				List<? extends SimplePathElement> elements = super.getAccessibleSimplePathElements(parent);
 				if (parent.getType() instanceof AccessPointType) {
 					AccessPointType parentType = (AccessPointType) parent.getType();
-					elements.stream().filter((e) -> e.getType() == HttpVirtualModelInstance.class).forEach((e) -> e.setType(parentType.getInstanceType()));
+					elements.stream().filter((e) -> e.getType() == HttpVirtualModelInstance.class)
+							.forEach((e) -> e.setType(parentType.getInstanceType()));
 				}
 				return elements;
 			}

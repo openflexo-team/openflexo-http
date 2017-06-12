@@ -22,13 +22,12 @@ package org.openflexo.http.connector;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
+
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
-import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
-import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
@@ -37,9 +36,6 @@ import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
 import org.openflexo.http.connector.HttpModelSlot.HttpModelSlotImpl;
 import org.openflexo.http.connector.fml.AccessPointType;
-import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
-import org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour;
-import org.openflexo.http.connector.fml.editionaction.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.annotations.Getter;
@@ -48,18 +44,17 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.PropertyIdentifier;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.toolbox.StringUtils;
 
 /**
- * REST model slot for Http technology adapter
+ * Abstract implementation of a model slot for HTTP technology adapter<br>
+ * We manage here an URL, and
+ * 
+ * We don't manage here technology-specific details.
  *
  */
-@ModelEntity
-@XMLElement
+@ModelEntity(isAbstract = true)
 @ImplementationClass(HttpModelSlotImpl.class)
-@DeclareEditionActions({ CreateAccessPointResource.class })
-@DeclareFlexoBehaviours({ JsonRequestBehaviour.class, XmlRpcRequestBehaviour.class })
 public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 	@PropertyIdentifier(type = String.class)

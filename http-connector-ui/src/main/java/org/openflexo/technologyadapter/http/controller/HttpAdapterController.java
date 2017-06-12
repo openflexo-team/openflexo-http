@@ -55,11 +55,15 @@
 
 package org.openflexo.technologyadapter.http.controller;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
+
+import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.gina.utils.InspectorGroup;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour;
+import org.openflexo.http.connector.fml.editionaction.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.technologyadapter.http.library.HttpIconLibrary;
 import org.openflexo.technologyadapter.http.view.AccessPointModuleView;
@@ -71,9 +75,8 @@ import org.openflexo.view.controller.TechnologyAdapterController;
 import org.openflexo.view.controller.model.FlexoPerspective;
 
 public class HttpAdapterController extends TechnologyAdapterController<HttpTechnologyAdapter> {
-    
-	private InspectorGroup httpInspectorGroup;
 
+	private InspectorGroup httpInspectorGroup;
 
 	@Override
 	public Class<HttpTechnologyAdapter> getTechnologyAdapterClass() {
@@ -84,18 +87,19 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	public void initializeActions(ControllerActionInitializer actionInitializer) {
 	}
 
-    @Override
-    protected void initializeInspectors(FlexoController controller) {
-		httpInspectorGroup = controller.loadInspectorGroup("HTTP", getTechnologyAdapter().getLocales(), getFMLTechnologyAdapterInspectorGroup());
+	@Override
+	protected void initializeInspectors(FlexoController controller) {
+		httpInspectorGroup = controller.loadInspectorGroup("HTTP", getTechnologyAdapter().getLocales(),
+				getFMLTechnologyAdapterInspectorGroup());
 
 	}
 
-    @Override
-    public InspectorGroup getTechnologyAdapterInspectorGroup() {
-        return httpInspectorGroup;
-    }
+	@Override
+	public InspectorGroup getTechnologyAdapterInspectorGroup() {
+		return httpInspectorGroup;
+	}
 
-    @Override
+	@Override
 	public ImageIcon getTechnologyBigIcon() {
 		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_BIG_ICON;
 	}
@@ -121,18 +125,19 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	}
 
 	@Override
-	public ModuleView<?> createModuleViewForObject(final TechnologyObject<HttpTechnologyAdapter> object, final FlexoController controller, final FlexoPerspective perspective) {
+	public ModuleView<?> createModuleViewForObject(final TechnologyObject<HttpTechnologyAdapter> object, final FlexoController controller,
+			final FlexoPerspective perspective) {
 		// TODO Auto-generated method stub : update your moduleView code to have something represented
-		if (object instanceof AccessPoint){
+		if (object instanceof AccessPoint) {
 			return new AccessPointModuleView((AccessPoint) object, controller, perspective);
 		}
 		return new EmptyPanel<>(controller, perspective, object);
 	}
 
-    @Override
-    public ImageIcon getIconForFlexoRole(Class<? extends FlexoRole<?>> flexoRoleClass) {
+	@Override
+	public ImageIcon getIconForFlexoRole(Class<? extends FlexoRole<?>> flexoRoleClass) {
 		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
-    }
+	}
 
 	@Override
 	public String getWindowTitleforObject(TechnologyObject<HttpTechnologyAdapter> obj, FlexoController controller) {
@@ -144,5 +149,16 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	public boolean hasModuleViewForObject(TechnologyObject<HttpTechnologyAdapter> obj, FlexoController controller) {
 		return obj instanceof AccessPoint;
 	}
-}
 
+	@Override
+	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
+		if (XmlRpcRequestBehaviour.class.isAssignableFrom(flexoBehaviourClass)) {
+			return HttpIconLibrary.REQUEST_BEHAVIOUR_ICON;
+		}
+		if (JsonRequestBehaviour.class.isAssignableFrom(flexoBehaviourClass)) {
+			return HttpIconLibrary.REQUEST_BEHAVIOUR_ICON;
+		}
+		return super.getIconForFlexoBehaviour(flexoBehaviourClass);
+	}
+
+}

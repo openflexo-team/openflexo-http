@@ -56,18 +56,23 @@
 package org.openflexo.technologyadapter.http.library;
 
 import java.util.logging.Logger;
-import javax.swing.*;
+
+import javax.swing.ImageIcon;
+
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.icon.ImageIconResource;
 import org.openflexo.rm.ResourceLocator;
 
-
 public class HttpIconLibrary {
 	private static final Logger logger = Logger.getLogger(HttpIconLibrary.class.getPackage().getName());
 
-	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_BIG_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accesspoint-big.png"));
-	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accespoint.png"));
+	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_BIG_ICON = new ImageIconResource(
+			ResourceLocator.locateResource("Icons/accesspoint-big.png"));
+	public static final ImageIcon ACCESSPOINT_TECHNOLOGY_ICON = new ImageIconResource(
+			ResourceLocator.locateResource("Icons/accespoint.png"));
 	public static final ImageIcon ACCESSPOINT_FILE_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accespoint.png"));
+
+	public static final ImageIcon REQUEST_BEHAVIOUR_ICON = new ImageIconResource(ResourceLocator.locateResource("Icons/accespoint.png"));
 
 	public static ImageIcon iconForObject(Class<? extends TechnologyObject> objectClass) {
 		return ACCESSPOINT_TECHNOLOGY_ICON;

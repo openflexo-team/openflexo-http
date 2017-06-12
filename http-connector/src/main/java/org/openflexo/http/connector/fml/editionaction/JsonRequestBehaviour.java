@@ -35,7 +35,22 @@
 
 package org.openflexo.http.connector.fml.editionaction;
 
+import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Level;
+
 import org.openflexo.connie.BindingEvaluationContext;
+import org.openflexo.connie.type.ParameterizedTypeImpl;
+import org.openflexo.foundation.FlexoEditor;
+import org.openflexo.foundation.fml.FMLTechnologyAdapter;
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoConceptInstanceType;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -49,27 +64,99 @@ import org.openflexo.model.annotations.XMLElement;
 /**
  * Action that requests concepts using a HTTP request
  */
-@ModelEntity @XMLElement
+@ModelEntity
+@XMLElement
 @ImplementationClass(JsonRequestBehaviour.JsonRequestBehaviourImpl.class)
 public interface JsonRequestBehaviour extends HttpRequestBehaviour {
+
+	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
+	String RETURNED_FLEXO_CONCEPT_URI_KEY = "returnedFlexoConceptURI";
+	String MULTIPLE_KEY = "multiple";
 
 	String PATH_BUILDER_KEY = "pathBuilder";
 	String POINTER_KEY = "pointer";
 
+	@Getter(RETURNED_FLEXO_CONCEPT_URI_KEY)
+	@XMLAttribute
+	String getReturnedFlexoConceptURI();
+
+	@Setter(RETURNED_FLEXO_CONCEPT_URI_KEY)
+	void setReturnedFlexoConceptURI(String flexoConceptURI);
+
+	@Getter(RETURNED_FLEXO_CONCEPT_KEY)
+	FlexoConcept getReturnedFlexoConcept();
+
+	@Setter(RETURNED_FLEXO_CONCEPT_KEY)
+	void setReturnedFlexoConcept(FlexoConcept flexoConcept);
+
+	@Getter(value = MULTIPLE_KEY, defaultValue = "false")
+	@XMLAttribute
+	boolean isMultiple();
+
+	@Setter(MULTIPLE_KEY)
+	void setMultiple(boolean multiple);
+
 	@Getter(PATH_BUILDER_KEY)
-	@XMLElement @Embedded @Initialize
+	@XMLElement
+	@Embedded
+	@Initialize
 	PathBuilder getBuilder();
 
 	@Setter(PATH_BUILDER_KEY)
 	void setBuilder(PathBuilder builder);
 
-	@Getter(POINTER_KEY) @XMLAttribute
+	@Getter(POINTER_KEY)
+	@XMLAttribute
 	String getPointer();
 
 	@Setter(POINTER_KEY)
 	void setPointer(String pointer);
 
 	abstract class JsonRequestBehaviourImpl extends HttpRequestBehaviourImpl implements JsonRequestBehaviour {
+
+		private FlexoConcept flexoConcept;
+
+		@Override
+		public Type getReturnType() {
+			FlexoConceptInstanceType type = FlexoConceptInstanceType.getFlexoConceptInstanceType(getReturnedFlexoConcept());
+			return isMultiple() ? new ParameterizedTypeImpl(List.class, type) : type;
+		}
+
+		@Override
+		public ActionSchemeActionType getActionFactory(FlexoConceptInstance fci) {
+			return new ActionSchemeActionType(this, fci) {
+				@Override
+				public ActionSchemeAction makeNewAction(FlexoConceptInstance focusedObject,
+						Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
+					return new HttpRequestBehaviourAction(this, focusedObject, globalSelection, editor);
+				}
+			};
+		}
+
+		@Override
+		public FlexoConcept getReturnedFlexoConcept() {
+			String flexoConceptURI = getReturnedFlexoConceptURI();
+			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing() && getServiceManager() != null) {
+				try {
+					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
+					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
+					this.flexoConcept = technologyAdapter.getViewPointLibrary().getFlexoConcept(flexoConceptURI, false);
+				} catch (Exception e) {
+					logger.log(Level.SEVERE, "Can't find virtual model '" + flexoConceptURI + "'", e);
+				}
+			}
+			return flexoConcept;
+		}
+
+		@Override
+		public void setReturnedFlexoConcept(FlexoConcept flexoConcept) {
+			FlexoConcept oldVirtualModel = this.flexoConcept;
+			if (oldVirtualModel != flexoConcept) {
+				this.flexoConcept = flexoConcept;
+				getPropertyChangeSupport().firePropertyChange(RETURNED_FLEXO_CONCEPT_KEY, oldVirtualModel, flexoConcept);
+				setReturnedFlexoConceptURI(flexoConcept != null ? flexoConcept.getURI() : null);
+			}
+		}
 
 		@Override
 		public PathBuilder getBuilder() {
@@ -80,13 +167,15 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour {
 			return builder;
 		}
 
+		@Override
 		public Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 			PathBuilder builder = getBuilder();
 			if (builder != null) {
 				String url = builder.evaluateUrl(this, context);
 				if (isMultiple()) {
 					return modelInstance.getFlexoConceptInstances(url, getPointer(), getReturnedFlexoConcept());
-				} else {
+				}
+				else {
 					return modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
 				}
 

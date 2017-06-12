@@ -1,4 +1,12 @@
 dependencies {
-    compile project(':http-connector')
-    compile flexoUi()
+   compile project(':http-connector')
+   compile flexoUi()
+   compile flexoUi()
+   compile fmlTechnologyAdapterUi()
+   compile fmlRtTechnologyAdapterUi()
+    
+   testCompile testUtils()
+   testCompile ginaTest()
+   testCompile flexoUiTest()
+    
 }
