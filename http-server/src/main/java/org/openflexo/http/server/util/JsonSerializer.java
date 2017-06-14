@@ -38,8 +38,10 @@ package org.openflexo.http.server.util;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.InnerResourceData;
@@ -70,11 +72,17 @@ public class JsonSerializer {
 		this.factory = factory;
 	}
 
-	public Object toJson(Object object) throws InvalidDataException, ModelDefinitionException {
-		return toJson(object, false);
+	public Object toJson(Object object, boolean detailed) {
+		return toJson(object, false, detailed);
 	}
 
-	private Object toJson(Object object, boolean small) throws InvalidDataException, ModelDefinitionException {
+	protected Object toReference(Object object) {
+		JsonObject result = new JsonObject();
+		identifyObject(object, result);
+		return result;
+	}
+
+	protected Object toJson(Object object, boolean reference, boolean detailed) {
 		if (object == null) return null;
 
 		Class<?> type = object.getClass();
@@ -83,28 +91,35 @@ public class JsonSerializer {
 			return object;
 		}
 		else if (factory.getStringEncoder().isConvertable(type)) {
-			return factory.getStringEncoder().toString(object);
+			try {
+				return factory.getStringEncoder().toString(object);
+			} catch (InvalidDataException e) {
+				return null;
+			}
 		}
 		else if (type.isEnum() || type.getSuperclass().isEnum()) {
 			return object.toString();
 		} else {
 			JsonObject result = new JsonObject();
 			boolean identified = identifyObject(object, result);
-			if (!(small&&identified)) {
-				describeObject(object, result);
+			if (identified && !reference) {
+				describeObject(object, result, detailed);
 			}
 			return result;
 		}
 	}
 
-	private boolean identifyObject(Object object, JsonObject result) {
+	protected JsonArray toArray(Collection<?> list, boolean detailed) {
+		return new JsonArray(list.stream().map((i) -> toJson(i, detailed)).collect(Collectors.toList()));
+	}
+
+	public boolean identifyObject(Object object, JsonObject result) {
 		String id = IdUtils.getId(object);
 		if (id != null) {
 			result.put("id", id);
 			result.put("type", getType(object));
 			String url = getUrl(object);
 			if (url != null) { result.put("url", url); }
-
 			// Used for debugging purposes
 			//result.put("__debug_object__", object.toString());
 		}
@@ -156,50 +171,64 @@ public class JsonSerializer {
 		return url.toString();
 	}
 
-	private void describeObject(Object object, JsonObject result) throws ModelDefinitionException, InvalidDataException {
+	public void describeObject(Object object, JsonObject result, boolean detailed) {
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject)object).getHandler();
 			@SuppressWarnings({ "unchecked", "rawtype" }) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 
-			Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
-			while (iterator.hasNext()) {
-				ModelProperty property = iterator.next();
-				XMLAttribute xmlAttribute = property.getXMLAttribute();
-				XMLElement xmlElement = property.getXMLElement();
+			try {
+				if (detailed) {
+					Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
+					while (iterator.hasNext()) {
+						ModelProperty property = iterator.next();
+						XMLAttribute xmlAttribute = property.getXMLAttribute();
+						XMLElement xmlElement = property.getXMLElement();
 
-				Object propertyValue = handler.invokeGetter(property);
-				Object transformed = null;
+						Object propertyValue = handler.invokeGetter(property);
+						Object transformed = null;
 
-				boolean small = property.getEmbedded() == null || propertyValue == object;
-				switch (property.getCardinality()) {
-					case SINGLE: {
-						transformed = toJson(propertyValue, small);
-						break;
-					}
-					case LIST: {
-						List<Object> collected = new ArrayList<>();
-						for (Object child : (List) propertyValue) {
-							collected.add(toJson(child, small));
+						// avoid source
+						if (propertyValue == object)
+							continue;
+
+						boolean reference = property.getEmbedded() == null;
+						switch (property.getCardinality()) {
+							case SINGLE: {
+								transformed = toJson(propertyValue, reference, detailed);
+								break;
+							}
+							case LIST: {
+								List<Object> collected = new ArrayList<>();
+								for (Object child : (List) propertyValue) {
+									collected.add(toJson(child, reference, detailed));
+								}
+								if (collected != null) {
+									transformed = new JsonArray(collected);
+								}
+								break;
+							}
+							case MAP: {
+								//TODO
+								break;
+							}
+							default:
+								break;
 						}
-						transformed = new JsonArray(collected);
-						break;
-					}
-					case MAP: {
-						//TODO
-						break;
-					}
-					default:
-						break;
-				}
 
-				String propertyName = property.getPropertyIdentifier();
-				if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0) {
-					propertyName = xmlAttribute.xmlTag();
+						String propertyName = property.getPropertyIdentifier();
+						if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0) {
+							propertyName = xmlAttribute.xmlTag();
+						}
+						if (xmlElement != null && xmlElement.xmlTag().length() > 0) {
+							propertyName = xmlElement.xmlTag();
+						}
+						if (propertyName != null && transformed != null) {
+							result.put(propertyName, transformed);
+						}
+					}
 				}
-				if (xmlElement != null && xmlElement.xmlTag().length() > 0) {
-					propertyName = xmlElement.xmlTag();
-				}
-				result.put(propertyName, transformed);
+			} catch (ModelDefinitionException e) {
+				// nothing to do
 			}
 		}
 	}
