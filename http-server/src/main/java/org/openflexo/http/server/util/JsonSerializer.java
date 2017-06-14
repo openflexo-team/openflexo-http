@@ -77,9 +77,7 @@ public class JsonSerializer {
 	}
 
 	protected Object toReference(Object object) {
-		JsonObject result = new JsonObject();
-		identifyObject(object, result);
-		return result;
+		return toJson(object, true, false);
 	}
 
 	protected Object toJson(Object object, boolean reference, boolean detailed) {
@@ -111,6 +109,10 @@ public class JsonSerializer {
 
 	protected JsonArray toArray(Collection<?> list, boolean detailed) {
 		return new JsonArray(list.stream().map((i) -> toJson(i, detailed)).collect(Collectors.toList()));
+	}
+
+	protected JsonArray toReferenceArray(Collection<?> list) {
+		return new JsonArray(list.stream().map((i) -> toJson(i, true, false)).collect(Collectors.toList()));
 	}
 
 	public boolean identifyObject(Object object, JsonObject result) {
