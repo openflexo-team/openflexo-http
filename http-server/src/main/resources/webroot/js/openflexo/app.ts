@@ -18,7 +18,6 @@ export class Application implements AppContext {
         addMdlCssIfNotAlreadyPresent();
         
         const root = document.querySelector("#root");  
-        
         if (root) {      
             let tabs = new Tabs();
             let selected = this.createAdaptersTab();
