@@ -36,8 +36,12 @@
 package org.openflexo.http.connector.fml.editionaction;
 
 import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
+import org.openflexo.connie.DataBinding;
+import org.openflexo.connie.exception.NullReferenceException;
+import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.InvalidArgumentException;
 import org.openflexo.foundation.fml.FlexoProperty;
@@ -67,13 +71,13 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 /**
  * {@link EditionAction} used to create an empty AccessPoint resource
  * 
- * @author charlie
+ * @author charlie, sylvain
  *
  */
 @ModelEntity
 @ImplementationClass(CreateAccessPointResourceImpl.class)
 @XMLElement
-@FML("CreateHTTPResource")
+@FML("CreateAccessPointResource")
 public interface CreateAccessPointResource extends AbstractCreateResource<HttpModelSlot, AccessPoint, HttpTechnologyAdapter> {
 
 	@PropertyIdentifier(type = String.class)
@@ -85,27 +89,31 @@ public interface CreateAccessPointResource extends AbstractCreateResource<HttpMo
 
 	@Getter(URL_KEY)
 	@XMLAttribute
-	String getUrl();
+	DataBinding<String> getUrl();
 
 	@Setter(URL_KEY)
-	void setUrl(String url);
+	void setUrl(DataBinding<String> url);
 
 	@Getter(USER_KEY)
 	@XMLAttribute
-	String getUser();
+	DataBinding<String> getUser();
 
 	@Setter(USER_KEY)
-	void setUser(String user);
+	void setUser(DataBinding<String> user);
 
 	@Getter(PASSWORD_KEY)
 	@XMLAttribute
-	String getPassword();
+	DataBinding<String> getPassword();
 
 	@Setter(PASSWORD_KEY)
-	void setPassword(String password);
+	void setPassword(DataBinding<String> password);
 
 	abstract class CreateAccessPointResourceImpl extends AbstractCreateResourceImpl<HttpModelSlot, AccessPoint, HttpTechnologyAdapter>
 			implements CreateAccessPointResource {
+
+		private DataBinding<String> url;
+		private DataBinding<String> user;
+		private DataBinding<String> password;
 
 		@Override
 		public Type getAssignableType() {
@@ -134,9 +142,43 @@ public interface CreateAccessPointResource extends AbstractCreateResource<HttpMo
 				FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
 				if (flexoProperty instanceof HttpModelSlot) {
 					HttpModelSlot httpModelSlot = (HttpModelSlot) flexoProperty;
-					data.setUrl(httpModelSlot.getUrl());
-					data.setUser(httpModelSlot.getUser());
-					data.setPassword(httpModelSlot.getPassword());
+					String url = null;
+					try {
+						if (getUrl().isValid()) {
+							url = getUrl().getBindingValue(evaluationContext);
+						}
+						else if (httpModelSlot.getUrl().isValid()) {
+							url = httpModelSlot.getUrl().getBindingValue(evaluationContext);
+						}
+					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+					String user = null;
+					try {
+						if (getUser().isValid()) {
+							user = getUser().getBindingValue(evaluationContext);
+						}
+						else if (httpModelSlot.getUser().isValid()) {
+							user = httpModelSlot.getUser().getBindingValue(evaluationContext);
+						}
+					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+					String password = null;
+					try {
+						if (getPassword().isValid()) {
+							password = getPassword().getBindingValue(evaluationContext);
+						}
+						else if (httpModelSlot.getPassword().isValid()) {
+							password = httpModelSlot.getPassword().getBindingValue(evaluationContext);
+						}
+					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+						e.printStackTrace();
+					}
+
+					data.setUrl(url);
+					data.setUser(user);
+					data.setPassword(password);
 					data.setModelSlot(httpModelSlot);
 					data.setOwnerInstance(evaluationContext.getVirtualModelInstance());
 					newResource.getFactory().initializeModel(data, httpModelSlot.getCreationScheme(), httpModelSlot.getParameters(),
@@ -152,5 +194,66 @@ public interface CreateAccessPointResource extends AbstractCreateResource<HttpMo
 			}
 
 		}
+
+		@Override
+		public DataBinding<String> getUrl() {
+			if (url == null) {
+				url = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				url.setBindingName("url");
+			}
+			return url;
+		}
+
+		@Override
+		public void setUrl(DataBinding<String> url) {
+			if (url != null) {
+				url.setOwner(this);
+				url.setDeclaredType(String.class);
+				url.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				url.setBindingName("url");
+			}
+			this.url = url;
+		}
+
+		@Override
+		public DataBinding<String> getUser() {
+			if (user == null) {
+				user = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				user.setBindingName("user");
+			}
+			return user;
+		}
+
+		@Override
+		public void setUser(DataBinding<String> user) {
+			if (user != null) {
+				user.setOwner(this);
+				user.setDeclaredType(String.class);
+				user.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				user.setBindingName("user");
+			}
+			this.user = user;
+		}
+
+		@Override
+		public DataBinding<String> getPassword() {
+			if (password == null) {
+				password = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				password.setBindingName("password");
+			}
+			return password;
+		}
+
+		@Override
+		public void setPassword(DataBinding<String> password) {
+			if (password != null) {
+				password.setOwner(this);
+				password.setDeclaredType(String.class);
+				password.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				password.setBindingName("password");
+			}
+			this.password = password;
+		}
+
 	}
 }

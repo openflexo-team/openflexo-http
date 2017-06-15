@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoRole;
@@ -73,13 +74,13 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	@PropertyIdentifier(type = String.class)
 	String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
 
-	@PropertyIdentifier(type = String.class)
+	@PropertyIdentifier(type = DataBinding.class)
 	String URL_KEY = "url";
 
-	@PropertyIdentifier(type = String.class)
+	@PropertyIdentifier(type = DataBinding.class)
 	String USER_KEY = "user";
 
-	@PropertyIdentifier(type = String.class)
+	@PropertyIdentifier(type = DataBinding.class)
 	String PASSWORD_KEY = "password";
 
 	@PropertyIdentifier(type = String.class)
@@ -107,24 +108,24 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 	@Getter(URL_KEY)
 	@XMLAttribute
-	String getUrl();
+	DataBinding<String> getUrl();
 
 	@Setter(URL_KEY)
-	void setUrl(String url);
+	void setUrl(DataBinding<String> url);
 
 	@Getter(USER_KEY)
 	@XMLAttribute
-	String getUser();
+	DataBinding<String> getUser();
 
 	@Setter(USER_KEY)
-	void setUser(String user);
+	void setUser(DataBinding<String> user);
 
 	@Getter(PASSWORD_KEY)
 	@XMLAttribute
-	String getPassword();
+	DataBinding<String> getPassword();
 
 	@Setter(PASSWORD_KEY)
-	void setPassword(String password);
+	void setPassword(DataBinding<String> password);
 
 	@Getter(value = CREATION_SCHEME_URI_KEY)
 	@XMLAttribute
@@ -158,6 +159,10 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	HttpTechnologyAdapter getModelSlotTechnologyAdapter();
 
 	abstract class HttpModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements HttpModelSlot {
+
+		private DataBinding<String> url;
+		private DataBinding<String> user;
+		private DataBinding<String> password;
 
 		private VirtualModelResource virtualModelResource;
 		private String virtualModelURI;
@@ -383,6 +388,66 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 				removeFromParameters(removeThis);
 			}
 			getPropertyChangeSupport().firePropertyChange(PARAMETERS_KEY, oldValue, parameters);
+		}
+
+		@Override
+		public DataBinding<String> getUrl() {
+			if (url == null) {
+				url = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				url.setBindingName("url");
+			}
+			return url;
+		}
+
+		@Override
+		public void setUrl(DataBinding<String> url) {
+			if (url != null) {
+				url.setOwner(this);
+				url.setDeclaredType(String.class);
+				url.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				url.setBindingName("url");
+			}
+			this.url = url;
+		}
+
+		@Override
+		public DataBinding<String> getUser() {
+			if (user == null) {
+				user = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				user.setBindingName("user");
+			}
+			return user;
+		}
+
+		@Override
+		public void setUser(DataBinding<String> user) {
+			if (user != null) {
+				user.setOwner(this);
+				user.setDeclaredType(String.class);
+				user.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				user.setBindingName("user");
+			}
+			this.user = user;
+		}
+
+		@Override
+		public DataBinding<String> getPassword() {
+			if (password == null) {
+				password = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				password.setBindingName("password");
+			}
+			return password;
+		}
+
+		@Override
+		public void setPassword(DataBinding<String> password) {
+			if (password != null) {
+				password.setOwner(this);
+				password.setDeclaredType(String.class);
+				password.setBindingDefinitionType(DataBinding.BindingDefinitionType.GET);
+				password.setBindingName("password");
+			}
+			this.password = password;
 		}
 
 	}

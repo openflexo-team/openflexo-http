@@ -11,13 +11,28 @@
             <Label id="3" label="url" align="right" index="23"
                    constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
                    name="url_label"/>
-            <TextField id="4" columns="7" data="data.url" index="24"
-                       constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
-                       name="url_name"/>
-            <Label id="5" label="virtual_model" align="left" localize="true" index="25"
+ 			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
+				localize="true" index="24" data="data.url"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
+			</Custom>
+ 			<Label index="25" label="user" align="left" localize="true"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="UserLabel" />
+			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
+				localize="true" index="26" data="data.user"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
+			</Custom>
+			<Label index="27" label="password" align="left"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="PasswordLabel" />
+			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
+				localize="true" index="28" data="data.password"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
+			</Custom>
+            <Label id="5" label="virtual_model" align="left" localize="true" index="29"
                    constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
                    name="VirtualModelLabel"/>
-            <Custom id="6" index="26" componentClassName="org.openflexo.fml.controller.widget.FIBVirtualModelSelector"
+            <Custom id="6" index="30" componentClassName="org.openflexo.fml.controller.widget.FIBVirtualModelSelector"
                     dataClassForComponent="org.openflexo.foundation.fml.rm.AbstractVirtualModelResource" localize="true"
                     manageDynamicModel="true" data="data.accessedVirtualModelResource"
                     constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
@@ -29,9 +44,9 @@
                 <Assignment id="11" variable="component.viewPointLibrary" value="data.viewPointLibrary" mandatory="true"/>
             </Custom>
             
-            <Label label="creation_scheme" index="27"
+            <Label label="creation_scheme" index="31"
 				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)"/>
-			<DropDown index="28" data="data.creationScheme"  
+			<DropDown index="32" data="data.creationScheme"  
 				constraints="twocols(anchor=west;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=0;gridX=-1;gridY=-1;index=11;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right;padX=0;padY=0;weightX=0.0;weightY=0.0)"
 				name="CreationSchemeDropDown" format="object.signature"
 				icon="controller.iconForObject(object)" localize="false"
@@ -39,9 +54,9 @@
 				showIcon="true" iteratorClassName="org.openflexo.http.connector.fml.HttpVirtualModelInitializer"
 				autoSelectFirstRow="false">
 			</DropDown>
-			<Label label="parameters" index="29"
+			<Label label="parameters" index="33"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;index=12;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left)"/>
-			<Table index="30"
+			<Table index="34"
 				iteratorClassName="org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter"
 				visibleRowCount="4" rowHeight="18" autoSelectFirstRow="false"
 				createNewRowOnClick="false" boundToSelectionManager="false"
