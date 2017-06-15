@@ -97,6 +97,10 @@ public class JsonSerializer {
 		}
 		else if (type.isEnum() || type.getSuperclass().isEnum()) {
 			return object.toString();
+
+		} else if (object instanceof FlexoResource) {
+			return JsonUtils.getResourceDescription((FlexoResource) object, service);
+
 		} else {
 			JsonObject result = new JsonObject();
 			boolean identified = identifyObject(object, result);

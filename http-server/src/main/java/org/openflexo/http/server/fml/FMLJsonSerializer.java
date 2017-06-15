@@ -41,6 +41,7 @@ import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoRole;
+import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.JsonSerializer;
@@ -76,10 +77,15 @@ public class FMLJsonSerializer extends JsonSerializer {
 
 	@Override
 	public void describeObject(Object object, JsonObject result, boolean detailed) {
-		if (object instanceof VirtualModel) {
+		if (object instanceof ViewPoint) {
+			ViewPoint viewPoint = (ViewPoint) object;
+			describeFlexoConcept(viewPoint, result, detailed);
+			result.put("virtualModels", toReferenceArray(viewPoint.getVirtualModels()));
+
+		} else if (object instanceof VirtualModel) {
 			VirtualModel model = (VirtualModel) object;
 			describeFlexoConcept(model, result, detailed);
-			result.put("flexoConcepts", toArray(model.getFlexoConcepts(), detailed));
+			result.put("flexoConcepts", toReferenceArray(model.getFlexoConcepts()));
 
 		} else if (object instanceof FlexoConcept) {
 			FlexoConcept concept = (FlexoConcept) object;
