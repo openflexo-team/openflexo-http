@@ -38,13 +38,21 @@
 
 package org.openflexo.http.connector.model;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
+import org.openflexo.connie.exception.NullReferenceException;
+import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
+import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
+import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
+import org.openflexo.http.connector.fml.HttpVirtualModelInitializerAction;
+import org.openflexo.http.connector.fml.editionaction.CreateAccessPointParameter;
 import org.openflexo.http.connector.model.support.ContentSupport;
-import org.openflexo.http.connector.model.support.ContentSupportFactory;
-import org.openflexo.http.connector.model.support.JsonSupportFactory;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
 import org.openflexo.model.exceptions.ModelDefinitionException;
@@ -76,24 +84,81 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 
 	/**
 	 * Creates empty model that needs to be initialized
+	 * 
 	 * @return the created model
 	 */
 	public AccessPoint makeEmptyModel() {
 		return newInstance(AccessPoint.class);
 	}
 
-	public void initializeModel(AccessPoint accessPoint) {
-		ContentSupportFactory<?> supportFactory = null;
-		AccessPoint.Format format = accessPoint.getFormat();
-		if (format == null || format == AccessPoint.Format.json) {
-			supportFactory = new JsonSupportFactory("url");
-		} else {
-			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
+	/**
+	 * This is the initialization method for an AccessPoint
+	 * 
+	 * @param accessPoint
+	 * @param creationScheme
+	 * @param evaluationContext
+	 * @return
+	 */
+	public void initializeModel(AccessPoint accessPoint, HttpVirtualModelInitializer creationScheme,
+			List<CreateAccessPointParameter> parameters, RunTimeEvaluationContext evaluationContext) {
+
+		System.out.println("initializeModel for AccessPoint=" + accessPoint);
+
+		HttpVirtualModelInitializerAction action;
+
+		if (evaluationContext instanceof FlexoBehaviourAction) {
+			action = HttpVirtualModelInitializerAction.actionType.makeNewEmbeddedAction(accessPoint, null,
+					(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
+		}
+		else {
+			action = HttpVirtualModelInitializerAction.actionType.makeNewAction(accessPoint, null, evaluationContext.getEditor());
 		}
 
-		HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint, supportFactory);
+		action.setFactory(this);
+		action.setInitializer(creationScheme);
+
+		if (creationScheme != null) {
+			int i = 0;
+			for (CreateAccessPointParameter parameter : parameters) {
+				Object paramValue = null;
+				try {
+					paramValue = parameter.getValue().getBindingValue(evaluationContext);
+				} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					e.printStackTrace();
+				}
+				action.setParameterValue(creationScheme.getParameters().get(i), paramValue);
+				i++;
+			}
+
+		}
+
+		action.doAction();
+
+		/*HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint, supportFactory);
 		virtualModelInstance.setVirtualModel(accessPoint.getVirtualModel());
-		accessPoint.setInstance(virtualModelInstance);
+		
+		Object returned = null;
+		
+		if (creationScheme != null) {
+			System.out.println("Tiens ce qui serait bien maintenant, c'est d'executer " + creationScheme);
+			System.out.println("FML: " + creationScheme.getFMLRepresentation());
+			for (Object p : parameters) {
+				System.out.println("p=" + p);
+			}
+			try {
+				returned = creationScheme.getControlGraph().execute(virtualModelInstance);
+			} catch (ReturnException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (FlexoException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		accessPoint.setInstance(virtualModelInstance);*/
+
+		// return returned;
 	}
 
 	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, ContentSupport support, FlexoConcept concept) {

@@ -36,6 +36,7 @@
 package org.openflexo.http.connector.fml;
 
 import java.lang.reflect.Type;
+
 import org.openflexo.connie.type.CustomTypeFactory;
 import org.openflexo.foundation.fml.TechnologySpecificType;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
@@ -47,12 +48,12 @@ import org.openflexo.http.connector.model.AccessPoint;
  */
 public class AccessPointType implements TechnologySpecificType<HttpTechnologyAdapter> {
 
-	private final HttpTechnologyAdapter technologyAdapter;
+	// private final HttpTechnologyAdapter technologyAdapter;
 
 	private final VirtualModelInstanceType instanceType;
 
-	public AccessPointType(HttpTechnologyAdapter technologyAdapter, VirtualModelInstanceType instanceType) {
-		this.technologyAdapter = technologyAdapter;
+	public AccessPointType(/*HttpTechnologyAdapter technologyAdapter,*/ VirtualModelInstanceType instanceType) {
+		// this.technologyAdapter = technologyAdapter;
 		this.instanceType = instanceType;
 	}
 
@@ -68,9 +69,8 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 	@Override
 	public boolean isOfType(Object object, boolean permissive) {
 		if (object instanceof AccessPoint) {
-			VirtualModelInstanceType instanceType = VirtualModelInstanceType.getVirtualModelInstanceType(
-				((AccessPoint) object).getInstance().getVirtualModel()
-			);
+			VirtualModelInstanceType instanceType = VirtualModelInstanceType
+					.getVirtualModelInstanceType(((AccessPoint) object).getInstance().getVirtualModel());
 			return instanceType.isTypeAssignableFrom(instanceType, permissive);
 		}
 		return false;
@@ -78,7 +78,7 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 
 	@Override
 	public String simpleRepresentation() {
-		return "AccessPoint<"  +instanceType.simpleRepresentation() + ">";
+		return "AccessPoint<" + instanceType.simpleRepresentation() + ">";
 	}
 
 	@Override
@@ -103,7 +103,11 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 
 	@Override
 	public HttpTechnologyAdapter getSpecificTechnologyAdapter() {
-		return technologyAdapter;
+		if (instanceType != null && instanceType.getVirtualModel() != null
+				&& instanceType.getVirtualModel().getTechnologyAdapterService() != null) {
+			return instanceType.getVirtualModel().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+		}
+		return null;
 	}
 
 	@Override

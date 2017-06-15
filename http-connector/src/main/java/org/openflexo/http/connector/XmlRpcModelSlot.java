@@ -22,9 +22,11 @@ package org.openflexo.http.connector;
 
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
-import org.openflexo.http.connector.XMLRPCModelSlot.RestModelSlotImpl;
+import org.openflexo.http.connector.XmlRpcModelSlot.RestModelSlotImpl;
+import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
-import org.openflexo.http.connector.fml.editionaction.XmlRpcRequestBehaviour;
+import org.openflexo.http.connector.fml.xmlrpc.editionaction.PerformXmlRpcRequest;
+import org.openflexo.http.connector.fml.xmlrpc.editionaction.XmlRpcRequestBehaviour;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
@@ -36,11 +38,11 @@ import org.openflexo.model.annotations.XMLElement;
 @ModelEntity
 @XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
-@DeclareEditionActions({ CreateAccessPointResource.class })
-@DeclareFlexoBehaviours({ XmlRpcRequestBehaviour.class })
-public interface XMLRPCModelSlot extends HttpModelSlot {
+@DeclareEditionActions({ CreateAccessPointResource.class, PerformXmlRpcRequest.class })
+@DeclareFlexoBehaviours({ HttpVirtualModelInitializer.class, XmlRpcRequestBehaviour.class })
+public interface XmlRpcModelSlot extends HttpModelSlot {
 
-	abstract class RestModelSlotImpl extends HttpModelSlotImpl implements XMLRPCModelSlot {
+	abstract class RestModelSlotImpl extends HttpModelSlotImpl implements XmlRpcModelSlot {
 
 	}
 }

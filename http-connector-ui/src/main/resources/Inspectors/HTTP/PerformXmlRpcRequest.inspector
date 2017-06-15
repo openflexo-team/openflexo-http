@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Inspector xmlns:p="http://www.openflexo.org/pamela/" id="0"
+	p:modelEntity="org.openflexo.gina.utils.FIBInspector" align="left"
+	borderTop="0" borderLeft="0" trackViewPortHeight="true"
+	trackViewPortWidth="true" borderBottom="0" border="empty"
+	sizeAdjustment="OriginalSize" titleFont="SansSerif,0,12" layout="border"
+	borderRight="0" controllerClassName="org.openflexo.fml.controller.FMLFIBInspectorController"
+	font="SansSerif,0,12" name="Inspector">
+	<TabPanel id="1" constraints="border(location=center)" name="Tab">
+		<Tab id="2" title="Basic" align="left" borderTop="0" borderTitle="Request"
+			borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true"
+			borderBottom="0" border="empty" sizeAdjustment="OriginalSize"
+			titleFont="SansSerif,0,11" layout="twocols" borderRight="0"
+			useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED"
+			index="0" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED"
+			font="SansSerif,0,11" name="BasicTab">
+			<Label label="end_point_name" align="right" index="4"
+				constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="endPointLabel" />
+			<TextField columns="7" data="data.endPointName" index="5"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
+				name="endPointTF" />
+			<Label label="method_name" align="right" index="6"
+				constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="methodNameLabel" />
+			<TextField columns="7" data="data.methodName" index="7"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
+				name="methodNameTF" />
+			<Label label="type" index="8"
+				constraints="twocols(expandHorizontally=false;expandVertically=false;index=6;location=left)"
+				localize="true">
+			</Label>
+			<Custom index="9" componentClassName="org.openflexo.gina.swing.utils.TypeSelector"
+				localize="true" manageDynamicModel="true" data="data.type"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;index=7;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=0;location=right)">
+				<Assignment variable="component.customTypeManager"
+					value="controller.serviceManager.technologyAdapterService" />
+				<Assignment variable="component.customTypeEditorProvider"
+					value="controller.serviceManager.technologyAdapterControllerService" />
+			</Custom>
+			<Label id="16" index="10" label="parameters" align="left"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="parameters_label" />
+			<Table id="17" index="11" visibleRowCount="3"
+				backgroundNonSelectionColor="255,255,255"
+				backgroundSecondarySelectionColor="178,215,255"
+				iteratorClassName="org.openflexo.http.connector.fml.xmlrpc.editionaction.XmlRpcParameter"
+				showFooter="true" selectionMode="MultipleIntervalSelection"
+				rowHeight="18" manageDynamicModel="true" data="data.parameters"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
+				name="parameters_table">
+				<IconColumn id="18" resizable="false" title="icon"
+					displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
+				<LabelColumn data="iterator.name" title="name"
+					columnWidth="80" resizable="true" displayTitle="true" tooltip="iterator.name"
+					name="label" />
+				<CustomColumn id="21"
+					componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
+					data="iterator.value" resizable="true" title="value" displayTitle="true"
+					columnWidth="80" showIcon="false" name="value">
+					<ColumnAssignment id="22" variable="component.bindable"
+						value="data.owner" mandatory="true" />
+				</CustomColumn>
+				<AddAction id="23" method="data.addNewParameter()" name="add_action" />
+				<RemoveAction id="24" isAvailable="(selected != null)"
+					method="data.deleteParameter(selected)" name="delete_action" />
+			</Table>
+		</Tab>
+		<Tab id="27" title="Advanced" align="left" borderTop="0"
+			borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true"
+			borderBottom="0" border="empty" sizeAdjustment="OriginalSize"
+			titleFont="SansSerif,0,11" layout="twocols" borderRight="0"
+			useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED"
+			index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED"
+			font="SansSerif,0,11" name="AdvancedTab" />
+	</TabPanel>
+	<FIBVariable id="28"
+		type="org.openflexo.http.connector.fml.xmlrpc.editionaction.PerformXmlRpcRequest"
+		name="data" />
+	<LocalizedDictionary id="29">
+		<Localized id="30" lang="French" value="Avancé" key="Advanced" />
+		<Localized id="31" lang="French" value="Basique" key="Basic" />
+		<Localized id="32" lang="English" value="Name" key="name" />
+		<Localized id="33" lang="French" value="Nom" key="name" />
+		<Localized id="34" lang="Dutch" value="Name" key="name" />
+	</LocalizedDictionary>
+	<Parameter id="35" name="title" value="Perform XML/RPC request" />
+</Inspector>

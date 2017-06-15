@@ -23,6 +23,7 @@ package org.openflexo.http.connector;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.http.connector.RestModelSlot.RestModelSlotImpl;
+import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
 import org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -37,7 +38,7 @@ import org.openflexo.model.annotations.XMLElement;
 @XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
 @DeclareEditionActions({ CreateAccessPointResource.class })
-@DeclareFlexoBehaviours({ JsonRequestBehaviour.class })
+@DeclareFlexoBehaviours({ HttpVirtualModelInitializer.class, JsonRequestBehaviour.class })
 public interface RestModelSlot extends HttpModelSlot {
 
 	abstract class RestModelSlotImpl extends HttpModelSlotImpl implements RestModelSlot {

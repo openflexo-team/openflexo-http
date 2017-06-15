@@ -37,6 +37,7 @@ package org.openflexo.http.connector.fml.editionaction;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.Type;
+
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.InvalidArgumentException;
 import org.openflexo.foundation.fml.FlexoProperty;
@@ -54,8 +55,12 @@ import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource.
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.http.connector.rm.AccessPointResourceFactory;
+import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.PropertyIdentifier;
+import org.openflexo.model.annotations.Setter;
+import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 
@@ -71,21 +76,47 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @FML("CreateHTTPResource")
 public interface CreateAccessPointResource extends AbstractCreateResource<HttpModelSlot, AccessPoint, HttpTechnologyAdapter> {
 
-	abstract class CreateAccessPointResourceImpl
-			extends AbstractCreateResourceImpl<HttpModelSlot, AccessPoint, HttpTechnologyAdapter>
-			implements CreateAccessPointResource
-	{
+	@PropertyIdentifier(type = String.class)
+	String URL_KEY = "url";
+	@PropertyIdentifier(type = String.class)
+	String USER_KEY = "user";
+	@PropertyIdentifier(type = String.class)
+	String PASSWORD_KEY = "password";
+
+	@Getter(URL_KEY)
+	@XMLAttribute
+	String getUrl();
+
+	@Setter(URL_KEY)
+	void setUrl(String url);
+
+	@Getter(USER_KEY)
+	@XMLAttribute
+	String getUser();
+
+	@Setter(USER_KEY)
+	void setUser(String user);
+
+	@Getter(PASSWORD_KEY)
+	@XMLAttribute
+	String getPassword();
+
+	@Setter(PASSWORD_KEY)
+	void setPassword(String password);
+
+	abstract class CreateAccessPointResourceImpl extends AbstractCreateResourceImpl<HttpModelSlot, AccessPoint, HttpTechnologyAdapter>
+			implements CreateAccessPointResource {
 
 		@Override
 		public Type getAssignableType() {
 			FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
 			if (flexoProperty instanceof HttpModelSlot) {
 				HttpModelSlot httpModelSlot = (HttpModelSlot) flexoProperty;
-				HttpTechnologyAdapter technologyAdapter = getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
-				return new AccessPointType(technologyAdapter, (VirtualModelInstanceType) httpModelSlot.getAccessedVirtualModel().getInstanceType());
-			} else {
-				return AccessPoint.class;
+				if (httpModelSlot != null && httpModelSlot.getAccessedVirtualModel() != null) {
+					return new AccessPointType((VirtualModelInstanceType) httpModelSlot.getAccessedVirtualModel().getInstanceType());
+				}
 			}
+			return AccessPoint.class;
 		}
 
 		@Override
@@ -97,9 +128,7 @@ public interface CreateAccessPointResource extends AbstractCreateResource<HttpMo
 
 				AccessPointResource newResource = createResource(
 						getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class),
-						AccessPointResourceFactory.class, rc,
-						resourceName, resourceURI, getRelativePath(), ".url", true
-					);
+						AccessPointResourceFactory.class, rc, resourceName, resourceURI, getRelativePath(), ".url", true);
 				AccessPoint data = newResource.getResourceData(null);
 
 				FlexoProperty<AccessPoint> flexoProperty = getAssignedFlexoProperty();
@@ -108,14 +137,17 @@ public interface CreateAccessPointResource extends AbstractCreateResource<HttpMo
 					data.setUrl(httpModelSlot.getUrl());
 					data.setUser(httpModelSlot.getUser());
 					data.setPassword(httpModelSlot.getPassword());
-					data.setVirtualModel(httpModelSlot.getAccessedVirtualModel());
-					newResource.getFactory().initializeModel(data);
-				} else {
+					data.setModelSlot(httpModelSlot);
+					data.setOwnerInstance(evaluationContext.getVirtualModelInstance());
+					newResource.getFactory().initializeModel(data, httpModelSlot.getCreationScheme(), httpModelSlot.getParameters(),
+							evaluationContext);
+				}
+				else {
 					throw new InvalidArgumentException("AccessPoint creation must be affected to a HTTPModelSlot");
 				}
 
 				return data;
-			} catch (ModelDefinitionException |FileNotFoundException | ResourceLoadingCancelledException e) {
+			} catch (ModelDefinitionException | FileNotFoundException | ResourceLoadingCancelledException e) {
 				throw new FlexoException(e);
 			}
 

@@ -46,52 +46,56 @@ import org.openflexo.toolbox.IProgress;
 @XMLElement
 @ImplementationClass(AccessPointResourceImpl.class)
 public interface AccessPointResource
-extends
-        PamelaResource<AccessPoint, AccessPointFactory>,
-        TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter>
-{
-    
-    String TECHNOLOGY_CONTEXT_MANAGER = "technologyContextManager";
+		extends PamelaResource<AccessPoint, AccessPointFactory>, TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter> {
 
-    @Getter(value=TECHNOLOGY_CONTEXT_MANAGER, ignoreType=true)
-    HttpTechnologyContextManager getTechnologyContextManager();
+	String TECHNOLOGY_CONTEXT_MANAGER = "technologyContextManager";
 
-    @Setter(TECHNOLOGY_CONTEXT_MANAGER)
-    void setTechnologyContextManager(HttpTechnologyContextManager contextManager);
+	@Override
+	@Getter(value = TECHNOLOGY_CONTEXT_MANAGER, ignoreType = true)
+	HttpTechnologyContextManager getTechnologyContextManager();
 
-    // TODO connect to model
-    @Getter("model")
+	@Setter(TECHNOLOGY_CONTEXT_MANAGER)
+	void setTechnologyContextManager(HttpTechnologyContextManager contextManager);
+
+	// TODO connect to model
+	@Getter("model")
 	AccessPoint getModel();
 
-    abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
+	abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
 
-        public HttpTechnologyAdapter getTechnologyAdapter() {
-            if (getServiceManager() != null) {
-                return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
-            }
-            return null;
-        }
+		@Override
+		public HttpTechnologyAdapter getTechnologyAdapter() {
+			if (getServiceManager() != null) {
+				return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+			}
+			return null;
+		}
 
-        public Class<AccessPoint> getResourceDataClass() {
-            return AccessPoint.class;
-        }
+		@Override
+		public Class<AccessPoint> getResourceDataClass() {
+			return AccessPoint.class;
+		}
 
-        @Override
-        public AccessPoint loadResourceData(IProgress progress)
-                throws FlexoFileNotFoundException, IOFlexoException,
-                InvalidXMLException, InconsistentDataException,
-                InvalidModelDefinitionException {
-            AccessPoint accessPoint = super.loadResourceData(progress);
-            getFactory().initializeModel(accessPoint);
-            return accessPoint;
-        }
+		@Override
+		public AccessPoint loadResourceData(IProgress progress) throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
+				InconsistentDataException, InvalidModelDefinitionException {
+			AccessPoint accessPoint = super.loadResourceData(progress);
+			if (accessPoint.getModelSlot() != null) {
+				getFactory().initializeModel(accessPoint, accessPoint.getModelSlot().getCreationScheme(),
+						accessPoint.getModelSlot().getParameters(), accessPoint.getOwnerInstance());
+			}
+			else {
+				getFactory().initializeModel(accessPoint, null, null, accessPoint.getOwnerInstance());
+			}
+			return accessPoint;
+		}
 
-        @Override
-        public FlexoObject findObject(String objectIdentifier, String userIdentifier, String typeIdentifier) {
-            System.out.println(("Trying to find object '" + objectIdentifier + "'"));
-            AccessPoint accessPoint = getLoadedResourceData();
-            FlexoConcept concept = accessPoint.getVirtualModel().getFlexoConcept(typeIdentifier);
-            return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, null, concept);
-        }
-    }
+		@Override
+		public FlexoObject findObject(String objectIdentifier, String userIdentifier, String typeIdentifier) {
+			System.out.println(("Trying to find object '" + objectIdentifier + "'"));
+			AccessPoint accessPoint = getLoadedResourceData();
+			FlexoConcept concept = accessPoint.getModelSlot().getAccessedVirtualModel().getFlexoConcept(typeIdentifier);
+			return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, null, concept);
+		}
+	}
 }

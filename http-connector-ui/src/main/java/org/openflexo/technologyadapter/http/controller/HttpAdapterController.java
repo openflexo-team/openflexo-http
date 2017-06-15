@@ -59,12 +59,19 @@ import javax.swing.ImageIcon;
 
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoRole;
+import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.gina.utils.InspectorGroup;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
+import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource;
 import org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour;
-import org.openflexo.http.connector.fml.editionaction.XmlRpcRequestBehaviour;
+import org.openflexo.http.connector.fml.xmlrpc.editionaction.PerformXmlRpcRequest;
+import org.openflexo.http.connector.fml.xmlrpc.editionaction.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.icon.FMLIconLibrary;
+import org.openflexo.icon.IconFactory;
+import org.openflexo.icon.IconLibrary;
 import org.openflexo.technologyadapter.http.library.HttpIconLibrary;
 import org.openflexo.technologyadapter.http.view.AccessPointModuleView;
 import org.openflexo.view.EmptyPanel;
@@ -152,6 +159,9 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
 	@Override
 	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
+		if (HttpVirtualModelInitializer.class.isAssignableFrom(flexoBehaviourClass)) {
+			return IconFactory.getImageIcon(FMLIconLibrary.CREATION_SCHEME_ICON, HttpIconLibrary.HTTP_MARKER);
+		}
 		if (XmlRpcRequestBehaviour.class.isAssignableFrom(flexoBehaviourClass)) {
 			return HttpIconLibrary.REQUEST_BEHAVIOUR_ICON;
 		}
@@ -159,6 +169,17 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 			return HttpIconLibrary.REQUEST_BEHAVIOUR_ICON;
 		}
 		return super.getIconForFlexoBehaviour(flexoBehaviourClass);
+	}
+
+	@Override
+	public ImageIcon getIconForEditionAction(Class<? extends EditionAction> editionActionClass) {
+		if (CreateAccessPointResource.class.isAssignableFrom(editionActionClass)) {
+			return IconFactory.getImageIcon(HttpIconLibrary.ACCESSPOINT_ICON, IconLibrary.NEW_MARKER);
+		}
+		if (PerformXmlRpcRequest.class.isAssignableFrom(editionActionClass)) {
+			return HttpIconLibrary.REQUEST_RESPONSE_ICON;
+		}
+		return super.getIconForEditionAction(editionActionClass);
 	}
 
 }

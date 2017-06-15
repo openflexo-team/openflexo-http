@@ -65,6 +65,11 @@ public class TestHTTPInspectors extends GenericFIBInspectorTestCase {
 	}
 
 	@Test
+	public void testHttpModelSlotInspector() {
+		validateFIB("Inspectors/HTTP/HttpModelSlot.inspector");
+	}
+
+	@Test
 	public void testJsonRequestBehaviourInspector() {
 		validateFIB("Inspectors/HTTP/JsonRequestBehaviour.inspector");
 	}
@@ -72,6 +77,11 @@ public class TestHTTPInspectors extends GenericFIBInspectorTestCase {
 	@Test
 	public void testPathBuilderInspector() {
 		validateFIB("Inspectors/HTTP/PathBuilder.inspector");
+	}
+
+	@Test
+	public void testPerformXmlRpcRequestInspector() {
+		validateFIB("Inspectors/HTTP/PerformXmlRpcRequest.inspector");
 	}
 
 	@Test
