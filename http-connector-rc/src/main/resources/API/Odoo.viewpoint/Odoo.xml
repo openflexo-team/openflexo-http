@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ViewPoint id="0" modelVersion="1.0" uri="http://openflexo.org/http/resources/API/Odoo.viewpoint" version="0.1" name="Odoo" userID="FLX" description="This ViewPoint encodes the connection to an Odoo instance" flexoID="2">
+  <Inspector id="1" inspectorTitle="Odoo" userID="FLX" flexoID="1" />
+</ViewPoint>

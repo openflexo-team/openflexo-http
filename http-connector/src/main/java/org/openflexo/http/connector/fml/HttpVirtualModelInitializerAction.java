@@ -131,7 +131,8 @@ public class HttpVirtualModelInitializerAction
 			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
 		}
 
-		httpVirtualModelInstance = factory.newInstance(HttpVirtualModelInstance.class, getFocusedObject(), supportFactory);
+		httpVirtualModelInstance = factory.newInstance(HttpVirtualModelInstance.class, getFocusedObject(), getServiceManager(),
+				supportFactory);
 		httpVirtualModelInstance.setVirtualModel(getFocusedObject().getModelSlot().getAccessedVirtualModel());
 
 		executeControlGraph();

@@ -44,14 +44,18 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.ViewPoint;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.rm.ViewResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -68,19 +72,21 @@ import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Parameter;
 import org.openflexo.model.annotations.Setter;
+import org.openflexo.model.exceptions.ModelDefinitionException;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
  */
 @ModelEntity
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
-@Imports( @Import(HttpFlexoConceptInstance.class) )
+@Imports(@Import(HttpFlexoConceptInstance.class))
 public interface HttpVirtualModelInstance<S extends ContentSupport> extends VirtualModelInstance {
 
 	String ACCESS_POINT = "accessPoint";
 
 	@Initializer
-	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, ContentSupportFactory<S> supportFactory);
+	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, FlexoServiceManager serviceManager,
+			ContentSupportFactory<S> supportFactory);
 
 	@Getter(ACCESS_POINT)
 	AccessPoint getAccessPoint();
@@ -94,7 +100,8 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 
 	CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport> extends VirtualModelInstanceImpl implements HttpVirtualModelInstance<S> {
+	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport> extends VirtualModelInstanceImpl
+			implements HttpVirtualModelInstance<S> {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
@@ -104,41 +111,47 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 
 		private ContentSupportFactory supportFactory;
 
+		private VirtualModelInstanceModelFactory modelFactory;
+
 		@Override
-		public void initialize(AccessPoint accessPoint, ContentSupportFactory<S> supportFactory) {
+		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<S> supportFactory) {
 			performSuperSetter(ACCESS_POINT, accessPoint);
 			this.supportFactory = supportFactory;
+			try {
+				modelFactory = new VirtualModelInstanceModelFactory(null, serviceManager.getEditingContext(),
+						serviceManager.getTechnologyAdapterService());
+			} catch (ModelDefinitionException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
-			return instances.computeIfAbsent(
-				path, (newPath) -> {
-					ContentSupport support = supportFactory.newSupport(this, path, null, pointer);
-					return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
-				});
+			return instances.computeIfAbsent(path, (newPath) -> {
+				ContentSupport support = supportFactory.newSupport(this, path, null, pointer);
+				return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
+			});
 		}
 
+		@Override
 		public CloseableHttpClient getHttpclient() {
 			return httpclient;
 		}
 
+		@Override
 		public List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
 			AccessPoint accessPoint = getAccessPoint();
 			HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
 			accessPoint.contributeHeaders(httpGet);
-			try (
-				CloseableHttpResponse response = httpclient.execute(httpGet);
-				InputStream stream = response.getEntity().getContent()
-			) {
+			try (CloseableHttpResponse response = httpclient.execute(httpGet); InputStream stream = response.getEntity().getContent()) {
 
 				List<S> supports = supportFactory.newSupports(this, path, stream, pointer);
-				return supports.stream().map((s) ->
-					getAccessPointFactory().newFlexoConceptInstance(this, s, concept)
-				).collect(Collectors.toList());
+				return supports.stream().map((s) -> getAccessPointFactory().newFlexoConceptInstance(this, s, concept))
+						.collect(Collectors.toList());
 
 			} catch (IOException e) {
-				logger.log(Level.SEVERE, "Can't read '"+ httpGet.getURI(), e);
+				logger.log(Level.SEVERE, "Can't read '" + httpGet.getURI(), e);
 			}
 			return Collections.emptyList();
 		}
@@ -168,7 +181,7 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 		@Override
 		public FlexoResourceCenter<?> getResourceCenter() {
 			FlexoResource<AccessPoint> resource = getAccessPoint().getResource();
-			return resource != null ? resource.getResourceCenter() :  null;
+			return resource != null ? resource.getResourceCenter() : null;
 		}
 
 		@Override
@@ -176,5 +189,13 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 			return "HttpVirtualModelInstance:" + super.toString();
 		}
 
+		@Override
+		public AbstractVirtualModelInstanceModelFactory<?> getFactory() {
+			return modelFactory;
+		}
+
+		/*public HttpFlexoConceptInstance retrieveFlexoConceptInstance(FlexoConcept type, Map<?,?> values) {
+			
+		}*/
 	}
 }

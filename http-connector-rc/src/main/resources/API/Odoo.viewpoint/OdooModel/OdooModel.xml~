@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VirtualModel id="0" modelVersion="1.0" version="0.1" name="OdooModel" userID="FLX" flexoID="2">
+  <FlexoConcept id="1" name="Version" isAbstract="true" userID="FLX" flexoID="16">
+    <AbstractProperty id="2" type="java.lang.String" name="protocol_version" userID="FLX" flexoID="34" />
+    <AbstractProperty id="3" type="java.lang.String" name="server_serie" userID="FLX" flexoID="35" />
+    <AbstractProperty id="4" type="java.lang.String" name="server_version" userID="FLX" flexoID="36" />
+    <AbstractProperty id="5" type="java.lang.String" name="server_version_info" userID="FLX" flexoID="37" />
+    <Inspector id="6" inspectorTitle="Version" userID="FLX" flexoID="11">
+      <GenericInspectorEntry id="7" widget="TEXT_FIELD" data="protocol_version" name="protocol_version" label="protocol_version" type="java.lang.String" userID="FLX" flexoID="38" />
+      <GenericInspectorEntry id="8" widget="TEXT_FIELD" data="server_serie" name="server_serie" label="server_serie" type="java.lang.String" userID="FLX" flexoID="39" />
+      <GenericInspectorEntry id="9" widget="TEXT_FIELD" data="server_version" name="server_version" label="server_version" type="java.lang.String" userID="FLX" flexoID="40" />
+      <GenericInspectorEntry id="10" widget="TEXT_FIELD" data="server_version_info" name="server_version_info" label="server_version_info" type="java.lang.String" userID="FLX" flexoID="41" />
+    </Inspector>
+  </FlexoConcept>
+  <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="12" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
+  <FlexoConceptInstanceRole id="13" virtualModelInstance="virtualModelInstance" flexoConceptTypeURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel#Version" cloningStrategy="Reference" cardinality="ZeroOne" name="version" userID="FLX" flexoID="58" />
+  <XmlRpcModelSlot id="14" accessedVirtualModelURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="accessPoint" userID="FLX" flexoID="75" />
+  <XmlRpcRequestBehaviour id="15" name="authenticate" width="800" label="authenticate" height="600" userID="FLX" flexoID="33">
+    <BehaviourControlGraph_EmptyControlGraph id="16" userID="FLX" flexoID="42" />
+    <GenericBehaviourParameter id="17" isRequired="true" widget="TEXT_FIELD" name="login" type="java.lang.String" userID="FLX" flexoID="43" />
+    <GenericBehaviourParameter id="18" isRequired="true" widget="TEXT_FIELD" name="passwd" type="java.lang.String" userID="FLX" flexoID="44" />
+  </XmlRpcRequestBehaviour>
+  <JsonRequestBehaviour id="19" returnedFlexoConceptURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel#Version" name="jsonRequestBehaviour" width="800" label="jsonRequestBehaviour" height="600" userID="FLX" flexoID="48">
+    <PathBuilder id="20">
+      <JsonRequestBehaviour idref="19" />
+    </PathBuilder>
+    <BehaviourControlGraph_EmptyControlGraph id="21" userID="FLX" flexoID="49" />
+  </JsonRequestBehaviour>
+  <ActionScheme id="22" name="retrieveVersion" width="800" label="retrieveVersion" height="600" userID="FLX" flexoID="68">
+    <BehaviourControlGraph_ReturnStatement id="23" userID="FLX" flexoID="123">
+      <AssignableAction_PerformXmlRpcRequest id="24" methodName="version" endPointName="xmlrpc/common" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel#Version&gt;" receiver="accessPoint" userID="FLX" flexoID="74" />
+    </BehaviourControlGraph_ReturnStatement>
+  </ActionScheme>
+  <HttpVirtualModelInitializer id="25" name="init" width="800" label="init" height="600" userID="FLX" flexoID="98">
+    <BehaviourControlGraph_Sequence id="26" userID="FLX" flexoID="112">
+      <ControlGraph2_Sequence id="27" ownerContext="controlGraph2" userID="FLX" flexoID="111">
+        <ControlGraph2_Sequence id="28" ownerContext="controlGraph2" userID="FLX" flexoID="110">
+          <ControlGraph2_LogAction id="29" logLevel="INFO" logString="(&quot;version=&quot; + version)" ownerContext="controlGraph2" userID="FLX" flexoID="109" />
+          <ControlGraph1_AssignationAction id="30" assign="version" ownerContext="controlGraph1" userID="FLX" flexoID="107">
+            <AssignableAction_ExpressionAction id="31" expression="virtualModelInstance.retrieveVersion()" userID="FLX" flexoID="108" />
+          </ControlGraph1_AssignationAction>
+        </ControlGraph2_Sequence>
+        <ControlGraph1_AssignationAction id="32" assign="accessPoint" ownerContext="controlGraph1" userID="FLX" flexoID="106">
+          <AssignableAction_ExpressionAction id="33" expression="initializingAccessPoint" userID="FLX" flexoID="105" />
+        </ControlGraph1_AssignationAction>
+      </ControlGraph2_Sequence>
+      <ControlGraph1_LogAction id="34" logLevel="INFO" logString="(((&quot;Initializing &quot; + initializingAccessPoint) + &quot; with &quot;) + parameters.aString)" ownerContext="controlGraph1" userID="FLX" flexoID="101" />
+    </BehaviourControlGraph_Sequence>
+    <GenericBehaviourParameter id="35" widget="CUSTOM_WIDGET" name="aString" type="java.lang.String" userID="FLX" flexoID="118" />
+  </HttpVirtualModelInitializer>
+  <HttpVirtualModelInitializer id="36" name="zob" width="800" label="zob" height="600" userID="FLX" flexoID="116">
+    <BehaviourControlGraph_EmptyControlGraph id="37" userID="FLX" flexoID="119" />
+  </HttpVirtualModelInitializer>
+  <Inspector id="38" inspectorTitle="OdooModel" userID="FLX" flexoID="1" />
+</VirtualModel>

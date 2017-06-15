@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VirtualModel id="0" modelVersion="1.0" version="0.1" name="GithubV3" userID="FLX" flexoID="2">
+  <FlexoConcept id="1" name="User" isAbstract="true" userID="FLX" flexoID="7">
+    <AbstractProperty id="2" type="java.lang.String" name="login" userID="FLX" flexoID="13" />
+    <AbstractProperty id="3" type="java.lang.String" name="avatar_url" userID="FLX" flexoID="14" />
+    <Inspector id="4" renderer="(&quot;User:&quot; + instance.login)" inspectorTitle="User" userID="FLX" flexoID="6">
+      <GenericInspectorEntry id="5" widget="TEXT_FIELD" data="login" name="login" label="login" type="java.lang.String" userID="FLX" flexoID="10" />
+      <GenericInspectorEntry id="6" widget="TEXT_FIELD" data="avatar_url" name="avatar_url" label="avatar_url" type="java.lang.String" userID="FLX" flexoID="11" />
+    </Inspector>
+  </FlexoConcept>
+  <UseModelSlotDeclaration id="7" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
+  <JsonRequestBehaviour id="8" pointer="/items" multiple="true" returnedFlexoConceptURI="http://www.openflexo.org/projects/2017/6/TestGithub_1497516908909/Github.viewpoint/GithubV3#User" name="searchUsers" width="800" label="searchUsers" height="600" userID="FLX" flexoID="12">
+    <PathBuilder id="9" template="/search/users">
+      <JsonRequestBehaviour idref="8" />
+      <PathParameter id="10" name="&quot;q&quot;" value="parameters.query" userID="FLX" flexoID="-1" />
+    </PathBuilder>
+    <BehaviourControlGraph_EmptyControlGraph id="11" userID="FLX" flexoID="15" />
+    <GenericBehaviourParameter id="12" isRequired="true" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="16" />
+  </JsonRequestBehaviour>
+  <Inspector id="13" inspectorTitle="GithubV3" userID="FLX" flexoID="1" />
+</VirtualModel>

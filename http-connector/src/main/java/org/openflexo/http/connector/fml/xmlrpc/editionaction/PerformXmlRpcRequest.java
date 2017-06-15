@@ -39,6 +39,8 @@
 package org.openflexo.http.connector.fml.xmlrpc.editionaction;
 
 import java.lang.reflect.Type;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -64,6 +66,9 @@ import org.openflexo.model.annotations.Remover;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
+
+import de.timroes.axmlrpc.XMLRPCClient;
+import de.timroes.axmlrpc.XMLRPCException;
 
 /**
  * {@link EditionAction} used to configure a {@link FIBComponentModelSlot}
@@ -155,9 +160,49 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 		@Override
 		public T execute(RunTimeEvaluationContext evaluationContext) throws ReturnException, FlexoException {
 
-			System.out.println("PerformXmlRpcRequest for :" + getAssignedFlexoProperty());
+			System.out.println("PerformXmlRpcRequest" + getEndPointName() + " " + getMethodName());
 
-			System.out.println("receiver=" + getReceiver(evaluationContext));
+			AccessPoint accessPoint = getReceiver(evaluationContext);
+
+			System.out.println("receiver: " + getReceiver() + " = " + accessPoint);
+			System.out.println("valid: " + getReceiver().isValid() + " reason: " + getReceiver().invalidBindingReason());
+
+			if (accessPoint == null) {
+				logger.warning("Could not perform XML/RPC request on null AccessPoint");
+				return null;
+			}
+
+			String relativePath = getEndPointName();
+			if (accessPoint.getUrl().endsWith("/")) {
+				if (relativePath.startsWith("/")) {
+					relativePath = relativePath.substring(1);
+				}
+			}
+			else {
+				if (!relativePath.startsWith("/")) {
+					relativePath = "/" + relativePath;
+				}
+			}
+
+			String urlString = accessPoint.getUrl() + relativePath;
+
+			System.out.println("Requesting " + urlString);
+
+			URL urlObject;
+			try {
+				urlObject = new URL(urlString);
+			} catch (MalformedURLException e) {
+				throw new FlexoException(e);
+			}
+			XMLRPCClient object = new XMLRPCClient(urlObject);
+
+			System.out.println("Calling XMLRPC " + getMethodName());
+			try {
+				Object result = object.call(getMethodName());
+				System.out.println("Resultat de l'appel: " + result);
+			} catch (XMLRPCException e) {
+				throw new FlexoException(e);
+			}
 
 			return null;
 

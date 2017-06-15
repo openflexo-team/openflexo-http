@@ -1,10 +1,5 @@
 package org.openflexo.http.connector;
 
-import java.util.List;
-
-import org.openflexo.connie.binding.BindingPathElement;
-import org.openflexo.connie.binding.SimplePathElement;
-import org.openflexo.foundation.fml.TechnologySpecificType;
 import org.openflexo.foundation.fml.annotations.DeclareModelSlots;
 import org.openflexo.foundation.fml.annotations.DeclareResourceTypes;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -12,8 +7,7 @@ import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterBindingFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
-import org.openflexo.http.connector.fml.AccessPointType;
-import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.http.connector.fml.HttpBindingFactory;
 import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 
 /**
@@ -23,7 +17,7 @@ import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 @DeclareResourceTypes({ AccessPointResourceFactory.class })
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 
-	private TechnologyAdapterBindingFactory bindingFactory;
+	private HttpBindingFactory bindingFactory;
 
 	@Override
 	public String getIdentifier() {
@@ -47,29 +41,9 @@ public class HttpTechnologyAdapter extends TechnologyAdapter {
 
 	@Override
 	public TechnologyAdapterBindingFactory getTechnologyAdapterBindingFactory() {
-		bindingFactory = new TechnologyAdapterBindingFactory() {
-			@Override
-			protected SimplePathElement makeSimplePathElement(Object object, BindingPathElement parent) {
-				return null;
-			}
-
-			@Override
-			public boolean handleType(TechnologySpecificType<?> technologySpecificType) {
-				return technologySpecificType instanceof AccessPointType;
-			}
-
-			@Override
-			public List<? extends SimplePathElement> getAccessibleSimplePathElements(BindingPathElement parent) {
-				List<? extends SimplePathElement> elements = super.getAccessibleSimplePathElements(parent);
-				if (parent.getType() instanceof AccessPointType) {
-					AccessPointType parentType = (AccessPointType) parent.getType();
-					elements.stream().filter((e) -> e.getType() == HttpVirtualModelInstance.class)
-							.forEach((e) -> e.setType(parentType.getInstanceType()));
-				}
-				return elements;
-			}
-
-		};
+		if (bindingFactory == null) {
+			bindingFactory = new HttpBindingFactory();
+		}
 		return bindingFactory;
 	}
 
