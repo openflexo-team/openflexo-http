@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.model.support;
+package org.openflexo.http.connector.model.xmlrpc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +52,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;
 

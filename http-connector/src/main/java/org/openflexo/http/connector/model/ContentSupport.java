@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.model.support;
+package org.openflexo.http.connector.model;
 
 import java.lang.reflect.Type;
 

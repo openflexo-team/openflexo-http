@@ -56,9 +56,9 @@ import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.AccessPointFactory;
+import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.http.connector.model.support.ContentSupportFactory;
-import org.openflexo.http.connector.model.support.JsonSupportFactory;
+import org.openflexo.http.connector.model.rest.JsonSupportFactory;
 import org.openflexo.localization.LocalizedDelegate;
 
 /**

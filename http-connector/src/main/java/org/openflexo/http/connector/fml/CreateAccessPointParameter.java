@@ -36,7 +36,7 @@
  * 
  */
 
-package org.openflexo.http.connector.fml.editionaction;
+package org.openflexo.http.connector.fml;
 
 import java.util.logging.Logger;
 

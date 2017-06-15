@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.model.support;
+package org.openflexo.http.connector.model.rest;
 
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -46,6 +46,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;

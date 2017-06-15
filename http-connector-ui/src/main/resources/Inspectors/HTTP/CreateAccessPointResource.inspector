@@ -49,7 +49,7 @@
 			font="SansSerif,0,11" name="AdvancedTab" />
 	</TabPanel>
 	<FIBVariable id="10"
-		type="org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource"
+		type="org.openflexo.http.connector.fml.CreateAccessPointResource"
 		name="data" />
 	<LocalizedDictionary id="11" />
 </Inspector>

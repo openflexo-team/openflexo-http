@@ -16,7 +16,7 @@
   </FlexoConcept>
   <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
   <UseModelSlotDeclaration id="12" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
-  <RestModelSlot id="13" password="&quot;b161d2aa52d34f8b9d1a50cecca61f853e176067&quot;" accessedVirtualModelURI="http://openflexo.org/http/API/Github.viewpoint/GithubV3" user="&quot;sylvain-openflexo&quot;" url="&quot;https://api.github.com&quot;" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="github" userID="FLX" flexoID="6" />
+  <RestModelSlot id="13" accessedVirtualModelURI="http://openflexo.org/http/API/Github.viewpoint/GithubV3" url="&quot;https://api.github.com&quot;" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="github" userID="FLX" flexoID="6" />
   <FIBComponentModelSlot id="14" templateComponentURI="http://openflexo.org/http-test/GithubTest.viewpoint/Fib/MyGithub.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="53">
     <VariableAssignment id="15" variableType="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub&gt;" variable="data" value="virtualModelInstance" userID="FLX" flexoID="52" />
   </FIBComponentModelSlot>
@@ -32,35 +32,38 @@
         <AssignableAction_ConfigureGINAFIBComponent id="23" receiver="ui" userID="FLX" flexoID="54" />
       </ControlGraph2_AssignationAction>
       <ControlGraph1_AssignationAction id="24" assign="github" ownerContext="controlGraph1" userID="FLX" flexoID="11">
-        <AssignableAction_CreateAccessPointResource id="25" resourceCenter="project" resourceName="(&quot;url_&quot; + virtualModelInstance.name)" receiver="github" userID="FLX" flexoID="10" />
+        <AssignableAction_CreateAccessPointResource id="25" password="parameters.password" user="parameters.user" url="parameters.url" resourceCenter="project" resourceName="(&quot;url_&quot; + virtualModelInstance.name)" receiver="github" userID="FLX" flexoID="10" />
       </ControlGraph1_AssignationAction>
     </BehaviourControlGraph_Sequence>
+    <GenericBehaviourParameter id="26" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;https://api.github.com&quot;" name="url" type="java.lang.String" userID="FLX" flexoID="76" />
+    <GenericBehaviourParameter id="27" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;sylvain-openflexo&quot;" name="user" type="java.lang.String" userID="FLX" flexoID="75" />
+    <GenericBehaviourParameter id="28" widget="TEXT_FIELD" defaultValue="&quot;776c7f83b44a8b6413e52af4512a3086193a2ae7&quot;" name="password" type="java.lang.String" userID="FLX" flexoID="74" />
   </CreationScheme>
-  <ActionScheme id="26" visibility="Public" name="recherche" width="800" label="recherche" height="600" userID="FLX" flexoID="25">
-    <BehaviourControlGraph_Sequence id="27" userID="FLX" flexoID="35">
-      <ControlGraph2_Sequence id="28" ownerContext="controlGraph2" userID="FLX" flexoID="48">
-        <ControlGraph2_Sequence id="29" ownerContext="controlGraph2" userID="FLX" flexoID="69">
-          <ControlGraph2_NotifyPropertyChangedAction id="30" propertyName="utilisateurs" object="virtualModelInstance" ownerContext="controlGraph2" userID="FLX" flexoID="68" />
-          <ControlGraph1_FinalizeMatching id="31" container="virtualModelInstance" flexoBehaviourURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur.delete" matchingSet="set" flexoConceptTypeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur" ownerContext="controlGraph1" userID="FLX" flexoID="47" />
+  <ActionScheme id="29" visibility="Public" name="recherche" width="800" label="recherche" height="600" userID="FLX" flexoID="25">
+    <BehaviourControlGraph_Sequence id="30" userID="FLX" flexoID="35">
+      <ControlGraph2_Sequence id="31" ownerContext="controlGraph2" userID="FLX" flexoID="48">
+        <ControlGraph2_Sequence id="32" ownerContext="controlGraph2" userID="FLX" flexoID="69">
+          <ControlGraph2_NotifyPropertyChangedAction id="33" propertyName="utilisateurs" object="virtualModelInstance" ownerContext="controlGraph2" userID="FLX" flexoID="68" />
+          <ControlGraph1_FinalizeMatching id="34" container="virtualModelInstance" flexoBehaviourURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur.delete" matchingSet="set" flexoConceptTypeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur" ownerContext="controlGraph1" userID="FLX" flexoID="47" />
         </ControlGraph2_Sequence>
-        <ControlGraph1_IterationAction id="32" iteratorName="user" ownerContext="controlGraph1" userID="FLX" flexoID="31">
-          <Iteration_ExpressionAction id="33" expression="github.instance.searchUsers(parameters.query)" ownerContext="iterationControlGraph" userID="FLX" flexoID="33" />
-          <ControlGraph_MatchFlexoConceptInstance id="34" creationSchemeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur.create" matchingSet="set" receiver="virtualModelInstance" ownerContext="controlGraph" userID="FLX" flexoID="41">
-            <MatchingCriteria id="35" patternRoleName="user" value="user" userID="FLX" flexoID="43" />
-            <MatchingCriteria id="36" patternRoleName="login" userID="FLX" flexoID="44" />
-            <MatchingCriteria id="37" patternRoleName="github" userID="FLX" flexoID="45" />
-            <CreateFlexoConceptInstanceParameter id="38" paramName="user" value="user" userID="FLX" flexoID="42" />
+        <ControlGraph1_IterationAction id="35" iteratorName="user" ownerContext="controlGraph1" userID="FLX" flexoID="31">
+          <Iteration_ExpressionAction id="36" expression="github.instance.searchUsers(parameters.query)" ownerContext="iterationControlGraph" userID="FLX" flexoID="33" />
+          <ControlGraph_MatchFlexoConceptInstance id="37" creationSchemeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur.create" matchingSet="set" receiver="virtualModelInstance" ownerContext="controlGraph" userID="FLX" flexoID="41">
+            <MatchingCriteria id="38" patternRoleName="user" value="user" userID="FLX" flexoID="43" />
+            <MatchingCriteria id="39" patternRoleName="login" userID="FLX" flexoID="44" />
+            <MatchingCriteria id="40" patternRoleName="github" userID="FLX" flexoID="45" />
+            <CreateFlexoConceptInstanceParameter id="41" paramName="user" value="user" userID="FLX" flexoID="42" />
           </ControlGraph_MatchFlexoConceptInstance>
         </ControlGraph1_IterationAction>
       </ControlGraph2_Sequence>
-      <ControlGraph1_DeclarationAction id="39" variable="set" ownerContext="controlGraph1" userID="FLX" flexoID="29">
-        <AssignableAction_InitiateMatching id="40" container="virtualModelInstance" flexoConceptTypeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur" userID="FLX" flexoID="28" />
+      <ControlGraph1_DeclarationAction id="42" variable="set" ownerContext="controlGraph1" userID="FLX" flexoID="29">
+        <AssignableAction_InitiateMatching id="43" container="virtualModelInstance" flexoConceptTypeURI="http://openflexo.org/http-test/GithubTest.viewpoint/MyGithub#Utilisateur" userID="FLX" flexoID="28" />
       </ControlGraph1_DeclarationAction>
     </BehaviourControlGraph_Sequence>
-    <GenericBehaviourParameter id="41" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="36" />
+    <GenericBehaviourParameter id="44" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="36" />
   </ActionScheme>
-  <DeletionScheme id="42" name="delete" width="800" label="delete" height="600" userID="FLX" flexoID="63">
-    <BehaviourControlGraph_EmptyControlGraph id="43" userID="FLX" flexoID="62" />
+  <DeletionScheme id="45" name="delete" width="800" label="delete" height="600" userID="FLX" flexoID="63">
+    <BehaviourControlGraph_EmptyControlGraph id="46" userID="FLX" flexoID="62" />
   </DeletionScheme>
-  <Inspector id="44" inspectorTitle="MyGithub" userID="FLX" flexoID="1" />
+  <Inspector id="47" inspectorTitle="MyGithub" userID="FLX" flexoID="1" />
 </VirtualModel>

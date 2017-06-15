@@ -33,11 +33,11 @@
  *
  */
 
-package org.openflexo.http.connector.fml.xmlrpc.editionaction;
+package org.openflexo.http.connector.fml.xmlrpc;
 
 import org.openflexo.connie.BindingEvaluationContext;
-import org.openflexo.http.connector.fml.editionaction.HttpRequestBehaviour;
-import org.openflexo.http.connector.fml.editionaction.HttpRequestBehaviour.HttpRequestBehaviourImpl;
+import org.openflexo.http.connector.fml.HttpRequestBehaviour;
+import org.openflexo.http.connector.fml.HttpRequestBehaviour.HttpRequestBehaviourImpl;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;

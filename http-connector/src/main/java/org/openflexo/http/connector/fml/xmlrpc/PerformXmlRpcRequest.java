@@ -36,7 +36,7 @@
  * 
  */
 
-package org.openflexo.http.connector.fml.xmlrpc.editionaction;
+package org.openflexo.http.connector.fml.xmlrpc;
 
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;

@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.fml.editionaction;
+package org.openflexo.http.connector.fml.rest;
 
 import java.util.List;
 import java.util.Objects;

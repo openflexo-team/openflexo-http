@@ -31,6 +31,6 @@
              useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2"
              horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab"/>
     </TabPanel>
-    <FIBVariable id="10" type="org.openflexo.http.connector.fml.editionaction.PathBuilder" name="data"/>
+    <FIBVariable id="10" type="org.openflexo.http.connector.fml.rest.PathBuilder" name="data"/>
     <LocalizedDictionary id="11"/>
 </Inspector>

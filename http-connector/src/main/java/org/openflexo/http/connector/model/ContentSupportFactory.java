@@ -33,11 +33,10 @@
  *
  */
 
-package org.openflexo.http.connector.model.support;
+package org.openflexo.http.connector.model;
 
 import java.io.InputStream;
 import java.util.List;
-import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
 /**
  * A {@link ContentSupportFactory} instance is able to create {@link ContentSupport} for a given

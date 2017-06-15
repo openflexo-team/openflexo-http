@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.fml.editionaction;
+package org.openflexo.http.connector.fml.rest;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -51,6 +51,8 @@ import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.connector.fml.HttpRequestBehaviour;
+import org.openflexo.http.connector.fml.HttpRequestBehaviourAction;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;

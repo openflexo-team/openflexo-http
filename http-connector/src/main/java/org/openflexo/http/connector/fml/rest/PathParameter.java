@@ -33,62 +33,85 @@
  *
  */
 
-package org.openflexo.http.connector.fml.xmlrpc.editionaction;
+package org.openflexo.http.connector.fml.rest;
 
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoObject;
+import org.openflexo.http.connector.fml.rest.PathParameter.PathParameterImpl;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.PropertyIdentifier;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * Parameter used in a XML/RPC request
+ * Parameter for an PathBuilder
  */
 @ModelEntity
 @XMLElement
-@ImplementationClass(XmlRpcParameter.XmlRpcParameterImpl.class)
-public interface XmlRpcParameter extends FlexoObject {
+@ImplementationClass(PathParameterImpl.class)
+public interface PathParameter extends FlexoObject {
 
-	@PropertyIdentifier(type = Bindable.class)
-	public static final String OWNER_KEY = "owner";
-	@PropertyIdentifier(type = String.class)
-	public static final String NAME_KEY = "name";
-	@PropertyIdentifier(type = DataBinding.class)
-	public static final String VALUE_KEY = "value";
+	String BUILDER_KEY = "builder";
+	String NAME_KEY = "name";
+	String VALUE_KEY = "value";
 
-	@Getter(value = OWNER_KEY, ignoreType = true)
-	public Bindable getOwner();
+	@Getter(BUILDER_KEY)
+	PathBuilder getBuilder();
 
-	@Setter(OWNER_KEY)
-	public void setOwner(Bindable owner);
+	@Setter(BUILDER_KEY)
+	void setBuilder(PathBuilder builder);
 
 	@Getter(NAME_KEY)
 	@XMLAttribute
-	public String getName();
+	DataBinding<String> getName();
 
 	@Setter(NAME_KEY)
-	void setName(String aName);
+	void setName(DataBinding<String> name);
 
 	@Getter(VALUE_KEY)
 	@XMLAttribute
-	DataBinding<Object> getValue();
+	DataBinding<String> getValue();
 
 	@Setter(VALUE_KEY)
-	void setValue(DataBinding<Object> value);
+	void setValue(DataBinding<String> value);
 
-	abstract class XmlRpcParameterImpl extends FlexoObjectImpl implements XmlRpcParameter {
+	public Bindable getOwner();
 
-		private DataBinding<Object> value;
+	abstract class PathParameterImpl extends FlexoObjectImpl implements PathParameter {
+
+		private DataBinding<String> name;
+		private DataBinding<String> value;
 
 		@Override
-		public DataBinding<Object> getValue() {
+		public Bindable getOwner() {
+			return getBuilder() != null ? getBuilder().getOwner() : null;
+		}
+
+		@Override
+		public DataBinding<String> getName() {
+			if (name == null) {
+				name = new DataBinding<>(getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				name.setBindingName("name");
+			}
+			name.setOwner(getOwner());
+			return name;
+		}
+
+		@Override
+		public void setName(DataBinding<String> name) {
+			if (name != null) {
+				this.name = new DataBinding<>(name.toString(), getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
+				this.name.setBindingName("name");
+			}
+		}
+
+		@Override
+		public DataBinding<String> getValue() {
 			if (value == null) {
-				value = new DataBinding<>(getOwner(), Object.class, DataBinding.BindingDefinitionType.GET);
+				value = new DataBinding<>(getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				value.setBindingName("value");
 			}
 			value.setOwner(getOwner());
@@ -96,9 +119,9 @@ public interface XmlRpcParameter extends FlexoObject {
 		}
 
 		@Override
-		public void setValue(DataBinding<Object> value) {
+		public void setValue(DataBinding<String> value) {
 			if (value != null) {
-				this.value = new DataBinding<>(value.toString(), getOwner(), Object.class, DataBinding.BindingDefinitionType.GET);
+				this.value = new DataBinding<>(value.toString(), getOwner(), String.class, DataBinding.BindingDefinitionType.GET);
 				this.value.setBindingName("value");
 			}
 		}

@@ -41,7 +41,6 @@ import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.utils.FlexoObjectReference;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
-import org.openflexo.http.connector.model.support.ContentSupport;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;

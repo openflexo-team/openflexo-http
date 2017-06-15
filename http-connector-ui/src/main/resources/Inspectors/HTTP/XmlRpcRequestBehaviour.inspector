@@ -5,5 +5,5 @@
     </Tab>
     <Tab id="27" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab" />
   </TabPanel>
-  <FIBVariable id="28" type="org.openflexo.http.connector.fml.xmlrpc.editionaction.XmlRpcRequestBehaviour" name="data" />
+  <FIBVariable id="28" type="org.openflexo.http.connector.fml.xmlrpc.XmlRpcRequestBehaviour" name="data" />
 </Inspector>

@@ -60,8 +60,6 @@ import org.openflexo.foundation.fml.rt.rm.ViewResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
-import org.openflexo.http.connector.model.support.ContentSupport;
-import org.openflexo.http.connector.model.support.ContentSupportFactory;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.Getter;

@@ -16,7 +16,7 @@
         <Label id="14" index="13" label="template" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="template_label" />
         <TextField id="15" index="11" columns="7" data="data.builder.template" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="template_textfield" />
         <Label id="16" index="14" label="parameters" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="parameters_label" />
-        <Table id="17" index="15" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" backgroundSecondarySelectionColor="178,215,255" iteratorClassName="org.openflexo.http.connector.fml.editionaction.PathParameter" showFooter="true" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.builder.parameters" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="parameters_table">
+        <Table id="17" index="15" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" backgroundSecondarySelectionColor="178,215,255" iteratorClassName="org.openflexo.http.connector.fml.rest.PathParameter" showFooter="true" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.builder.parameters" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="parameters_table">
           <IconColumn id="18" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
           <CustomColumn id="19" componentClassName="org.openflexo.gina.swing.utils.BindingSelector" data="iterator.name" resizable="true" title="name" displayTitle="true" columnWidth="80" showIcon="false" name="name">
             <ColumnAssignment id="20" variable="component.bindable" value="data" mandatory="true" />
@@ -32,7 +32,7 @@
     </Tab>
     <Tab id="27" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab" />
   </TabPanel>
-  <FIBVariable id="28" type="org.openflexo.http.connector.fml.editionaction.JsonRequestBehaviour" name="data" />
+  <FIBVariable id="28" type="org.openflexo.http.connector.fml.rest.JsonRequestBehaviour" name="data" />
   <LocalizedDictionary id="29">
     <Localized id="30" lang="French" value="Avancé" key="Advanced" />
     <Localized id="31" lang="French" value="Basique" key="Basic" />

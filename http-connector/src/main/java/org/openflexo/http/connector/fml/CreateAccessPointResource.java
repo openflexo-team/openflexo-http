@@ -33,7 +33,7 @@
  *
  */
 
-package org.openflexo.http.connector.fml.editionaction;
+package org.openflexo.http.connector.fml;
 
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
@@ -54,8 +54,7 @@ import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.fml.AccessPointType;
-import org.openflexo.http.connector.fml.editionaction.CreateAccessPointResource.CreateAccessPointResourceImpl;
+import org.openflexo.http.connector.fml.CreateAccessPointResource.CreateAccessPointResourceImpl;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.http.connector.rm.AccessPointResourceFactory;

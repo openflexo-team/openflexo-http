@@ -68,7 +68,7 @@
  *
  */
 
-package org.openflexo.http.connector.fml.editionaction;
+package org.openflexo.http.connector.fml;
 
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.foundation.fml.AbstractActionScheme;
