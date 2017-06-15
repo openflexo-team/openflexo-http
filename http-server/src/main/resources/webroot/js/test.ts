@@ -123,6 +123,7 @@ function setUrl(url: string) {
 }
 
 function retreiveUrl(url: string) {
+    console.log("Retreiving '"+ url +"'");
     var urlInput = <HTMLInputElement>document.getElementById("url");
     var result = <HTMLDivElement>document.getElementById("result");
     clearElement(result);
@@ -146,7 +147,10 @@ function retreiveUrl(url: string) {
 
 function initializeUrl() {
     var urlInput = <HTMLInputElement>document.getElementById("url");
-    urlInput.addEventListener("input", (e) => retreiveUrl(urlInput.value));
+    urlInput.oninput = (e) => retreiveUrl(urlInput.value);
+
+    var refreshButton = <HTMLButtonElement>document.getElementById("refresh");
+    refreshButton.onclick = (e) => retreiveUrl(urlInput.value);
 }
 
 let technologyAdapters = api.technologyAdapters();

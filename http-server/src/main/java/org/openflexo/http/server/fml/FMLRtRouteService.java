@@ -55,6 +55,7 @@ import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.util.JsonSerializer;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
@@ -83,7 +84,7 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 				"/view",
 				this::getViewResources,
 				this::getViewResource,
-				ViewResource.class, taService, viewFactory
+				ViewResource.class, new JsonSerializer(taService, viewFactory)
 		);
 
 		VirtualModelInstanceModelFactory vmiFactory = new VirtualModelInstanceModelFactory(null, null, technologyAdapterService);
@@ -91,7 +92,7 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 				"/vmi",
 				this::getVirtualModelInstanceResources,
 				this::getVirtualModelInstanceResource,
-				VirtualModelInstanceResource.class, taService, vmiFactory
+				VirtualModelInstanceResource.class, new FMLRtJsonSerializer(taService, vmiFactory)
 		);
 
 	}
@@ -134,4 +135,6 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 		result.put(virtualModelInstanceConverter.getResourceClass(), virtualModelInstanceConverter.getPrefix());
 		return result;
 	}
+
+
 }

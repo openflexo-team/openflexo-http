@@ -48,15 +48,15 @@ import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
-import org.openflexo.model.factory.ModelFactory;
 
 /**
  * Creates REST entry point to serveRoot Pamela models of a given root type.
  */
 public class PamelaResourceRestService<D extends ResourceData<D>, R extends PamelaResource<D, ?>> {
+
+	public static final String DETAILED_PARAM = "detailed";
 
 	private final String prefix;
 
@@ -75,14 +75,13 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		Supplier<Collection<R>> supplier,
 		Function<String, R> finder,
 		Class<R> resourceClass,
-		TechnologyAdapterRouteService service,
-		ModelFactory factory
+		JsonSerializer serializer
 	) throws ModelDefinitionException {
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
 		this.resourceClass = resourceClass;
-		this.serializer = new JsonSerializer(service, factory);
+		this.serializer = serializer;
 	}
 
 	public String getPrefix() {
@@ -106,9 +105,10 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private void serveResourceList(RoutingContext context) {
 		try {
+			boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 			JsonArray result = new JsonArray();
 			for (R served : supplier.get()) {
-				result.add(serializer.toJson(served));
+				result.add(serializer.toJson(served, detailed));
 			}
 			context.response().end(result.encodePrettily());
 
@@ -147,8 +147,9 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			String id = context.request().getParam(("id"));
 			R resource = getLoadedResource(id);
 			if (resource != null) {
+				boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 				D data = resource.getResourceData(null);
-				JsonObject vpJson = (JsonObject) serializer.toJson(data);
+				JsonObject vpJson = (JsonObject) serializer.toJson(data, detailed);
 				context.response().end(vpJson.encodePrettily());
 			} else {
 				notFound(context);
@@ -163,10 +164,11 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			String id = context.request().getParam(("id"));
 			PamelaResource resource = getLoadedResource(id);
 			if (resource != null) {
+				boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 				List<Object> embeddedObjects = resource.getFactory().getEmbeddedObjects(resource.getLoadedResourceData(), EmbeddingType.CLOSURE);
 				JsonArray result = new JsonArray();
 				for (Object object : embeddedObjects) {
-					result.add(serializer.toJson(object));
+					result.add(serializer.toJson(object, detailed));
 				}
 				context.response().end(result.encodePrettily());
 
@@ -182,6 +184,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private void serveEntity(RoutingContext context) {
 		try {
+
 			String id = context.request().getParam(("id"));
 			String eid = context.request().getParam(("eid"));
 			PamelaResource resource = getLoadedResource(id);
@@ -190,8 +193,8 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				// TODO what to do with user
 				FlexoObject object = resource.getFlexoObject(entityId, "FLX");
 				if (object != null) {
-					// TODO check type
-					JsonObject vpJson = (JsonObject) serializer.toJson(object);
+					boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
+					JsonObject vpJson = (JsonObject) serializer.toJson(object, detailed);
 					context.response().end(vpJson.encodePrettily());
 				} else {
 					notFound(context);

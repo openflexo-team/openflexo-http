@@ -16,6 +16,7 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.util.JsonSerializer;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
@@ -44,7 +45,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
 			viewPointLibrary::getViewPointResource,
-			ViewPointResource.class, taService, factory
+			ViewPointResource.class, new JsonSerializer(taService, factory)
 		);
 		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
 
@@ -52,7 +53,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/virtualmodel",
 			() -> Collections.emptyList(),
 			viewPointLibrary::getVirtualModelResource,
-			VirtualModelResource.class, taService, factory
+			VirtualModelResource.class, new FMLJsonSerializer(taService, factory)
 		);
 	}
 
