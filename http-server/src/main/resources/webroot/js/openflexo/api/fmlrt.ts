@@ -7,7 +7,9 @@ export class FlexoConceptInstance extends Description<FlexoConceptInstance> {
         public url: string,
         public type: string,
         public flexoConcept: Description<FlexoConcept>,
-        public container: Description<FlexoConceptInstance|VirtualModelInstance>|null,
+        public virtualModelInstance: Description<VirtualModelInstance>,
+        public view: Description<View>,
+        public container: Description<FlexoConceptInstance>|null,
         public embeddedFlexoConceptInstance: Description<FlexoConceptInstance>[],
         public actors: FlexoActor[],
     ) {  
@@ -22,7 +24,7 @@ export class VirtualModelInstance extends Description<VirtualModelInstance> {
         public url: string,
         public type: string,
         public virtualModel: Description<VirtualModel>,
-        public container: Description<FlexoConceptInstance>|null,
+        public view: Description<View>,
         public actors: FlexoActor[],
         public flexoConceptInstances: Description<FlexoConceptInstance>[],
         public resourceUrl: string

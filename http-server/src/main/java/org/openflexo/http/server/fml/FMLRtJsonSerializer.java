@@ -62,12 +62,16 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 		if (flexoConcept instanceof ViewPoint) {
 			result.put("viewPoint", toReference(flexoConcept));
 		} else if (flexoConcept instanceof VirtualModel) {
+			result.put("view", toReference(instance.getView()));
 			result.put("virtualModel", toReference(flexoConcept));
 		} else {
 			result.put("flexoConcept", toReference(flexoConcept));
+
+			result.put("virtualModelInstance", toReference(instance.getVirtualModelInstance()));
+			result.put("view", toReference(instance.getView()));
+			result.put("container", toReference(instance.getContainerFlexoConceptInstance()));
 		}
 
-		result.put("container", toReference(instance.getContainerFlexoConceptInstance()));
 		result.put("actors", toArray(instance.getActors(), detailed));
 		result.put("embeddedFlexoConceptInstance", toReferenceArray(instance.getEmbeddedFlexoConceptInstances()));
 	}
