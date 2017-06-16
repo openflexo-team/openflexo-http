@@ -43,6 +43,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
+import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
@@ -119,6 +120,11 @@ public class JsonSerializer {
 
 	public boolean identifyObject(Object object, JsonObject result) {
 		String id = IdUtils.getId(object);
+
+		if (object instanceof FMLObject) {
+			result.put("name", ((FMLObject) object).getName());
+		}
+
 		if (id != null) {
 			result.put("id", id);
 			result.put("type", getType(object));

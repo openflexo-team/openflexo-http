@@ -36,7 +36,6 @@
 package org.openflexo.http.server.fml;
 
 import io.vertx.core.json.JsonObject;
-import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
@@ -54,15 +53,6 @@ public class FMLJsonSerializer extends JsonSerializer {
 
 	public FMLJsonSerializer(TechnologyAdapterRouteService service, ModelFactory factory) {
 		super(service, factory);
-	}
-
-	@Override
-	public boolean identifyObject(Object object, JsonObject result) {
-		if (object instanceof FMLObject) {
-			String name = ((FMLObject) object).getName();
-			if (name != null) result.put("name", name);
-		}
-		return super.identifyObject(object, result);
 	}
 
 	private void describeFlexoConcept(FlexoConcept flexoConcept, JsonObject result, boolean detailed) {
