@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VirtualModel id="0" modelVersion="1.0" version="0.1" name="MyOdoo" userID="FLX" flexoID="2">
-  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.http.connector.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
   <UseModelSlotDeclaration id="2" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
-  <XmlRpcModelSlot id="3" creationSchemeURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel.init" accessedVirtualModelURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6">
+  <XmlRpcModelSlot id="3" creationSchemeURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel.init" format="map" accessedVirtualModelURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6">
     <CreateAccessPointParameter id="4" paramName="aString" value="&quot;coucou&quot;" userID="FLX" flexoID="127" />
   </XmlRpcModelSlot>
   <FIBComponentModelSlot id="5" templateComponentURI="http://openflexo.org/http-test/OdooTest.viewpoint/Fib/MyOdooUI.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="19">

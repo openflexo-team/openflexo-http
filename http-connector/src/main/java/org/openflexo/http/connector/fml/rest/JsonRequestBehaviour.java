@@ -53,7 +53,8 @@ import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.fml.HttpRequestBehaviour;
 import org.openflexo.http.connector.fml.HttpRequestBehaviourAction;
-import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.http.connector.model.rest.JsonSupport;
+import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -64,12 +65,13 @@ import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * Action that requests concepts using a HTTP request
+ * A behaviour that natively execute an REST request using FML parameters of that behaviour.<br>
+ * Then the underlying control graph is executed and computed value returned
  */
 @ModelEntity
 @XMLElement
 @ImplementationClass(JsonRequestBehaviour.JsonRequestBehaviourImpl.class)
-public interface JsonRequestBehaviour extends HttpRequestBehaviour {
+public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualModelInstance, JsonSupport> {
 
 	String RETURNED_FLEXO_CONCEPT_KEY = "returnedFlexoConcept";
 	String RETURNED_FLEXO_CONCEPT_URI_KEY = "returnedFlexoConceptURI";
@@ -114,7 +116,8 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour {
 	@Setter(POINTER_KEY)
 	void setPointer(String pointer);
 
-	abstract class JsonRequestBehaviourImpl extends HttpRequestBehaviourImpl implements JsonRequestBehaviour {
+	abstract class JsonRequestBehaviourImpl extends HttpRequestBehaviourImpl<RestVirtualModelInstance, JsonSupport>
+			implements JsonRequestBehaviour {
 
 		private FlexoConcept flexoConcept;
 
@@ -170,7 +173,7 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour {
 		}
 
 		@Override
-		public Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
+		public Object execute(RestVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 			PathBuilder builder = getBuilder();
 			if (builder != null) {
 				String url = builder.evaluateUrl(this, context);

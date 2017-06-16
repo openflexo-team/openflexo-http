@@ -42,18 +42,20 @@ import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
 import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.editionaction.TechnologySpecificAction;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
-import org.openflexo.http.connector.XmlRpcModelSlot;
 import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
@@ -200,6 +202,15 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 			try {
 				Object result = object.call(getMethodName());
 				System.out.println("Resultat de l'appel: " + result);
+
+				System.out.println("accessPoint=" + accessPoint);
+				System.out.println("accessPoint.getInstance()=" + accessPoint.getInstance());
+
+				if (result instanceof Map && getType() instanceof FlexoConceptInstanceType) {
+					return (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance((Map<?, ?>) result,
+							((FlexoConceptInstanceType) getType()).getFlexoConcept());
+				}
+
 			} catch (XMLRPCException e) {
 				throw new FlexoException(e);
 			}

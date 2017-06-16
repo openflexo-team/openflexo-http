@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VirtualModel id="0" modelVersion="1.0" version="0.1" name="MyOdoo" userID="FLX" flexoID="2">
-  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.http.connector.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
   <UseModelSlotDeclaration id="2" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
-  <XmlRpcModelSlot id="3" creationSchemeURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel.init" accessedVirtualModelURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6">
-    <CreateAccessPointParameter id="4" paramName="aString" value="&quot;prout&quot;" userID="FLX" flexoID="117" />
+  <XmlRpcModelSlot id="3" creationSchemeURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel.init" accessedVirtualModelURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6">
+    <CreateAccessPointParameter id="4" paramName="aString" value="&quot;coucou&quot;" userID="FLX" flexoID="127" />
   </XmlRpcModelSlot>
-  <FIBComponentModelSlot id="5" templateComponentURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/MyOdooUI.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="19">
-    <VariableAssignment id="6" variableType="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/MyOdoo&gt;" variable="data" value="virtualModelInstance" userID="FLX" flexoID="18" />
+  <FIBComponentModelSlot id="5" templateComponentURI="http://openflexo.org/http-test/OdooTest.viewpoint/Fib/MyOdooUI.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="19">
+    <VariableAssignment id="6" variableType="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/OdooTest.viewpoint/MyOdoo&gt;" variable="data" value="virtualModelInstance" userID="FLX" flexoID="18" />
   </FIBComponentModelSlot>
   <CreationScheme id="7" name="create" width="800" label="create" height="600" userID="FLX" flexoID="10">
     <BehaviourControlGraph_Sequence id="8" userID="FLX" flexoID="22">

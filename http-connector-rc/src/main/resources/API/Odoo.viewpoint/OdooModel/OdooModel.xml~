@@ -12,10 +12,10 @@
       <GenericInspectorEntry id="10" widget="TEXT_FIELD" data="server_version_info" name="server_version_info" label="server_version_info" type="java.lang.String" userID="FLX" flexoID="41" />
     </Inspector>
   </FlexoConcept>
-  <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
-  <UseModelSlotDeclaration id="12" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
-  <FlexoConceptInstanceRole id="13" virtualModelInstance="virtualModelInstance" flexoConceptTypeURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel#Version" cloningStrategy="Reference" cardinality="ZeroOne" name="version" userID="FLX" flexoID="58" />
-  <XmlRpcModelSlot id="14" accessedVirtualModelURI="http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="accessPoint" userID="FLX" flexoID="75" />
+  <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="12" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
+  <FlexoConceptInstanceRole id="13" virtualModelInstance="virtualModelInstance" flexoConceptTypeURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#Version" cloningStrategy="Reference" cardinality="ZeroOne" name="version" userID="FLX" flexoID="58" />
+  <XmlRpcModelSlot id="14" accessedVirtualModelURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="accessPoint" userID="FLX" flexoID="75" />
   <XmlRpcRequestBehaviour id="15" name="authenticate" width="800" label="authenticate" height="600" userID="FLX" flexoID="33">
     <BehaviourControlGraph_EmptyControlGraph id="16" userID="FLX" flexoID="42" />
     <GenericBehaviourParameter id="17" isRequired="true" widget="TEXT_FIELD" name="login" type="java.lang.String" userID="FLX" flexoID="43" />
@@ -29,7 +29,7 @@
   </JsonRequestBehaviour>
   <ActionScheme id="22" name="retrieveVersion" width="800" label="retrieveVersion" height="600" userID="FLX" flexoID="68">
     <BehaviourControlGraph_ReturnStatement id="23" userID="FLX" flexoID="123">
-      <AssignableAction_PerformXmlRpcRequest id="24" methodName="version" endPointName="xmlrpc/common" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://www.openflexo.org/projects/2017/6/TestXMLRPC2_1497214910417/TestXMLRPC.viewpoint/OdooModel#Version&gt;" receiver="accessPoint" userID="FLX" flexoID="74" />
+      <AssignableAction_PerformXmlRpcRequest id="24" methodName="version" endPointName="xmlrpc/common" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#Version&gt;" receiver="accessPoint" userID="FLX" flexoID="74" />
     </BehaviourControlGraph_ReturnStatement>
   </ActionScheme>
   <HttpVirtualModelInitializer id="25" name="init" width="800" label="init" height="600" userID="FLX" flexoID="98">

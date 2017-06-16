@@ -14,7 +14,7 @@
     </DeletionScheme>
     <Inspector id="10" renderer="(&quot;Utilisateur:&quot; + login)" inspectorTitle="Utilisateur" userID="FLX" flexoID="13" />
   </FlexoConcept>
-  <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="11" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
   <UseModelSlotDeclaration id="12" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
   <RestModelSlot id="13" accessedVirtualModelURI="http://openflexo.org/http/API/Github.viewpoint/GithubV3" url="&quot;https://api.github.com&quot;" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="github" userID="FLX" flexoID="6" />
   <FIBComponentModelSlot id="14" templateComponentURI="http://openflexo.org/http-test/GithubTest.viewpoint/Fib/MyGithub.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="53">

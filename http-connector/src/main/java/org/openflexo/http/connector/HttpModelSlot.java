@@ -28,12 +28,14 @@ import java.util.Vector;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPointLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -44,6 +46,8 @@ import org.openflexo.http.connector.fml.AccessPointType;
 import org.openflexo.http.connector.fml.CreateAccessPointParameter;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.model.ContentSupportFactory;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.CloningStrategy;
@@ -71,8 +75,21 @@ import org.openflexo.toolbox.StringUtils;
 @ImplementationClass(HttpModelSlotImpl.class)
 public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
+	/**
+	 * General format of responses for requests in that HttpModelSlot
+	 * 
+	 * @author sylvain
+	 *
+	 */
+	public enum Format {
+		json, xml, map
+	}
+
 	@PropertyIdentifier(type = String.class)
 	String ACCESSED_VIRTUAL_MODEL_URI_KEY = "accessedVirtualModelURI";
+
+	@PropertyIdentifier(type = Format.class)
+	String FORMAT_KEY = "format";
 
 	@PropertyIdentifier(type = DataBinding.class)
 	String URL_KEY = "url";
@@ -105,6 +122,13 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	VirtualModel getAccessedVirtualModel();
 
 	void setAccessedVirtualModel(VirtualModel aVirtualModel);
+
+	@Getter(FORMAT_KEY)
+	@XMLAttribute
+	Format getFormat();
+
+	@Setter(FORMAT_KEY)
+	void setFormat(Format format);
 
 	@Getter(URL_KEY)
 	@XMLAttribute
@@ -157,6 +181,25 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 	@Override
 	HttpTechnologyAdapter getModelSlotTechnologyAdapter();
+
+	/**
+	 * Called to build the infered HttpVirtualModelInstance attached to the AccessPoint
+	 * 
+	 * @param accessPoint
+	 * @param supportFactory
+	 * @param serviceManager
+	 * @return
+	 */
+	public HttpVirtualModelInstance<?> makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?> supportFactory,
+			FlexoServiceManager serviceManager);
+
+	/**
+	 * Build and return a new ModelFactory used to build embedded HttpVirtualModelInstance
+	 * 
+	 * @param serviceManager
+	 * @return
+	 */
+	public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
 
 	abstract class HttpModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements HttpModelSlot {
 

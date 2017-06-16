@@ -37,23 +37,28 @@ package org.openflexo.http.connector.fml.xmlrpc;
 
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.http.connector.fml.HttpRequestBehaviour;
-import org.openflexo.http.connector.fml.HttpRequestBehaviour.HttpRequestBehaviourImpl;
-import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.http.connector.model.xmlrpc.MapSupport;
+import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * Action that requests concepts using a HTTP request
+ * A behaviour that natively execute an XML/RPC request using FML parameters of that behaviour.<br>
+ * Then the underlying control graph is executed
+ * 
  */
-@ModelEntity @XMLElement
+@ModelEntity
+@XMLElement
 @ImplementationClass(XmlRpcRequestBehaviour.XmlRpcRequestBehaviourImpl.class)
-public interface XmlRpcRequestBehaviour extends HttpRequestBehaviour {
+public interface XmlRpcRequestBehaviour extends HttpRequestBehaviour<XmlRpcVirtualModelInstance, MapSupport> {
 
-	abstract class XmlRpcRequestBehaviourImpl extends HttpRequestBehaviourImpl implements XmlRpcRequestBehaviour {
-		public Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
-		return null;
-	}
+	abstract class XmlRpcRequestBehaviourImpl extends HttpRequestBehaviourImpl<XmlRpcVirtualModelInstance, MapSupport>
+			implements XmlRpcRequestBehaviour {
+		@Override
+		public Object execute(XmlRpcVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
+			return null;
+		}
 
 	}
 }

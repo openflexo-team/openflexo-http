@@ -20,6 +20,8 @@
 
 package org.openflexo.http.connector.rm;
 
+import java.util.logging.Logger;
+
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.IOFlexoException;
 import org.openflexo.foundation.InconsistentDataException;
@@ -34,7 +36,9 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.HttpTechnologyContextManager;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.AccessPointFactory;
+import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.rm.AccessPointResource.AccessPointResourceImpl;
+import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -62,6 +66,8 @@ public interface AccessPointResource
 	AccessPoint getModel();
 
 	abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
+
+		private static final Logger logger = FlexoLogger.getLogger(AccessPointResourceImpl.class.getPackage().toString());
 
 		@Override
 		public HttpTechnologyAdapter getTechnologyAdapter() {
@@ -95,7 +101,13 @@ public interface AccessPointResource
 			System.out.println(("Trying to find object '" + objectIdentifier + "'"));
 			AccessPoint accessPoint = getLoadedResourceData();
 			FlexoConcept concept = accessPoint.getModelSlot().getAccessedVirtualModel().getFlexoConcept(typeIdentifier);
-			return accessPoint.getInstance().getFlexoConceptInstance(objectIdentifier, null, concept);
+			if (accessPoint.getInstance() instanceof RestVirtualModelInstance) {
+				return ((RestVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance(objectIdentifier, null, concept);
+			}
+			else {
+				logger.warning("Don't know how to find object for " + accessPoint.getInstance());
+				return null;
+			}
 		}
 	}
 }

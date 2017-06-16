@@ -8,6 +8,8 @@ import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterBindingFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.fml.HttpBindingFactory;
+import org.openflexo.http.connector.fml.rest.RestModelSlot;
+import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot;
 import org.openflexo.http.connector.rm.AccessPointResourceFactory;
 
 /**

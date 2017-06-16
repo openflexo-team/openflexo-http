@@ -8,7 +8,7 @@
       <GenericInspectorEntry id="6" widget="TEXT_FIELD" data="avatar_url" name="avatar_url" label="avatar_url" type="java.lang.String" userID="FLX" flexoID="11" />
     </Inspector>
   </FlexoConcept>
-  <UseModelSlotDeclaration id="7" modelSlotClass="org.openflexo.http.connector.RestModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="7" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
   <JsonRequestBehaviour id="8" pointer="/items" multiple="true" returnedFlexoConceptURI="http://openflexo.org/http/API/Github.viewpoint/GithubV3#User" name="searchUsers" width="800" label="searchUsers" height="600" userID="FLX" flexoID="12">
     <PathBuilder id="9" template="/search/users">
       <JsonRequestBehaviour idref="8" />

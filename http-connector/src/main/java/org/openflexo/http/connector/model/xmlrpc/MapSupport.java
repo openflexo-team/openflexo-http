@@ -66,11 +66,13 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import de.timroes.axmlrpc.XMLRPCClient;
 
 /**
- * Created by charlie on 17/05/2017.
+ * 
+ * @author sylvain
+ *
  */
-public class XmlRpcSupport implements ContentSupport {
+public class MapSupport implements ContentSupport {
 
-	private static final Logger logger = FlexoLogger.getLogger(XmlRpcSupport.class.getPackage().toString());
+	private static final Logger logger = FlexoLogger.getLogger(MapSupport.class.getPackage().toString());
 
 	private final HttpVirtualModelInstance owner;
 
@@ -81,7 +83,7 @@ public class XmlRpcSupport implements ContentSupport {
 	private boolean complete = false;
 	private long lastUpdated = -1l;
 
-	public XmlRpcSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
+	public MapSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
 		this.owner = owner;
 		if (path == null && source != null) {
 

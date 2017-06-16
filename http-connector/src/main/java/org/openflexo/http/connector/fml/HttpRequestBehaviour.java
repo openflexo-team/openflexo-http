@@ -74,15 +74,26 @@ import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.ModelEntity;
 
+/**
+ * Base implementation of a behaviour executing an HTTPRequest
+ * 
+ * @author sylvain
+ *
+ * @param <VMI>
+ * @param <S>
+ */
 @ModelEntity(isAbstract = true)
-public interface HttpRequestBehaviour extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
+public interface HttpRequestBehaviour<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport>
+		extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
 
-	Object execute(HttpVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception;
+	Object execute(VMI modelInstance, BindingEvaluationContext context) throws Exception;
 
-	abstract class HttpRequestBehaviourImpl extends AbstractActionSchemeImpl implements HttpRequestBehaviour {
+	abstract class HttpRequestBehaviourImpl<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport>
+			extends AbstractActionSchemeImpl implements HttpRequestBehaviour<VMI, S> {
 
 		@Override
 		public HttpTechnologyAdapter getSpecificTechnologyAdapter() {

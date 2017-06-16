@@ -15,6 +15,7 @@ import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.http.connector.HttpModelSlot;
+import org.openflexo.http.connector.HttpModelSlot.Format;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint.AccessPointImpl;
 import org.openflexo.model.annotations.Getter;
@@ -38,15 +39,10 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	String URL_KEY = "url";
 	String USER_KEY = "user";
 	String PASSWORD_KEY = "password";
-	String FORMAT_KEY = "format";
 	String HTTP_MODEL_SLOT_URI_KEY = "httpModelSlotUri";
 	String HTTP_MODEL_SLOT_KEY = "httpModelSlot";
 	String OWNER_VIRTUAL_MODEL_INSTANCE_KEY = "ownerVirtualModelInstance";
 	String OWNER_VIRTUAL_MODEL_INSTANCE_URI_KEY = "ownerVirtualModelInstanceURI";
-
-	enum Format {
-		json, xml
-	}
 
 	@Getter(URL_KEY)
 	@XMLAttribute
@@ -120,14 +116,9 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	@Setter(OWNER_VIRTUAL_MODEL_INSTANCE_URI_KEY)
 	void setOwnerInstanceURI(String vmiURI);
 
-	@Getter(FORMAT_KEY)
-	@XMLAttribute
-	Format getFormat();
-
-	@Setter(FORMAT_KEY)
-	void setFormat(Format format);
-
 	void contributeHeaders(HttpUriRequest request);
+
+	public Format getFormat();
 
 	abstract class AccessPointImpl extends FlexoObjectImpl implements AccessPoint {
 
@@ -135,6 +126,14 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 
 		private HttpModelSlot modelSlot;
 		private AbstractVirtualModelInstance<?, ?> ownerInstance;
+
+		@Override
+		public Format getFormat() {
+			if (modelSlot != null) {
+				return modelSlot.getFormat();
+			}
+			return Format.json;
+		}
 
 		@Override
 		public HttpModelSlot getModelSlot() {

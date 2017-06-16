@@ -53,12 +53,14 @@ import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
+import org.openflexo.http.connector.HttpModelSlot.Format;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.AccessPointFactory;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupportFactory;
+import org.openflexo.http.connector.model.xmlrpc.MapSupportFactory;
 import org.openflexo.localization.LocalizedDelegate;
 
 /**
@@ -123,21 +125,31 @@ public class HttpVirtualModelInitializerAction
 		logger.info("On initialise un HTTPVirtualModelInstance avec " + getFlexoBehaviour());
 
 		ContentSupportFactory<?> supportFactory = null;
-		AccessPoint.Format format = getFocusedObject().getFormat();
-		if (format == null || format == AccessPoint.Format.json) {
+		Format format = getFocusedObject().getFormat();
+		if (format == null || format == Format.json) {
 			supportFactory = new JsonSupportFactory("url");
+		}
+		else if (format == Format.map) {
+			supportFactory = new MapSupportFactory("url");
 		}
 		else {
 			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
 		}
 
-		httpVirtualModelInstance = factory.newInstance(HttpVirtualModelInstance.class, getFocusedObject(), getServiceManager(),
-				supportFactory);
-		httpVirtualModelInstance.setVirtualModel(getFocusedObject().getModelSlot().getAccessedVirtualModel());
+		if (getFocusedObject().getModelSlot() != null) {
+			httpVirtualModelInstance = getFocusedObject().getModelSlot().makeHttpVirtualModelInstance(getFocusedObject(), supportFactory,
+					getServiceManager());
+			getFocusedObject().setInstance(httpVirtualModelInstance);
+			executeControlGraph();
+		}
 
-		executeControlGraph();
+		else {
+			logger.warning("No model slot defined for access point");
+		}
 
-		getFocusedObject().setInstance(httpVirtualModelInstance);
+		// httpVirtualModelInstance = factory.newInstance(HttpVirtualModelInstance.class, getFocusedObject(), getServiceManager(),
+		// supportFactory);
+		// httpVirtualModelInstance.setVirtualModel(getFocusedObject().getModelSlot().getAccessedVirtualModel());
 
 	}
 
