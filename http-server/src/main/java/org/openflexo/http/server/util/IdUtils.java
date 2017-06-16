@@ -45,8 +45,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.openflexo.foundation.FlexoObject;
+import org.openflexo.foundation.InnerResourceData;
 import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 
 /**
  * Created by charlie on 07/02/2017.
@@ -65,6 +68,40 @@ public class IdUtils {
 			return flexoID >= 0 ? Long.toString(flexoID) : null;
 		}
 		return null;
+	}
+
+	public static String getUrl(Object object, TechnologyAdapterRouteService service) {
+		FlexoResource resource = null;
+		long id = -1;
+
+		if (object instanceof FlexoResource) {
+			resource = (FlexoResource) object;
+		} else if (object instanceof ResourceData) {
+			resource = ((ResourceData) object).getResource();
+		} else if (object instanceof InnerResourceData) {
+			ResourceData resourceData = ((InnerResourceData) object).getResourceData();
+			resource = resourceData != null ? resourceData.getResource() : null;
+		}
+
+		if (object instanceof FlexoObject) {
+			id = ((FlexoObject) object).getFlexoID();
+		}
+
+		if (resource == null) return null;
+
+		String prefix = service.getPrefix(resource);
+		if (prefix == null) return null;
+
+		StringBuilder url = new StringBuilder();
+		url.append(prefix);
+		url.append("/");
+		url.append(IdUtils.encoreUri(resource.getURI()));
+		if (id >= 0) {
+			url.append("/object/");
+			url.append(id);
+		}
+
+		return url.toString();
 	}
 
 	public static String encoreUri(String uri) {

@@ -122,8 +122,9 @@ public class JsonUtils {
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 
 			String prefix = service.getPrefix(resource);
-			if (prefix != null) {
-				resourceDescription.put("modelUrl", prefix + "/" + id);
+			Object data = resource.getLoadedResourceData();
+			if (prefix != null && data != null) {
+				resourceDescription.put("modelUrl", IdUtils.getUrl(data, service));
 			}
 		}
 		return resourceDescription;

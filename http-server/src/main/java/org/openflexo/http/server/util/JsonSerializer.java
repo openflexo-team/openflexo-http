@@ -43,8 +43,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
-import org.openflexo.foundation.FlexoObject;
-import org.openflexo.foundation.InnerResourceData;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
@@ -124,7 +122,7 @@ public class JsonSerializer {
 		if (id != null) {
 			result.put("id", id);
 			result.put("type", getType(object));
-			String url = getUrl(object);
+			String url = IdUtils.getUrl(object, service);
 			if (url != null) { result.put("url", url); }
 			// Used for debugging purposes
 			//result.put("__debug_object__", object.toString());
@@ -143,41 +141,17 @@ public class JsonSerializer {
 		}
 	}
 
-	private String getUrl(Object object) {
-		FlexoResource resource = null;
-		long id = -1;
-
-		if (object instanceof FlexoResource) {
-			resource = (FlexoResource) object;
-		} else if (object instanceof ResourceData) {
-			resource = ((ResourceData) object).getResource();
-		} else if (object instanceof InnerResourceData) {
-			ResourceData resourceData = ((InnerResourceData) object).getResourceData();
-			resource = resourceData != null ? resourceData.getResource() : null;
-		}
-
-		if (object instanceof FlexoObject) {
-			id = ((FlexoObject) object).getFlexoID();
-		}
-
-		if (resource == null) return null;
-
-		String prefix = service.getPrefix(resource);
-		if (prefix == null) return null;
-
-		StringBuilder url = new StringBuilder();
-		url.append(prefix);
-		url.append("/");
-		url.append(IdUtils.encoreUri(resource.getURI()));
-		if (id >= 0) {
-			url.append("/object/");
-			url.append(id);
-		}
-
-		return url.toString();
-	}
-
 	public void describeObject(Object object, JsonObject result, boolean detailed) {
+
+		// adds resource link
+		if (object instanceof ResourceData) {
+			FlexoResource resource = ((ResourceData) object).getResource();
+			String resourceUrl = IdUtils.getUrl(resource, service);
+			if (resourceUrl != null) {
+				result.put("resourceUrl", resourceUrl);
+			}
+		}
+
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject)object).getHandler();
 			@SuppressWarnings({ "unchecked", "rawtype" }) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
