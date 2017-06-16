@@ -48,7 +48,7 @@ import org.openflexo.http.server.util.JsonSerializer;
 import org.openflexo.model.factory.ModelFactory;
 
 /**
- * Created by charlie on 09/06/2017.
+ * Specific JSON serializer for FML Rest services
  */
 public class FMLJsonSerializer extends JsonSerializer {
 
