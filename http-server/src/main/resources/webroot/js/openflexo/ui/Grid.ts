@@ -1,5 +1,5 @@
 import { Component } from "./Component";
-import { mdlUpgradeElement } from "./utils";
+import { mdlUpgradeElement, toHTMLElement } from "./utils";
 
 export class Grid implements Component {
 
@@ -57,16 +57,9 @@ export class GridCell implements Component {
 
     create() {
         this.container = document.createElement("div");
-        this.container.classList.add("grid-cell");
+        this.container.classList.add("mdl-cell");
         this.container.classList.add("mdl-cell--"+ this.size +"-col");
-        let contents = this.contents;
-        if ((<Component> contents).container) {
-            this.container.appendChild((<Component> contents).container);
-        } else {
-            // it's an html element
-            this.container.appendChild(<HTMLElement> contents);
-        }
-
+        this.container.appendChild(toHTMLElement(this.contents));
         mdlUpgradeElement(this.container);
     }
 }

@@ -1,14 +1,8 @@
-import { addCssIfNotAlreadyPresent, mdlUpgradeElement } from "./utils";
-
+import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./utils";
 import { Component } from "./component";
-
-import { TechnologyAdapter } from "../api";
-
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
 
 export class Card implements Component {
-
-    ta: TechnologyAdapter;
 
     container: HTMLDivElement;
 
@@ -43,15 +37,24 @@ export class Card implements Component {
         mdlUpgradeElement(this.container);
     }    
 }
-/*
-  <div class="mdl-card__actions mdl-card--border">
-    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
-      Get Started
-    </a>
-  </div>
-  <div class="mdl-card__menu">
-    <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect">
-      <i class="material-icons">share</i>
-    </button>
-  </div>
-*/
+
+export class GridCell implements Component {
+
+    container: HTMLDivElement;
+
+    constructor(
+        private contents : Component|FlowCategory,
+        private size: number = 4
+    ) {
+        this.create();
+    }
+
+    create() {
+        this.container = document.createElement("div");
+        this.container.classList.add("grid-cell");
+        this.container.classList.add("mdl-cell--"+ this.size +"-col");
+        let contents = this.contents;
+        this.container.appendChild(toHTMLElement(contents))
+        mdlUpgradeElement(this.container);
+    }
+}
