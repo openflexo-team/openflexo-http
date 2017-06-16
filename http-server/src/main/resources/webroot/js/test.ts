@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api } from "./openflexo/api/call";
+import { Api } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";

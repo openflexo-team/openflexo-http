@@ -1,4 +1,4 @@
-import { Api } from "./api/call";
+import { Api } from "./api/Api";
 import { Grid, GridCell } from "./ui/Grid";
 import { Tabs, Tab } from "./ui/Tabs";
 import { Card } from "./ui/Card";

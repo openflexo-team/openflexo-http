@@ -1,6 +1,6 @@
 import {
     Api
-} from "./openflexo/api/call";
+} from "./openflexo/api/Api";
 
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
