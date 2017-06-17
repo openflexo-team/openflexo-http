@@ -39,6 +39,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
@@ -54,6 +55,14 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 
 	public FMLRtJsonSerializer(TechnologyAdapterRouteService service, ModelFactory factory) {
 		super(service, factory);
+	}
+
+	@Override
+	public boolean identifyObject(Object object, JsonObject result) {
+		if (object instanceof AbstractVirtualModelInstance) {
+			result.put("name", ((AbstractVirtualModelInstance) object).getName());
+		}
+		return super.identifyObject(object, result);
 	}
 
 	private void describeFlexoConceptInstance(FlexoConceptInstance instance, JsonObject result, boolean detailed) {

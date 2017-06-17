@@ -56,6 +56,7 @@ public class FMLJsonSerializer extends JsonSerializer {
 	}
 
 	private void describeFlexoConcept(FlexoConcept flexoConcept, JsonObject result, boolean detailed) {
+		result.put("description", toJson(flexoConcept.getDescription(), detailed));
 		result.put("virtualModel", toReference(flexoConcept.getVirtualModel()));
 		result.put("container", toReference(flexoConcept.getContainerFlexoConcept()));
 		result.put("childFlexoConcepts", toReferenceArray(flexoConcept.getChildFlexoConcepts()));
