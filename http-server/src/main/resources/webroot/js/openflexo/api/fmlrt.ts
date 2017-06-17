@@ -13,7 +13,7 @@ export class FlexoConceptInstance extends Description<FlexoConceptInstance> {
         public embeddedFlexoConceptInstance: Description<FlexoConceptInstance>[],
         public actors: FlexoActor[],
     ) {  
-        super("", id, url, type);    
+        super(id, url, type);    
     }
 }
 
@@ -29,7 +29,7 @@ export class VirtualModelInstance extends Description<VirtualModelInstance> {
         public flexoConceptInstances: Description<FlexoConceptInstance>[],
         public resourceUrl: string
     ) {  
-        super(name, id, url, type)
+        super(id, url, type)
     }
 }
 
@@ -45,7 +45,7 @@ export class View extends Description<View> {
         public flexoConceptInstances: Description<FlexoConceptInstance>[],
         public resourceUrl: string
     ) {  
-        super(name, id, url, type)
+        super(id, url, type)
     }
 }
 
@@ -57,6 +57,6 @@ export class FlexoActor extends Description<FlexoActor> {
         public type: string,
         public value: string
     ) { 
-        super(name, id, url, type);   
+        super(id, url, type);   
      }
 }

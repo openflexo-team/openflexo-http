@@ -6,6 +6,7 @@ export class FlexoConcept extends Description<FlexoConcept> {
         public id: string,
         public url: string,
         public type: string,
+        public description: string,
         public virtualModel: Description<VirtualModel>,
         public container: Description<FlexoConcept>|null,
         public childFlexoConcepts: Description<FlexoConcept>[],
@@ -13,7 +14,7 @@ export class FlexoConcept extends Description<FlexoConcept> {
         public properties: FlexoRole[],
         public behaviors: FlexoBehavior[]
     ) {  
-        super(name, id, url, type);    
+        super(id, url, type);    
     }
 }
 
@@ -23,13 +24,14 @@ export class VirtualModel extends Description<VirtualModel> {
         public id: string,
         public url: string,
         public type: string,
+        public description: string,
         public container: Description<FlexoConcept>|null,
         public properties: FlexoRole[],
         public behaviors: FlexoBehavior[],
         public flexoConcepts: Description<FlexoConcept>[],
         public resourceUrl: string
     ) {  
-        super(name, id, url, type)
+        super(id, url, type)
     }
 }
 
@@ -39,12 +41,13 @@ export class ViewPoint extends Description<ViewPoint> {
         public id: string,
         public url: string,
         public type: string,
+        public description: string,
         public properties: FlexoRole[],
         public behaviors: FlexoBehavior[],
         public virtualModels: Description<VirtualModel>[],
         public resourceUrl: string
     ) {  
-        super(name, id, url, type)
+        super(id, url, type)
     }
 }
 
@@ -53,9 +56,10 @@ export class FlexoRole extends Description<FlexoRole> {
         public name: string,
         public id: string,
         public url: string,
-        public type: string
+        public type: string,
+        public description: string
     ) { 
-        super(name, id, url, type);   
+        super(id, url, type);   
      }
 }
 
@@ -64,8 +68,9 @@ export class FlexoBehavior extends Description<FlexoBehavior> {
         public name: string,
         public id: string,
         public url: string,
-        public type: string
+        public type: string,
+        public description: string
     ) { 
-        super(name, id, url, type);   
+        super(id, url, type);   
      }
 }
