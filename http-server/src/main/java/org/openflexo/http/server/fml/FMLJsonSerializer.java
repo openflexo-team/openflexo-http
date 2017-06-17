@@ -39,6 +39,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
@@ -61,8 +62,10 @@ public class FMLJsonSerializer extends JsonSerializer {
 		result.put("container", toReference(flexoConcept.getContainerFlexoConcept()));
 		result.put("childFlexoConcepts", toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 		result.put("parents", toReferenceArray(flexoConcept.getParentFlexoConcepts()));
-		result.put("properties", toArray(flexoConcept.getDeclaredProperties(), detailed));
-		result.put("behaviors", toArray(flexoConcept.getDeclaredFlexoBehaviours(), detailed));
+
+		result.put("properties", toMap(flexoConcept.getDeclaredProperties(), FlexoProperty::getName, detailed));
+		result.put("behaviors", toMap(flexoConcept.getDeclaredFlexoBehaviours(), FlexoBehaviour::getName, detailed));
+
 		result.put("childFlexoConcepts", toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 	}
 

@@ -65,6 +65,7 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 		return super.identifyObject(object, result);
 	}
 
+
 	private void describeFlexoConceptInstance(FlexoConceptInstance instance, JsonObject result, boolean detailed) {
 
 		FlexoConcept flexoConcept = instance.getFlexoConcept();
@@ -81,7 +82,7 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 			result.put("container", toReference(instance.getContainerFlexoConceptInstance()));
 		}
 
-		result.put("actors", toArray(instance.getActors(), detailed));
+		result.put("actors", toMap(instance.getActors(), ActorReference::getRoleName , detailed));
 		result.put("embeddedFlexoConceptInstance", toReferenceArray(instance.getEmbeddedFlexoConceptInstances()));
 	}
 

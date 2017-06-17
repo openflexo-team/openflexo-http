@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.foundation.fml.FMLObject;
@@ -108,6 +109,22 @@ public class JsonSerializer {
 			}
 			return result;
 		}
+	}
+
+	protected <T> JsonObject toMap(Collection<T> list, Function<T, String> keyFunction, boolean detailed) {
+		JsonObject result = new JsonObject();
+		for (T t : list) {
+			result.put(keyFunction.apply(t), toJson(t, detailed));
+		}
+		return result;
+	}
+
+	protected <T> JsonObject toReferenceMap(Collection<T> list, Function<T, String> keyFunction) {
+		JsonObject result = new JsonObject();
+		for (T t : list) {
+			result.put(keyFunction.apply(t), toReference(t));
+		}
+		return result;
 	}
 
 	protected JsonArray toArray(Collection<?> list, boolean detailed) {

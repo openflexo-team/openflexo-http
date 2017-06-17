@@ -11,7 +11,7 @@ export class FlexoConceptInstance extends Description<FlexoConceptInstance> {
         public view: Description<View>,
         public container: Description<FlexoConceptInstance>|null,
         public embeddedFlexoConceptInstance: Description<FlexoConceptInstance>[],
-        public actors: FlexoActor[],
+        public actors: {FlexoActor},
     ) {  
         super(id, url, type);    
     }
@@ -25,7 +25,7 @@ export class VirtualModelInstance extends Description<VirtualModelInstance> {
         public type: string,
         public virtualModel: Description<VirtualModel>,
         public view: Description<View>,
-        public actors: FlexoActor[],
+        public actors: {FlexoActor},
         public flexoConceptInstances: Description<FlexoConceptInstance>[],
         public resourceUrl: string
     ) {  
@@ -41,7 +41,7 @@ export class View extends Description<View> {
         public type: string,
         public viewPoint: Description<ViewPoint>,
         public container: Description<FlexoConceptInstance>|null,
-        public actors: FlexoActor[],
+        public actors: {FlexoActor},
         public flexoConceptInstances: Description<FlexoConceptInstance>[],
         public resourceUrl: string
     ) {  
