@@ -94,7 +94,7 @@ public final class HttpBindingFactory extends TechnologyAdapterBindingFactory {
 	public List<? extends SimplePathElement> getAccessibleSimplePathElements(BindingPathElement parent) {
 		List<? extends SimplePathElement> elements = super.getAccessibleSimplePathElements(parent);
 		if (parent.getType() instanceof AccessPointType) {
-			System.out.println("Hop, on a bien " + parent.getType());
+			// System.out.println("Hop, on a bien " + parent.getType());
 			AccessPointType parentType = (AccessPointType) parent.getType();
 			elements.stream().filter((e) -> TypeUtils.isTypeAssignableFrom(e.getType(), HttpVirtualModelInstance.class))
 					.forEach((e) -> e.setType(parentType.getInstanceType()));

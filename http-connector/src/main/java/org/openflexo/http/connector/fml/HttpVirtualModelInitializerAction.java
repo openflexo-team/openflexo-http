@@ -124,13 +124,13 @@ public class HttpVirtualModelInitializerAction
 	protected void doAction(Object context) throws NotImplementedException, InvalidParametersException, FlexoException {
 		logger.info("On initialise un HTTPVirtualModelInstance avec " + getFlexoBehaviour());
 
-		ContentSupportFactory<?> supportFactory = null;
+		ContentSupportFactory<?, ?> supportFactory = null;
 		Format format = getFocusedObject().getFormat();
 		if (format == null || format == Format.json) {
 			supportFactory = new JsonSupportFactory("url");
 		}
 		else if (format == Format.map) {
-			supportFactory = new MapSupportFactory("url");
+			supportFactory = new MapSupportFactory();
 		}
 		else {
 			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");

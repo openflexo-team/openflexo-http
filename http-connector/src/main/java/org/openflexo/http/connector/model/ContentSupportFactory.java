@@ -43,7 +43,7 @@ import java.util.List;
  * {@link HttpVirtualModelInstance} uses the factory to create {@link ContentSupport} for it's
  * {@link org.openflexo.http.connector.model.HttpFlexoConceptInstance}.
  */
-public interface ContentSupportFactory<S extends ContentSupport> {
+public interface ContentSupportFactory<S extends ContentSupport<T>, T extends Object> {
 
 	/**
 	 * Creates a list of supports using the given stream.
@@ -59,10 +59,10 @@ public interface ContentSupportFactory<S extends ContentSupport> {
 	 *            (may be null).
 	 * @return a list of {@link ContentSupport}, never null, may be empty.
 	 */
-	List<S> newSupports(HttpVirtualModelInstance<S> owner, String path, InputStream stream, String pointer);
+	List<S> newSupports(HttpVirtualModelInstance<S> owner, T supportObject);
 
 	/**
-	 * Creates a support for the given identifier. The support may be empty if the stream is null.
+	 * Creates a support for the given support object. The support may be empty if the stream is null.
 	 *
 	 * @param owner
 	 *            the {@link HttpVirtualModelInstance} owner (never null).
@@ -75,6 +75,6 @@ public interface ContentSupportFactory<S extends ContentSupport> {
 	 *            (may be null).
 	 * @return a support for the given object, never null.
 	 */
-	S newSupport(HttpVirtualModelInstance<S> owner, String identifier, InputStream stream, String pointer);
+	S newSupport(HttpVirtualModelInstance<S> owner, T supportObject);
 
 }

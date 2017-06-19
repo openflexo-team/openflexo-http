@@ -38,15 +38,19 @@
 
 package org.openflexo.http.connector.fml.xmlrpc;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
+import org.openflexo.connie.exception.NullReferenceException;
+import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
@@ -198,9 +202,29 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 			}
 			XMLRPCClient object = new XMLRPCClient(urlObject);
 
-			System.out.println("Calling XMLRPC " + getMethodName());
 			try {
-				Object result = object.call(getMethodName());
+
+				System.out.println("Calling XMLRPC " + getMethodName());
+
+				Object[] params = new Object[getParameters().size()];
+
+				int i = 0;
+				for (XmlRpcParameter p : getParameters()) {
+					if (p.getValue().isValid()) {
+						params[i] = p.getValue().getBindingValue(evaluationContext);
+					}
+					else {
+						// Caution: hacking section
+						// This should be replaced by a better code
+						if (p.getName().equals("map")) {
+							params[i] = Collections.emptyMap();
+						}
+					}
+					System.out.println(p.getName() + "=" + params[i]);
+					i++;
+				}
+
+				Object result = object.call(getMethodName(), params);
 				System.out.println("Resultat de l'appel: " + result);
 
 				System.out.println("accessPoint=" + accessPoint);
@@ -211,11 +235,37 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 							((FlexoConceptInstanceType) getType()).getFlexoConcept());
 				}
 
+				else if (result.getClass().isArray() && getType() instanceof FlexoConceptInstanceType) {
+					System.out.println("Tiens c'est bien un array de " + result.getClass().getComponentType());
+					Object[] objects = (Object[]) result;
+					for (int j = 0; j < objects.length; j++) {
+						System.out.println("objects[" + j + "]=" + objects[j]);
+						if (objects[j] instanceof Map) {
+							T mappedObject = (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance(
+									(Map<?, ?>) objects[j], ((FlexoConceptInstanceType) getType()).getFlexoConcept());
+							System.out.println("mappedObject=" + mappedObject);
+						}
+					}
+					return null;
+				}
+
+				else {
+					System.out.println("Hop, je retourne " + result + " of " + result.getClass());
+					return (T) result;
+				}
+
 			} catch (XMLRPCException e) {
 				throw new FlexoException(e);
+			} catch (TypeMismatchException e) {
+				e.printStackTrace();
+				throw new FlexoException(e);
+			} catch (NullReferenceException e) {
+				e.printStackTrace();
+				throw new FlexoException(e);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+				throw new FlexoException(e);
 			}
-
-			return null;
 
 		}
 	}

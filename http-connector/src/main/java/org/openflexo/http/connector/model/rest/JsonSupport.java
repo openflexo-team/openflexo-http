@@ -35,49 +35,145 @@
 
 package org.openflexo.http.connector.model.rest;
 
-import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.http.connector.model.rest.JsonSupport.JsonResponse;
 import org.openflexo.logging.FlexoLogger;
+
+import com.fasterxml.jackson.core.JsonPointer;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 /**
  * Created by charlie on 17/05/2017.
  */
-public class JsonSupport implements ContentSupport {
+public class JsonSupport implements ContentSupport<JsonResponse> {
 
 	private static final Logger logger = FlexoLogger.getLogger(JsonSupport.class.getPackage().toString());
 
-	private final HttpVirtualModelInstance owner;
+	private final HttpVirtualModelInstance<JsonSupport> owner;
 
-	private final String path;
+	// private final String path;
+	// private ObjectNode source;
+	// private JsonPointer pointer;
+
+	private JsonResponse response;
+
+	private JsonPointer jsonPointer;
 	private ObjectNode source;
-	private JsonPointer pointer;
+	private JsonNode node;
+
+	private String identifier;
 
 	private boolean complete = false;
 	private long lastUpdated = -1l;
 
-	public JsonSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
-		this.owner = owner;
-		if (path == null && source != null) {
+	/**
+	 * A Json response to a Json request<br>
+	 * Such object will be used by JsonSupport
+	 * <ul>
+	 * <li>identifier is the identifier for the object</li>
+	 * <li>stream is the{@link InputStream} to read (<b>may be null</b>)</li>
+	 * <li>pointer when the result is read as a tree (like JSON or XML) the pointer allows to get a specific node in the tree for the result
+	 * (may be null).</li>
+	 * </ul>
+	 * 
+	 * 
+	 * @author sylvain
+	 *
+	 */
+	public static class JsonResponse {
 
+		private String identifier;
+		private InputStream stream;
+		private String pointer;
+
+		/**
+		 * Build a new JsonResponse
+		 * 
+		 * @param identifier
+		 *            the identifier for the object.
+		 * @param stream
+		 *            {@link InputStream} to read (<b>may be null</b>).
+		 * @param pointer
+		 *            when the result is read as a tree (like JSON or XML) the pointer allows to get a specific node in the tree for the
+		 *            result (may be null).
+		 */
+		public JsonResponse(String identifier, InputStream stream, String pointer) {
+			super();
+			this.identifier = identifier;
+			this.stream = stream;
+			this.pointer = pointer;
 		}
-		this.path = path;
+
+		public String getIdentifier() {
+			return identifier;
+		}
+
+		public InputStream getStream() {
+			return stream;
+		}
+
+		public String getPointer() {
+			return pointer;
+		}
+	}
+
+	public JsonSupport(HttpVirtualModelInstance<JsonSupport> owner, JsonResponse response) {
+		this.owner = owner;
+		this.response = response;
+
+		this.identifier = response.getIdentifier();
+
+		// if the support contains the stream
+		if (response.getStream() != null) {
+			try {
+				ObjectMapper mapper = new ObjectMapper();
+				JsonNode source = mapper.readTree(response.getStream());
+
+				node = source;
+				if (response.getPointer() != null) {
+					node = node.at(response.getPointer());
+				}
+
+				if (!(node instanceof ObjectNode)) {
+					logger.severe("Read json from '" + response.getIdentifier() + "(" + response.getPointer() + ")' isn't an object ("
+							+ source + ")");
+				}
+			} catch (IOException e) {
+				logger.log(Level.SEVERE, "Read json from stream failed", e);
+			}
+		}
+
+		if (response.getPointer() != null) {
+			jsonPointer = JsonPointer.compile(response.getPointer());
+		}
+
+		if (source != null) {
+			lastUpdated = System.nanoTime();
+		}
+		complete = source != null;
+
+	}
+
+	public JsonSupport(HttpVirtualModelInstance<JsonSupport> owner, String identifier, ObjectNode source, JsonResponse response) {
+		this.owner = owner;
+		this.response = response;
+		this.identifier = identifier;
 		this.source = source;
-		this.pointer = pointer;
 		if (source != null) {
 			lastUpdated = System.nanoTime();
 		}
@@ -90,7 +186,7 @@ public class JsonSupport implements ContentSupport {
 
 	@Override
 	public String getIdentifier() {
-		return path;
+		return identifier;
 	}
 
 	@Override
@@ -100,7 +196,8 @@ public class JsonSupport implements ContentSupport {
 			JsonNode node = source.get(name);
 			if (node != null) {
 				return convertNode(type, node);
-			} else if (!complete) {
+			}
+			else if (!complete) {
 				update(true);
 				node = source.get(name);
 				if (node != null) {
@@ -128,16 +225,17 @@ public class JsonSupport implements ContentSupport {
 				if (needUpdate() || force) {
 
 					AccessPoint accessPoint = owner.getAccessPoint();
-					String url = accessPoint.getUrl() + path;
+					String url = accessPoint.getUrl() + getIdentifier();
 					HttpGet httpGet = new HttpGet(url);
 					accessPoint.contributeHeaders(httpGet);
-					try (CloseableHttpResponse response = owner.getHttpclient().execute(httpGet); InputStream stream = response.getEntity().getContent()) {
+					try (CloseableHttpResponse response = owner.getHttpclient().execute(httpGet);
+							InputStream stream = response.getEntity().getContent()) {
 
 						if (response.getStatusLine().getStatusCode() == 200) {
 							ObjectMapper mapper = new ObjectMapper();
 							JsonNode node = mapper.readTree(stream);
-							if (pointer != null) {
-								node = node.at(pointer);
+							if (jsonPointer != null) {
+								node = node.at(jsonPointer);
 							}
 
 							if (node instanceof ObjectNode) {
@@ -161,7 +259,5 @@ public class JsonSupport implements ContentSupport {
 			}
 		}
 	}
-
-
 
 }

@@ -190,7 +190,7 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	 * @param serviceManager
 	 * @return
 	 */
-	public HttpVirtualModelInstance<?> makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?> supportFactory,
+	public HttpVirtualModelInstance<?> makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?, ?> supportFactory,
 			FlexoServiceManager serviceManager);
 
 	/**

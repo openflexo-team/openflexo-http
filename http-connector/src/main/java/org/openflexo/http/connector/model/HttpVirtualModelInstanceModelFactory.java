@@ -36,11 +36,13 @@
  * 
  */
 
-package org.openflexo.http.connector.model.rest;
+package org.openflexo.http.connector.model;
 
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
-import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;
@@ -51,11 +53,21 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
+public abstract class HttpVirtualModelInstanceModelFactory extends AbstractVirtualModelInstanceModelFactory<VirtualModelInstanceResource> {
 
-	public RestVirtualModelInstanceModelFactory(VirtualModelInstanceResource virtualModelInstanceResource, EditingContext editingContext,
+	public HttpVirtualModelInstanceModelFactory(VirtualModelInstanceResource virtualModelInstanceResource,
+			Class<? extends AbstractVirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext,
 			TechnologyAdapterService taService) throws ModelDefinitionException {
-		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
+		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);
+	}
+
+	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(HttpVirtualModelInstance<S> owner, S support,
+			FlexoConcept concept) {
+		System.out.println("attention on cree un nouveau FCI pour " + concept);
+		System.out.println("support=" + support);
+		HttpFlexoConceptInstance<S> returned = newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
+		System.out.println("Nouvelle instance: " + returned);
+		return returned;
 	}
 
 }

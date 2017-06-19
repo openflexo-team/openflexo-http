@@ -37,17 +37,16 @@ package org.openflexo.http.connector.model;
 
 import java.lang.reflect.Type;
 
-
 /**
  * A {@link ContentSupport} instance provides value storage for an {@link org.openflexo.http.connector.model.HttpFlexoConceptInstance}.
  *
  * It must be able to update it's values using an {@link org.apache.http.client.HttpClient}.
  */
-public interface ContentSupport {
+public interface ContentSupport<T extends Object> {
 
 	/**
-	 * Distant object identifier, relative the owning {@link org.openflexo.http.connector.model.HttpVirtualModelInstance}.
-	 * It's used to serialize the object as a reference.
+	 * Distant object identifier, relative the owning {@link org.openflexo.http.connector.model.HttpVirtualModelInstance}. It's used to
+	 * serialize the object as a reference.
 	 *
 	 * The instance must be able to retrieve the object using this identifier and the owner.
 	 */
@@ -55,9 +54,13 @@ public interface ContentSupport {
 
 	/**
 	 * Gets the value for the property with the given name and type.
-	 * @param name name for the value
-	 * @param type type for the value
-	 * @param <T> the returned type
+	 * 
+	 * @param name
+	 *            name for the value
+	 * @param type
+	 *            type for the value
+	 * @param <T>
+	 *            the returned type
 	 * @return the typed value for the given name or null.
 	 */
 	<T> T getValue(String name, Type type);
@@ -67,10 +70,11 @@ public interface ContentSupport {
 	 *
 	 * TODO This doesn't not currently affect the distant value.
 	 *
-	 * @param name name for the value
-	 * @param value new value
+	 * @param name
+	 *            name for the value
+	 * @param value
+	 *            new value
 	 */
 	void setValue(String name, Object value);
-
 
 }

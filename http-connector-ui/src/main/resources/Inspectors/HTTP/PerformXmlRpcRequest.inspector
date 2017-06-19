@@ -41,7 +41,7 @@
 			<Label id="16" index="10" label="parameters" align="left"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
 				name="parameters_label" />
-			<Table id="17" index="11" visibleRowCount="3"
+			<Table id="17" index="11" visibleRowCount="5"
 				backgroundNonSelectionColor="255,255,255"
 				backgroundSecondarySelectionColor="178,215,255"
 				iteratorClassName="org.openflexo.http.connector.fml.xmlrpc.XmlRpcParameter"
@@ -51,9 +51,9 @@
 				name="parameters_table">
 				<IconColumn id="18" resizable="false" title="icon"
 					displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
-				<LabelColumn data="iterator.name" title="name"
+				<TextFieldColumn data="iterator.name" title="name"
 					columnWidth="80" resizable="true" displayTitle="true" tooltip="iterator.name"
-					name="label" />
+					name="name" />
 				<CustomColumn id="21"
 					componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
 					data="iterator.value" resizable="true" title="value" displayTitle="true"

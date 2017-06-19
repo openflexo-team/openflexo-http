@@ -51,30 +51,25 @@ import org.openflexo.model.annotations.Parameter;
  */
 @ModelEntity
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
-public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
+public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends FlexoConceptInstance {
 
 	@Initializer
-	void initialize(
-		@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner,
-		ContentSupport support,
-		@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept
-	);
+	void initialize(@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance<S> owner, S support,
+			@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept);
 
-	abstract class HttpFlexoConceptInstanceImpl
-			extends FlexoConceptInstanceImpl
-			implements HttpFlexoConceptInstance
-	{
+	abstract class HttpFlexoConceptInstanceImpl<S extends ContentSupport<?>> extends FlexoConceptInstanceImpl
+			implements HttpFlexoConceptInstance<S> {
 
-		private ContentSupport support;
+		private S support;
 
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
 			if (flexoProperty instanceof AbstractProperty) {
+				// System.out.println("support = " + support);
 				return support.getValue(flexoProperty.getName(), flexoProperty.getType());
 			}
 			return super.getFlexoPropertyValue(flexoProperty);
 		}
-
 
 		@Override
 		public <T> void setFlexoPropertyValue(FlexoProperty<T> flexoProperty, T value) {
@@ -86,14 +81,15 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 					setIsModified();
 					getPropertyChangeSupport().firePropertyChange(flexoProperty.getPropertyName(), oldValue, value);
 				}
-			} else {
+			}
+			else {
 				super.setFlexoPropertyValue(flexoProperty, value);
 			}
 		}
 
 		@Override
-		public HttpVirtualModelInstance getVirtualModelInstance() {
-			return (HttpVirtualModelInstance) super.getVirtualModelInstance();
+		public HttpVirtualModelInstance<S> getVirtualModelInstance() {
+			return (HttpVirtualModelInstance<S>) super.getVirtualModelInstance();
 		}
 
 		@Override
@@ -102,7 +98,8 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance owner, ContentSupport support, FlexoConcept concept)  {
+		public void initialize(HttpVirtualModelInstance<S> owner, S support, FlexoConcept concept) {
+			System.out.println("Est ce qu'on passe la ????");
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
 			this.support = support;
@@ -113,7 +110,8 @@ public interface HttpFlexoConceptInstance extends FlexoConceptInstance {
 			AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 			String resourceURI = accessPoint.getResource().getURI();
 			String conceptName = getFlexoConcept().getName();
-			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(), support.getIdentifier(), conceptName);
+			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(),
+					support.getIdentifier(), conceptName);
 		}
 	}
 }

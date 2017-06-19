@@ -64,13 +64,13 @@ import org.openflexo.model.annotations.Setter;
 @ModelEntity
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface HttpVirtualModelInstance<S extends ContentSupport> extends VirtualModelInstance {
+public interface HttpVirtualModelInstance<S extends ContentSupport<?>> extends VirtualModelInstance {
 
 	String ACCESS_POINT = "accessPoint";
 
 	@Initializer
 	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, FlexoServiceManager serviceManager,
-			ContentSupportFactory<S> supportFactory);
+			ContentSupportFactory<S, ?> supportFactory);
 
 	@Getter(ACCESS_POINT)
 	AccessPoint getAccessPoint();
@@ -87,7 +87,7 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 
 	public CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport> extends VirtualModelInstanceImpl
+	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport<?>> extends VirtualModelInstanceImpl
 			implements HttpVirtualModelInstance<S> {
 
 		@SuppressWarnings("unused")
@@ -95,10 +95,10 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
-		private ContentSupportFactory<S> supportFactory;
+		private ContentSupportFactory<S, ?> supportFactory;
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<S> supportFactory) {
+		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<S, ?> supportFactory) {
 
 			System.out.println("Hop, on initialise un HttpVirtualModelInstance");
 
@@ -144,7 +144,7 @@ public interface HttpVirtualModelInstance<S extends ContentSupport> extends Virt
 			return "HttpVirtualModelInstance:" + super.toString();
 		}
 
-		public ContentSupportFactory<S> getSupportFactory() {
+		public ContentSupportFactory<S, ?> getSupportFactory() {
 			return supportFactory;
 		}
 

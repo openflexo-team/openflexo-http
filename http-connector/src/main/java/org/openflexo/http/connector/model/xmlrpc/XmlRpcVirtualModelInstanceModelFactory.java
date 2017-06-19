@@ -38,9 +38,9 @@
 
 package org.openflexo.http.connector.model.xmlrpc;
 
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;
@@ -51,7 +51,7 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public class XmlRpcVirtualModelInstanceModelFactory extends AbstractVirtualModelInstanceModelFactory<VirtualModelInstanceResource> {
+public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
 
 	public XmlRpcVirtualModelInstanceModelFactory(VirtualModelInstanceResource virtualModelInstanceResource, EditingContext editingContext,
 			TechnologyAdapterService taService) throws ModelDefinitionException {

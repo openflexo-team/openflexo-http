@@ -76,7 +76,7 @@ public interface XmlRpcModelSlot extends HttpModelSlot {
 		}
 
 		@Override
-		public XmlRpcVirtualModelInstance makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?> supportFactory,
+		public XmlRpcVirtualModelInstance makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?, ?> supportFactory,
 				FlexoServiceManager serviceManager) {
 
 			XmlRpcVirtualModelInstance returned = getVirtualModelInstanceModelFactory(serviceManager)

@@ -50,10 +50,10 @@ import org.apache.http.client.methods.HttpGet;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.http.connector.model.AccessPoint;
-import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.http.connector.model.rest.JsonSupport.JsonResponse;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Import;
@@ -70,9 +70,9 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonS
 
 	String ACCESS_POINT = "accessPoint";
 
-	List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
+	List<HttpFlexoConceptInstance<JsonSupport>> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
 
-	HttpFlexoConceptInstance getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
+	HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
 
 	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<JsonSupport> implements RestVirtualModelInstance {
 
@@ -80,11 +80,11 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonS
 
 		private RestVirtualModelInstanceModelFactory modelFactory;
 
-		private final Map<String, HttpFlexoConceptInstance> instances = new HashMap<>();
+		private final Map<String, HttpFlexoConceptInstance<JsonSupport>> instances = new HashMap<>();
 
 		@Override
 		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager,
-				ContentSupportFactory<JsonSupport> supportFactory) {
+				ContentSupportFactory<JsonSupport, ?> supportFactory) {
 
 			super.initialize(accessPoint, serviceManager, supportFactory);
 
@@ -101,23 +101,29 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonS
 		}
 
 		@Override
-		public HttpFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
+		public ContentSupportFactory<JsonSupport, JsonResponse> getSupportFactory() {
+			return (ContentSupportFactory<JsonSupport, JsonResponse>) super.getSupportFactory();
+		}
+
+		@Override
+		public HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
+			JsonResponse response = new JsonResponse(path, null, pointer);
 			return instances.computeIfAbsent(path, (newPath) -> {
-				ContentSupport support = getSupportFactory().newSupport(this, path, null, pointer);
-				return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
+				JsonSupport support = getSupportFactory().newSupport(this, response);
+				return getFactory().newFlexoConceptInstance(this, support, concept);
 			});
 		}
 
 		@Override
-		public List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
+		public List<HttpFlexoConceptInstance<JsonSupport>> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
 			AccessPoint accessPoint = getAccessPoint();
 			HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
 			accessPoint.contributeHeaders(httpGet);
-			try (CloseableHttpResponse response = getHttpclient().execute(httpGet);
-					InputStream stream = response.getEntity().getContent()) {
-				List<JsonSupport> supports = getSupportFactory().newSupports(this, path, stream, pointer);
-				return supports.stream().map((s) -> getAccessPointFactory().newFlexoConceptInstance(this, s, concept))
-						.collect(Collectors.toList());
+			try (CloseableHttpResponse httpResponse = getHttpclient().execute(httpGet);
+					InputStream stream = httpResponse.getEntity().getContent()) {
+				JsonResponse response = new JsonResponse(path, stream, pointer);
+				List<JsonSupport> supports = getSupportFactory().newSupports(this, response);
+				return supports.stream().map((s) -> getFactory().newFlexoConceptInstance(this, s, concept)).collect(Collectors.toList());
 
 			} catch (IOException e) {
 				logger.log(Level.SEVERE, "Can't read '" + httpGet.getURI(), e);

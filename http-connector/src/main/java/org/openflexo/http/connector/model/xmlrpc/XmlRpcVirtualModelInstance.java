@@ -36,6 +36,7 @@
 package org.openflexo.http.connector.model.xmlrpc;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -73,11 +74,11 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 
 		private XmlRpcVirtualModelInstanceModelFactory modelFactory;
 
-		// private final Map<String, HttpFlexoConceptInstance> instances = new HashMap<>();
+		private final Map<String, HttpFlexoConceptInstance<MapSupport>> instances = new HashMap<>();
 
 		@Override
 		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager,
-				ContentSupportFactory<MapSupport> supportFactory) {
+				ContentSupportFactory<MapSupport, ?> supportFactory) {
 
 			super.initialize(accessPoint, serviceManager, supportFactory);
 
@@ -99,13 +100,19 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 		}
 
 		@Override
-		public HttpFlexoConceptInstance getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept) {
+		public ContentSupportFactory<MapSupport, Map<?, ?>> getSupportFactory() {
+			return (ContentSupportFactory<MapSupport, Map<?, ?>>) super.getSupportFactory();
+		}
+
+		@Override
+		public HttpFlexoConceptInstance<MapSupport> getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept) {
 			/*return instances.computeIfAbsent(path, (newPath) -> {
 				ContentSupport support = getSupportFactory().newSupport(this, path, null, pointer);
 				return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
 			});*/
 			System.out.println("Je dois retourner le FCI " + concept + " pour " + map);
-			return null;
+			MapSupport support = getSupportFactory().newSupport(this, map);
+			return getFactory().newFlexoConceptInstance(this, support, concept);
 		}
 
 		@Override
@@ -126,5 +133,9 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 			return Collections.emptyList();
 		}
 
+		@Override
+		public String toString() {
+			return "XmlRpcVirtualModelInstance[" + Integer.toHexString(hashCode()) + "]";
+		}
 	}
 }

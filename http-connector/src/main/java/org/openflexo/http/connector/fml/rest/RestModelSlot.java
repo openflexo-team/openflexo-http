@@ -76,7 +76,7 @@ public interface RestModelSlot extends HttpModelSlot {
 		}
 
 		@Override
-		public RestVirtualModelInstance makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?> supportFactory,
+		public RestVirtualModelInstance makeHttpVirtualModelInstance(AccessPoint accessPoint, ContentSupportFactory<?, ?> supportFactory,
 				FlexoServiceManager serviceManager) {
 
 			RestVirtualModelInstance returned = getVirtualModelInstanceModelFactory(serviceManager)

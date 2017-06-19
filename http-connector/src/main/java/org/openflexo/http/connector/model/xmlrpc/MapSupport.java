@@ -35,8 +35,6 @@
 
 package org.openflexo.http.connector.model.xmlrpc;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -45,23 +43,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.openflexo.connie.type.TypeUtils;
-import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;
-
-import com.fasterxml.jackson.core.JsonPointer;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.TextNode;
 
 import de.timroes.axmlrpc.XMLRPCClient;
 
@@ -70,31 +56,27 @@ import de.timroes.axmlrpc.XMLRPCClient;
  * @author sylvain
  *
  */
-public class MapSupport implements ContentSupport {
+public class MapSupport implements ContentSupport<Map<?, ?>> {
 
 	private static final Logger logger = FlexoLogger.getLogger(MapSupport.class.getPackage().toString());
 
-	private final HttpVirtualModelInstance owner;
+	private final HttpVirtualModelInstance<MapSupport> owner;
 
-	private final String path;
-	private ObjectNode source;
-	private JsonPointer pointer;
+	private Map<?, ?> map;
 
 	private boolean complete = false;
 	private long lastUpdated = -1l;
 
-	public MapSupport(HttpVirtualModelInstance owner, String path, ObjectNode source, JsonPointer pointer) {
+	public MapSupport(HttpVirtualModelInstance<MapSupport> owner, Map<?, ?> map) {
 		this.owner = owner;
-		if (path == null && source != null) {
+		this.map = map;
+		lastUpdated = System.nanoTime();
+		complete = (map != null);
 
+		for (Object key : map.keySet()) {
+			System.out.println("key " + key + "[" + key.getClass().getSimpleName() + "]=" + map.get(key) + "["
+					+ map.get(key).getClass().getSimpleName() + "]");
 		}
-		this.path = path;
-		this.source = source;
-		this.pointer = pointer;
-		if (source != null) {
-			lastUpdated = System.nanoTime();
-		}
-		complete = source != null;
 	}
 
 	private boolean needUpdate() {
@@ -103,78 +85,22 @@ public class MapSupport implements ContentSupport {
 
 	@Override
 	public String getIdentifier() {
-		return path;
-	}
-
-	@Override
-	public <T> T getValue(String name, Type type) {
-		update(false);
-		if (source != null) {
-			JsonNode node = source.get(name);
-			if (node != null) {
-				return convertNode(type, node);
-			}
-			else if (!complete) {
-				update(true);
-				node = source.get(name);
-				if (node != null) {
-					return convertNode(type, node);
-				}
-			}
-		}
 		return null;
 	}
 
 	@Override
-	public void setValue(String name, Object value) {
-		source.set(name, value != null ? TextNode.valueOf(value.toString()) : NullNode.getInstance());
-	}
-
-	private <T> T convertNode(Type type, JsonNode node) {
-		// TODO work on conversion
-		Object value = node.textValue();
-		return TypeUtils.isAssignableTo(value, type) ? (T) value : null;
-	}
-
-	public void update(boolean force) {
-		if (needUpdate() || force) {
-			synchronized (this) {
-				if (needUpdate() || force) {
-
-					AccessPoint accessPoint = owner.getAccessPoint();
-					String url = accessPoint.getUrl() + path;
-					HttpGet httpGet = new HttpGet(url);
-					accessPoint.contributeHeaders(httpGet);
-					try (CloseableHttpResponse response = owner.getHttpclient().execute(httpGet);
-							InputStream stream = response.getEntity().getContent()) {
-
-						if (response.getStatusLine().getStatusCode() == 200) {
-							ObjectMapper mapper = new ObjectMapper();
-							JsonNode node = mapper.readTree(stream);
-							if (pointer != null) {
-								node = node.at(pointer);
-							}
-
-							if (node instanceof ObjectNode) {
-								source = (ObjectNode) node;
-							}
-							else {
-								logger.log(Level.SEVERE, "Read json from '" + url + "' isn't an object (" + node + ")");
-							}
-						}
-						else {
-							logger.log(Level.SEVERE, "Can't access '" + url + "': " + response.getStatusLine());
-						}
-
-					} catch (IOException e) {
-						logger.log(Level.SEVERE, "Can't read '" + url + "'", e);
-					} finally {
-						complete = true;
-						lastUpdated = System.nanoTime();
-					}
-				}
-			}
+	public <T> T getValue(String name, Type type) {
+		// System.out.println("getValue() name=" + name + " type=" + type);
+		if (type.equals(String.class)) {
+			return (T) map.get(name).toString();
 		}
+		return (T) map.get(name);
+	}
+
+	@Override
+	public void setValue(String name, Object value) {
+		System.out.println("setValue() name=" + name + " value=" + value);
+		System.out.println("Not implemented");
 	}
 
 	public static void mainOld(String... prout) throws MalformedURLException/*, XmlRpcException*/ {
@@ -359,11 +285,12 @@ public class MapSupport implements ContentSupport {
 			));*/
 
 		Map map3 = new HashMap();
-		map3.put("fields", Arrays.asList("name", "country_id", "comment"));
-		map3.put("limit", 5);
+		map3.put("fields", Arrays.asList("name", "country_id", "comment", "siren"));
+		map3.put("limit", 30);
+		// map3.put("offset", 20);
 		System.out.println("Calling execute_kw (search with pagination)");
-		Object[] searchAndRead = (Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search_read",
-				Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true))), map3);
+		Object[] searchAndRead = (Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search_read", Collections.emptyList()
+		/*Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))*/, map3);
 		System.out.println(searchAndRead);
 		for (int i = 0; i < searchAndRead.length; i++) {
 			System.out.println("searchAndRead[" + i + "]=" + searchAndRead[i]);

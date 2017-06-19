@@ -45,7 +45,6 @@ import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
-import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
@@ -158,10 +157,6 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 		accessPoint.setInstance(virtualModelInstance);*/
 
 		// return returned;
-	}
-
-	public HttpFlexoConceptInstance newFlexoConceptInstance(HttpVirtualModelInstance owner, ContentSupport support, FlexoConcept concept) {
-		return newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
 	}
 
 	@Override
