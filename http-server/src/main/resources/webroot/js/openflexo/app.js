@@ -1,8 +1,8 @@
-define(["require", "exports", "./api", "./ui/Grid", "./ui/Tabs", "./ui/Card", "./ui/utils"], function (require, exports, api_1, Grid_1, Tabs_1, Card_1, utils_1) {
+define(["require", "exports", "./api/Api", "./ui/Grid", "./ui/Tabs", "./ui/Card", "./ui/utils"], function (require, exports, Api_1, Grid_1, Tabs_1, Card_1, utils_1) {
     "use strict";
     var Application = (function () {
         function Application() {
-            this.api = new api_1.Api();
+            this.api = new Api_1.Api();
         }
         Application.prototype.start = function () {
             console.log("Starting OpenFlexo app");

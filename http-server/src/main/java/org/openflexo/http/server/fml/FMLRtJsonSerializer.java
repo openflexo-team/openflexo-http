@@ -35,11 +35,14 @@
 
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.openflexo.foundation.fml.FMLObject;
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.ViewPoint;
+import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.JsonSerializer;
@@ -56,33 +59,43 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 
 	@Override
 	public boolean identifyObject(Object object, JsonObject result) {
-		if (object instanceof FMLObject) {
-			result.put("name", ((FMLObject) object).getName());
+		if (object instanceof AbstractVirtualModelInstance) {
+			result.put("name", ((AbstractVirtualModelInstance) object).getName());
 		}
 		return super.identifyObject(object, result);
 	}
 
+
 	private void describeFlexoConceptInstance(FlexoConceptInstance instance, JsonObject result, boolean detailed) {
-		JsonObject actors = new JsonObject();
-		for (ActorReference<?> reference : instance.getActors()) {
-			actors.put(reference.getRoleName(), toJson(reference, detailed));
+
+		FlexoConcept flexoConcept = instance.getFlexoConcept();
+		if (flexoConcept instanceof ViewPoint) {
+			result.put("viewPoint", toReference(flexoConcept));
+		} else if (flexoConcept instanceof VirtualModel) {
+			result.put("view", toReference(instance.getView()));
+			result.put("virtualModel", toReference(flexoConcept));
+		} else {
+			result.put("flexoConcept", toReference(flexoConcept));
+
+			result.put("virtualModelInstance", toReference(instance.getVirtualModelInstance()));
+			result.put("view", toReference(instance.getView()));
+			result.put("container", toReference(instance.getContainerFlexoConceptInstance()));
 		}
-		result.put("actors", actors);
-		result.put("flexoConcept", toReference(instance.getFlexoConcept()));
+
+		result.put("actors", toMap(instance.getActors(), ActorReference::getRoleName , detailed));
+		result.put("embeddedFlexoConceptInstance", toReferenceArray(instance.getEmbeddedFlexoConceptInstances()));
 	}
 
 	@Override
 	public void describeObject(Object object, JsonObject result, boolean detailed) {
-		if (object instanceof VirtualModelInstance) {
+		if (object instanceof View) {
+			View view = (View) object;
+			describeFlexoConceptInstance(view, result, detailed);
+
+		} else if (object instanceof VirtualModelInstance) {
 			VirtualModelInstance instance = (VirtualModelInstance) object;
 			describeFlexoConceptInstance(instance, result, detailed);
-			result.put("virtualModel", toJson(instance.getVirtualModel(), detailed));
-
-			JsonArray flexoConceptInstances = new JsonArray();
-			for (FlexoConceptInstance child : instance.getFlexoConceptInstances()) {
-				flexoConceptInstances.add(toJson(child, detailed));
-			}
-			result.put("flexoConceptInstances", flexoConceptInstances);
+			result.put("flexoConceptInstances", toArray(instance.getFlexoConceptInstances(), detailed));
 
 
 		} else if (object instanceof FlexoConceptInstance) {

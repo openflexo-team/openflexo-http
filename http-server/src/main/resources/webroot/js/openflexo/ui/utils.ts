@@ -1,5 +1,8 @@
 /// <reference path="./mdl.d.ts" />
 
+import { Component } from "./Component"
+import { FlowCategory } from "./category"
+
 export function clearElement(element: HTMLElement) {
     var child = element.firstChild;
     while (child !== null) {
@@ -42,5 +45,15 @@ function addCss(reference: string) {
 export function forEachNode(list: NodeList, callback:(i:number, n: HTMLElement)=>void) {
     for (let i=0; i<list.length; i++) {
         callback.call(callback, i, list.item(i));
+    }
+}
+
+export function toHTMLElement(source: Component|FlowCategory|string): Node {
+    if ((<Component> source).container) {
+       return (<Component> source).container;
+    } else if (typeof source === "string") {
+        return document.createTextNode(source);
+    } else {
+        return <HTMLElement> source;
     }
 }

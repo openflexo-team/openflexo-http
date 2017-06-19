@@ -41,10 +41,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
-import org.openflexo.foundation.FlexoObject;
-import org.openflexo.foundation.InnerResourceData;
+import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
@@ -111,6 +111,22 @@ public class JsonSerializer {
 		}
 	}
 
+	protected <T> JsonObject toMap(Collection<T> list, Function<T, String> keyFunction, boolean detailed) {
+		JsonObject result = new JsonObject();
+		for (T t : list) {
+			result.put(keyFunction.apply(t), toJson(t, detailed));
+		}
+		return result;
+	}
+
+	protected <T> JsonObject toReferenceMap(Collection<T> list, Function<T, String> keyFunction) {
+		JsonObject result = new JsonObject();
+		for (T t : list) {
+			result.put(keyFunction.apply(t), toReference(t));
+		}
+		return result;
+	}
+
 	protected JsonArray toArray(Collection<?> list, boolean detailed) {
 		return new JsonArray(list.stream().map((i) -> toJson(i, detailed)).collect(Collectors.toList()));
 	}
@@ -121,10 +137,15 @@ public class JsonSerializer {
 
 	public boolean identifyObject(Object object, JsonObject result) {
 		String id = IdUtils.getId(object);
+
+		if (object instanceof FMLObject) {
+			result.put("name", ((FMLObject) object).getName());
+		}
+
 		if (id != null) {
 			result.put("id", id);
 			result.put("type", getType(object));
-			String url = getUrl(object);
+			String url = IdUtils.getUrl(object, service);
 			if (url != null) { result.put("url", url); }
 			// Used for debugging purposes
 			//result.put("__debug_object__", object.toString());
@@ -143,41 +164,17 @@ public class JsonSerializer {
 		}
 	}
 
-	private String getUrl(Object object) {
-		FlexoResource resource = null;
-		long id = -1;
-
-		if (object instanceof FlexoResource) {
-			resource = (FlexoResource) object;
-		} else if (object instanceof ResourceData) {
-			resource = ((ResourceData) object).getResource();
-		} else if (object instanceof InnerResourceData) {
-			ResourceData resourceData = ((InnerResourceData) object).getResourceData();
-			resource = resourceData != null ? resourceData.getResource() : null;
-		}
-
-		if (object instanceof FlexoObject) {
-			id = ((FlexoObject) object).getFlexoID();
-		}
-
-		if (resource == null) return null;
-
-		String prefix = service.getPrefix(resource);
-		if (prefix == null) return null;
-
-		StringBuilder url = new StringBuilder();
-		url.append(prefix);
-		url.append("/");
-		url.append(IdUtils.encoreUri(resource.getURI()));
-		if (id >= 0) {
-			url.append("/object/");
-			url.append(id);
-		}
-
-		return url.toString();
-	}
-
 	public void describeObject(Object object, JsonObject result, boolean detailed) {
+
+		// adds resource link
+		if (object instanceof ResourceData) {
+			FlexoResource resource = ((ResourceData) object).getResource();
+			String resourceUrl = IdUtils.getUrl(resource, service);
+			if (resourceUrl != null) {
+				result.put("resourceUrl", resourceUrl);
+			}
+		}
+
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject)object).getHandler();
 			@SuppressWarnings({ "unchecked", "rawtype" }) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();

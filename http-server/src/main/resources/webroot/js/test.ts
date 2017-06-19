@@ -1,7 +1,8 @@
+import { Description } from "./openflexo/api/general";
+import { Api } from "./openflexo/api/Api";
 import {
-    ResourceCenter, ContainedByResourceCenter, Resource,
-   Description, Api
-} from "./openflexo/api";
+    ResourceCenter, ContainedByResourceCenter, Resource
+} from "./openflexo/api/resource";
 
 import {
     spinner, clearElement

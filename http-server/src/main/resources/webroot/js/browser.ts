@@ -1,6 +1,10 @@
 import {
-    ResourceCenter, ContainedByResourceCenter, Resource, Api
-} from "./openflexo/api";
+    Api
+} from "./openflexo/api/Api";
+
+import {
+    ResourceCenter, ContainedByResourceCenter, Resource
+} from "./openflexo/api/resource";
 
 import {
     findElementWithAttributeInHierarchy, spinner, icon

@@ -148,8 +148,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			R resource = getLoadedResource(id);
 			if (resource != null) {
 				boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
-				D data = resource.getResourceData(null);
-				JsonObject vpJson = (JsonObject) serializer.toJson(data, detailed);
+				JsonObject vpJson = (JsonObject) serializer.toJson(resource, detailed);
 				context.response().end(vpJson.encodePrettily());
 			} else {
 				notFound(context);
@@ -184,7 +183,6 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private void serveEntity(RoutingContext context) {
 		try {
-
 			String id = context.request().getParam(("id"));
 			String eid = context.request().getParam(("eid"));
 			PamelaResource resource = getLoadedResource(id);

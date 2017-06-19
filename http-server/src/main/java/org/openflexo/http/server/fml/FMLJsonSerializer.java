@@ -36,10 +36,10 @@
 package org.openflexo.http.server.fml;
 
 import io.vertx.core.json.JsonObject;
-import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
@@ -48,7 +48,7 @@ import org.openflexo.http.server.util.JsonSerializer;
 import org.openflexo.model.factory.ModelFactory;
 
 /**
- * Created by charlie on 09/06/2017.
+ * Specific JSON serializer for FML Rest services
  */
 public class FMLJsonSerializer extends JsonSerializer {
 
@@ -56,22 +56,16 @@ public class FMLJsonSerializer extends JsonSerializer {
 		super(service, factory);
 	}
 
-	@Override
-	public boolean identifyObject(Object object, JsonObject result) {
-		if (object instanceof FMLObject) {
-			String name = ((FMLObject) object).getName();
-			if (name != null) result.put("name", name);
-		}
-		return super.identifyObject(object, result);
-	}
-
 	private void describeFlexoConcept(FlexoConcept flexoConcept, JsonObject result, boolean detailed) {
+		result.put("description", toJson(flexoConcept.getDescription(), detailed));
 		result.put("virtualModel", toReference(flexoConcept.getVirtualModel()));
 		result.put("container", toReference(flexoConcept.getContainerFlexoConcept()));
 		result.put("childFlexoConcepts", toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 		result.put("parents", toReferenceArray(flexoConcept.getParentFlexoConcepts()));
-		result.put("properties", toArray(flexoConcept.getDeclaredProperties(), detailed));
-		result.put("behaviors", toArray(flexoConcept.getDeclaredFlexoBehaviours(), detailed));
+
+		result.put("properties", toMap(flexoConcept.getDeclaredProperties(), FlexoProperty::getName, detailed));
+		result.put("behaviors", toMap(flexoConcept.getDeclaredFlexoBehaviours(), FlexoBehaviour::getName, detailed));
+
 		result.put("childFlexoConcepts", toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 	}
 
