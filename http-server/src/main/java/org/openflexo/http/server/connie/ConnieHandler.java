@@ -72,13 +72,13 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 	 */
 	private <T> T findObject(String url, Class<T> type) {
 		if (url == null) return null;
-		String prefix = "/ta/fmlrt/vmi/";
 		String objectInfix = "/object/";
-		if (url.startsWith(prefix)) {
-			url = url.substring(prefix.length());
-			int indexOf = url.indexOf(objectInfix);
-			String resourceId = url.substring(0, indexOf);
-			String objectUrl = url.substring(indexOf+objectInfix.length());
+		int indexOfInfix = url.indexOf(objectInfix);
+		if (indexOfInfix >= 0) {
+			String resourceId = url.substring(0, indexOfInfix);
+			int indexOfFirstSlash = resourceId.lastIndexOf('/');
+			resourceId = resourceId.substring(indexOfFirstSlash+1);
+			String objectUrl = url.substring(indexOfInfix+objectInfix.length());
 
 			String resourceUri = IdUtils.decodeId(resourceId);
 			FlexoResource<?> resource = serviceManager.getResourceManager().getResource(resourceUri);
@@ -106,9 +106,14 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
 				if (context != null && model != null) {
 					DataBinding binding = new DataBinding(request.binding, model, Object.class, DataBinding.BindingDefinitionType.GET);
-					Object value = binding.getBindingValue(context);
-					// TODO serialize to JSON with JsonSerializer
-					response.result = value != null ? value.toString() : "null";
+					binding.decode();
+					if (binding.isValid()) {
+						Object value = binding.getBindingValue(context);
+						// TODO serialize to JSON with JsonSerializer
+						response.result = value != null ? value.toString() : "null";
+					} else {
+						response.error = "Invalid binding: " + binding.invalidBindingReason() + "'";
+					}
 				} else if (context == null) {
 					response.error = "Can't find context '" + request.runtime + "'";
 				} else if (model == null) {

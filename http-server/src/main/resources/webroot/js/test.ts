@@ -51,14 +51,14 @@ function createCount(source : any[]) {
     return count;
 }
 
-function createDescriptionElement(source: Description) {
+function createDescriptionElement(source: Description<any>) {
     let description = <HTMLDivElement> document.createElement("div");
     description.setAttribute("data-url", source.url);
     description.onclick = showDetails;
     
     let a = <HTMLAnchorElement> document.createElement("a");
     a.href = source.url;
-    a.text = source.name;
+    a.text = source["name"];
     description.appendChild(a);
 
     return description;
@@ -154,6 +154,39 @@ function initializeUrl() {
     refreshButton.onclick = (e) => retreiveUrl(urlInput.value);
 }
 
+function evaluateBinding(binding: string) {
+    console.log("Evaluating '"+ binding +"'");
+    var urlInput = <HTMLInputElement>document.getElementById("url");
+    var evaluation = <HTMLDivElement>document.getElementById("evaluation");
+    clearElement(evaluation);
+
+    evaluation.appendChild(spinner());
+
+    let result = api.evaluate(binding, urlInput.value, urlInput.value);
+    result.then(value => {
+        clearElement(evaluation);
+        var div = document.createElement("div");
+        div.className = "details";  
+        div.innerText = JSON.stringify(value);
+        evaluation.appendChild(div);   
+    }).catch((error) => {
+        clearElement(evaluation);     
+        var div = document.createElement("div");
+        div.className = "details";  
+        div.innerText = "Error : " + error;
+        evaluation.appendChild(div);
+    });
+}
+
+
+function initializeBinding() {
+    var bindingInput = <HTMLInputElement>document.getElementById("binding");
+    bindingInput.oninput = (e) => evaluateBinding(bindingInput.value);
+
+    var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
+    evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value);
+}
+
 let technologyAdapters = api.technologyAdapters();
 technologyAdapters.then(tas => {
     let div = document.querySelector("#tas");
@@ -189,3 +222,4 @@ api.resources().then(resources => {
 });
 
 initializeUrl();
+initializeBinding();
