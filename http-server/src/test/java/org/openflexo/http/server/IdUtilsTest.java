@@ -18,7 +18,7 @@ public class IdUtilsTest {
 	}
 
 	private void checkUriEncoding(String uri) {
-		String encoded = IdUtils.encoreUri(uri);
+		String encoded = IdUtils.encodeuri(uri);
 		Assert.assertNotNull(encoded);
 		Assert.assertEquals(uri, IdUtils.decodeId(encoded));
 	}

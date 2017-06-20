@@ -9,7 +9,7 @@ export class ResourceCenter extends Description<ResourceCenter> {
         public uri: string,
         public resourceUrl: string
     ) {  
-        super(name, id, url, type);    
+        super(id, url, type);    
     }
 }
 
@@ -25,7 +25,7 @@ export class ContainedByResourceCenter extends Description<ContainedByResourceCe
         public resourceCenterId: string,
         public resourceCenterUrl: string
     ) {  
-        super(name, id, url, type);    
+        super(id, url, type);    
     }
     
 }
@@ -68,7 +68,7 @@ export class TechnologyAdapter extends Description<TechnologyAdapter> {
         public url: string,
         public type: string
     ) { 
-        super(name, id, url, type);
+        super(id, url, type);
      }
 
 }

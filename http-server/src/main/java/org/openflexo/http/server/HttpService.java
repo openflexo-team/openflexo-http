@@ -15,6 +15,7 @@ import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.http.server.connie.ConnieHandler;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 
 /**
@@ -107,6 +108,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		server = vertx.createHttpServer(serverOptions);
 		server.requestHandler(router::accept);
+		server.websocketHandler(new ConnieHandler(serviceManager));
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);

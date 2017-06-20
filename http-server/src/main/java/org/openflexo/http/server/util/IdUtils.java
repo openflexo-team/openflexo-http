@@ -61,7 +61,7 @@ public class IdUtils {
 
 	public static String getId(Object object) {
 		if (object instanceof FlexoResource) {
-			return IdUtils.encoreUri(((FlexoResource) object).getURI());
+			return IdUtils.encodeuri(((FlexoResource) object).getURI());
 		}
 		if (object instanceof FlexoObject) {
 			long flexoID = ((FlexoObject) object).getFlexoID();
@@ -95,7 +95,7 @@ public class IdUtils {
 		StringBuilder url = new StringBuilder();
 		url.append(prefix);
 		url.append("/");
-		url.append(IdUtils.encoreUri(resource.getURI()));
+		url.append(IdUtils.encodeuri(resource.getURI()));
 		if (id >= 0) {
 			url.append("/object/");
 			url.append(id);
@@ -104,7 +104,7 @@ public class IdUtils {
 		return url.toString();
 	}
 
-	public static String encoreUri(String uri) {
+	public static String encodeuri(String uri) {
 		return encoder.encodeToString(uri.getBytes(StandardCharsets.ISO_8859_1));
 	}
 

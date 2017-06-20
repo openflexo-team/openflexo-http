@@ -53,7 +53,7 @@ public class JsonUtils {
 
 	public static JsonObject getCenterDescription(FlexoResourceCenter<?> center) {
 		String uri = center.getDefaultBaseURI();
-		String id = IdUtils.encoreUri(uri);
+		String id = IdUtils.encodeuri(uri);
 		JsonObject centerDescription = new JsonObject();
 		centerDescription.put("name", center.getDisplayableName());
 		centerDescription.put("type", "ResourceCenter");
@@ -66,7 +66,7 @@ public class JsonUtils {
 
 	public static JsonObject getRepositoryDescription(ResourceRepository<?,?> repository) {
 		String uri = repository.getDefaultBaseURI();
-		String id = IdUtils.encoreUri(uri);
+		String id = IdUtils.encodeuri(uri);
 		JsonObject description = new JsonObject();
 		description.put("name", repository.getDisplayableName());
 		description.put("type", "ResourceRepository");
@@ -99,14 +99,14 @@ public class JsonUtils {
 
 	public static JsonObject getResourceDescription(FlexoResource<?> resource, TechnologyAdapterRouteService service) {
 		String uri = resource.getURI();
-		String id = IdUtils.encoreUri(uri);
+		String id = IdUtils.encodeuri(uri);
 		JsonObject resourceDescription = new JsonObject();
 		resourceDescription.put("name", resource.getName());
 		resourceDescription.put("type", "Resource");
 		resourceDescription.put("uri", uri);
 		resourceDescription.put("id", id);
 		if (resource.getResourceCenter() != null) {
-			String centerId = IdUtils.encoreUri(resource.getResourceCenter().getDefaultBaseURI());
+			String centerId = IdUtils.encodeuri(resource.getResourceCenter().getDefaultBaseURI());
 			resourceDescription.put("resourceCenterId", centerId);
 			resourceDescription.put("resourceCenterUrl", "/rc/" + centerId);
 		} else {
