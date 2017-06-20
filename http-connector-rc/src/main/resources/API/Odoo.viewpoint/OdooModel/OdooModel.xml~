@@ -128,5 +128,60 @@
       </ControlGraph1_DeclarationAction>
     </BehaviourControlGraph_Sequence>
   </ActionScheme>
-  <Inspector id="92" inspectorTitle="OdooModel" userID="FLX" flexoID="1" />
+  <ActionScheme id="92" name="retrieveInstances" width="800" label="retrieveInstances" height="600" userID="FLX" description="Retrieve some instances of a given concept" flexoID="210">
+    <BehaviourControlGraph_Sequence id="93" userID="FLX" flexoID="234">
+      <ControlGraph2_Sequence id="94" ownerContext="controlGraph2" userID="FLX" flexoID="231">
+        <ControlGraph2_Sequence id="95" ownerContext="controlGraph2" userID="FLX" flexoID="229">
+          <ControlGraph2_Sequence id="96" ownerContext="controlGraph2" userID="FLX" flexoID="227">
+            <ControlGraph2_Sequence id="97" ownerContext="controlGraph2" userID="FLX" flexoID="243">
+              <ControlGraph2_Sequence id="98" ownerContext="controlGraph2" userID="FLX" flexoID="218">
+                <ControlGraph2_Sequence id="99" ownerContext="controlGraph2" userID="FLX" flexoID="216">
+                  <ControlGraph2_PerformXmlRpcRequest id="100" methodName="execute_kw" endPointName="xmlrpc/2/object" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#ResPartner&gt;" receiver="accessPoint" ownerContext="controlGraph2" userID="FLX" flexoID="212">
+                    <XmlRpcParameter idref="73" />
+                    <XmlRpcParameter idref="74" />
+                    <XmlRpcParameter idref="75" />
+                    <XmlRpcParameter idref="76" />
+                    <XmlRpcParameter idref="77" />
+                    <XmlRpcParameter idref="78" />
+                    <XmlRpcParameter idref="79" />
+                  </ControlGraph2_PerformXmlRpcRequest>
+                  <ControlGraph1_DeclarationAction id="101" variable="requestConditions" ownerContext="controlGraph1" userID="FLX" flexoID="215">
+                    <AssignableAction_AddClassInstance id="102" type="java.util.ArrayList&lt;java.lang.Object&gt;" userID="FLX" flexoID="214" />
+                  </ControlGraph1_DeclarationAction>
+                </ControlGraph2_Sequence>
+                <ControlGraph1_ExpressionAction id="103" expression="requestParameters.put(&quot;fields&quot;,fieldsList)" ownerContext="controlGraph1" userID="FLX" flexoID="217" />
+              </ControlGraph2_Sequence>
+              <ControlGraph1_IterationAction id="104" iteratorName="property" ownerContext="controlGraph1" userID="FLX" flexoID="239">
+                <Iteration_ExpressionAction id="105" expression="parameters.concept.accessibleAbstractProperties" ownerContext="iterationControlGraph" userID="FLX" flexoID="241" />
+                <ControlGraph_ExpressionAction id="106" expression="fieldsList.add(property.name)" ownerContext="controlGraph" userID="FLX" flexoID="248" />
+              </ControlGraph1_IterationAction>
+            </ControlGraph2_Sequence>
+            <ControlGraph1_DeclarationAction id="107" variable="fieldsList" ownerContext="controlGraph1" userID="FLX" flexoID="226">
+              <AssignableAction_AddClassInstance id="108" type="java.util.ArrayList&lt;java.lang.Object&gt;" userID="FLX" flexoID="225" />
+            </ControlGraph1_DeclarationAction>
+          </ControlGraph2_Sequence>
+          <ControlGraph1_ExpressionAction id="109" expression="requestParameters.put(&quot;offset&quot;,parameters.offset)" ownerContext="controlGraph1" userID="FLX" flexoID="228" />
+        </ControlGraph2_Sequence>
+        <ControlGraph1_ExpressionAction id="110" expression="requestParameters.put(&quot;limit&quot;,parameters.limit)" ownerContext="controlGraph1" userID="FLX" flexoID="230" />
+      </ControlGraph2_Sequence>
+      <ControlGraph1_DeclarationAction id="111" variable="requestParameters" ownerContext="controlGraph1" userID="FLX" flexoID="233">
+        <AssignableAction_AddClassInstance id="112" type="java.util.HashMap&lt;java.lang.Object,java.lang.Object&gt;" userID="FLX" flexoID="232" />
+      </ControlGraph1_DeclarationAction>
+    </BehaviourControlGraph_Sequence>
+    <GenericBehaviourParameter id="113" widget="CUSTOM_WIDGET" name="concept" type="org.openflexo.foundation.fml.FlexoConcept" userID="FLX" description="Type of concept to return" flexoID="235" />
+    <GenericBehaviourParameter id="114" widget="INTEGER" name="limit" type="java.lang.Integer" userID="FLX" description="The size of the set beeing requested" flexoID="237" />
+    <GenericBehaviourParameter id="115" widget="INTEGER" name="offset" type="java.lang.Integer" userID="FLX" description="Index of first instance for the set to be requested&#xA;" flexoID="236" />
+  </ActionScheme>
+  <ActionScheme id="116" name="retrieveResPartners2" width="800" label="retrieveResPartners2" height="600" userID="FLX" flexoID="249">
+    <BehaviourControlGraph_Sequence id="117" userID="FLX" flexoID="256">
+      <ControlGraph2_Sequence id="118" ownerContext="controlGraph2" userID="FLX" flexoID="255">
+        <ControlGraph2_NotifyPropertyChangedAction id="119" propertyName="partners" object="virtualModelInstance" ownerContext="controlGraph2" userID="FLX" flexoID="254" />
+        <ControlGraph1_ExpressionAction id="120" expression="virtualModelInstance.retrieveInstances(resPartnerConcept,30,0)" ownerContext="controlGraph1" userID="FLX" flexoID="253" />
+      </ControlGraph2_Sequence>
+      <ControlGraph1_DeclarationAction id="121" variable="resPartnerConcept" ownerContext="controlGraph1" userID="FLX" flexoID="252">
+        <AssignableAction_ExpressionAction id="122" expression="virtualModelInstance.virtualModelDefinition.getFlexoConcept(&quot;ResPartner&quot;)" userID="FLX" flexoID="251" />
+      </ControlGraph1_DeclarationAction>
+    </BehaviourControlGraph_Sequence>
+  </ActionScheme>
+  <Inspector id="123" inspectorTitle="OdooModel" userID="FLX" flexoID="1" />
 </VirtualModel>

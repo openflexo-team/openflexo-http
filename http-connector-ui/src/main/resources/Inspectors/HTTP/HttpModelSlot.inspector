@@ -1,21 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Inspector xmlns:p="http://www.openflexo.org/pamela/" id="0" p:modelEntity="org.openflexo.gina.utils.FIBInspector" align="left"
-           borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty"
-           sizeAdjustment="OriginalSize" titleFont="SansSerif,0,12" layout="border" borderRight="0"
-           controllerClassName="org.openflexo.inspector.FIBInspectorController" font="SansSerif,0,12" name="Inspector">
-    <TabPanel id="1" constraints="border(location=center)" name="Tab">
-        <Tab id="2" title="Basic" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true"
-             borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0"
-             useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="0"
-             horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="BasicTab">
-            <Label id="3" label="url" align="right" index="23"
-                   constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
-                   name="url_label"/>
- 			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
+<Inspector xmlns:p="http://www.openflexo.org/pamela/" id="0"
+	p:modelEntity="org.openflexo.gina.utils.FIBInspector" align="left"
+	borderTop="0" borderLeft="0" trackViewPortHeight="true"
+	trackViewPortWidth="true" borderBottom="0" border="empty"
+	sizeAdjustment="OriginalSize" titleFont="SansSerif,0,12" layout="border"
+	borderRight="0" controllerClassName="org.openflexo.inspector.FIBInspectorController"
+	font="SansSerif,0,12" name="Inspector">
+	<TabPanel id="1" constraints="border(location=center)" name="Tab">
+		<Tab id="2" title="Basic" align="left" borderTop="0" borderLeft="0"
+			trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0"
+			border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11"
+			layout="twocols" borderRight="0" useScrollBar="true"
+			verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="0"
+			horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11"
+			name="BasicTab">
+			<Label id="3" label="url" align="right" index="23"
+				constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="url_label" />
+			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
 				localize="true" index="24" data="data.url"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
 			</Custom>
- 			<Label index="25" label="user" align="left" localize="true"
+			<Label index="25" label="user" align="left" localize="true"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
 				name="UserLabel" />
 			<Custom componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
@@ -29,43 +35,58 @@
 				localize="true" index="28" data="data.password"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
 			</Custom>
-            <Label id="5" label="virtual_model" align="left" localize="true" index="29"
-                   constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
-                   name="VirtualModelLabel"/>
-            <Custom id="6" index="30" componentClassName="org.openflexo.fml.controller.widget.FIBVirtualModelSelector"
-                    dataClassForComponent="org.openflexo.foundation.fml.rm.AbstractVirtualModelResource" localize="true"
-                    manageDynamicModel="true" data="data.accessedVirtualModelResource"
-                    constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
-                    name="VirtualModelSelector">
-                <Assignment id="7" variable="component.viewPoint" mandatory="true"/>
-                <Assignment id="8" variable="component.serviceManager" mandatory="true"/>
-                <Assignment id="9" variable="component.flexoController" mandatory="true"/>
-                <Assignment id="10" variable="component.selectableCondition" mandatory="true"/>
-                <Assignment id="11" variable="component.viewPointLibrary" value="data.viewPointLibrary" mandatory="true"/>
-            </Custom>
-            
-            <Label label="format" index="31"
-				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)"/>
-			<DropDown index="32" data="data.format"  
+			<Label id="5" label="virtual_model" align="left" localize="true"
+				index="29"
+				constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="VirtualModelLabel" />
+			<Custom id="6" index="30"
+				componentClassName="org.openflexo.fml.controller.widget.FIBVirtualModelSelector"
+				dataClassForComponent="org.openflexo.foundation.fml.rm.AbstractVirtualModelResource"
+				localize="true" manageDynamicModel="true"
+				data="data.accessedVirtualModelResource"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
+				name="VirtualModelSelector">
+				<Assignment id="7" variable="component.viewPoint"
+					mandatory="true" />
+				<Assignment id="8" variable="component.serviceManager"
+					mandatory="true" />
+				<Assignment id="9" variable="component.flexoController"
+					mandatory="true" />
+				<Assignment id="10" variable="component.selectableCondition"
+					mandatory="true" />
+				<Assignment id="11" variable="component.viewPointLibrary"
+					value="data.viewPointLibrary" mandatory="true" />
+			</Custom>
+
+			<Label label="format" index="31"
+				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)" />
+			<DropDown index="32" data="data.format"
 				constraints="twocols(anchor=west;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=0;gridX=-1;gridY=-1;index=11;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right;padX=0;padY=0;weightX=0.0;weightY=0.0)"
 				name="FormatDropDown" format="object.name"
 				iteratorClassName="org.openflexo.http.connector.HttpModelSlot$Format"
 				autoSelectFirstRow="false">
 			</DropDown>
-            
-            <Label label="creation_scheme" index="33"
-				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)"/>
-			<DropDown index="34" data="data.creationScheme"  
+
+			<Label index="33" label="id_property" align="left" localize="true"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
+				name="IdPropertyNameLabel" />
+			<TextField index="34" columns="7" data="data.idPropertyName"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
+				name="IdPropertyNameTextField" />
+
+			<Label label="creation_scheme" index="35"
+				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)" />
+			<DropDown index="36" data="data.creationScheme"
 				constraints="twocols(anchor=west;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=0;gridX=-1;gridY=-1;index=11;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right;padX=0;padY=0;weightX=0.0;weightY=0.0)"
 				name="CreationSchemeDropDown" format="object.signature"
 				icon="controller.iconForObject(object)" localize="false"
-				list="data.availableCreationSchemes"
-				showIcon="true" iteratorClassName="org.openflexo.http.connector.fml.HttpVirtualModelInitializer"
+				list="data.availableCreationSchemes" showIcon="true"
+				iteratorClassName="org.openflexo.http.connector.fml.HttpVirtualModelInitializer"
 				autoSelectFirstRow="false">
 			</DropDown>
-			<Label label="parameters" index="35"
-				constraints="twocols(expandHorizontally=true;expandVertically=false;index=12;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left)"/>
-			<Table index="36"
+			<Label label="parameters" index="37"
+				constraints="twocols(expandHorizontally=true;expandVertically=false;index=12;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left)" />
+			<Table index="38"
 				iteratorClassName="org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter"
 				visibleRowCount="4" rowHeight="18" autoSelectFirstRow="false"
 				createNewRowOnClick="false" boundToSelectionManager="false"
@@ -73,33 +94,34 @@
 				textSelectionColor="255,255,255" textNonSelectionColor="0,0,0"
 				backgroundSelectionColor="41,90,209"
 				backgroundSecondarySelectionColor="173,215,255"
-				backgroundNonSelectionColor="255,255,255" 
-				localize="true" manageDynamicModel="true" opaque="false"
-				data="data.parameters"
+				backgroundNonSelectionColor="255,255,255" localize="true"
+				manageDynamicModel="true" opaque="false" data="data.parameters"
 				constraints="twocols(expandHorizontally=true;expandVertically=true;index=13;insetsBottom=0;insetsLeft=5;insetsRight=5;insetsTop=0;location=right)">
 				<IconColumn data="controller.iconForObject(iterator.param)"
-					title="icon" columnWidth="25" resizable="false"
-					displayTitle="false" name="icon" />
-				<LabelColumn data="iterator.param.name"
-					title="parameter" columnWidth="80" resizable="true" displayTitle="true"
-					name="label" />
+					title="icon" columnWidth="25" resizable="false" displayTitle="false"
+					name="icon" />
+				<LabelColumn data="iterator.param.name" title="parameter"
+					columnWidth="80" resizable="true" displayTitle="true" name="label" />
 				<CustomColumn componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
 					customRendering="false" disableTerminateEditOnFocusLost="false"
-					data="iterator.value" title="value" columnWidth="200"
-					resizable="true" displayTitle="true"
-					 name="value">
+					data="iterator.value" title="value" columnWidth="200" resizable="true"
+					displayTitle="true" name="value">
 					<ColumnAssignment variable="component.bindable"
 						value="iterator" />
 				</CustomColumn>
 				<LocalizedDictionary />
 			</Table>
-            
-        </Tab>
-        <Tab id="12" title="Advanced" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true"
-             borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0"
-             useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="2"
-             horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="AdvancedTab"/>
-    </TabPanel>
-    <FIBVariable id="13" type="org.openflexo.http.connector.HttpModelSlot" name="data"/>
-    <LocalizedDictionary id="14"/>
+
+		</Tab>
+		<Tab id="12" title="Advanced" align="left" borderTop="0"
+			borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true"
+			borderBottom="0" border="empty" sizeAdjustment="OriginalSize"
+			titleFont="SansSerif,0,11" layout="twocols" borderRight="0"
+			useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED"
+			index="2" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED"
+			font="SansSerif,0,11" name="AdvancedTab" />
+	</TabPanel>
+	<FIBVariable id="13"
+		type="org.openflexo.http.connector.HttpModelSlot" name="data" />
+	<LocalizedDictionary id="14" />
 </Inspector>

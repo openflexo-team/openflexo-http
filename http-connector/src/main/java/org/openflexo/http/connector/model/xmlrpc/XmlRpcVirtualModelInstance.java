@@ -64,9 +64,9 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 
 	String ACCESS_POINT = "accessPoint";
 
-	public HttpFlexoConceptInstance getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept);
+	public HttpFlexoConceptInstance<MapSupport> getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept);
 
-	public List<HttpFlexoConceptInstance> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept);
+	public List<HttpFlexoConceptInstance<MapSupport>> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept);
 
 	abstract class XmlRpcVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<MapSupport> implements XmlRpcVirtualModelInstance {
 
@@ -74,7 +74,7 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 
 		private XmlRpcVirtualModelInstanceModelFactory modelFactory;
 
-		private final Map<String, HttpFlexoConceptInstance<MapSupport>> instances = new HashMap<>();
+		private final Map<Object, HttpFlexoConceptInstance<MapSupport>> instances = new HashMap<>();
 
 		@Override
 		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager,
@@ -106,17 +106,20 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 
 		@Override
 		public HttpFlexoConceptInstance<MapSupport> getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept) {
-			/*return instances.computeIfAbsent(path, (newPath) -> {
-				ContentSupport support = getSupportFactory().newSupport(this, path, null, pointer);
-				return getAccessPointFactory().newFlexoConceptInstance(this, support, concept);
-			});*/
-			System.out.println("Je dois retourner le FCI " + concept + " pour " + map);
+			Object id = map.get(getAccessPoint().getModelSlot().getIdPropertyName());
+
+			return instances.computeIfAbsent(id, (newId) -> {
+				MapSupport support = getSupportFactory().newSupport(this, map);
+				return getFactory().newFlexoConceptInstance(this, support, concept);
+			});
+
+			/*System.out.println("Je dois retourner le FCI " + concept + " pour " + map);
 			MapSupport support = getSupportFactory().newSupport(this, map);
-			return getFactory().newFlexoConceptInstance(this, support, concept);
+			return getFactory().newFlexoConceptInstance(this, support, concept);*/
 		}
 
 		@Override
-		public List<HttpFlexoConceptInstance> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept) {
+		public List<HttpFlexoConceptInstance<MapSupport>> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept) {
 			AccessPoint accessPoint = getAccessPoint();
 			/*HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
 			accessPoint.contributeHeaders(httpGet);

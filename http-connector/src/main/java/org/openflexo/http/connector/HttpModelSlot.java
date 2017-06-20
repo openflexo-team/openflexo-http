@@ -91,6 +91,9 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	@PropertyIdentifier(type = Format.class)
 	String FORMAT_KEY = "format";
 
+	@PropertyIdentifier(type = String.class)
+	String ID_PROPERTY_NAME_KEY = "idPropertyName";
+
 	@PropertyIdentifier(type = DataBinding.class)
 	String URL_KEY = "url";
 
@@ -129,6 +132,13 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 	@Setter(FORMAT_KEY)
 	void setFormat(Format format);
+
+	@Getter(value = ID_PROPERTY_NAME_KEY, defaultValue = "id")
+	@XMLAttribute
+	String getIdPropertyName();
+
+	@Setter(ID_PROPERTY_NAME_KEY)
+	void setIdPropertyName(String propertyName);
 
 	@Getter(URL_KEY)
 	@XMLAttribute
