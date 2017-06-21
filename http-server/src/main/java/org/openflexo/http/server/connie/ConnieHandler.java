@@ -39,6 +39,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.json.DecodeException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
@@ -56,8 +58,21 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private final FlexoServiceManager serviceManager;
 
+	private final Map<BindingId, DataBinding> compiledBindings = new WeakHashMap<>();
+
 	public ConnieHandler(FlexoServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
+	}
+
+	private DataBinding getBinding(String expression, String modelUrl) {
+		System.out.println("[ --- ConnieHandler --- ] Compiled bindings " + compiledBindings.size());
+		BindingId id = new BindingId(expression, modelUrl);
+		return compiledBindings.computeIfAbsent(id, (bId) -> {
+			Bindable model = findObject(modelUrl, Bindable.class);
+			DataBinding binding = new DataBinding(expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
+			binding.decode();
+			return binding;
+		});
 	}
 
 	/**
@@ -100,24 +115,28 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		ws.frameHandler(frame -> {
 			try {
 				EvaluationRequest request = EvaluationRequest.read(frame.textData());
-
 				EvaluationResponse response = new EvaluationResponse(request.id);
-				Bindable model = findObject(request.model, Bindable.class);
-				BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
-				if (context != null && model != null) {
-					DataBinding binding = new DataBinding(request.binding, model, Object.class, DataBinding.BindingDefinitionType.GET);
-					binding.decode();
-					if (binding.isValid()) {
-						Object value = binding.getBindingValue(context);
-						// TODO serialize to JSON with JsonSerializer
-						response.result = value != null ? value.toString() : "null";
+				DataBinding binding = getBinding(request.binding, request.model);
+				if (binding.isValid()) {
+					BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
+					if (context != null) {
+						try {
+							Object value = binding.getBindingValue(context);
+							// TODO serialize to JSON with JsonSerializer
+							response.result = value != null ? value.toString() : "null";
+						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+							String message = "Can't evaluate binding" + request.binding + ": " + e;
+							System.out.println(message);
+							ws.write(EvaluationResponse.error(request.id, message).toBuffer());
+						}
 					} else {
-						response.error = "Invalid binding: " + binding.invalidBindingReason() + "'";
+						String message = "Runtime url '"+ request.runtime +"' is invalid";
+						System.out.println(message);
+						ws.write(EvaluationResponse.error(request.id, message).toBuffer());
 					}
-				} else if (context == null) {
-					response.error = "Can't find context '" + request.runtime + "'";
-				} else if (model == null) {
-					response.error = "Can't find model '" + request.model + "'";
+
+				} else {
+					response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
 				}
 				ws.write(response.toBuffer());
 
@@ -125,11 +144,6 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				String message = "Can't decode request " + frame.textData() + ": " + e;
 				System.out.println(message);
 				ws.write(EvaluationResponse.error(message).toBuffer());
-			} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-				EvaluationRequest request = EvaluationRequest.read(frame.textData());
-				String message = "Can't evaluate binding" + request.binding + ": " + e;
-				System.out.println(message);
-				ws.write(EvaluationResponse.error(request.id, message).toBuffer());
 			}
 		});
 		ws.exceptionHandler(exception -> System.out.println("Exception: " + exception));
