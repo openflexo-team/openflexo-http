@@ -108,7 +108,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			// In this case, we are about to handle a reference to another object
 			Object[] oList = (Object[]) map.get(name);
 			if (oList != null && oList.length > 0) {
-				System.out.println("retrieve object with id " + oList[0]);
+				// System.out.println("retrieve object with id " + oList[0]);
 				return (T) oList[0];
 			}
 		}

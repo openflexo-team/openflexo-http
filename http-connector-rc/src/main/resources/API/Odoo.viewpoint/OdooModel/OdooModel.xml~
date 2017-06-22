@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <VirtualModel id="0" modelVersion="1.0" version="0.1" name="OdooModel" userID="FLX" flexoID="2">
-  <FlexoConcept id="1" name="Version" isAbstract="true" userID="FLX" flexoID="16">
+  <FlexoConcept id="1" parentFlexoConceptsList="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#OdooObject" name="Version" isAbstract="true" userID="FLX" flexoID="16">
     <AbstractProperty id="2" type="java.lang.Integer" name="protocol_version" userID="FLX" flexoID="34" />
     <AbstractProperty id="3" type="java.lang.String" name="server_serie" userID="FLX" flexoID="35" />
     <AbstractProperty id="4" type="java.lang.String" name="server_version" userID="FLX" flexoID="36" />
@@ -14,7 +14,7 @@
       <GenericInspectorEntry id="11" widget="TEXT_FIELD" data="server_version_info" name="server_version_info" label="server_version_info" type="java.lang.String" userID="FLX" flexoID="41" />
     </Inspector>
   </FlexoConcept>
-  <FlexoConcept id="12" name="ResPartner" isAbstract="true" userID="FLX" flexoID="151">
+  <FlexoConcept id="12" parentFlexoConceptsList="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#OdooObject" name="ResPartner" isAbstract="true" userID="FLX" flexoID="151">
     <AbstractProperty id="13" type="java.lang.String" name="name" userID="FLX" flexoID="154" />
     <AbstractProperty id="14" type="java.lang.String" name="siren" userID="FLX" flexoID="155" />
     <AbstractProperty id="15" type="java.lang.String" name="comment" userID="FLX" flexoID="156" />
@@ -42,13 +42,13 @@
       <GenericInspectorEntry id="35" widget="TEXT_FIELD" data="comment" name="comment" label="comment" type="java.lang.String" userID="FLX" flexoID="159" />
     </Inspector>
   </FlexoConcept>
-  <FlexoConcept id="36" name="OdooObject" userID="FLX" flexoID="161">
-    <PrimitiveRole id="37" primitiveType="Integer" cloningStrategy="Clone" cardinality="ZeroOne" name="id" userID="FLX" description="The unique and unmutable id of object" flexoID="166" />
+  <FlexoConcept id="36" name="OdooObject" isAbstract="true" userID="FLX" flexoID="161">
+    <AbstractProperty id="37" type="java.lang.Integer" name="id" userID="FLX" description="The unique and unmutable id of object" flexoID="404" />
     <Inspector id="38" inspectorTitle="OdooObject" userID="FLX" flexoID="160">
       <GenericInspectorEntry id="39" widget="INTEGER" data="id" name="id" label="id" type="java.lang.Integer" userID="FLX" description="The unique and unmutable id of object" flexoID="167" />
     </Inspector>
   </FlexoConcept>
-  <FlexoConcept id="40" name="ResCompany" isAbstract="true" userID="FLX" flexoID="273">
+  <FlexoConcept id="40" parentFlexoConceptsList="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#OdooObject" name="ResCompany" isAbstract="true" userID="FLX" flexoID="273">
     <AbstractProperty id="41" type="java.lang.String" name="name" userID="FLX" flexoID="288" />
     <AbstractProperty id="42" type="java.lang.String" name="street" userID="FLX" flexoID="289" />
     <AbstractProperty id="43" type="java.lang.String" name="street2" userID="FLX" flexoID="290" />
@@ -131,7 +131,7 @@
                     <ControlGraph2_Sequence id="101" ownerContext="controlGraph2" userID="FLX" flexoID="243">
                       <ControlGraph2_Sequence id="102" ownerContext="controlGraph2" userID="FLX" flexoID="218">
                         <ControlGraph2_Sequence id="103" ownerContext="controlGraph2" userID="FLX" flexoID="216">
-                          <ControlGraph2_PerformXmlRpcRequest id="104" methodName="execute_kw" endPointName="xmlrpc/2/object" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#ResPartner&gt;" receiver="accessPoint" ownerContext="controlGraph2" userID="FLX" description="" flexoID="212">
+                          <ControlGraph2_PerformXmlRpcRequest id="104" methodName="execute_kw" endPointName="xmlrpc/2/object" dynamicMappedFlexoConcept="flexoConcept" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#OdooObject&gt;" mappedFlexoConceptURI="http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#OdooObject" receiver="accessPoint" ownerContext="controlGraph2" userID="FLX" description="" flexoID="212">
                             <XmlRpcParameter id="105" name="db" value="&quot;dynalec_openflexo&quot;" userID="FLX" flexoID="-1" />
                             <XmlRpcParameter id="106" name="username" value="uid" userID="FLX" flexoID="-1" />
                             <XmlRpcParameter id="107" name="password" value="accessPoint.password" userID="FLX" flexoID="-1" />

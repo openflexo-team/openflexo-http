@@ -45,19 +45,24 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
+import org.openflexo.connie.type.ParameterizedTypeImpl;
 import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.fml.FMLTechnologyAdapter;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.editionaction.TechnologySpecificAction;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.model.annotations.Adder;
@@ -96,6 +101,15 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 	public static final String METHOD_NAME_KEY = "methodName";
 	@PropertyIdentifier(type = Type.class)
 	public static final String TYPE_KEY = "type";
+	@PropertyIdentifier(type = String.class)
+	public static final String MAPPED_FLEXO_CONCEPT_URI_KEY = "mappedFlexoConceptURI";
+	@PropertyIdentifier(type = FlexoConcept.class)
+	public static final String MAPPED_FLEXO_CONCEPT_KEY = "mappedFlexoConcept";
+	@PropertyIdentifier(type = DataBinding.class)
+	public static final String DYNAMIC_MAPPED_FLEXO_CONCEPT_KEY = "dynamicMappedFlexoConcept";
+	@PropertyIdentifier(type = Boolean.class)
+	public static final String MULTIPLE_KEY = "multiple";
+
 	@PropertyIdentifier(type = XmlRpcParameter.class, cardinality = Cardinality.LIST)
 	public static final String PARAMETERS_KEY = "parameters";
 
@@ -119,6 +133,33 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 
 	@Setter(TYPE_KEY)
 	public void setType(Type type);
+
+	@Getter(MAPPED_FLEXO_CONCEPT_URI_KEY)
+	@XMLAttribute
+	String getMappedFlexoConceptURI();
+
+	@Setter(MAPPED_FLEXO_CONCEPT_URI_KEY)
+	void setMappedFlexoConceptURI(String flexoConceptURI);
+
+	@Getter(MAPPED_FLEXO_CONCEPT_KEY)
+	FlexoConcept getMappedFlexoConcept();
+
+	@Setter(MAPPED_FLEXO_CONCEPT_KEY)
+	void setMappedFlexoConcept(FlexoConcept flexoConcept);
+
+	@Getter(DYNAMIC_MAPPED_FLEXO_CONCEPT_KEY)
+	@XMLAttribute
+	DataBinding<FlexoConcept> getDynamicMappedFlexoConcept();
+
+	@Setter(DYNAMIC_MAPPED_FLEXO_CONCEPT_KEY)
+	void setDynamicMappedFlexoConcept(DataBinding<FlexoConcept> flexoConceptBinding);
+
+	@Getter(value = MULTIPLE_KEY, defaultValue = "false")
+	@XMLAttribute
+	boolean isMultiple();
+
+	@Setter(MULTIPLE_KEY)
+	void setMultiple(boolean multiple);
 
 	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = XmlRpcParameter.OWNER_KEY)
 	@Embedded
@@ -158,12 +199,90 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 
 		private static final Logger logger = Logger.getLogger(PerformXmlRpcRequestImpl.class.getPackage().getName());
 
+		private FlexoConcept flexoConcept;
+
 		@Override
 		public Type getAssignableType() {
 			if (getType() != null) {
 				return getType();
 			}
 			return Object.class;
+		}
+
+		@Override
+		public Type getType() {
+			if (getMappedFlexoConcept() != null) {
+				FlexoConceptInstanceType type = FlexoConceptInstanceType.getFlexoConceptInstanceType(getMappedFlexoConcept());
+				return isMultiple() ? new ParameterizedTypeImpl(List.class, type) : type;
+			}
+			else {
+				return (Type) performSuperGetter(PerformXmlRpcRequest.TYPE_KEY);
+			}
+		}
+
+		@Override
+		public FlexoConcept getMappedFlexoConcept() {
+			String flexoConceptURI = getMappedFlexoConceptURI();
+			if (flexoConcept == null && flexoConceptURI != null && !isDeserializing() && getServiceManager() != null) {
+				try {
+					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
+					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
+					this.flexoConcept = technologyAdapter.getViewPointLibrary().getFlexoConcept(flexoConceptURI, false);
+				} catch (Exception e) {
+					logger.log(Level.SEVERE, "Can't find virtual model '" + flexoConceptURI + "'", e);
+				}
+			}
+			return flexoConcept;
+		}
+
+		@Override
+		public void setMappedFlexoConcept(FlexoConcept flexoConcept) {
+			FlexoConcept oldVirtualModel = this.flexoConcept;
+			if (oldVirtualModel != flexoConcept) {
+				this.flexoConcept = flexoConcept;
+				setMappedFlexoConceptURI(flexoConcept != null ? flexoConcept.getURI() : null);
+				getPropertyChangeSupport().firePropertyChange(MAPPED_FLEXO_CONCEPT_KEY, oldVirtualModel, flexoConcept);
+				getPropertyChangeSupport().firePropertyChange(PerformXmlRpcRequest.TYPE_KEY, null, getType());
+			}
+		}
+
+		private DataBinding<FlexoConcept> flexoConceptBinding;
+
+		@Override
+		public DataBinding<FlexoConcept> getDynamicMappedFlexoConcept() {
+			if (flexoConceptBinding == null) {
+				flexoConceptBinding = new DataBinding<>(this, FlexoConcept.class, DataBinding.BindingDefinitionType.GET);
+				flexoConceptBinding.setBindingName("dynamicMappedFlexoConcept");
+			}
+			flexoConceptBinding.setOwner(this);
+			return flexoConceptBinding;
+		}
+
+		@Override
+		public void setDynamicMappedFlexoConcept(DataBinding<FlexoConcept> flexoConceptBinding) {
+			if (flexoConceptBinding != null) {
+				this.flexoConceptBinding = new DataBinding<>(flexoConceptBinding.toString(), this, FlexoConcept.class,
+						DataBinding.BindingDefinitionType.GET);
+				this.flexoConceptBinding.setBindingName("dynamicMappedFlexoConcept");
+			}
+		}
+
+		private FlexoConcept getMappedFlexoConcept(RunTimeEvaluationContext evaluationContext) {
+			if (getDynamicMappedFlexoConcept().isValid()) {
+				try {
+					return getDynamicMappedFlexoConcept().getBindingValue(evaluationContext);
+				} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			if (getMappedFlexoConcept() != null) {
+				return getMappedFlexoConcept();
+			}
+			if (getType() instanceof FlexoConceptInstanceType) {
+				return ((FlexoConceptInstanceType) getType()).getFlexoConcept();
+			}
+			return null;
 		}
 
 		@Override
@@ -233,23 +352,31 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 				System.out.println("accessPoint=" + accessPoint);
 				System.out.println("accessPoint.getInstance()=" + accessPoint.getInstance());
 
-				if (result instanceof Map && getType() instanceof FlexoConceptInstanceType) {
-					return (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance((Map<?, ?>) result,
-							((FlexoConceptInstanceType) getType()).getFlexoConcept());
-				}
+				System.out.println("mapped concept : " + getMappedFlexoConcept(evaluationContext));
 
-				else if (result.getClass().isArray() && getType() instanceof FlexoConceptInstanceType) {
-					System.out.println("Tiens c'est bien un array de " + result.getClass().getComponentType());
-					Object[] objects = (Object[]) result;
-					for (int j = 0; j < objects.length; j++) {
-						System.out.println("objects[" + j + "]=" + objects[j]);
-						if (objects[j] instanceof Map) {
-							T mappedObject = (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance(
-									(Map<?, ?>) objects[j], ((FlexoConceptInstanceType) getType()).getFlexoConcept());
-							System.out.println("mappedObject=" + mappedObject);
-						}
+				if (getMappedFlexoConcept(evaluationContext) != null) {
+
+					if (result instanceof Map) {
+						return (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance((Map<?, ?>) result,
+								getMappedFlexoConcept(evaluationContext));
 					}
-					return null;
+
+					else if (result.getClass().isArray()) {
+						System.out.println("Tiens c'est bien un array de " + result.getClass().getComponentType());
+						Object[] objects = (Object[]) result;
+						for (int j = 0; j < objects.length; j++) {
+							System.out.println("objects[" + j + "]=" + objects[j]);
+							if (objects[j] instanceof Map) {
+								T mappedObject = (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance())
+										.getFlexoConceptInstance((Map<?, ?>) objects[j], getMappedFlexoConcept(evaluationContext));
+								System.out.println("mappedObject=" + mappedObject);
+							}
+						}
+						return null;
+					}
+					else {
+						return null;
+					}
 				}
 
 				else {
