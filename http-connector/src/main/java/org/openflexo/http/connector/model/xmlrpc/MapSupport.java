@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;
@@ -91,10 +92,47 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 	@Override
 	public <T> T getValue(String name, Type type) {
 		// System.out.println("getValue() name=" + name + " type=" + type);
-		if (type.equals(String.class)) {
-			return (T) map.get(name).toString();
+
+		if (map.get(name) == null) {
+			return null;
 		}
-		return (T) map.get(name);
+
+		if (map.get(name) instanceof Boolean) {
+			if ((type != Boolean.class) && (type != Boolean.TYPE)) {
+				return null;
+			}
+		}
+
+		if (map.get(name).getClass().isArray()) {
+			// Hack for Odoo, is this generalizable ???
+			// In this case, we are about to handle a reference to another object
+			Object[] oList = (Object[]) map.get(name);
+			if (oList != null && oList.length > 0) {
+				System.out.println("retrieve object with id " + oList[0]);
+				return (T) oList[0];
+			}
+		}
+		/*if (type instanceof FlexoConceptInstanceType && map.get(name).getClass().isArray()) {
+			// In this case, we are about to handle a reference to another object
+			Object[] oList = (Object[]) map.get(name);
+			if (oList != null && oList.length > 1) {
+				System.out.println("retrieve object with id " + oList[0] + "(" + oList[1] + ")");
+			}
+		}*/
+
+		/*if (name.equals("company_id")) {
+			System.out.println("Tiens mon company_id c'est " + map.get(name) + " of " + map.get(name).getClass());
+			if (map.get(name).getClass().isArray()) {
+				Object[] oList = (Object[]) map.get(name);
+				for (Object o : oList) {
+					System.out.println("> " + o);
+				}
+			}
+			return (T) new Integer(42);
+		}*/
+
+		return (T) TypeUtils.castTo(map.get(name), type);
+
 	}
 
 	@Override
@@ -263,7 +301,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 		// System.out.println("returned=" + returned);*/
 
 		Map map2 = new HashMap();
-		map2.put("attributes", Arrays.asList("string", "help", "type"));
+		map2.put("attributes", Arrays.asList("string", "help", "type", "company_id"));
 		Object returned = object.call("execute_kw", db, uid, passwd, "res.partner", "fields_get", Collections.emptyList(), map2);
 
 		System.out.println("returned=" + returned);
@@ -285,15 +323,23 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			));*/
 
 		Map map3 = new HashMap();
-		map3.put("fields", Arrays.asList("name", "country_id", "comment", "siren"));
+		map3.put("fields", Arrays.asList("name", "country_id", "comment", "siren", "company_id"));
 		map3.put("limit", 30);
 		// map3.put("offset", 20);
-		System.out.println("Calling execute_kw (search with pagination)");
+		System.out.println("Calling execute_kw to retrieve some res.partners");
 		Object[] searchAndRead = (Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search_read", Collections.emptyList()
 		/*Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))*/, map3);
 		System.out.println(searchAndRead);
 		for (int i = 0; i < searchAndRead.length; i++) {
 			System.out.println("searchAndRead[" + i + "]=" + searchAndRead[i]);
+		}
+
+		System.out.println("Now search company with id=1");
+		Object[] foundObject = (Object[]) object.call("execute_kw", db, uid, passwd, "res.company", "search_read",
+				Arrays.asList(Arrays.asList(Arrays.asList("id", "=", 1))), map3);
+		System.out.println(foundObject);
+		for (int i = 0; i < foundObject.length; i++) {
+			System.out.println("foundObject[" + i + "]=" + foundObject[i]);
 		}
 
 	}

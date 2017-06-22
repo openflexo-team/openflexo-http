@@ -61,6 +61,8 @@ import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.model.annotations.Adder;
+import org.openflexo.model.annotations.CloningStrategy;
+import org.openflexo.model.annotations.CloningStrategy.StrategyType;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.Getter.Cardinality;
@@ -120,6 +122,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 
 	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = XmlRpcParameter.OWNER_KEY)
 	@Embedded
+	@CloningStrategy(StrategyType.CLONE)
 	@XMLElement
 	List<XmlRpcParameter> getParameters();
 
