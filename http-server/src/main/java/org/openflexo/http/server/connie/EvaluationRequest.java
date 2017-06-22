@@ -35,12 +35,10 @@
 
 package org.openflexo.http.server.connie;
 
-import io.vertx.core.json.Json;
-
 /**
  * Simple class representing an evaluation request from a client through a WebSocket
  */
-public final class EvaluationRequest {
+public final class EvaluationRequest extends ConnieMessage {
 
 	public int id;
 
@@ -50,22 +48,9 @@ public final class EvaluationRequest {
 
 	public String binding;
 
-	public EvaluationRequest() {
-	}
-
-	public EvaluationRequest(int id, String runtime, String model, String binding) {
-		this.id = id;
-		this.runtime = runtime;
-		this.model = model;
-		this.binding = binding;
-	}
-
 	@Override
 	public String toString() {
 		return "Evaluate " + binding;
 	}
 
-	public static EvaluationRequest read(String source) {
-		return Json.decodeValue(source, EvaluationRequest.class);
-	}
 }

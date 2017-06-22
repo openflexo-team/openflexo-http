@@ -35,13 +35,10 @@
 
 package org.openflexo.http.server.connie;
 
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.json.Json;
-
 /**
  * Response object for an evaluation response
  */
-public final class EvaluationResponse {
+public final class EvaluationResponse extends ConnieMessage {
 
 	public int id;
 
@@ -56,10 +53,6 @@ public final class EvaluationResponse {
 		this.id = id;
 	}
 
-
-	Buffer toBuffer() {
-		return Buffer.buffer(Json.encode(this));
-	}
 
 	@Override
 	public String toString() {

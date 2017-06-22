@@ -185,6 +185,10 @@ function initializeBinding() {
 
     var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
     evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value);
+
+    api.addChangeListener((event) => {
+        evaluateBinding(bindingInput.value);
+    });
 }
 
 let technologyAdapters = api.technologyAdapters();

@@ -36,17 +36,17 @@
 package org.openflexo.http.server.connie;
 
 /**
- * Id class for a {@link org.openflexo.connie.DataBinding}
+ * Id class for a {@link org.openflexo.connie.DataBinding} with a given runtime context
  */
-public class BindingId {
+public class RuntimeBindingId {
 
-	public final String expression;
+	public final BindingId bindingId;
 
-	public final String modelUrl;
+	public final String runtimeUrl;
 
-	public BindingId(String expression, String modelUrl) {
-		this.expression = expression;
-		this.modelUrl = modelUrl;
+	public RuntimeBindingId(BindingId bindingId, String runtimeUrl) {
+		this.bindingId = bindingId;
+		this.runtimeUrl = runtimeUrl;
 	}
 
 	@Override
@@ -56,22 +56,17 @@ public class BindingId {
 		if (o == null || getClass() != o.getClass())
 			return false;
 
-		BindingId bindingId = (BindingId) o;
+		RuntimeBindingId that = (RuntimeBindingId) o;
 
-		if (!expression.equals(bindingId.expression))
+		if (!bindingId.equals(that.bindingId))
 			return false;
-		return modelUrl.equals(bindingId.modelUrl);
+		return runtimeUrl.equals(that.runtimeUrl);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = expression.hashCode();
-		result = 31 * result + modelUrl.hashCode();
+		int result = bindingId.hashCode();
+		result = 31 * result + runtimeUrl.hashCode();
 		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Binding: " + expression + " on " + modelUrl;
 	}
 }

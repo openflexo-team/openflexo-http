@@ -36,42 +36,29 @@
 package org.openflexo.http.server.connie;
 
 /**
- * Id class for a {@link org.openflexo.connie.DataBinding}
+ * Event send when a binding changes
  */
-public class BindingId {
+public class ChangeEvent extends ConnieMessage {
 
-	public final String expression;
+	public String runtime;
 
-	public final String modelUrl;
+	public String model;
 
-	public BindingId(String expression, String modelUrl) {
-		this.expression = expression;
-		this.modelUrl = modelUrl;
-	}
+	public String binding;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		BindingId bindingId = (BindingId) o;
-
-		if (!expression.equals(bindingId.expression))
-			return false;
-		return modelUrl.equals(bindingId.modelUrl);
-	}
-
-	@Override
-	public int hashCode() {
-		int result = expression.hashCode();
-		result = 31 * result + modelUrl.hashCode();
-		return result;
-	}
+	public String value;
 
 	@Override
 	public String toString() {
-		return "Binding: " + expression + " on " + modelUrl;
+		return "Changed " + binding;
 	}
+
+	public static ChangeEvent create(RuntimeBindingId id, String value) {
+		ChangeEvent result = new ChangeEvent();
+		result.runtime = id.runtimeUrl;
+		result.model = id.bindingId.modelUrl;
+		result.binding = id.bindingId.expression;
+		return result;
+	}
+
 }
