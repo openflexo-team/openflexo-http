@@ -7,6 +7,7 @@ Request=Request
 XmlRpcRequestBehaviour$XmlRpcRequestBehaviourImpl_$$_jvst8d5_a1=XmlRpcRequestBehaviour$XmlRpcRequestBehaviourImpl $$ jvst8d5 a1
 base_url=Base URL
 define_popup_size=Define popup size
+id_property=Id property
 object_type=Object type
 password=Password
 skip_confirmation_panel_when_possible=Skip confirmation panel when possible
