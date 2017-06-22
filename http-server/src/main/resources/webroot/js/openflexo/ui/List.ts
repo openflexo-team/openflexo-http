@@ -2,8 +2,6 @@ import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./u
 
 import { Component } from "./component";
 
-import { TechnologyAdapter } from "../api";
-
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
 
 export class List implements Component {

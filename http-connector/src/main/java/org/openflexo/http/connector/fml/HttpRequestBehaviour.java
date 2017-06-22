@@ -87,12 +87,12 @@ import org.openflexo.model.annotations.ModelEntity;
  * @param <S>
  */
 @ModelEntity(isAbstract = true)
-public interface HttpRequestBehaviour<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport>
+public interface HttpRequestBehaviour<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport<?>>
 		extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
 
 	Object execute(VMI modelInstance, BindingEvaluationContext context) throws Exception;
 
-	abstract class HttpRequestBehaviourImpl<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport>
+	abstract class HttpRequestBehaviourImpl<VMI extends HttpVirtualModelInstance<S>, S extends ContentSupport<?>>
 			extends AbstractActionSchemeImpl implements HttpRequestBehaviour<VMI, S> {
 
 		@Override

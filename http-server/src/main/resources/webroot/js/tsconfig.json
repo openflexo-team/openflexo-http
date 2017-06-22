@@ -3,7 +3,7 @@
         "module": "amd",
         "noImplicitAny": false,
         "inlineSourceMap": true,
-        "lib": ["dom", "es2015.promise", "es5"],
+        "lib": ["dom", "es2015.promise", "es5", "es2015.collection"],
         "alwaysStrict": true,
         "strictNullChecks": true
     }
