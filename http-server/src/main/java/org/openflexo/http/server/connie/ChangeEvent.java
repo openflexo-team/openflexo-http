@@ -58,6 +58,7 @@ public class ChangeEvent extends ConnieMessage {
 		result.runtime = id.runtimeUrl;
 		result.model = id.bindingId.modelUrl;
 		result.binding = id.bindingId.expression;
+		result.value = value;
 		return result;
 	}
 

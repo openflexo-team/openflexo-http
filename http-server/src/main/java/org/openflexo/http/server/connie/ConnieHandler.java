@@ -178,7 +178,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 								@Override
 								public void bindingValueChanged(Object source, Object newValue) {
 									System.out.println("Binding changed " + runtimeBindingId + ", source " + source + ", newValue " + newValue);
-									sendChangeEvent(runtimeBindingId, newValue);
+									String value = newValue != null ? newValue.toString() : "null";;
+									sendChangeEvent(runtimeBindingId, value);
 								}
 							};
 							listener.startObserving();
@@ -219,8 +220,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			unregister(this);
 		}
 
-		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, Object newValue) {
-			socket.write(ChangeEvent.create(runtimeBindingId, "newValue").toBuffer());
+		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, String newValue) {
+			socket.write(ChangeEvent.create(runtimeBindingId, newValue).toBuffer());
 		}
 	}
 }
