@@ -174,7 +174,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 						RuntimeBindingId runtimeBindingId = new RuntimeBindingId(id, request.runtime);
 						BindingValueChangeListener listener = listenedBindings.get(runtimeBindingId);
 						if (listener == null) {
-							listener = new BindingValueChangeListener(binding, context) {
+							listener = new BindingValueChangeListener<Object>(binding, context) {
 								@Override
 								public void bindingValueChanged(Object source, Object newValue) {
 									System.out.println("Binding changed " + runtimeBindingId + ", source " + source + ", newValue " + newValue);
