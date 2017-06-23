@@ -67,6 +67,7 @@ public abstract class HttpVirtualModelInstanceModelFactory extends AbstractVirtu
 		System.out.println("support=" + support);
 		HttpFlexoConceptInstance<S> returned = newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
 		System.out.println("Nouvelle instance: " + returned);
+		owner.addToFlexoConceptInstances(returned);
 		return returned;
 	}
 
