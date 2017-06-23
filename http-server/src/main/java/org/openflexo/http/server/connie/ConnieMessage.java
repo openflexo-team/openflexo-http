@@ -35,43 +35,34 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.json.Json;
+
 /**
- * Id class for a {@link org.openflexo.connie.DataBinding}
+ * Base class for exchanged messages with the WebSocket
  */
-public class BindingId {
+@JsonTypeInfo(
+	use = JsonTypeInfo.Id.NAME,
+	include = JsonTypeInfo.As.PROPERTY,
+	property = "type"
+)
+@JsonSubTypes({
+	@Type(value = EvaluationRequest.class, name = "EvaluationRequest"),
+	@Type(value = EvaluationResponse.class, name = "EvaluationResponse"),
+	@Type(value = ChangeEvent.class, name = "ChangeEvent"),
+})
+public class ConnieMessage {
 
-	public final String expression;
+	public String type = getClass().getSimpleName();
 
-	public final String modelUrl;
-
-	public BindingId(String expression, String modelUrl) {
-		this.expression = expression;
-		this.modelUrl = modelUrl;
+	Buffer toBuffer() {
+		return Buffer.buffer(Json.encode(this));
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		BindingId bindingId = (BindingId) o;
-
-		if (!expression.equals(bindingId.expression))
-			return false;
-		return modelUrl.equals(bindingId.modelUrl);
-	}
-
-	@Override
-	public int hashCode() {
-		int result = expression.hashCode();
-		result = 31 * result + modelUrl.hashCode();
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Binding: " + expression + " on " + modelUrl;
+	public static ConnieMessage read(String source) {
+		return Json.decodeValue(source, ConnieMessage.class);
 	}
 }

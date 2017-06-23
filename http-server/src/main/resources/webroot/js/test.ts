@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api } from "./openflexo/api/Api";
+import { Api, ChangeEvent } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";
@@ -185,6 +185,25 @@ function initializeBinding() {
 
     var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
     evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value);
+
+    api.addChangeListener((event:ChangeEvent) => {
+        var urlInput = <HTMLInputElement>document.getElementById("url");
+        let context = urlInput.value;
+        let binding = bindingInput.value;
+
+        if (context === event.model && context === event.runtime && binding === event.binding) {
+            console.log("Update value from event:");
+            console.log(event);
+
+            var evaluation = <HTMLDivElement>document.getElementById("evaluation");
+            clearElement(evaluation);
+            var div = document.createElement("div");
+            div.className = "details";  
+            div.innerText = JSON.stringify(event.value);
+            evaluation.appendChild(div);   
+            //evaluateBinding(bindingInput.value);
+        }
+    });
 }
 
 let technologyAdapters = api.technologyAdapters();

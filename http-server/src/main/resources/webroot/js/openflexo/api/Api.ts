@@ -2,34 +2,61 @@ import { Description } from "./general"
 import { TechnologyAdapter, Resource, ResourceCenter } from "./resource"
 
 /**
+ * TODO
+ */
+export class Message {
+    constructor(
+        public type: string
+    ) { }
+}
+
+/**
  * Class used to send evaluation request.
  */
-class EvaluationRequest {
+export class EvaluationRequest extends Message {
 
     constructor(
         public id: number,
         public binding: string,
         public runtime: string,
         public model: string
-    ) { }
+    ) {
+        super("EvaluationRequest");
+     }
 }
 
 /**
  * Class used for received evaluation response
  */
-class EvaluationResponse {
+export class EvaluationResponse extends Message {
 
     constructor(
         public id: number,
         public result: string,
         public error: string
-    ) { }
+    ) { 
+        super("EvaluationResponse");
+    }
+}
+
+/**
+ * Class used when a binding is changed
+ */
+export class ChangeEvent extends Message {
+    constructor(
+        public binding: string,
+        public runtime: string,
+        public model: string,
+        public value: string
+    ) {
+        super("ChangeEvent");
+     }
 }
 
 /**
  * Currently pending evaluations
  */
-class PendingEvaluation<T> {
+export class PendingEvaluation<T> {
 
     constructor(
         public fullfilled: (T) => void,
@@ -37,6 +64,8 @@ class PendingEvaluation<T> {
         public request: EvaluationRequest
     ) { }
 }
+
+export type ChangeListener = (ChangeEvent)=>void;
 
 /**
  * The Api class proposes methods to access an OpenFlexo server.
@@ -53,6 +82,8 @@ export class Api {
     private pendingEvaluationQueue: Map<number, PendingEvaluation<any>> = new Map();
 
     private evaluationRequestSeed: number = 0;
+
+    private bindingListeners: Set<ChangeListener> = new Set();
 
     constructor(
         private host: string = ""
@@ -99,22 +130,31 @@ export class Api {
         reader.onloadend = (e: ProgressEvent) => {
             if (e.srcElement != null) {
                 // parses the response
-                let response = <EvaluationResponse>JSON.parse(e.srcElement["result"]);
-                if (response.id != null) {
-                    // searches for the evaluation id
-                    let pending = this.pendingEvaluationQueue.get(response.id);
-                    if (pending) {
-                        // found it, now it removes it
-                        this.pendingEvaluationQueue.delete(response.id);
-                    
-                        if (response.error !== null) {
-                            // rejects the promise if there is an error
-                            pending.rejected(response.error);
-                        } else {
-                            // fullfilled the promise when it's ok
-                            pending.fullfilled(response.result);
-                        }
+                let message = <Message>JSON.parse(e.srcElement["result"]);
+                switch (message.type) {
+                    case "EvaluationResponse": {
+                        let response = <EvaluationResponse>message;
+                        // searches for the evaluation id
+                        let pending = this.pendingEvaluationQueue.get(response.id);
+                        if (pending) {
+                            // found it, now it removes it
+                            this.pendingEvaluationQueue.delete(response.id);
+                        
+                            if (response.error !== null) {
+                                // rejects the promise if there is an error
+                                pending.rejected(response.error);
+                            } else {
+                                // fullfilled the promise when it's ok
+                                pending.fullfilled(response.result);
+                            }
 
+                        }
+                        break;
+                    }
+                    case "ChangeEvent": {
+                        let event = <ChangeEvent>message;
+                        console.log("ChangeEvent for " + event.binding);
+                        this.bindingListeners.forEach( listener => listener(event));
                     }
                 }
             }
@@ -204,6 +244,22 @@ export class Api {
         return new Promise((fullfilled, rejected) => {
             this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));
         });
+    }
+
+    /**
+     * Adds a listener for binding changes
+     * @param listener callback
+     */
+    public addChangeListener(listener : ChangeListener) {
+        this.bindingListeners.add(listener);
+    }
+
+    /**
+     * Removes a listener for binding changes
+     * @param listener callback
+     */
+    public removeChangeListener(listener : ChangeListener) {
+        this.bindingListeners.delete(listener);
     }
 
     /**

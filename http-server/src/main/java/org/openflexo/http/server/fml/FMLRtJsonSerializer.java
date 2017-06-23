@@ -102,7 +102,7 @@ public class FMLRtJsonSerializer extends JsonSerializer {
 			describeFlexoConceptInstance((FlexoConceptInstance) object, result, detailed);
 
 		} else if (object instanceof ActorReference) {
-			result.put("value", ((ActorReference) object).getModellingElement());
+			result.put("value", toJson(((ActorReference) object).getModellingElement(), detailed));
 		}
 		super.describeObject(object, result, detailed);
 	}

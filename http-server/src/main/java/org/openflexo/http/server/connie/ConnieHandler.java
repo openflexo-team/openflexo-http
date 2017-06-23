@@ -37,13 +37,18 @@ package org.openflexo.http.server.connie;
 
 import io.vertx.core.Handler;
 import io.vertx.core.http.ServerWebSocket;
+import io.vertx.core.http.WebSocketFrame;
 import io.vertx.core.json.DecodeException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.WeakHashMap;
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
+import org.openflexo.connie.binding.BindingValueChangeListener;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoObject;
@@ -60,16 +65,20 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private final Map<BindingId, DataBinding> compiledBindings = new WeakHashMap<>();
 
+	private final Set<ClientConnection> clients = new HashSet<>();
+
 	public ConnieHandler(FlexoServiceManager serviceManager) {
 		this.serviceManager = serviceManager;
 	}
 
-	private DataBinding getBinding(String expression, String modelUrl) {
-		System.out.println("[ --- ConnieHandler --- ] Compiled bindings " + compiledBindings.size());
-		BindingId id = new BindingId(expression, modelUrl);
+	private DataBinding getBinding(BindingId id) {
+		return compiledBindings.get(id);
+	}
+
+	private DataBinding getOrCreateBinding(final BindingId id) {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
-			Bindable model = findObject(modelUrl, Bindable.class);
-			DataBinding binding = new DataBinding(expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
+			Bindable model = findObject(id.modelUrl, Bindable.class);
+			DataBinding binding = new DataBinding(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
 			binding.decode();
 			return binding;
 		});
@@ -103,50 +112,116 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					return type.cast(object);
 				}
 			}
-
 		}
-
 		return null;
 	}
 
-
 	@Override
-	public void handle(ServerWebSocket ws){
-		ws.frameHandler(frame -> {
-			try {
-				EvaluationRequest request = EvaluationRequest.read(frame.textData());
-				EvaluationResponse response = new EvaluationResponse(request.id);
-				DataBinding binding = getBinding(request.binding, request.model);
-				if (binding.isValid()) {
-					BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
-					if (context != null) {
-						try {
-							Object value = binding.getBindingValue(context);
-							// TODO serialize to JSON with JsonSerializer
-							response.result = value != null ? value.toString() : "null";
-						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-							String message = "Can't evaluate binding" + request.binding + ": " + e;
-							System.out.println(message);
-							ws.write(EvaluationResponse.error(request.id, message).toBuffer());
-						}
-					} else {
-						String message = "Runtime url '"+ request.runtime +"' is invalid";
-						System.out.println(message);
-						ws.write(EvaluationResponse.error(request.id, message).toBuffer());
-					}
+	public void handle(ServerWebSocket socket){
+		register(new ClientConnection(socket));
+	}
 
-				} else {
-					response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+	private void register(ClientConnection client) {
+		clients.add(client);
+	}
+
+	private void unregister(ClientConnection client) {
+		clients.remove(client);
+	}
+
+	private class ClientConnection {
+
+		private final ServerWebSocket socket;
+
+		private final Map<RuntimeBindingId, BindingValueChangeListener> listenedBindings = new HashMap<>();
+
+		public ClientConnection(ServerWebSocket socket) {
+			this.socket = socket;
+
+			socket.frameHandler(this::handleFrame);
+			socket.exceptionHandler(this::exceptionHandler);
+			socket.endHandler(this::endHandler);
+		}
+
+		private void handleFrame(WebSocketFrame frame) {
+			try {
+				ConnieMessage message = ConnieMessage.read(frame.textData());
+				System.out.println("- Received - " + frame.textData());
+				if (message instanceof EvaluationRequest) {
+					EvaluationRequest request = (EvaluationRequest) message;
+					respondToEvaluationRequest(request);
 				}
-				ws.write(response.toBuffer());
 
 			} catch (DecodeException e) {
 				String message = "Can't decode request " + frame.textData() + ": " + e;
 				System.out.println(message);
-				ws.write(EvaluationResponse.error(message).toBuffer());
+				socket.write(EvaluationResponse.error(message).toBuffer());
 			}
-		});
-		ws.exceptionHandler(exception -> System.out.println("Exception: " + exception));
-	}
+		}
 
+		private void respondToEvaluationRequest(EvaluationRequest request) {
+			EvaluationResponse response = new EvaluationResponse(request.id);
+			BindingId id = new BindingId(request.binding, request.model);
+			DataBinding binding = getOrCreateBinding(id);
+			if (binding.isValid()) {
+				BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
+				if (context != null) {
+					try {
+						Object value = binding.getBindingValue(context);
+						// TODO serialize to JSON with JsonSerializer
+						response.result = value != null ? value.toString() : "null";
+
+						RuntimeBindingId runtimeBindingId = new RuntimeBindingId(id, request.runtime);
+						BindingValueChangeListener listener = listenedBindings.get(runtimeBindingId);
+						if (listener == null) {
+							listener = new BindingValueChangeListener(binding, context) {
+								@Override
+								public void bindingValueChanged(Object source, Object newValue) {
+									System.out.println("Binding changed " + runtimeBindingId + ", source " + source + ", newValue " + newValue);
+									String value = newValue != null ? newValue.toString() : "null";;
+									sendChangeEvent(runtimeBindingId, value);
+								}
+							};
+							listener.startObserving();
+						}
+						listenedBindings.put(runtimeBindingId, listener);
+
+					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+						String error = "Can't evaluate binding" + request.binding + ": " + e;
+						System.out.println(error);
+						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+					}
+				}
+				else {
+					String error = "Runtime url '" + request.runtime + "' is invalid";
+					System.out.println(error);
+					socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+				}
+
+			}
+			else {
+				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+			}
+			socket.write(response.toBuffer());
+		}
+
+		private void exceptionHandler(Throwable throwable) {
+			System.err.println("Exception in websocket " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage());
+		}
+
+		private void endHandler(Void nothing) {
+			System.out.println("Ending websocket " + socket);
+
+			for (BindingValueChangeListener listener : listenedBindings.values()) {
+				listener.stopObserving();
+			}
+			listenedBindings.clear();
+
+			unregister(this);
+		}
+
+		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, String newValue) {
+			socket.write(ChangeEvent.create(runtimeBindingId, newValue).toBuffer());
+		}
+	}
 }
