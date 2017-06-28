@@ -43,6 +43,7 @@ import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.controlgraph.FMLControlGraph;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.JsonSerializer;
 import org.openflexo.model.factory.ModelFactory;
@@ -95,8 +96,10 @@ public class FMLJsonSerializer extends JsonSerializer {
 			FlexoBehaviour behavior = (FlexoBehaviour) object;
 			result.put("parameters", toArray(behavior.getParameters(), detailed));
 			result.put("returnType", toJson(behavior.getReturnType(), detailed));
-			result.put("controlGraph", toJson(behavior.getControlGraph(), detailed));
 			result.put("flexoConcept", toReference(behavior.getFlexoConcept()));
+			result.put("controlGraph", toArray(behavior.getControlGraph().getFlattenedSequence(), detailed));
+
+		} else if (object instanceof FMLControlGraph) {
 
 		} else if (object instanceof FlexoBehaviourParameter) {
 			FlexoBehaviourParameter parameter = (FlexoBehaviourParameter) object;

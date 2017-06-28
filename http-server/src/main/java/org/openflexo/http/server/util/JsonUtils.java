@@ -37,6 +37,7 @@ package org.openflexo.http.server.util;
 
 import io.vertx.core.json.JsonObject;
 import java.util.Map;
+import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceRepository;
@@ -123,13 +124,25 @@ public class JsonUtils {
 
 			String prefix = service.getPrefix(resource);
 			if (prefix != null) {
-				// constructs model url assuming that the object id is 1
-				StringBuilder modelUrl = new StringBuilder();
-				modelUrl.append(prefix);
-				modelUrl.append("/");
-				modelUrl.append(IdUtils.encodeuri(resource.getURI()));
-				modelUrl.append("/object/1");
-				resourceDescription.put("modelUrl", modelUrl.toString());
+				if (!resource.isLoaded()) {
+					try {
+						resource.getResourceData(null);
+					} catch (Exception e) {
+						// nothing to do
+					}
+				}
+
+				Object data = resource.getLoadedResourceData();
+				if (data instanceof FlexoObject) {
+					// constructs model url assuming that the object id is 1
+					StringBuilder modelUrl = new StringBuilder();
+					modelUrl.append(prefix);
+					modelUrl.append("/");
+					modelUrl.append(IdUtils.encodeuri(resource.getURI()));
+					modelUrl.append("/object/");
+					modelUrl.append(((FlexoObject) data).getFlexoID());
+					resourceDescription.put("modelUrl", modelUrl.toString());
+				}
 			}
 		}
 		return resourceDescription;

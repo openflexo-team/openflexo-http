@@ -194,30 +194,6 @@ public class JsonSerializer {
 						if (propertyValue == object)
 							continue;
 
-						boolean reference = property.getEmbedded() == null;
-						switch (property.getCardinality()) {
-							case SINGLE: {
-								transformed = toJson(propertyValue, reference, detailed);
-								break;
-							}
-							case LIST: {
-								List<Object> collected = new ArrayList<>();
-								for (Object child : (List) propertyValue) {
-									collected.add(toJson(child, reference, detailed));
-								}
-								if (collected != null) {
-									transformed = new JsonArray(collected);
-								}
-								break;
-							}
-							case MAP: {
-								//TODO
-								break;
-							}
-							default:
-								break;
-						}
-
 						String propertyName = property.getPropertyIdentifier();
 						if (xmlAttribute != null && xmlAttribute.xmlTag().length() > 0) {
 							propertyName = xmlAttribute.xmlTag();
@@ -225,8 +201,36 @@ public class JsonSerializer {
 						if (xmlElement != null && xmlElement.xmlTag().length() > 0) {
 							propertyName = xmlElement.xmlTag();
 						}
-						if (propertyName != null && transformed != null) {
-							result.put(propertyName, transformed);
+
+						if (propertyName != null && !result.containsKey(propertyName)) {
+
+							boolean reference = property.getEmbedded() == null;
+							switch (property.getCardinality()) {
+								case SINGLE: {
+									transformed = toJson(propertyValue, reference, detailed);
+									break;
+								}
+								case LIST: {
+									List<Object> collected = new ArrayList<>();
+									for (Object child : (List) propertyValue) {
+										collected.add(toJson(child, reference, detailed));
+									}
+									if (collected != null) {
+										transformed = new JsonArray(collected);
+									}
+									break;
+								}
+								case MAP: {
+									//TODO
+									break;
+								}
+								default:
+									break;
+							}
+
+							if (transformed != null) {
+								result.put(propertyName, transformed);
+							}
 						}
 					}
 				}

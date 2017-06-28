@@ -83,7 +83,7 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 				"/view",
 				this::getViewResources,
 				this::getViewResource,
-				ViewResource.class, new FMLJsonSerializer(taService, viewFactory)
+				ViewResource.class, new FMLRtJsonSerializer(taService, viewFactory)
 		);
 
 		VirtualModelInstanceModelFactory vmiFactory = new VirtualModelInstanceModelFactory(null, null, technologyAdapterService);
