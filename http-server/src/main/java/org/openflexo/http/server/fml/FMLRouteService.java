@@ -44,7 +44,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/viewpoint",
 			viewPointLibrary::getViewPoints,
 			viewPointLibrary::getViewPointResource,
-			ViewPointResource.class, new FMLJsonSerializer(taService, factory)
+			ViewPointResource.class, taService
 		);
 		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
 
@@ -52,7 +52,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 			"/virtualmodel",
 			() -> Collections.emptyList(),
 			viewPointLibrary::getVirtualModelResource,
-			VirtualModelResource.class, new FMLJsonSerializer(taService, factory)
+			VirtualModelResource.class, taService
 		);
 	}
 

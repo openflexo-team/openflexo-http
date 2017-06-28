@@ -15,8 +15,8 @@ import org.openflexo.foundation.resource.ResourceManager;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.http.server.util.JsonUtils;
 import org.openflexo.rm.Resource;
 
 /**

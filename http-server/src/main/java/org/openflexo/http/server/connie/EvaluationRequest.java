@@ -48,6 +48,8 @@ public final class EvaluationRequest extends ConnieMessage {
 
 	public String binding;
 
+	public boolean detailed;
+
 	@Override
 	public String toString() {
 		return "Evaluate " + binding;

@@ -54,8 +54,9 @@ import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.json.JsonSerializer;
+import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.http.server.util.JsonUtils;
 
 /**
  * Created by charlie on 11/02/2017.
@@ -65,6 +66,8 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 	private static Logger logger = Logger.getLogger(TechnologyAdapterRouteService.class.getPackage().getName());
 
 	private TechnologyAdapterService technologyAdapterService;
+
+	private final JsonSerializer serializer = new JsonSerializer(this);
 
 	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
 	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
@@ -160,5 +163,9 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		else {
 			notFound(context);
 		}
+	}
+
+	public JsonSerializer getSerializer() {
+		return serializer;
 	}
 }

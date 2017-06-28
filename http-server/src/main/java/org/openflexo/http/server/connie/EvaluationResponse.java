@@ -35,6 +35,8 @@
 
 package org.openflexo.http.server.connie;
 
+import java.util.Objects;
+
 /**
  * Response object for an evaluation response
  */
@@ -42,7 +44,7 @@ public final class EvaluationResponse extends ConnieMessage {
 
 	public int id;
 
-	public String result;
+	public Object result;
 
 	public String error;
 
@@ -56,7 +58,7 @@ public final class EvaluationResponse extends ConnieMessage {
 
 	@Override
 	public String toString() {
-		return "Response " + error != null ? "[error]: " + error : result;
+		return "Response " + error != null ? "[error]: " + error : Objects.toString(result);
 	}
 
 

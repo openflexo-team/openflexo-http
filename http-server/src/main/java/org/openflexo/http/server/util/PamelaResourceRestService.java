@@ -48,6 +48,8 @@ import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
 
@@ -75,13 +77,13 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		Supplier<Collection<R>> supplier,
 		Function<String, R> finder,
 		Class<R> resourceClass,
-		JsonSerializer serializer
+		TechnologyAdapterRouteService service
 	) throws ModelDefinitionException {
 		this.prefix = prefix;
 		this.supplier = supplier;
 		this.finder = finder;
 		this.resourceClass = resourceClass;
-		this.serializer = serializer;
+		this.serializer = service.getSerializer();
 	}
 
 	public String getPrefix() {

@@ -108,7 +108,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		server = vertx.createHttpServer(serverOptions);
 		server.requestHandler(router::accept);
-		server.websocketHandler(new ConnieHandler(serviceManager));
+		server.websocketHandler(new ConnieHandler(serviceManager, technologyAdapterRestService));
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
@@ -122,5 +122,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	public void stop() {
 		server.close();
 	}
+
+
 
 }

@@ -19,7 +19,8 @@ export class EvaluationRequest extends Message {
         public id: number,
         public binding: string,
         public runtime: string,
-        public model: string
+        public model: string,
+        public detailed: boolean
     ) {
         super("EvaluationRequest");
      }
@@ -220,7 +221,7 @@ export class Api {
      * @param model url of the model object using to compile the binding.
      * @return a Promise for evaluated binding
      */
-    public evaluate<T>(binding: string, runtime: string, model: string): Promise<T> {
+    public evaluate<T>(binding: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         if (this.connie == null) {
             this.initializeConnieEvaluator();
@@ -228,7 +229,7 @@ export class Api {
         
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
-        let request = new EvaluationRequest(id, binding, runtime, model);
+        let request = new EvaluationRequest(id, binding, runtime, model, detailed);
         
         // act depending on the WebSocket status
         if (this.connie.readyState == 1) {

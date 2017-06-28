@@ -33,7 +33,42 @@
  *
  */
 
-package org.openflexo.http.server.util;
+/*
+ * Copyright (c) 2013-2017, Openflexo
+ *
+ * This file is part of Flexo-foundation, a component of the software infrastructure
+ * developed at Openflexo.
+ *
+ * Openflexo is dual-licensed under the European Union Public License (EUPL, either
+ * version 1.1 of the License, or any later version ), which is available at
+ * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
+ * and the GNU General Public License (GPL, either version 3 of the License, or any
+ * later version), which is available at http://www.gnu.org/licenses/gpl.html .
+ *
+ * You can redistribute it and/or modify under the terms of either of these licenses
+ *
+ * If you choose to redistribute it and/or modify under the terms of the GNU GPL, you
+ * must include the following additional permission.
+ *
+ *           Additional permission under GNU GPL version 3 section 7
+ *           If you modify this Program, or any covered work, by linking or
+ *           combining it with software containing parts covered by the terms
+ *           of EPL 1.0, the licensors of this Program grant you additional permission
+ *           to convey the resulting work.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * See http://www.openflexo.org/license.html for details.
+ *
+ *
+ * Please contact Openflexo (openflexo-contacts@openflexo.org)
+ * or visit www.openflexo.org if you need additional information.
+ *
+ */
+
+package org.openflexo.http.server.json;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -41,15 +76,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import javassist.util.proxy.ProxyObject;
+import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
+import org.openflexo.model.StringEncoder;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.exceptions.InvalidDataException;
@@ -65,53 +104,90 @@ public class JsonSerializer {
 
 	private final TechnologyAdapterRouteService service;
 
-	private final ModelFactory factory;
+	private final List<JsonComplement> complements = new ArrayList<>();
 
-	public JsonSerializer(TechnologyAdapterRouteService service, ModelFactory factory) {
+	private final List<StringEncoder> encoders = new ArrayList<>();
+
+	public JsonSerializer(TechnologyAdapterRouteService service) {
 		this.service = service;
-		this.factory = factory;
+		initialize();
+	}
+
+	private void initialize() {
+		// gets complements
+		ServiceLoader<JsonComplement> foundComplements = ServiceLoader.load(JsonComplement.class);
+		for (JsonComplement complement : foundComplements) {
+			complements.add(complement);
+
+			ModelFactory factory = complement.getFactory();
+			if (factory != null && factory.getStringEncoder() != null) {
+				encoders.add(factory.getStringEncoder());
+			}
+		}
+
+	}
+
+	private StringEncoder findEncoder(Class<?> clazz) {
+		for (StringEncoder encoder : encoders) {
+			if (encoder.isConvertable(clazz)) return encoder;
+		}
+		return null;
 	}
 
 	public Object toJson(Object object, boolean detailed) {
 		return toJson(object, false, detailed);
 	}
 
-	protected Object toReference(Object object) {
+	public Object toReference(Object object) {
 		return toJson(object, true, false);
 	}
 
 	protected Object toJson(Object object, boolean reference, boolean detailed) {
-		if (object == null) return null;
+		if (object == null)
+			return null;
 
 		Class<?> type = object.getClass();
-		if (type.isPrimitive() || type.isAssignableFrom(String.class)) {
+		if (TypeUtils.kindOfType(type).getType() != Object.class) {
 			// no transformation needed
 			return object;
 		}
-		else if (factory.getStringEncoder().isConvertable(type)) {
+		else if (findEncoder(object.getClass()) != null) {
 			try {
-				return factory.getStringEncoder().toString(object);
+				StringEncoder encoder = findEncoder(object.getClass());
+				return encoder.toString(object);
 			} catch (InvalidDataException e) {
 				return null;
 			}
 		}
 		else if (type.isEnum() || type.getSuperclass().isEnum()) {
 			return object.toString();
-
+		}
+		else if (object instanceof Collection) {
+			if (reference) {
+				return toReferenceArray((Collection) object);
+			} else {
+				return toArray((Collection) object, detailed);
+			}
 		} else if (object instanceof FlexoResource) {
 			return JsonUtils.getResourceDescription((FlexoResource) object, service);
 
 		} else {
 			JsonObject result = new JsonObject();
 			boolean identified = identifyObject(object, result);
+			for (JsonComplement complement : complements) {
+				complement.identifyObject(this, object, result);
+			}
 			if (identified && !reference) {
 				describeObject(object, result, detailed);
+				for (JsonComplement complement : complements) {
+					complement.describeObject(this, object, result, detailed);
+				}
 			}
 			return result;
 		}
 	}
 
-	protected <T> JsonObject toMap(Collection<T> list, Function<T, String> keyFunction, boolean detailed) {
+	public <T> JsonObject toMap(Collection<T> list, Function<T, String> keyFunction, boolean detailed) {
 		JsonObject result = new JsonObject();
 		for (T t : list) {
 			result.put(keyFunction.apply(t), toJson(t, detailed));
@@ -119,7 +195,7 @@ public class JsonSerializer {
 		return result;
 	}
 
-	protected <T> JsonObject toReferenceMap(Collection<T> list, Function<T, String> keyFunction) {
+	public <T> JsonObject toReferenceMap(Collection<T> list, Function<T, String> keyFunction) {
 		JsonObject result = new JsonObject();
 		for (T t : list) {
 			result.put(keyFunction.apply(t), toReference(t));
@@ -127,11 +203,11 @@ public class JsonSerializer {
 		return result;
 	}
 
-	protected JsonArray toArray(Collection<?> list, boolean detailed) {
+	public JsonArray toArray(Collection<?> list, boolean detailed) {
 		return new JsonArray(list.stream().map((i) -> toJson(i, detailed)).collect(Collectors.toList()));
 	}
 
-	protected JsonArray toReferenceArray(Collection<?> list) {
+	public JsonArray toReferenceArray(Collection<?> list) {
 		return new JsonArray(list.stream().map((i) -> toJson(i, true, false)).collect(Collectors.toList()));
 	}
 

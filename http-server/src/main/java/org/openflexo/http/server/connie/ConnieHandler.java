@@ -54,6 +54,7 @@ import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 
 /**
@@ -62,13 +63,15 @@ import org.openflexo.http.server.util.IdUtils;
 public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private final FlexoServiceManager serviceManager;
+	private final TechnologyAdapterRouteService taRouteService;
 
 	private final Map<BindingId, DataBinding> compiledBindings = new WeakHashMap<>();
 
 	private final Set<ClientConnection> clients = new HashSet<>();
 
-	public ConnieHandler(FlexoServiceManager serviceManager) {
+	public ConnieHandler(FlexoServiceManager serviceManager, TechnologyAdapterRouteService taRouteService) {
 		this.serviceManager = serviceManager;
+		this.taRouteService = taRouteService;
 	}
 
 	private DataBinding getBinding(BindingId id) {
@@ -146,7 +149,6 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		private void handleFrame(WebSocketFrame frame) {
 			try {
 				ConnieMessage message = ConnieMessage.read(frame.textData());
-				System.out.println("- Received - " + frame.textData());
 				if (message instanceof EvaluationRequest) {
 					EvaluationRequest request = (EvaluationRequest) message;
 					respondToEvaluationRequest(request);
@@ -168,8 +170,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				if (context != null) {
 					try {
 						Object value = binding.getBindingValue(context);
-						// TODO serialize to JSON with JsonSerializer
-						response.result = value != null ? value.toString() : "null";
+						Object result = taRouteService.getSerializer().toJson(value, request.detailed);
+						response.result = /*result != null ? result.toString() : "null";*/ result;
 
 						RuntimeBindingId runtimeBindingId = new RuntimeBindingId(id, request.runtime);
 						BindingValueChangeListener listener = listenedBindings.get(runtimeBindingId);

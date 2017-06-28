@@ -158,17 +158,23 @@ function evaluateBinding(binding: string) {
     console.log("Evaluating '"+ binding +"'");
     var urlInput = <HTMLInputElement>document.getElementById("url");
     var evaluation = <HTMLDivElement>document.getElementById("evaluation");
+    var detailed = <HTMLInputElement>document.getElementById("detailed");
+    
     clearElement(evaluation);
 
     evaluation.appendChild(spinner());
 
-    let result = api.evaluate(binding, urlInput.value, urlInput.value);
+    let result = api.evaluate(binding, urlInput.value, urlInput.value, detailed.value == "true");
     result.then(value => {
         clearElement(evaluation);
+        evaluation.appendChild(createJsonElement(value));
+
+        /*
         var div = document.createElement("div");
         div.className = "details";  
         div.innerText = JSON.stringify(value);
         evaluation.appendChild(div);   
+        */
     }).catch((error) => {
         clearElement(evaluation);     
         var div = document.createElement("div");
