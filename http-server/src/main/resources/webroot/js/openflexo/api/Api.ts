@@ -163,7 +163,6 @@ export class Api {
         reader.readAsText(event.data); 
     }
 
-
     /**
      * Listens to Webocket open
      * @param event 
@@ -242,7 +241,7 @@ export class Api {
 
         // (executor: (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>
         // prepares the promise's callback for the result
-        return new Promise((fullfilled, rejected) => {
+        return new Promise<T>((fullfilled, rejected) => {
             this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));
         });
     }

@@ -48,12 +48,14 @@ export function forEachNode(list: NodeList, callback:(i:number, n: HTMLElement)=
     }
 }
 
-export function toHTMLElement(source: Component|FlowCategory|string): Node {
-    if ((<Component> source).container) {
-       return (<Component> source).container;
+export function toHTMLElement(source: Component|FlowCategory|string|null): Node {
+    if (source == null) {
+        return document.createElement("span");
     } else if (typeof source === "string") {
         return document.createTextNode(source);
+    } else if ((<Component> source).container) {
+       return (<Component> source).container;
     } else {
-        return <HTMLElement> source;
+        return <Node> source;
     }
 }
