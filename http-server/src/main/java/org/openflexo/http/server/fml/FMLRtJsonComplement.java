@@ -167,8 +167,10 @@ public class FMLRtJsonComplement implements JsonComplement {
 			describeFlexoConceptInstance(serializer, (FlexoConceptInstance) object, result, detailed);
 
 		} else if (object instanceof ActorReference) {
-			result.put("instance", serializer.toReference(((ActorReference) object).getFlexoConceptInstance()));
-			result.put("value", serializer.toJson(((ActorReference) object).getModellingElement(), detailed));
+			ActorReference actorReference = (ActorReference) object;
+			result.put("instance", serializer.toReference(actorReference.getFlexoConceptInstance()));
+			result.put("value", serializer.toJson(actorReference.getModellingElement(), detailed));
+			result.put("roleName", actorReference.getRoleName());
 		}
 	}
 }

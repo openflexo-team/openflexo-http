@@ -113,7 +113,6 @@ import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.controlgraph.FMLControlGraph;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
 
@@ -163,8 +162,6 @@ public class FMLJsonComplement implements JsonComplement {
 			result.put("returnType", serializer.toJson(behavior.getReturnType(), detailed));
 			result.put("flexoConcept", serializer.toReference(behavior.getFlexoConcept()));
 			result.put("controlGraph", serializer.toArray(behavior.getControlGraph().getFlattenedSequence(), detailed));
-
-		} else if (object instanceof FMLControlGraph) {
 
 		} else if (object instanceof FlexoBehaviourParameter) {
 			FlexoBehaviourParameter parameter = (FlexoBehaviourParameter) object;
