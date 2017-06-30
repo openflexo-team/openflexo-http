@@ -35,55 +35,26 @@
 
 package org.openflexo.http.server.connie;
 
-import org.openflexo.connie.DataBinding.BindingDefinitionType;
-
 /**
- * Id class for a {@link org.openflexo.connie.DataBinding}
+ * Simple class representing an evaluation request from a client through a WebSocket
  */
-public class BindingId {
+public final class AssignationRequest extends ConnieMessage {
 
-	public final String expression;
+	public int id;
 
-	public final String modelUrl;
+	public String runtime;
 
-	public final BindingDefinitionType type;
+	public String model;
 
-	public BindingId(String expression, String modelUrl) {
-		this(expression, modelUrl, BindingDefinitionType.GET);
-	}
+	public String binding;
 
-	public BindingId(String expression, String modelUrl, BindingDefinitionType type) {
-		this.expression = expression;
-		this.modelUrl = modelUrl;
-		this.type = type;
-	}
+	public boolean detailed;
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		BindingId bindingId = (BindingId) o;
-
-		if (!expression.equals(bindingId.expression))
-			return false;
-		if (!modelUrl.equals(bindingId.modelUrl))
-			return false;
-		return type == bindingId.type;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = expression.hashCode();
-		result = 31 * result + modelUrl.hashCode();
-		result = 31 * result + type.hashCode();
-		return result;
-	}
+	public String value;
 
 	@Override
 	public String toString() {
-		return "Binding: " + expression + " on " + modelUrl;
+		return "Assign " + value + " on to " + binding;
 	}
+
 }

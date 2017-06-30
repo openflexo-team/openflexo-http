@@ -8,6 +8,8 @@ import {
     spinner, clearElement
 } from "./utils";
 
+import { List, ListItem } from "./openflexo/ui/List";
+
 const api = new Api();
 
 function getDataUrl(element : HTMLElement) {
@@ -154,7 +156,7 @@ function initializeUrl() {
     refreshButton.onclick = (e) => retreiveUrl(urlInput.value);
 }
 
-function evaluateBinding(binding: string) {
+function evaluateBinding(binding: string, value: string) {
     console.log("Evaluating '"+ binding +"'");
     var urlInput = <HTMLInputElement>document.getElementById("url");
     var evaluation = <HTMLDivElement>document.getElementById("evaluation");
@@ -164,7 +166,11 @@ function evaluateBinding(binding: string) {
 
     evaluation.appendChild(spinner());
 
-    let result = api.evaluate(binding, urlInput.value, urlInput.value, detailed.value == "true");
+    let result = 
+        value != null && value.length > 0 ?
+        api.assign(binding, value,  urlInput.value, urlInput.value, detailed.value == "true") :
+        api.evaluate(binding, urlInput.value, urlInput.value, detailed.value == "true");
+        
     result.then(value => {
         clearElement(evaluation);
         evaluation.appendChild(createJsonElement(value));
@@ -187,10 +193,13 @@ function evaluateBinding(binding: string) {
 
 function initializeBinding() {
     var bindingInput = <HTMLInputElement>document.getElementById("binding");
-    bindingInput.oninput = (e) => evaluateBinding(bindingInput.value);
+    bindingInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
+
+    var valueInput = <HTMLInputElement>document.getElementById("value");
+    valueInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
 
     var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
-    evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value);
+    evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value, valueInput.value);
 
     api.addChangeListener((event:ChangeEvent) => {
         var urlInput = <HTMLInputElement>document.getElementById("url");
@@ -217,10 +226,12 @@ technologyAdapters.then(tas => {
     let div = document.querySelector("#tas");
     if (div) {
         div.appendChild(createCount(tas));
+        let list = new List();
         for (let ta of tas) {
-            div.appendChild(createDescriptionElement(ta));
-            div.appendChild(createHiddenElement(ta))
+            list.addItem(new ListItem(createDescriptionElement(ta), "gps_fixed"));
+            //div.appendChild(createHiddenElement(center))
         }
+        div.appendChild(list.container);
     }
 });
 
@@ -228,10 +239,12 @@ api.resourceCenters().then(centers => {
     let div = document.querySelector("#centers");
     if (div) {
         div.appendChild(createCount(centers));
+        let list = new List();
         for (let center of centers) {
-            div.appendChild(createDescriptionElement(center));
-            div.appendChild(createHiddenElement(center))
+            list.addItem(new ListItem(createDescriptionElement(center), "folder"));
+            //div.appendChild(createHiddenElement(center))
         }
+        div.appendChild(list.container);
     }
 });
 
@@ -239,10 +252,12 @@ api.resources().then(resources => {
     let div = document.querySelector("#resources");
     if (div) {
         div.appendChild(createCount(resources));
+        let list = new List();
         for (let resource of resources) {
-            div.appendChild(createDescriptionElement(resource));
-            div.appendChild(createHiddenElement(resource))
+            list.addItem(new ListItem(createDescriptionElement(resource), "storage"));
+            //div.appendChild(createHiddenElement(resource))
         }
+        div.appendChild(list.container);
     }
 });
 

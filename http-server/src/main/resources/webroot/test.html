@@ -1,23 +1,50 @@
 <html>
 <head>
     <title>OpenFlexo Server</title>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
     <link href="/css/test.css" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- TODO Load the js from the typescript -->
+    <link href="/css/mdl-openflexo.css" rel="stylesheet"/>
+    
 </head>
 <body>
 
     <h1>Binding</h1>
-    <div>
-        <input id='binding' type="text" size="80" value='3+4'></input>
-        <input type="checkbox" id="detailed" value="true"><label for="detailed">Details</label>
-        <button id='evaluate'><i class="material-icons">replay</i></button>
-        <div id='evaluation'></div>
+    <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="binding">
+            <label class="mdl-textfield__label" for="binding">Binding</label>
+        </div>
+        <div class="mdl-cell mdl-cell--4-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="value">
+            <label class="mdl-textfield__label" for="binding">Value</label>
+        </div>
+
+        <label class="mdl-cell mdl-cell--1-col mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="detailed">
+            <input type="checkbox" id="detailed" class="mdl-checkbox__input">
+            <span class="mdl-checkbox__label">Detailed</span>
+        </label>   
+
+        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="evaluate">
+            <i class="material-icons">replay</i>
+        </button>
     </div>
+    <div id='evaluation'></div>
+
     <h1>Context</h1>
-    <div>
-        <input id='url' type="text" size="140" value='/'></input>
-        <button id='refresh'><i class="material-icons">replay</i></button>
+    <div class="mdl-grid">
+         <div class="mdl-cell mdl-cell--11-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="url">
+            <label class="mdl-textfield__label" for="binding">Binding</label>
+        </div>
+
+        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="refresh">
+            <i class="material-icons">replay</i>
+        </button>
     </div>
     <div id='result'></div>
 
@@ -30,6 +57,8 @@
     <h1>Resources </h1>
     <div id="resources"></div>
 
+
+    <script src="/modules/material-design-lite/material.min.js"></script>
     <script data-main="js/test.js" src="/modules/requirejs/require.js"></script>
 
 </body>

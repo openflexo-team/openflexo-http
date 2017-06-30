@@ -27,6 +27,23 @@ export class EvaluationRequest extends Message {
 }
 
 /**
+ * Class used to send assignation request.
+ */
+export class AssignationRequest extends Message {
+
+    constructor(
+        public id: number,
+        public binding: string,
+        public value: string,
+        public runtime: string,
+        public model: string,
+        public detailed: boolean
+    ) {
+        super("AssignationRequest");
+     }
+}
+
+/**
  * Class used for received evaluation response
  */
 export class EvaluationResponse extends Message {
@@ -189,14 +206,16 @@ export class Api {
      * Internal connie WebSocket
      */
     private initializeConnieEvaluator() {
-        var wsHost = this.host.length > 0 ?
-            this.host.replace(new RegExp("https?\\://"), "ws://"):
-            wsHost = "ws://" + document.location.host;
-        
-        this.connie = new WebSocket(wsHost);
-        this.connie.onopen = (e:MessageEvent) => this.onEvaluationOpen(e);
-        this.connie.onmessage = (e:MessageEvent) => this.onEvaluationMessage(e);
-        this.connie.onclose = () => this.onEvaluationClose();
+        if (this.connie == null) {
+            var wsHost = this.host.length > 0 ?
+                this.host.replace(new RegExp("https?\\://"), "ws://"):
+                wsHost = "ws://" + document.location.host;
+            
+            this.connie = new WebSocket(wsHost);
+            this.connie.onopen = (e:MessageEvent) => this.onEvaluationOpen(e);
+            this.connie.onmessage = (e:MessageEvent) => this.onEvaluationMessage(e);
+            this.connie.onclose = () => this.onEvaluationClose();
+        }
     }
 
     /**
@@ -209,7 +228,10 @@ export class Api {
 
     /**
      * Evaluates a binding for a given model on a given runtime. The binding is 
-     * sent to the server using a WebSocket to be evaluated.
+     * sent to the server using a WebSocket to be evaluated. While the socket is
+     * open, each time the value of the sent binding (with its context) is changed
+     * an event is sent from the server. To listen to the changes, add listener
+     * using {@link addChangeListener}.
      * 
      * <b>Not Supported Yet</b>
      * A cache mechanism allows to store a binding result on the client in 
@@ -222,9 +244,7 @@ export class Api {
      */
     public evaluate<T>(binding: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
-        if (this.connie == null) {
-            this.initializeConnieEvaluator();
-        }
+        this.initializeConnieEvaluator();
         
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
@@ -239,7 +259,42 @@ export class Api {
             this.evaluationRequestQueue.push(request);
         }
 
-        // (executor: (resolve: (value?: T | PromiseLike<T>) => void, reject: (reason?: any) => void) => void): Promise<T>
+        // prepares the promise's callback for the result
+        return new Promise<T>((fullfilled, rejected) => {
+            this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));
+        });
+    }
+
+
+    /**
+     * Assigns the given binding to value for a given model on a given runtime.
+     * The binding is sent to the server using a WebSocket to be evaluated. 
+     *
+     * No change will be sent for any changes in the given bindings 
+     * 
+     * @param binding binding to assign.
+     * @param value binding of the new value.
+     * @param runtime url of the runtime object to use for context.
+     * @param model url of the model object using to compile the binding.
+     * @return a Promise for evaluated binding
+     */
+    public assign<T>(binding: string, value: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
+        // connects the WebSocket if not already done
+        this.initializeConnieEvaluator();
+
+        // creates a request for evaluation
+        let id = this.evaluationRequestSeed++;
+        let request = new AssignationRequest(id, binding, value, runtime, model, detailed);
+        
+        // act depending on the WebSocket status
+        if (this.connie.readyState == 1) {
+            // sends the binding now
+            this.sendEvaluationRequest(request);
+        } else {
+            // sends when the socket is ready
+            this.evaluationRequestQueue.push(request);
+        }
+
         // prepares the promise's callback for the result
         return new Promise<T>((fullfilled, rejected) => {
             this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));

@@ -38,7 +38,7 @@ package org.openflexo.http.server.connie;
 /**
  * Simple class representing an evaluation request from a client through a WebSocket
  */
-public final class EvaluationRequest extends ConnieMessage {
+public class EvaluationRequest extends ConnieMessage {
 
 	public int id;
 

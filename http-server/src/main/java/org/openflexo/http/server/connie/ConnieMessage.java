@@ -51,6 +51,7 @@ import io.vertx.core.json.Json;
 )
 @JsonSubTypes({
 	@Type(value = EvaluationRequest.class, name = "EvaluationRequest"),
+	@Type(value = AssignationRequest.class, name = "AssignationRequest"),
 	@Type(value = EvaluationResponse.class, name = "EvaluationResponse"),
 	@Type(value = ChangeEvent.class, name = "ChangeEvent"),
 })
