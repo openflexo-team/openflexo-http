@@ -46,6 +46,7 @@ export class ListItem implements Component {
 
     constructor(
         private contents : Component|PhrasingCategory,
+        private body: Component|PhrasingCategory|null = null,
         private icon: string|null = null,
         private action: Component|PhrasingCategory|null = null
     ) {
@@ -53,24 +54,38 @@ export class ListItem implements Component {
     }
 
     create() {
-        this.container = document.createElement("li");
+        this.container = document.createElement("li");     
         this.container.classList.add("mdl-list__item");
+        if (this.body != null) {
+            this.container.classList.add("mdl-list__item--three-line");
+        }
+
+        let primaryContent = document.createElement("span");
+        primaryContent.classList.add("mdl-list__item-primary-content");
+        this.container.appendChild(primaryContent);
 
         if (this.icon != null) {
             let i = document.createElement("i");
             i.classList.add("material-icons");
             i.classList.add("mdl-list__item-icon");
             i.innerText = this.icon;
-            this.container.appendChild(i);
+            primaryContent.appendChild(i);
         }
 
-        this.container.appendChild(toHTMLElement(this.contents));
+        primaryContent.appendChild(toHTMLElement(this.contents));
+
+        if (this.body != null) {
+            let bodySpan = document.createElement("span");
+            bodySpan.classList.add("mdl-list__item-text-body");
+            bodySpan.appendChild(toHTMLElement(this.body));
+            primaryContent.appendChild(bodySpan);
+        }
 
         if (this.action != null) {
             let action = document.createElement("span");
             action.classList.add("mdl-list__item-secondary-action");
             action.appendChild(toHTMLElement(this.action));
-            this.container.appendChild(action);
+            primaryContent.appendChild(action);
         }
 
         mdlUpgradeElement(this.container);

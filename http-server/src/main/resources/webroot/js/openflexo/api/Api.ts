@@ -272,19 +272,19 @@ export class Api {
      *
      * No change will be sent for any changes in the given bindings 
      * 
-     * @param binding binding to assign.
-     * @param value binding of the new value.
+     * @param left binding to assign.
+     * @param right binding of the new value.
      * @param runtime url of the runtime object to use for context.
      * @param model url of the model object using to compile the binding.
      * @return a Promise for evaluated binding
      */
-    public assign<T>(binding: string, value: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
+    public assign<T>(left: string, right: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         this.initializeConnieEvaluator();
 
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
-        let request = new AssignationRequest(id, binding, value, runtime, model, detailed);
+        let request = new AssignationRequest(id, left, right, runtime, model, detailed);
         
         // act depending on the WebSocket status
         if (this.connie.readyState == 1) {

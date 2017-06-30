@@ -8,7 +8,10 @@ import {
     spinner, clearElement
 } from "./utils";
 
+import { Icon } from "./openflexo/ui/Icon";
+import { Grid, GridCell } from "./openflexo/ui/Grid";
 import { List, ListItem } from "./openflexo/ui/List";
+import { Card } from "./openflexo/ui/Card";
 
 const api = new Api();
 
@@ -34,42 +37,25 @@ function getDescriptionDiv(element: HTMLElement) {
     return current;   
 }
 
-function showDetails(event: MouseEvent) {
-    let description = getDescriptionDiv(<HTMLElement>event.target);
-    if (description) {
-        let details = <HTMLElement>description.nextSibling;
-        if (details.style.display === "block") {
-            details.style.display = 'none'
-        } else {
-            details.style.display = 'block'
-        }
-    }
-    event.preventDefault();
-}
-
 function createCount(source : any[]) {
     let count = document.createElement("span")
     count.innerText = `Found ${source.length} elements`;
     return count;
 }
 
-function createDescriptionElement(source: Description<any>) {
+function createDescriptionElement(iconName: string, source: Description<any>) {
     let description = <HTMLDivElement> document.createElement("div");
     description.setAttribute("data-url", source.url);
-    description.onclick = showDetails;
     
+    let icon = new Icon(iconName);
+    description.appendChild(icon.container);
+
     let a = <HTMLAnchorElement> document.createElement("a");
     a.href = source.url;
     a.text = source["name"];
     description.appendChild(a);
 
     return description;
-}
-
-function createHiddenElement(source: any) {
-    var all = createJsonElement(source);
-    all.className += ' hidden';
-    return all;
 }
 
 function createJsonElement(source: any): HTMLElement {
@@ -159,43 +145,37 @@ function initializeUrl() {
 function evaluateBinding(binding: string, value: string) {
     console.log("Evaluating '"+ binding +"'");
     var urlInput = <HTMLInputElement>document.getElementById("url");
-    var evaluation = <HTMLDivElement>document.getElementById("evaluation");
-    var detailed = <HTMLInputElement>document.getElementById("detailed");
+    var detailedCheckbox = <HTMLInputElement>document.getElementById("detailed");
+    var resultDiv = <HTMLDivElement>document.getElementById("result");
     
-    clearElement(evaluation);
+    clearElement(resultDiv);
 
-    evaluation.appendChild(spinner());
+    resultDiv.appendChild(spinner());
 
     let result = 
-        value != null && value.length > 0 ?
-        api.assign(binding, value,  urlInput.value, urlInput.value, detailed.value == "true") :
-        api.evaluate(binding, urlInput.value, urlInput.value, detailed.value == "true");
+        binding != null && binding.length > 0 ?
+        api.assign(binding, value,  urlInput.value, urlInput.value, detailedCheckbox.value == "true") :
+        api.evaluate(value, urlInput.value, urlInput.value, detailedCheckbox.value == "true");
         
     result.then(value => {
-        clearElement(evaluation);
-        evaluation.appendChild(createJsonElement(value));
+        clearElement(resultDiv);
+        resultDiv.appendChild(createJsonElement(value));
 
-        /*
-        var div = document.createElement("div");
-        div.className = "details";  
-        div.innerText = JSON.stringify(value);
-        evaluation.appendChild(div);   
-        */
     }).catch((error) => {
-        clearElement(evaluation);     
+        clearElement(resultDiv);     
         var div = document.createElement("div");
         div.className = "details";  
         div.innerText = "Error : " + error;
-        evaluation.appendChild(div);
+        resultDiv.appendChild(div);
     });
 }
 
 
 function initializeBinding() {
-    var bindingInput = <HTMLInputElement>document.getElementById("binding");
+    var bindingInput = <HTMLInputElement>document.getElementById("left");
     bindingInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
 
-    var valueInput = <HTMLInputElement>document.getElementById("value");
+    var valueInput = <HTMLInputElement>document.getElementById("right");
     valueInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
 
     var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
@@ -204,19 +184,18 @@ function initializeBinding() {
     api.addChangeListener((event:ChangeEvent) => {
         var urlInput = <HTMLInputElement>document.getElementById("url");
         let context = urlInput.value;
-        let binding = bindingInput.value;
+        let binding = valueInput.value;
 
         if (context === event.model && context === event.runtime && binding === event.binding) {
             console.log("Update value from event:");
             console.log(event);
 
-            var evaluation = <HTMLDivElement>document.getElementById("evaluation");
-            clearElement(evaluation);
+            var result = <HTMLDivElement>document.getElementById("result");
+            clearElement(result);
             var div = document.createElement("div");
             div.className = "details";  
             div.innerText = JSON.stringify(event.value);
-            evaluation.appendChild(div);   
-            //evaluateBinding(bindingInput.value);
+            result.appendChild(div);   
         }
     });
 }
@@ -226,12 +205,15 @@ technologyAdapters.then(tas => {
     let div = document.querySelector("#tas");
     if (div) {
         div.appendChild(createCount(tas));
-        let list = new List();
+        let grid = new Grid();
         for (let ta of tas) {
-            list.addItem(new ListItem(createDescriptionElement(ta), "gps_fixed"));
-            //div.appendChild(createHiddenElement(center))
+            let card = new Card(
+                createDescriptionElement("gps_fixed",ta),
+                createJsonElement(ta)
+            );
+            grid.addCell(new GridCell(card));
         }
-        div.appendChild(list.container);
+        div.appendChild(grid.container);
     }
 });
 
@@ -239,12 +221,15 @@ api.resourceCenters().then(centers => {
     let div = document.querySelector("#centers");
     if (div) {
         div.appendChild(createCount(centers));
-        let list = new List();
+        let grid = new Grid();
         for (let center of centers) {
-            list.addItem(new ListItem(createDescriptionElement(center), "folder"));
-            //div.appendChild(createHiddenElement(center))
+            let card = new Card(
+                createDescriptionElement("folder",center),
+                createJsonElement(center)
+            );
+            grid.addCell(new GridCell(card, 12));
         }
-        div.appendChild(list.container);
+        div.appendChild(grid.container);
     }
 });
 
@@ -252,12 +237,15 @@ api.resources().then(resources => {
     let div = document.querySelector("#resources");
     if (div) {
         div.appendChild(createCount(resources));
-        let list = new List();
+        let grid = new Grid();
         for (let resource of resources) {
-            list.addItem(new ListItem(createDescriptionElement(resource), "storage"));
-            //div.appendChild(createHiddenElement(resource))
+            let card = new Card(
+                createDescriptionElement("storage",resource),
+                createJsonElement(resource)
+            );
+            grid.addCell(new GridCell(card, 12));
         }
-        div.appendChild(list.container);
+        div.appendChild(grid.container);
     }
 });
 

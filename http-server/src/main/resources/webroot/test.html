@@ -15,13 +15,19 @@
 
     <h1>Binding</h1>
     <div class="mdl-grid">
+        <div class="mdl-cell mdl-cell--4-col mdl-textfield mdl-js-textfield mdl-textfield--expandable mdl-textfield--floating-label">
+            <label class="mdl-button mdl-js-button mdl-button--icon" for="left">
+                <i class="material-icons">arrow_back</i>
+            </label>
+            <div class="mdl-textfield__expandable-holder" style="width:90%">
+                <input class="mdl-textfield__input" type="text" id="left">
+                <label class="mdl-textfield__label" for="left">Left</label>
+            </div>
+        </div>    
+
         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="binding">
-            <label class="mdl-textfield__label" for="binding">Binding</label>
-        </div>
-        <div class="mdl-cell mdl-cell--4-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-            <input class="mdl-textfield__input" type="text" id="value">
-            <label class="mdl-textfield__label" for="binding">Value</label>
+            <input class="mdl-textfield__input" type="text" id="right">
+            <label class="mdl-textfield__label" for="binding">Right</label>
         </div>
 
         <label class="mdl-cell mdl-cell--1-col mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="detailed">
@@ -32,22 +38,20 @@
         <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="evaluate">
             <i class="material-icons">replay</i>
         </button>
-    </div>
-    <div id='evaluation'></div>
-
-    <h1>Context</h1>
-    <div class="mdl-grid">
+  
          <div class="mdl-cell mdl-cell--11-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="url">
-            <label class="mdl-textfield__label" for="binding">Binding</label>
+            <label class="mdl-textfield__label" for="binding">Context</label>
         </div>
 
         <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="refresh">
             <i class="material-icons">replay</i>
         </button>
-    </div>
-    <div id='result'></div>
 
+        <div class="mdl-cell mdl-cell--12-col" id='result'></div>
+
+    </div>
+    
     <h1>Technologies adapters</h1>
     <div id="tas"></div>
 
