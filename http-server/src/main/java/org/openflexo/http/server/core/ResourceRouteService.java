@@ -12,6 +12,7 @@ import java.io.InputStream;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
+import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
@@ -38,7 +39,7 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 	public void addRoutes(Vertx vertx, Router router) {
 		router.get("/resource").produces(JSON).handler(this::serveResourceList);
 		router.get("/resource/:rid").produces(JSON).handler(this::serveResource);
-
+		router.post("/resource/:rid").produces(JSON).handler(this::processResource);
 		router.get("/resource/:rid/contents").handler(this::serveResourceContents);
 	}
 
@@ -57,6 +58,24 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
 			context.response().end(JsonUtils.getResourceDescription(resource, technologyAdapterRestService).encodePrettily());
+		} else {
+			notFound(context);
+		}
+	}
+
+	private void processResource(RoutingContext context) {
+		String id = context.request().getParam(("rid"));
+		String uri = IdUtils.decodeId(id);
+
+		FlexoResource<?> resource = resourceManager.getResource(uri);
+		if (resource != null) {
+			try {
+				resource.save(null);
+				context.response().end(JsonUtils.getResourceDescription(resource, technologyAdapterRestService).encodePrettily());
+			} catch (SaveResourceException e) {
+				error(context, e);
+			}
+
 		} else {
 			notFound(context);
 		}

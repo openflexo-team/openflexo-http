@@ -27,7 +27,7 @@
 
         <div class="mdl-cell mdl-cell--6-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="right">
-            <label class="mdl-textfield__label" for="binding">Right</label>
+            <label class="mdl-textfield__label" for="right">Right</label>
         </div>
 
         <label class="mdl-cell mdl-cell--1-col mdl-checkbox mdl-js-checkbox mdl-js-ripple-effect" for="detailed">
@@ -35,17 +35,21 @@
             <span class="mdl-checkbox__label">Detailed</span>
         </label>   
 
-        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="evaluate">
+        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button" id="evaluate">
             <i class="material-icons">replay</i>
         </button>
   
-         <div class="mdl-cell mdl-cell--11-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+         <div class="mdl-cell mdl-cell--10-col mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
             <input class="mdl-textfield__input" type="text" id="url">
-            <label class="mdl-textfield__label" for="binding">Context</label>
+            <label class="mdl-textfield__label" for="url">Context</label>
         </div>
 
-        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button mdl-button--fab" id="refresh">
+        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button" id="refresh">
             <i class="material-icons">replay</i>
+        </button>
+
+        <button class="mdl-cell mdl-cell--1-col mdl-button mdl-js-button" id="save">
+            <i class="material-icons">save</i>
         </button>
 
         <div class="mdl-cell mdl-cell--12-col" id='result'></div>
@@ -55,6 +59,7 @@
     <div id="data"><div>
 
     <script src="/modules/material-design-lite/material.min.js"></script>
+    <script src="https://unpkg.com/lunr/lunr.js"></script>
     <script data-main="js/test.js" src="/modules/requirejs/require.js"></script>
 
 </body>

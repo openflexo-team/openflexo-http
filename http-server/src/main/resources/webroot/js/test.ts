@@ -135,12 +135,34 @@ function retreiveUrl(url: string) {
     });
 }
 
+function saveResource(resourceId: string) {
+    console.log("Saving resource '"+ resourceId +"'");
+
+    var result = <HTMLDivElement>document.getElementById("result");
+    clearElement(result);
+    
+    let resource = api.save(resourceId);
+    resource.then(json => {
+        clearElement(result);       
+        result.appendChild(createJsonElement(json));
+        window.scrollTo(0, 0);
+    }).catch( event => {
+        clearElement(result);       
+        result.appendChild(createJsonElement(event));
+        window.scrollTo(0, 0);
+    });
+}
+
 function initializeUrl() {
     var urlInput = <HTMLInputElement>document.getElementById("url");
     urlInput.oninput = (e) => retreiveUrl(urlInput.value);
 
     var refreshButton = <HTMLButtonElement>document.getElementById("refresh");
     refreshButton.onclick = (e) => retreiveUrl(urlInput.value);
+
+    var saveButton = <HTMLButtonElement>document.getElementById("save");
+    saveButton.onclick = (e) => saveResource(urlInput.value);
+
 }
 
 function evaluateBinding(binding: string, value: string) {
@@ -170,7 +192,6 @@ function evaluateBinding(binding: string, value: string) {
         resultDiv.appendChild(div);
     });
 }
-
 
 function initializeBinding() {
     var bindingInput = <HTMLInputElement>document.getElementById("left");
@@ -243,13 +264,12 @@ if (dataDiv != null) {
                 createDescriptionElement("storage",resource),
                 createJsonElement(resource)
             );
-            grid.addCell(new GridCell(card, 12));
+            grid.addCell(new GridCell(card, 6));
         }
          
         let tab = new Tab("res", "Resources", grid);
         tabs.addTab(tab);
     });
-
 }
 
 initializeUrl();

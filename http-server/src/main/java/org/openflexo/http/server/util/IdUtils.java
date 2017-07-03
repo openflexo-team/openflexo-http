@@ -89,19 +89,27 @@ public class IdUtils {
 
 		if (resource == null) return null;
 
-		String prefix = service.getPrefix(resource);
-		if (prefix == null) return null;
-
-		StringBuilder url = new StringBuilder();
-		url.append(prefix);
-		url.append("/");
-		url.append(IdUtils.encodeuri(resource.getURI()));
 		if (id >= 0) {
-			url.append("/object/");
-			url.append(id);
-		}
+			String prefix = service.getPrefix(resource);
+			if (prefix == null)
+				return null;
 
-		return url.toString();
+			StringBuilder url = new StringBuilder();
+			url.append(prefix);
+			url.append("/");
+			url.append(IdUtils.encodeuri(resource.getURI()));
+			if (id >= 0) {
+				url.append("/object/");
+				url.append(id);
+			}
+
+			return url.toString();
+		} else {
+			StringBuilder url = new StringBuilder();
+			url.append("/resource/");
+			url.append(IdUtils.encodeuri(resource.getURI()));
+			return url.toString();
+		}
 	}
 
 	public static String encodeuri(String uri) {

@@ -112,11 +112,11 @@ export class Api {
     error(url: string): void {
         console.log("Error can't access '" + url + '", check that it exists and is accessible');
     }
- 
-    public call<T>(path: string): Promise<T> {
+
+    public call<T>(path: string, method: string = "get"): Promise<T> {
         const result = new Promise((fullfilled, rejected) => {
             let request = new XMLHttpRequest();
-            request.open("get", this.host + path);
+            request.open(method, this.host + path);
             request.onload = (ev) => {
                 if (request.status >= 200 && request.status < 300) {
                     var first = request.responseText.charAt(0);
@@ -322,7 +322,7 @@ export class Api {
      * @return a Promise for all resource centers
      */
     public resourceCenters(): Promise<ResourceCenter[]> {
-        return this.call(this.host + "/rc");
+        return this.call("/rc");
     }
 
     /**
@@ -330,7 +330,22 @@ export class Api {
      * @return a Promise for all resources
      */
     public resources(): Promise<Resource[]> {
-        return this.call(this.host + "/resource");
+        return this.call("/resource");
+    }
+
+    /**
+     * Saves given resource
+     * @param resource the resource to save an id or a description
+     */
+    public save(resource: Resource|string): Promise<Resource> {
+        let path: string;
+        if (typeof resource === "string") {
+            path = resource
+        } else {
+            path = (<Resource> resource).url
+        }
+
+        return this.call<Resource>(path, "post");
     }
 
     /**
@@ -338,7 +353,7 @@ export class Api {
      * @return a Promise for all technology adapters
      */
     public technologyAdapters(): Promise<TechnologyAdapter[]> {
-        return this.call(this.host + "/ta");
+        return this.call("/ta");
     }
 
     /**
@@ -346,6 +361,6 @@ export class Api {
      * @return a Promise for all view points
      */
     public viewPoints(): Promise<Resource[]> {
-        return this.call(this.host + "/ta/fml/viewpoint");
+        return this.call("/ta/fml/viewpoint");
     }
 }
