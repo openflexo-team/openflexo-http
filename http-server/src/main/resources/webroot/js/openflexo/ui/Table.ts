@@ -1,5 +1,8 @@
 import { Component } from "./Component";
 import { mdlUpgradeElement, toHTMLElement } from "./utils";
+import { PhrasingCategory } from "./category";
+
+// mdlUpgradeElement(this.container);
 
 export class Table implements Component {
 
@@ -9,7 +12,7 @@ export class Table implements Component {
     public readonly body : TableSection = new TableSection(false)
 
     constructor(
-        private selectable: boolean = true
+        private selectable: boolean = false
      ) {
         this.create();
     }
@@ -21,8 +24,13 @@ export class Table implements Component {
         if (this.selectable) {
             this.container.classList.add("mdl-data-table--selectable");
         }
+
+        this.container.appendChild(this.head.container);
+        this.container.appendChild(this.body.container);
+
         mdlUpgradeElement(this.container);
     }    
+
 }
 
 class TableSection implements Component {
@@ -55,8 +63,8 @@ class TableSection implements Component {
 
     create() {
         this.container = document.createElement(this.head ? "thead" : "tbody");
-        mdlUpgradeElement(this.container);
     }
+
 }
 
 export class TableLine implements Component {
@@ -69,26 +77,26 @@ export class TableLine implements Component {
         this.create();
     }
 
-    addCell(line: TableCell) {
-        this.cells.push(line);
-        this.container.appendChild(line.container);
+    addCell(cell: TableCell) {
+        this.cells.push(cell);
+        this.container.appendChild(cell.container);
     }
 
-    removeCell(line: TableCell) {
-        let index = this.cells.indexOf(line);
+    removeCell(cell: TableCell) {
+        let index = this.cells.indexOf(cell);
         if (index >= 0) {
             // removes from array
             this.cells.splice(index, 1);
 
             // removes from dom
-            this.container.removeChild(line.container);
+            this.container.removeChild(cell.container);
         }
     }
 
     create() {
         this.container = document.createElement("tr");
-        mdlUpgradeElement(this.container);
     }
+
 }
 
 export class TableCell implements Component {
@@ -96,7 +104,7 @@ export class TableCell implements Component {
     container: HTMLTableDataCellElement;
 
     constructor(
-        private contents : Component|HTMLElement,
+        private contents : Component|PhrasingCategory,
         private numeric: boolean = true
     ) {
         this.create();
@@ -106,7 +114,6 @@ export class TableCell implements Component {
         this.container = document.createElement("td");
         if (!this.numeric) this.container.classList.add("mdl-data-table__cell--non-numeric");
         this.container.appendChild(toHTMLElement(this.contents));
-        mdlUpgradeElement(this.container);
     }
     
 }
