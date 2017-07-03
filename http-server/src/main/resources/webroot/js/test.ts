@@ -12,6 +12,7 @@ import { Icon } from "./openflexo/ui/Icon";
 import { Grid, GridCell } from "./openflexo/ui/Grid";
 import { List, ListItem } from "./openflexo/ui/List";
 import { Card } from "./openflexo/ui/Card";
+import { Tabs, Tab } from "./openflexo/ui/Tabs";
 
 const api = new Api();
 
@@ -184,9 +185,9 @@ function initializeBinding() {
     api.addChangeListener((event:ChangeEvent) => {
         var urlInput = <HTMLInputElement>document.getElementById("url");
         let context = urlInput.value;
-        let binding = valueInput.value;
+        let value = valueInput.value;
 
-        if (context === event.model && context === event.runtime && binding === event.binding) {
+        if (context === event.model && context === event.runtime && value === event.binding) {
             console.log("Update value from event:");
             console.log(event);
 
@@ -200,11 +201,12 @@ function initializeBinding() {
     });
 }
 
-let technologyAdapters = api.technologyAdapters();
-technologyAdapters.then(tas => {
-    let div = document.querySelector("#tas");
-    if (div) {
-        div.appendChild(createCount(tas));
+let dataDiv = document.querySelector("#data");
+if (dataDiv != null) {
+    let tabs = new Tabs();
+    dataDiv.appendChild(tabs.container);
+
+    api.technologyAdapters().then(tas => {
         let grid = new Grid();
         for (let ta of tas) {
             let card = new Card(
@@ -213,14 +215,14 @@ technologyAdapters.then(tas => {
             );
             grid.addCell(new GridCell(card));
         }
-        div.appendChild(grid.container);
-    }
-});
 
-api.resourceCenters().then(centers => {
-    let div = document.querySelector("#centers");
-    if (div) {
-        div.appendChild(createCount(centers));
+        let tab = new Tab("tas", "Technology Adapters", grid);
+        tabs.addTab(tab);
+        tabs.selectTab(tab);
+        
+    });
+
+    api.resourceCenters().then(centers => {
         let grid = new Grid();
         for (let center of centers) {
             let card = new Card(
@@ -229,14 +231,12 @@ api.resourceCenters().then(centers => {
             );
             grid.addCell(new GridCell(card, 12));
         }
-        div.appendChild(grid.container);
-    }
-});
 
-api.resources().then(resources => {
-    let div = document.querySelector("#resources");
-    if (div) {
-        div.appendChild(createCount(resources));
+        let tab = new Tab("rc", "Resource Centers", grid);
+        tabs.addTab(tab);
+    });
+
+    api.resources().then(resources => {
         let grid = new Grid();
         for (let resource of resources) {
             let card = new Card(
@@ -245,9 +245,12 @@ api.resources().then(resources => {
             );
             grid.addCell(new GridCell(card, 12));
         }
-        div.appendChild(grid.container);
-    }
-});
+         
+        let tab = new Tab("res", "Resources", grid);
+        tabs.addTab(tab);
+    });
+
+}
 
 initializeUrl();
 initializeBinding();
