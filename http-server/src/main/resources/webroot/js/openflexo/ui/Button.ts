@@ -20,16 +20,16 @@ export class Button implements Component {
         this.container = document.createElement("button");
         this.container.classList.add("mdl-button");
         this.container.classList.add("mdl-js-button");
-        if (this.fab !== null) {
+        if (this.fab) {
             this.container.classList.add("mdl-button--fab");
         } 
-        if (this.rippleEffect !== null) {
+        if (this.rippleEffect) {
             this.container.classList.add("mdl-js-ripple-effect");
         } 
-        if (this.colored !== null) {
+        if (this.colored) {
             this.container.classList.add("mdl-button--colored");
         } 
-        if (this.accent !== null) {
+        if (this.accent) {
             this.container.classList.add("mdl-button--accent");
         }
         
