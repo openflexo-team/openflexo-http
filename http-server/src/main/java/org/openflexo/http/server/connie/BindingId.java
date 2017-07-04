@@ -35,6 +35,7 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.openflexo.connie.DataBinding.BindingDefinitionType;
 
 /**
@@ -44,17 +45,20 @@ public class BindingId {
 
 	public final String expression;
 
-	public final String modelUrl;
+	public final String contextUrl;
 
 	public final BindingDefinitionType type;
 
-	public BindingId(String expression, String modelUrl) {
-		this(expression, modelUrl, BindingDefinitionType.GET);
+	public BindingId(
+			@JsonProperty("expression") String expression,
+			@JsonProperty("contextUrl") String contextUrl
+	) {
+		this(expression, contextUrl, BindingDefinitionType.GET);
 	}
 
-	public BindingId(String expression, String modelUrl, BindingDefinitionType type) {
+	public BindingId(String expression, String contextUrl, BindingDefinitionType type) {
 		this.expression = expression;
-		this.modelUrl = modelUrl;
+		this.contextUrl = contextUrl;
 		this.type = type;
 	}
 
@@ -69,7 +73,7 @@ public class BindingId {
 
 		if (!expression.equals(bindingId.expression))
 			return false;
-		if (!modelUrl.equals(bindingId.modelUrl))
+		if (!contextUrl.equals(bindingId.contextUrl))
 			return false;
 		return type == bindingId.type;
 	}
@@ -77,13 +81,13 @@ public class BindingId {
 	@Override
 	public int hashCode() {
 		int result = expression.hashCode();
-		result = 31 * result + modelUrl.hashCode();
+		result = 31 * result + contextUrl.hashCode();
 		result = 31 * result + type.hashCode();
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "Binding: " + expression + " on " + modelUrl;
+		return "Binding: " + expression + " on " + contextUrl;
 	}
 }

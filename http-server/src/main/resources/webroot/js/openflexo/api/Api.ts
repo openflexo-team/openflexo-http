@@ -1,6 +1,28 @@
 import { Description } from "./general"
 import { TechnologyAdapter, Resource, ResourceCenter } from "./resource"
 
+export function binding(expression: string, context: string) {
+    return new BindingId(expression, context);
+}
+
+export function runtimeBinding(expression: string, context: string, runtime:string) {
+    return new RuntimeBindingId(binding(expression, context), runtime);
+}
+
+export class BindingId {
+    constructor(
+        public expression: string,
+        public contextUrl: string
+    ) { }
+}
+
+export class RuntimeBindingId {
+    constructor(
+        public binding: BindingId,
+        public runtimeUrl: string 
+    ) { }
+}
+
 /**
  * TODO
  */
@@ -17,9 +39,7 @@ export class EvaluationRequest extends Message {
 
     constructor(
         public id: number,
-        public binding: string,
-        public runtime: string,
-        public model: string,
+        public runtimeBinding: RuntimeBindingId,
         public detailed: boolean
     ) {
         super("EvaluationRequest");
@@ -33,10 +53,8 @@ export class AssignationRequest extends Message {
 
     constructor(
         public id: number,
-        public binding: string,
-        public value: string,
-        public runtime: string,
-        public model: string,
+        public left: RuntimeBindingId,
+        public right: RuntimeBindingId,
         public detailed: boolean
     ) {
         super("AssignationRequest");
@@ -79,7 +97,7 @@ export class PendingEvaluation<T> {
     constructor(
         public fullfilled: (T) => void,
         public rejected: (string) => void,
-        public request: EvaluationRequest
+        public request: Message
     ) { }
 }
 
@@ -96,7 +114,7 @@ export type ChangeListener = (ChangeEvent)=>void;
 export class Api {
 
     private connie: WebSocket;
-    private evaluationRequestQueue: EvaluationRequest[] = [];
+    private messageQueue: Message[] = [];
     private pendingEvaluationQueue: Map<number, PendingEvaluation<any>> = new Map();
 
     private evaluationRequestSeed: number = 0;
@@ -186,12 +204,12 @@ export class Api {
      */
     public onEvaluationOpen(event: MessageEvent) {
         console.log("Openned " + event.data);
-        console.log(this.evaluationRequestQueue);
+        console.log(this.messageQueue);
 
         // evaluates pending request
-        for (let binding of this.evaluationRequestQueue) {
+        for (let binding of this.messageQueue) {
             console.log("Sending " + binding);
-            this.sendEvaluationRequest(binding);
+            this.sendMessage(binding);
         }
     }
 
@@ -220,10 +238,10 @@ export class Api {
 
     /**
      * Internal send evaluation request
-     * @param request request to send
+     * @param mesage message to send
      */
-    private sendEvaluationRequest(request: EvaluationRequest) {
-        this.connie.send(JSON.stringify(request));
+    private sendMessage(message: Message) {
+        this.connie.send(JSON.stringify(message));
     }
 
     /**
@@ -237,26 +255,24 @@ export class Api {
      * A cache mechanism allows to store a binding result on the client in 
      * cooperation with the server's own cache.
      * 
-     * @param binding binding to evaluate.
-     * @param runtime url of the runtime object to use for context.
-     * @param model url of the model object using to compile the binding.
+     * @param runtimeBinding binding  to evaluate.
      * @return a Promise for evaluated binding
      */
-    public evaluate<T>(binding: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
+    public evaluate<T>(runtimeBinding: RuntimeBindingId, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         this.initializeConnieEvaluator();
         
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
-        let request = new EvaluationRequest(id, binding, runtime, model, detailed);
+        let request = new EvaluationRequest(id, runtimeBinding, detailed);
         
         // act depending on the WebSocket status
         if (this.connie.readyState == 1) {
             // sends the binding now
-            this.sendEvaluationRequest(request);
+            this.sendMessage(request);
         } else {
             // sends when the socket is ready
-            this.evaluationRequestQueue.push(request);
+            this.messageQueue.push(request);
         }
 
         // prepares the promise's callback for the result
@@ -274,25 +290,23 @@ export class Api {
      * 
      * @param left binding to assign.
      * @param right binding of the new value.
-     * @param runtime url of the runtime object to use for context.
-     * @param model url of the model object using to compile the binding.
      * @return a Promise for evaluated binding
      */
-    public assign<T>(left: string, right: string, runtime: string, model: string, detailed: boolean = false): Promise<T> {
+    public assign<T>(left: RuntimeBindingId, right: RuntimeBindingId, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         this.initializeConnieEvaluator();
 
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
-        let request = new AssignationRequest(id, left, right, runtime, model, detailed);
+        let request = new AssignationRequest(id, left, right, detailed);
         
         // act depending on the WebSocket status
         if (this.connie.readyState == 1) {
             // sends the binding now
-            this.sendEvaluationRequest(request);
+            this.sendMessage(request);
         } else {
             // sends when the socket is ready
-            this.evaluationRequestQueue.push(request);
+            this.messageQueue.push(request);
         }
 
         // prepares the promise's callback for the result

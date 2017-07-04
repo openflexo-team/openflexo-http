@@ -35,17 +35,22 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Id class for a {@link org.openflexo.connie.DataBinding} with a given runtime context
  */
 public class RuntimeBindingId {
 
-	public final BindingId bindingId;
+	public final BindingId binding;
 
 	public final String runtimeUrl;
 
-	public RuntimeBindingId(BindingId bindingId, String runtimeUrl) {
-		this.bindingId = bindingId;
+	public RuntimeBindingId(
+			@JsonProperty("binding") BindingId binding,
+			@JsonProperty("runtimeUrl") String runtimeUrl
+	) {
+		this.binding = binding;
 		this.runtimeUrl = runtimeUrl;
 	}
 
@@ -58,15 +63,20 @@ public class RuntimeBindingId {
 
 		RuntimeBindingId that = (RuntimeBindingId) o;
 
-		if (!bindingId.equals(that.bindingId))
+		if (!binding.equals(that.binding))
 			return false;
 		return runtimeUrl.equals(that.runtimeUrl);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = bindingId.hashCode();
+		int result = binding.hashCode();
 		result = 31 * result + runtimeUrl.hashCode();
 		return result;
+	}
+
+	@Override
+	public String toString() {
+		return "RuntimeBindingId{" + "binding=" + binding + ", runtimeUrl='" + runtimeUrl + '\'' + '}';
 	}
 }

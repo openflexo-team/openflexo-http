@@ -42,17 +42,13 @@ public class EvaluationRequest extends ConnieMessage {
 
 	public int id;
 
-	public String runtime;
-
-	public String model;
-
-	public String binding;
+	public RuntimeBindingId runtimeBinding;
 
 	public boolean detailed;
 
 	@Override
 	public String toString() {
-		return "Evaluate " + binding;
+		return "Evaluate " + runtimeBinding;
 	}
 
 }

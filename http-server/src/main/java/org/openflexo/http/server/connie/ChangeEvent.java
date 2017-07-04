@@ -40,24 +40,18 @@ package org.openflexo.http.server.connie;
  */
 public class ChangeEvent extends ConnieMessage {
 
-	public String runtime;
-
-	public String model;
-
-	public String binding;
+	public RuntimeBindingId runtimeBinding;
 
 	public String value;
 
 	@Override
 	public String toString() {
-		return "Changed " + binding;
+		return "Changed " + runtimeBinding;
 	}
 
 	public static ChangeEvent create(RuntimeBindingId id, String value) {
 		ChangeEvent result = new ChangeEvent();
-		result.runtime = id.runtimeUrl;
-		result.model = id.bindingId.modelUrl;
-		result.binding = id.bindingId.expression;
+		result.runtimeBinding = id;
 		result.value = value;
 		return result;
 	}

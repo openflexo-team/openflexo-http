@@ -77,7 +77,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private DataBinding getOrCreateBinding(final BindingId id) {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
-			Bindable model = findObject(id.modelUrl, Bindable.class);
+			Bindable model = findObject(id.contextUrl, Bindable.class);
 			DataBinding binding = new DataBinding(id.expression, model, Object.class, id.type);
 			binding.decode();
 			return binding;
@@ -156,7 +156,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				}
 
 			} catch (DecodeException e) {
-				String message = "Can't decode request " + frame.textData() + ": " + e;
+				String message = "Can't decode request: " + e.getMessage();
 				System.out.println(message);
 				socket.write(EvaluationResponse.error(message).toBuffer());
 			}
@@ -164,37 +164,36 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 		private void respondToEvaluationRequest(EvaluationRequest request) {
 			EvaluationResponse response = new EvaluationResponse(request.id);
-			BindingId id = new BindingId(request.binding, request.model);
-			DataBinding binding = getOrCreateBinding(id);
+			RuntimeBindingId runtimeBinding = request.runtimeBinding;
+			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
-				BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
+				BindingEvaluationContext context = findObject(runtimeBinding.runtimeUrl, BindingEvaluationContext.class);
 				if (context != null) {
 					try {
 						Object value = binding.getBindingValue(context);
 						response.result = taRouteService.getSerializer().toJson(value, request.detailed);
 
-						RuntimeBindingId runtimeBindingId = new RuntimeBindingId(id, request.runtime);
-						BindingValueChangeListener listener = listenedBindings.get(runtimeBindingId);
+						BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
 						if (listener == null) {
 							listener = new BindingValueChangeListener<Object>(binding, context) {
 								@Override
 								public void bindingValueChanged(Object source, Object newValue) {
 									String value = newValue != null ? newValue.toString() : "null";;
-									sendChangeEvent(runtimeBindingId, value);
+									sendChangeEvent(runtimeBinding, value);
 								}
 							};
 							listener.startObserving();
 						}
-						listenedBindings.put(runtimeBindingId, listener);
+						listenedBindings.put(runtimeBinding, listener);
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-						String error = "Can't evaluate binding" + request.binding + ": " + e;
+						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
 					}
 				}
 				else {
-					String error = "Runtime url '" + request.runtime + "' is invalid";
+					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
 					System.out.println(error);
 					socket.write(EvaluationResponse.error(request.id, error).toBuffer());
 				}
@@ -209,50 +208,62 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		private void respondToAssignationRequest(AssignationRequest request) {
 			EvaluationResponse response = new EvaluationResponse(request.id);
 
-			BindingId assigneeId = new BindingId(request.binding, request.model, DataBinding.BindingDefinitionType.GET_SET);
-			DataBinding assigneeBinding = getOrCreateBinding(assigneeId);
+			RuntimeBindingId left = request.left;
+			DataBinding leftBinding = getOrCreateBinding(left.binding);
 
-			BindingId valueId = new BindingId(request.value, request.model, DataBinding.BindingDefinitionType.GET);
-			DataBinding valueBinding = getOrCreateBinding(valueId);
+			RuntimeBindingId right = request.right;
+			DataBinding valueBinding = getOrCreateBinding(right.binding);
 
-			if (assigneeBinding.isValid() && valueBinding.isValid()) {
-				BindingEvaluationContext context = findObject(request.runtime, BindingEvaluationContext.class);
-				if (context != null) {
+			if (leftBinding.isValid() && valueBinding.isValid()) {
+				BindingEvaluationContext leftContext = findObject(left.runtimeUrl, BindingEvaluationContext.class);
+				BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
+				if (leftContext != null && rightContext != null) {
 					try {
-						Object value = valueBinding.getBindingValue(context);
-						assigneeBinding.setBindingValue(value, context);
-						response.result = taRouteService.getSerializer().toJson(value, request.detailed);
+						Object rightValue = valueBinding.getBindingValue(rightContext);
+						leftBinding.setBindingValue(rightValue, leftContext);
+						response.result = taRouteService.getSerializer().toJson(rightValue, request.detailed);
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-						String error = "Can't evaluate binding " + request.binding + " and " + request.value + ": " + e;
-						System.out.println(error);
+						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
 						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
 					} catch (NotSettableContextException e) {
-						String error = "Can't expression " + request.binding + " is not settable";
-						System.out.println(error);
+						String error = "Can't set expression '" + request.left.binding + "'";
 						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
 					}
 				}
 				else {
-					String error = "Runtime url '" + request.runtime + "' is invalid";
-					System.out.println(error);
-					socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+					StringBuilder message = new StringBuilder("Invalid runtime ");
+					int length = message.length();
+					if (leftContext == null) {
+						message.append("'");
+						message.append(request.left.runtimeUrl);
+						message.append("': ");
+						message.append(leftBinding.invalidBindingReason());
+					}
+					if (rightContext == null) {
+						if (message.length() > length) message.append(" and ");
+						message.append("'");
+						message.append(request.right.runtimeUrl);
+						message.append("': ");
+						message.append(valueBinding.invalidBindingReason());
+					}
+					response.error = message.toString();
 				}
 
 			}
 			else {
 				StringBuilder message = new StringBuilder("Invalid binding ");
 				int length = message.length();
-				if (!assigneeBinding.isValid()) {
+				if (!leftBinding.isValid()) {
 					message.append("'");
-					message.append(request.binding);
+					message.append(request.left.binding.expression);
 					message.append("': ");
-					message.append(assigneeBinding.invalidBindingReason());
+					message.append(leftBinding.invalidBindingReason());
 				}
 				if (!valueBinding.isValid()) {
 					if (message.length() > length) message.append(" and ");
 					message.append("'");
-					message.append(request.value);
+					message.append(request.right.binding.expression);
 					message.append("': ");
 					message.append(valueBinding.invalidBindingReason());
 				}

@@ -42,19 +42,15 @@ public final class AssignationRequest extends ConnieMessage {
 
 	public int id;
 
-	public String runtime;
+	public RuntimeBindingId left;
 
-	public String model;
-
-	public String binding;
+	public RuntimeBindingId right;
 
 	public boolean detailed;
 
-	public String value;
-
 	@Override
 	public String toString() {
-		return "Assign " + value + " on to " + binding;
+		return "Assign " + right + " on to " + left;
 	}
 
 }

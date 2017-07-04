@@ -40,7 +40,7 @@ export class Resource extends ContainedByResourceCenter {
         public resourceCenterId: string,
         public resourceCenterUrl: string,
         public contentUrl: string,
-        public modelUrl: string,
+        public contextUrl: string,
         public technologyAdapterId: string,
         public technologyAdapterUrl: string
     ) { 

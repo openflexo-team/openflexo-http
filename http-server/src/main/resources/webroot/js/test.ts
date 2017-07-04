@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api, ChangeEvent } from "./openflexo/api/Api";
+import { Api, runtimeBinding, binding, ChangeEvent } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";
@@ -81,8 +81,8 @@ function createJsonElement(source: any): HTMLElement {
                     valueCode.innerText = source[key];
                     valueCode.addEventListener("click", function(e) {
                         var a = <HTMLAnchorElement>e.srcElement;
-                        setUrl(a.href);
-                        retreiveUrl(a.href);
+                        setContext(a.href);
+                        retreiveContext();
                         e.preventDefault();
                     });
                     element.appendChild(valueCode);
@@ -103,23 +103,25 @@ function createJsonElement(source: any): HTMLElement {
     
 }
 
-function setUrl(url: string) { 
+function setContext(url: string) { 
     if (url.match(document.location.origin)) {
         url = url.substring(document.location.origin.length);
     }
 
-    var urlInput = <HTMLInputElement>document.getElementById("url");
-    urlInput.value = url;
+    var contextInput = <HTMLInputElement>document.getElementById("context");
+    contextInput.value = url;
 }
 
-function retreiveUrl(url: string) {
-    console.log("Retreiving '"+ url +"'");
-    var urlInput = <HTMLInputElement>document.getElementById("url");
+function retreiveContext() {
+    var contextInput = <HTMLInputElement>document.getElementById("context");
     var result = <HTMLDivElement>document.getElementById("result");
+
+    console.log("Retreiving '"+ contextInput.value +"'");
+
     clearElement(result);
     result.appendChild(spinner());
 
-    let json = api.call(url);
+    let json = api.call(contextInput.value);
     json.then(json => {
         clearElement(result);       
         result.appendChild(createJsonElement(json));
@@ -154,20 +156,19 @@ function saveResource(resourceId: string) {
 }
 
 function initializeUrl() {
-    var urlInput = <HTMLInputElement>document.getElementById("url");
-    urlInput.oninput = (e) => retreiveUrl(urlInput.value);
+    var contextInput = <HTMLInputElement>document.getElementById("context");
+    contextInput.oninput = (e) => retreiveContext();
 
     var refreshButton = <HTMLButtonElement>document.getElementById("refresh");
-    refreshButton.onclick = (e) => retreiveUrl(urlInput.value);
+    refreshButton.onclick = (e) => retreiveContext();
 
     var saveButton = <HTMLButtonElement>document.getElementById("save");
-    saveButton.onclick = (e) => saveResource(urlInput.value);
+    saveButton.onclick = (e) => saveResource(contextInput.value);
 
 }
 
-function evaluateBinding(binding: string, value: string) {
-    console.log("Evaluating '"+ binding +"'");
-    var urlInput = <HTMLInputElement>document.getElementById("url");
+function evaluateBinding(left: string, right: string) {
+    var contextInput = <HTMLInputElement>document.getElementById("context");
     var detailedCheckbox = <HTMLInputElement>document.getElementById("detailed");
     var resultDiv = <HTMLDivElement>document.getElementById("result");
     
@@ -175,10 +176,14 @@ function evaluateBinding(binding: string, value: string) {
 
     resultDiv.appendChild(spinner());
 
+    let context = contextInput.value;
+    let rightBinding = runtimeBinding(right, context, context);
+    let leftBinding = left !== null && left.length > 0  ? runtimeBinding(left, context, context) : null;
+
     let result = 
-        binding != null && binding.length > 0 ?
-        api.assign(binding, value,  urlInput.value, urlInput.value, detailedCheckbox.value == "true") :
-        api.evaluate(value, urlInput.value, urlInput.value, detailedCheckbox.value == "true");
+        leftBinding != null ?
+        api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
+        api.evaluate(rightBinding, detailedCheckbox.value == "true");
         
     result.then(value => {
         clearElement(resultDiv);
@@ -204,8 +209,8 @@ function initializeBinding() {
     evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value, valueInput.value);
 
     api.addChangeListener((event:ChangeEvent) => {
-        var urlInput = <HTMLInputElement>document.getElementById("url");
-        let context = urlInput.value;
+        var contextInput = <HTMLInputElement>document.getElementById("context");
+        let context = contextInput.value;
         let value = valueInput.value;
 
         if (context === event.model && context === event.runtime && value === event.binding) {
