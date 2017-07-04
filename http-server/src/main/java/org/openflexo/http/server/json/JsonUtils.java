@@ -178,7 +178,7 @@ public class JsonUtils {
 					modelUrl.append(IdUtils.encodeuri(resource.getURI()));
 					modelUrl.append("/object/");
 					modelUrl.append(((FlexoObject) data).getFlexoID());
-					resourceDescription.put("contextUrl", modelUrl.toString());
+					resourceDescription.put("modelUrl", modelUrl.toString());
 				}
 			}
 		}
