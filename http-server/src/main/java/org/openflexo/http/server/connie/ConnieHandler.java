@@ -288,7 +288,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, String newValue) {
-			socket.write(ChangeEvent.create(runtimeBindingId, newValue).toBuffer());
+			socket.write(new ChangeEvent(runtimeBindingId, newValue).toBuffer());
 		}
 	}
 }

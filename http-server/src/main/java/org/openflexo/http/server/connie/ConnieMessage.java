@@ -57,7 +57,7 @@ import io.vertx.core.json.Json;
 })
 public class ConnieMessage {
 
-	public String type = getClass().getSimpleName();
+	public final String type = getClass().getSimpleName();
 
 	Buffer toBuffer() {
 		return Buffer.buffer(Json.encode(this));

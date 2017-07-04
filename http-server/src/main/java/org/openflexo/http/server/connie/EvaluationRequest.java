@@ -35,16 +35,28 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Simple class representing an evaluation request from a client through a WebSocket
  */
 public class EvaluationRequest extends ConnieMessage {
 
-	public int id;
+	public final int id;
 
-	public RuntimeBindingId runtimeBinding;
+	public final RuntimeBindingId runtimeBinding;
 
-	public boolean detailed;
+	public final boolean detailed;
+
+	public EvaluationRequest(
+		@JsonProperty("id") int id,
+		@JsonProperty("runtimeBinding") RuntimeBindingId runtimeBinding,
+		@JsonProperty("detailed") boolean detailed
+	) {
+		this.id = id;
+		this.runtimeBinding = runtimeBinding;
+		this.detailed = detailed;
+	}
 
 	@Override
 	public String toString() {

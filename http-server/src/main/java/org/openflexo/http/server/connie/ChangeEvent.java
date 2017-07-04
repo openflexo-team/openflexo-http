@@ -35,25 +35,28 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Event send when a binding changes
  */
 public class ChangeEvent extends ConnieMessage {
 
-	public RuntimeBindingId runtimeBinding;
+	public final RuntimeBindingId runtimeBinding;
 
-	public String value;
+	public final String value;
+
+	public ChangeEvent(
+			@JsonProperty("runtimeBinding") RuntimeBindingId runtimeBinding,
+			@JsonProperty("value") String value
+	) {
+		this.runtimeBinding = runtimeBinding;
+		this.value = value;
+	}
 
 	@Override
 	public String toString() {
 		return "Changed " + runtimeBinding;
-	}
-
-	public static ChangeEvent create(RuntimeBindingId id, String value) {
-		ChangeEvent result = new ChangeEvent();
-		result.runtimeBinding = id;
-		result.value = value;
-		return result;
 	}
 
 }

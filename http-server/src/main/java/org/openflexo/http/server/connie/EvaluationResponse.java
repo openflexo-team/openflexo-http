@@ -35,6 +35,7 @@
 
 package org.openflexo.http.server.connie;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
 
 /**
@@ -48,28 +49,29 @@ public final class EvaluationResponse extends ConnieMessage {
 
 	public String error;
 
-	public EvaluationResponse() {
-	}
-
 	public EvaluationResponse(int id) {
-		this.id = id;
+		this(id, null, null);
 	}
 
-
+	public EvaluationResponse(
+			@JsonProperty("id") int id,
+			@JsonProperty("result") Object result,
+			@JsonProperty("error") String error
+	) {
+		this.id = id;
+		this.result = result;
+		this.error = error;
+	}
 	@Override
 	public String toString() {
 		return "Response " + error != null ? "[error]: " + error : Objects.toString(result);
 	}
-
 
 	public static EvaluationResponse error(String error) {
 		return error(-1, error);
 	}
 
 	public static EvaluationResponse error(int id, String error) {
-		EvaluationResponse result = new EvaluationResponse();
-		result.id = id;
-		result.error = error;
-		return result;
+		return new EvaluationResponse(id, null, error);
 	}
 }
