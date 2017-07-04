@@ -14,6 +14,10 @@ export class BindingId {
         public expression: string,
         public contextUrl: string
     ) { }
+
+    public equals(other: BindingId) {
+        return this.expression === other.expression && this.contextUrl === other.contextUrl;
+    }
 }
 
 export class RuntimeBindingId {
@@ -21,6 +25,10 @@ export class RuntimeBindingId {
         public binding: BindingId,
         public runtimeUrl: string 
     ) { }
+
+    public equals(other: RuntimeBindingId) {
+        return this.binding.equals(other.binding) && this.runtimeUrl === other.runtimeUrl;
+    }
 }
 
 /**
@@ -76,13 +84,18 @@ export class EvaluationResponse extends Message {
 }
 
 /**
+ * public final RuntimeBindingId runtimeBinding;
+
+	public final String value;
+
+ */
+
+/**
  * Class used when a binding is changed
  */
 export class ChangeEvent extends Message {
     constructor(
-        public binding: string,
-        public runtime: string,
-        public model: string,
+        public runtimeBinding: RuntimeBindingId,
         public value: string
     ) {
         super("ChangeEvent");
@@ -119,7 +132,7 @@ export class Api {
 
     private evaluationRequestSeed: number = 0;
 
-    private bindingListeners: Set<ChangeListener> = new Set();
+    private bindingListeners: Set<[RuntimeBindingId, ChangeListener]> = new Set();
 
     constructor(
         private host: string = ""
@@ -189,8 +202,11 @@ export class Api {
                     }
                     case "ChangeEvent": {
                         let event = <ChangeEvent>message;
-                        console.log("ChangeEvent for " + event.binding);
-                        this.bindingListeners.forEach( listener => listener(event));
+                        this.bindingListeners.forEach( (binding, listener) => {
+                            if (binding[0].equals(event.runtimeBinding)) {
+                                binding[1](event);
+                            }
+                        });
                     }
                 }
             }
@@ -319,16 +335,16 @@ export class Api {
      * Adds a listener for binding changes
      * @param listener callback
      */
-    public addChangeListener(listener : ChangeListener) {
-        this.bindingListeners.add(listener);
+    public addChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
+        this.bindingListeners.add([binding, listener]);
     }
 
     /**
      * Removes a listener for binding changes
      * @param listener callback
      */
-    public removeChangeListener(listener : ChangeListener) {
-        this.bindingListeners.delete(listener);
+    public removeChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
+        this.bindingListeners.delete([binding, listener]);
     }
 
     /**

@@ -42,7 +42,8 @@ export class Resource extends ContainedByResourceCenter {
         public contentUrl: string,
         public contextUrl: string,
         public technologyAdapterId: string,
-        public technologyAdapterUrl: string
+        public technologyAdapterUrl: string,
+        public modelUrl: string
     ) { 
         super(name, id, url, type, uri, url, resourceCenterId, resourceCenterUrl);
      }

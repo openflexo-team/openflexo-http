@@ -17,12 +17,13 @@ export class TextField implements Component {
 */
     container: HTMLDivElement;
 
+    input: HTMLInputElement;
+
     constructor(
         private id: string,
         private value: string|null = null,
         private label: PhrasingCategory|null = null,
         private floatingLabel: boolean = false,
-        private multiline: boolean = false,
         private invalid: boolean = false
      ) {
         this.create();
@@ -39,14 +40,14 @@ export class TextField implements Component {
             this.container.classList.add("is-invalid");
         }
 
-        let input = document.createElement("input");
-        input.classList.add("mdl-textfield__input");
-        input.type = "text";
-        input.id = this.id;
-        this.container.appendChild(input);
+        this.input = document.createElement("input");
+        this.input.classList.add("mdl-textfield__input");
+        this.input.type = "text";
+        this.input.id = this.id;
+        this.container.appendChild(this.input);
 
         if (this.value != null) {
-            input.value = this.value;
+            this.input.value = this.value;
         }
 
         if (this.label != null) {
