@@ -8,7 +8,7 @@ export class Button implements Component {
 
     constructor(
         private label: Component|PhrasingCategory,
-        private fab: boolean = false,
+        private type: "raised"|"fab"|"mini-fab"|"icon" = "raised",
         private colored: boolean = false,
         private accent: boolean = false,
         private rippleEffect: boolean = false
@@ -20,9 +20,8 @@ export class Button implements Component {
         this.container = document.createElement("button");
         this.container.classList.add("mdl-button");
         this.container.classList.add("mdl-js-button");
-        if (this.fab) {
-            this.container.classList.add("mdl-button--fab");
-        } 
+        this.container.classList.add("mdl-button--" + this.type);
+
         if (this.rippleEffect) {
             this.container.classList.add("mdl-js-ripple-effect");
         } 
@@ -37,10 +36,12 @@ export class Button implements Component {
 
         mdlUpgradeElement(this.container);
     }    
-}
 
-/*
-<button class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
-  <i class="material-icons">add</i>
-</button>
- */
+    public isEnable(): boolean {
+        return !this.container.disabled;
+    }
+
+    public setEnable(enable: boolean) {
+        this.container.disabled = !enable;
+    }
+}
