@@ -333,6 +333,7 @@ export class Api {
 
     /**
      * Adds a listener for binding changes
+     * @param binding binding change to listen to
      * @param listener callback
      */
     public addChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
@@ -341,10 +342,23 @@ export class Api {
 
     /**
      * Removes a listener for binding changes
+     * @param binding binding change to listen to
      * @param listener callback
      */
     public removeChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
         this.bindingListeners.delete([binding, listener]);
+    }
+
+    /**
+     * Removes all callbacks for the given binding
+     * @param binding binding
+     */
+    public removeChangeListeners(binding: RuntimeBindingId) {
+        this.bindingListeners.forEach(e => {
+            if (e[0].equals(binding)) {
+                this.bindingListeners.delete(e);
+            }
+        })
     }
 
     /**
