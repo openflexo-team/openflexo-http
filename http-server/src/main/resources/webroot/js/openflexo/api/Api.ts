@@ -36,6 +36,7 @@ export class RuntimeBindingId {
  */
 export class Message {
     constructor(
+        public id: number,
         public type: string
     ) { }
 }
@@ -50,7 +51,7 @@ export class EvaluationRequest extends Message {
         public runtimeBinding: RuntimeBindingId,
         public detailed: boolean
     ) {
-        super("EvaluationRequest");
+        super(id, "EvaluationRequest");
      }
 }
 
@@ -65,7 +66,7 @@ export class AssignationRequest extends Message {
         public right: RuntimeBindingId,
         public detailed: boolean
     ) {
-        super("AssignationRequest");
+        super(id, "AssignationRequest");
      }
 }
 
@@ -79,16 +80,9 @@ export class EvaluationResponse extends Message {
         public result: string,
         public error: string
     ) { 
-        super("EvaluationResponse");
+        super(id, "EvaluationResponse");
     }
 }
-
-/**
- * public final RuntimeBindingId runtimeBinding;
-
-	public final String value;
-
- */
 
 /**
  * Class used when a binding is changed
@@ -98,15 +92,14 @@ export class ChangeEvent extends Message {
         public runtimeBinding: RuntimeBindingId,
         public value: string
     ) {
-        super("ChangeEvent");
+        super(-1, "ChangeEvent");
      }
 }
 
 /**
  * Currently pending evaluations
  */
-export class PendingEvaluation<T> {
-
+class PendingEvaluation<T> {
     constructor(
         public fullfilled: (T) => void,
         public rejected: (string) => void,
@@ -115,6 +108,22 @@ export class PendingEvaluation<T> {
 }
 
 export type ChangeListener = (ChangeEvent)=>void;
+
+export type LogLevel = "error"|"warning"|"info";
+
+/**
+ * Log from the OpenFlexo Api
+ */
+export class Log {
+    constructor(
+        public level: LogLevel,
+        public message: string,
+        public source: Message|null
+    ) {
+    }
+} 
+
+export type LogListener = (Log)=>void;
 
 /**
  * The Api class proposes methods to access an OpenFlexo server.
@@ -126,7 +135,7 @@ export type ChangeListener = (ChangeEvent)=>void;
  */
 export class Api {
 
-    private connie: WebSocket;
+    private connie: WebSocket|null;
     private messageQueue: Message[] = [];
     private pendingEvaluationQueue: Map<number, PendingEvaluation<any>> = new Map();
 
@@ -134,14 +143,12 @@ export class Api {
 
     private bindingListeners: Set<[RuntimeBindingId, ChangeListener]> = new Set();
 
+    private logListeners: Set<LogListener> = new Set();
+
     constructor(
         private host: string = ""
     ) {
         
-    }
-
-    error(url: string): void {
-        console.log("Error can't access '" + url + '", check that it exists and is accessible');
     }
 
     public call<T>(path: string, method: string = "get"): Promise<T> {
@@ -191,9 +198,11 @@ export class Api {
                         
                             if (response.error !== null) {
                                 // rejects the promise if there is an error
+                                this.log("error", response.error, message);
                                 pending.rejected(response.error);
                             } else {
                                 // fullfilled the promise when it's ok
+                                this.log("info", "Received", message);
                                 pending.fullfilled(response.result);
                             }
 
@@ -219,13 +228,12 @@ export class Api {
      * @param event 
      */
     public onEvaluationOpen(event: MessageEvent) {
-        console.log("Openned " + event.data);
-        console.log(this.messageQueue);
-
+        this.log("info", "Openned " + event.data, null);
+        
         // evaluates pending request
-        for (let binding of this.messageQueue) {
-            console.log("Sending " + binding);
-            this.sendMessage(binding);
+        for (let message of this.messageQueue) {
+            this.log("info", "Sending message", message);
+            this.readySendMessage(message);
         }
     }
 
@@ -233,13 +241,14 @@ export class Api {
      * Listens to WebSocket close
      */
     private onEvaluationClose() {
-        console.log("Closed " + this.connie);
+        this.log("warning", "Websocket is closed", null);
+        this.connie = null;
     }
 
     /**
      * Internal connie WebSocket
      */
-    private initializeConnieEvaluator() {
+    private initializeConnieEvaluator(): WebSocket {
         if (this.connie == null) {
             var wsHost = this.host.length > 0 ?
                 this.host.replace(new RegExp("https?\\://"), "ws://"):
@@ -250,14 +259,38 @@ export class Api {
             this.connie.onmessage = (e:MessageEvent) => this.onEvaluationMessage(e);
             this.connie.onclose = () => this.onEvaluationClose();
         }
+        return this.connie;
     }
+
+    public sendMessage<T>(message: Message):Promise<T> {
+        if (this.connie != null) {
+            // act depending on the WebSocket status
+            if (this.connie.readyState == 1) {
+                // sends the binding now
+                this.readySendMessage(message);
+            } else {
+                // sends when the socket is ready
+                this.messageQueue.push(message);
+            }
+        }
+
+        // prepares the promise's callback for the result
+        return new Promise<T>((fullfilled, rejected) => {
+            this.pendingEvaluationQueue.set(message.id , new PendingEvaluation(fullfilled, rejected, message));
+        });
+    }
+    
 
     /**
      * Internal send evaluation request
      * @param mesage message to send
      */
-    private sendMessage(message: Message) {
-        this.connie.send(JSON.stringify(message));
+    private readySendMessage(message: Message) {
+        let json = JSON.stringify(message); 
+        this.log("info", "Sending message", message);
+        if (this.connie != null) {
+            this.connie.send(json);
+        }
     }
 
     /**
@@ -282,19 +315,7 @@ export class Api {
         let id = this.evaluationRequestSeed++;
         let request = new EvaluationRequest(id, runtimeBinding, detailed);
         
-        // act depending on the WebSocket status
-        if (this.connie.readyState == 1) {
-            // sends the binding now
-            this.sendMessage(request);
-        } else {
-            // sends when the socket is ready
-            this.messageQueue.push(request);
-        }
-
-        // prepares the promise's callback for the result
-        return new Promise<T>((fullfilled, rejected) => {
-            this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));
-        });
+        return this.sendMessage(request);
     }
 
 
@@ -310,25 +331,13 @@ export class Api {
      */
     public assign<T>(left: RuntimeBindingId, right: RuntimeBindingId, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
-        this.initializeConnieEvaluator();
+        let connie = this.initializeConnieEvaluator();
 
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
         let request = new AssignationRequest(id, left, right, detailed);
         
-        // act depending on the WebSocket status
-        if (this.connie.readyState == 1) {
-            // sends the binding now
-            this.sendMessage(request);
-        } else {
-            // sends when the socket is ready
-            this.messageQueue.push(request);
-        }
-
-        // prepares the promise's callback for the result
-        return new Promise<T>((fullfilled, rejected) => {
-            this.pendingEvaluationQueue.set(id , new PendingEvaluation(fullfilled, rejected, request));
-        });
+        return this.sendMessage(request);
     }
 
     /**
@@ -358,6 +367,35 @@ export class Api {
             if (e[0].equals(binding)) {
                 this.bindingListeners.delete(e);
             }
+        })
+    }
+
+    /**
+     * Adds a log listener.
+     * @param listener the callback
+     */
+    public addLogListener(listener: LogListener) {
+        this.logListeners.add(listener);
+    }
+
+    /**
+     * Removes a log listener.
+     * @param listener the callback
+     */
+    public removeLogListener(listener: LogListener) {
+        this.logListeners.delete(listener);
+    }
+
+    /**
+     * Logs a message from the OpenFlexo System
+     * @param level 
+     * @param message 
+     * @param binding 
+     */
+    public log(level: LogLevel, message: string, source: Message|null) {
+        let event = new Log(level, message, source);
+        this.logListeners.forEach(listener => {
+            listener(event);
         })
     }
 

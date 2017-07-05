@@ -33,50 +33,28 @@
  *
  */
 
-package org.openflexo.http.server.connie;
+package org.openflexo.http.server.util;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.FileNotFoundException;
+import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.foundation.resource.ResourceData;
+import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 
 /**
- * Id class for a {@link org.openflexo.connie.DataBinding}
+ * Sets of utility methods for Resources
  */
-public class BindingId {
+public class ResourceUtils {
 
-	public final String expression;
-
-	public final String contextUrl;
-
-	public BindingId(
-			@JsonProperty("expression") String expression,
-			@JsonProperty("contextUrl") String contextUrl
-	) {
-		this.expression = expression;
-		this.contextUrl = contextUrl;
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		BindingId bindingId = (BindingId) o;
-
-		if (!expression.equals(bindingId.expression))
-			return false;
-		return contextUrl.equals(bindingId.contextUrl);
-	}
-
-	@Override
-	public int hashCode() {
-		int result = expression.hashCode();
-		result = 31 * result + contextUrl.hashCode();
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "Binding: " + expression + " on " + contextUrl;
+	/**
+	 * Try to retrieves the ResourceData from the resource or null if something happen.
+	 */
+	public static ResourceData safeGetResourceOrNull(FlexoResource resource) {
+		try {
+			if (resource == null) return null;
+			return resource.getResourceData(null);
+		} catch (ResourceLoadingCancelledException | FileNotFoundException | FlexoException e) {
+			return null;
+		}
 	}
 }

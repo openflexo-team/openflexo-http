@@ -57,6 +57,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.ResourceUtils;
 
 /**
  * WebSocket service to evaluate Connie expressions
@@ -78,7 +79,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 	private DataBinding getOrCreateBinding(final BindingId id) {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
 			Bindable model = findObject(id.contextUrl, Bindable.class);
-			DataBinding binding = new DataBinding(id.expression, model, Object.class, id.type);
+			DataBinding binding = new DataBinding(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
 			binding.decode();
 			return binding;
 		});
@@ -106,6 +107,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 			String resourceUri = IdUtils.decodeId(resourceId);
 			FlexoResource<?> resource = serviceManager.getResourceManager().getResource(resourceUri);
+			ResourceUtils.safeGetResourceOrNull(resource);
 			if (resource != null) {
 				FlexoObject object = resource.findObject(objectUrl, "FLX", null);
 				if (type.isInstance(object)) {
@@ -277,8 +279,6 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void endHandler(Void nothing) {
-			System.out.println("Ending websocket " + socket);
-
 			for (BindingValueChangeListener listener : listenedBindings.values()) {
 				listener.stopObserving();
 			}

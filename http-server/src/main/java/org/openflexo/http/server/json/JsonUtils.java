@@ -75,6 +75,7 @@ import java.util.Map;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
@@ -82,6 +83,7 @@ import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepos
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.ResourceUtils;
 
 /**
  * Utility methods for JSON handling
@@ -161,15 +163,7 @@ public class JsonUtils {
 
 			String prefix = service.getPrefix(resource);
 			if (prefix != null) {
-				if (!resource.isLoaded()) {
-					try {
-						resource.getResourceData(null);
-					} catch (Exception e) {
-						// nothing to do
-					}
-				}
-
-				Object data = resource.getLoadedResourceData();
+				ResourceData data = ResourceUtils.safeGetResourceOrNull(resource);
 				if (data instanceof FlexoObject) {
 					// constructs model url assuming that the object id is 1
 					StringBuilder modelUrl = new StringBuilder();
