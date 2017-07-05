@@ -52,8 +52,6 @@ export class BoundTextField implements Component {
     }
 
     sendToServer(e: any) {
-        // TODO update binding
-        console.log("Update textfield " + this.textField.input.id);
         this.valueBinding.binding.expression = "'" + this.textField.input.value + "'";
         this.api.assign(this.binding, this.valueBinding, false).then(value => {
             this.container.classList.remove("is-invalid");
