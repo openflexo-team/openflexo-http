@@ -61,6 +61,10 @@ class TableSection implements Component {
         }
     }
 
+    removeLines() {
+        this.lines.splice(0, this.lines.length);
+    }
+
     create() {
         this.container = document.createElement(this.head ? "thead" : "tbody");
     }
