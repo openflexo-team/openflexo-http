@@ -50,8 +50,7 @@ export class BoundTable implements Component {
         for (let element of elements) {
             let line = new TableLine();
             for (let column of this.columns) {
-                let binding = runtimeBinding(column.value, element.url, element.url);
-                let component = column.component(this.api, binding);
+                let component = column.component(this.api, element);
                 let cell = new TableCell(component);
                 line.addCell(cell);
             }
@@ -62,12 +61,10 @@ export class BoundTable implements Component {
 
 
 export class BoundColumn {
-
+    
     constructor(
         public name: string,
-        public value: string,
-        // TODO Adds checkbox type
-        public component: (api: Api, binding: RuntimeBindingId) => Component|PhrasingCategory 
+        public component: (api: Api, element: Description<any>) => Component|PhrasingCategory 
     ) { }
 
 }

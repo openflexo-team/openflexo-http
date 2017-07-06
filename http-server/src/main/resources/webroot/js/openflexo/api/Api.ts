@@ -5,7 +5,7 @@ export function binding(expression: string, context: string) {
     return new BindingId(expression, context);
 }
 
-export function runtimeBinding(expression: string, context: string, runtime:string) {
+export function runtimeBinding(expression: string, context: string, runtime:string = context) {
     return new RuntimeBindingId(binding(expression, context), runtime);
 }
 
