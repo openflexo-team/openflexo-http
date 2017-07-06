@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api, runtimeBinding, binding, ChangeEvent } from "./openflexo/api/Api";
+import { Api, RuntimeBindingId, runtimeBinding, binding, ChangeEvent } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";
@@ -15,6 +15,9 @@ import { Card } from "./openflexo/ui/Card";
 import { Tabs, Tab } from "./openflexo/ui/Tabs";
 
 const api = new Api();
+
+var leftBinding: RuntimeBindingId|null = null;
+var rightBinding: RuntimeBindingId|null = null;
 
 function getDataUrl(element : HTMLElement) {
     let current: HTMLElement|null = element;
@@ -176,15 +179,39 @@ function evaluateBinding(left: string, right: string) {
 
     resultDiv.appendChild(spinner());
 
+    leftBinding = null;
+    if (rightBinding !== null) {
+        api.removeChangeListeners(rightBinding);
+        rightBinding = null;
+    }
+
     let context = contextInput.value;
-    let rightBinding = runtimeBinding(right, context, context);
-    let leftBinding = left !== null && left.length > 0  ? runtimeBinding(left, context, context) : null;
+    rightBinding = runtimeBinding(right, context, context);
+    leftBinding = left !== null && left.length > 0  ? runtimeBinding(left, context, context) : null;
 
     let result = 
         leftBinding != null ?
         api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
         api.evaluate(rightBinding, detailedCheckbox.value == "true");
         
+    api.addChangeListener(rightBinding, (event:ChangeEvent) => {
+        var contextInput = <HTMLInputElement>document.getElementById("context");
+        let context = contextInput.value;
+        
+        var rightInput = <HTMLInputElement>document.getElementById("right");
+        let rightValue = rightInput.value;
+
+        console.log("Update value from event:");
+        console.log(event);
+
+        var result = <HTMLDivElement>document.getElementById("result");
+        clearElement(result);
+        var div = document.createElement("div");
+        div.className = "details";  
+        div.innerText = JSON.stringify(event.value);
+        result.appendChild(div);   
+    });
+
     result.then(value => {
         clearElement(resultDiv);
         resultDiv.appendChild(createJsonElement(value));
@@ -199,32 +226,14 @@ function evaluateBinding(left: string, right: string) {
 }
 
 function initializeBinding() {
-    var bindingInput = <HTMLInputElement>document.getElementById("left");
-    bindingInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
+    var leftInput = <HTMLInputElement>document.getElementById("left");
+    leftInput.oninput = (e) => evaluateBinding(leftInput.value, rightInput.value);
 
-    var valueInput = <HTMLInputElement>document.getElementById("right");
-    valueInput.oninput = (e) => evaluateBinding(bindingInput.value, valueInput.value);
+    var rightInput = <HTMLInputElement>document.getElementById("right");
+    rightInput.oninput = (e) => evaluateBinding(leftInput.value, rightInput.value);
 
     var evaluateButton = <HTMLButtonElement>document.getElementById("evaluate");
-    evaluateButton.onclick = (e) => evaluateBinding(bindingInput.value, valueInput.value);
-
-    api.addChangeListener((event:ChangeEvent) => {
-        var contextInput = <HTMLInputElement>document.getElementById("context");
-        let context = contextInput.value;
-        let value = valueInput.value;
-
-        if (context === event.model && context === event.runtime && value === event.binding) {
-            console.log("Update value from event:");
-            console.log(event);
-
-            var result = <HTMLDivElement>document.getElementById("result");
-            clearElement(result);
-            var div = document.createElement("div");
-            div.className = "details";  
-            div.innerText = JSON.stringify(event.value);
-            result.appendChild(div);   
-        }
-    });
+    evaluateButton.onclick = (e) => evaluateBinding(leftInput.value, rightInput.value);
 }
 
 let dataDiv = document.querySelector("#data");
