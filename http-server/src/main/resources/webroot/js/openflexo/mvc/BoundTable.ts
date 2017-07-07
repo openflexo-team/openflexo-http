@@ -37,7 +37,7 @@ export class BoundTable implements Component {
             this.table.head.addLine(header);
         }
 
-        this.api.evaluate<Description<any>[]>(this.elements, false).then(elements => this.updateList(elements));
+        this.api.evaluate<Description<any>[]>(this.elements).then(elements => this.updateList(elements));
         this.api.addChangeListener(this.elements, elements => this.updateList(elements));
 
         this.container = this.table.container;

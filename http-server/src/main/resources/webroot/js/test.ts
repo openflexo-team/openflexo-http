@@ -192,7 +192,7 @@ function evaluateBinding(left: string, right: string) {
     let result = 
         leftBinding != null ?
         api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
-        api.evaluate(rightBinding, detailedCheckbox.value == "true");
+        api.evaluate(rightBinding, false, detailedCheckbox.value == "true");
         
     api.addChangeListener(rightBinding, (event:ChangeEvent) => {
         var contextInput = <HTMLInputElement>document.getElementById("context");

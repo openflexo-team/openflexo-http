@@ -17,7 +17,7 @@ export class BoundLabel implements Component {
     create(): void {
         this.container = document.createElement("span");
 
-        this.api.evaluate<string>(this.binding, false).then( value => this.container.innerText = value );
+        this.api.evaluate<string>(this.binding).then( value => this.container.innerText = value );
 
         this.api.addChangeListener(this.binding, event => this.container.innerText = event.value );
     }    

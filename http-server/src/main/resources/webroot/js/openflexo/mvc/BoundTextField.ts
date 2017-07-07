@@ -38,7 +38,7 @@ export class BoundTextField implements Component {
         input.onblur = (e) => this.sendToServer(e);
 
         this.valueBinding = runtimeBinding("", this.binding.binding.contextUrl, this.binding.runtimeUrl);
-        this.api.evaluate<string>(this.binding, false).then( value => {
+        this.api.evaluate<string>(this.binding).then( value => {
             input.value = value;
         });
 

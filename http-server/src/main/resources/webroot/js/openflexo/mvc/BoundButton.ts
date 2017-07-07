@@ -31,7 +31,7 @@ export class BoundButton implements Component {
         this.container.onclick = (e) => this.sendActionToServer(e);
         
         if (this.enabled != null) { 
-            this.api.evaluate<string>(this.enabled, false).then( value => {
+            this.api.evaluate<string>(this.enabled).then( value => {
                 this.button.setEnable(value === "true")
             });
 
@@ -44,7 +44,7 @@ export class BoundButton implements Component {
     }
 
     sendActionToServer(e: any) {
-        this.api.evaluate(this.action, false).then(value => {
+        this.api.evaluate(this.action).then(value => {
             this.container.classList.remove("mdl-button--colored");
         }).catch(error => {
             this.container.classList.add("mdl-button--colored");
