@@ -15,24 +15,35 @@ The OpenFlexo's HTTP server provides a REST API to access:
 - **`/rc`:** List of resource centers
 
 ```json
-[ 
-  { "name": "Demo resource center", "uri": "http://www.openflexo.org/demos-rc", 
-    "id": "347d5ab625ede4b9d7", "url":"/rc/347d5ab625ede4b9d7" },
-  { "name": "Demo resource center", "uri": "http://www.openflexo.org/http", 
-    "id": "2e7661e55f3631cbce", "url":"/rc/2e7661e55f3631cbce" }  
-]
+[{
+  "name" : "http://openflexo.org/docx-test",
+  "type" : "ResourceCenter",
+  "uri" : "http://openflexo.org/docx-test",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource"
+}, {
+  "name" : "http://openflexo.org/excel-test",
+  "type" : "ResourceCenter",
+  "uri" : "http://openflexo.org/excel-test",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZXhjZWwtdGVzdA",
+  "url" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZXhjZWwtdGVzdA",
+  "resourceUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZXhjZWwtdGVzdA/resource"
+}]
 ```
 
 - **`/rc/{rc_id}`:** Information for resource center with given id.
 
-Example results for `/rc/347d5ab625ede4b9d7`:
+Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0`:
 
 ```json
-{ 
-  "name": "Demo resource center", "uri": "http://www.openflexo.org/demos-rc",
-  "id": "347d5ab625ede4b9d7", "url":"/rc/347d5ab625ede4b9d7",
-  "enable_resource_center": false, "allows_edit": true, 
-  "allows_publish": true, "watch_resource_center_every": 2
+{
+  "name" : "http://openflexo.org/docx-test",
+  "type" : "ResourceCenter",
+  "uri" : "http://openflexo.org/docx-test",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource"
 }
 ```
 
@@ -40,26 +51,64 @@ Example results for `/rc/347d5ab625ede4b9d7`:
 
 - **`/rc/{rc_id}/resource{path}`:** List of resources for resource center with given id.
 
-Example results for `/rc/347d5ab625ede4b9d7/resource`:
+Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource`:
 
 ```json
-[ 
-  { "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
-  { "name": "People.diagram", "uri": "http://people", "version": "0.5", "type": "Diagram",
-    "id": "db835d8f1a32e5234c", "url": "/rc/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
-]
+[{
+  "name" : "Step3-alter-MSWord.docx",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestResourceCenter/HeterogeneousDocumentEdition2/Step3-alter-MSWord.docx",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9IZXRlcm9nZW5lb3VzRG9jdW1lbnRFZGl0aW9uMi9TdGVwMy1hbHRlci1NU1dvcmQuZG9jeA",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9IZXRlcm9nZW5lb3VzRG9jdW1lbnRFZGl0aW9uMi9TdGVwMy1hbHRlci1NU1dvcmQuZG9jeA",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9IZXRlcm9nZW5lb3VzRG9jdW1lbnRFZGl0aW9uMi9TdGVwMy1hbHRlci1NU1dvcmQuZG9jeA/contents",
+  "technologyAdapterId" : "docx",
+  "technologyAdapterUrl" : "/ta/docx"
+}, {
+  "name" : "Step2.docx",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestResourceCenter/MSWordDocumentEdition/Step2.docx",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9NU1dvcmREb2N1bWVudEVkaXRpb24vU3RlcDIuZG9jeA",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9NU1dvcmREb2N1bWVudEVkaXRpb24vU3RlcDIuZG9jeA",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9NU1dvcmREb2N1bWVudEVkaXRpb24vU3RlcDIuZG9jeA/contents",
+  "technologyAdapterId" : "docx",
+  "technologyAdapterUrl" : "/ta/docx"
+}]
 ```
 
-Example results for `/rc/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`:
+Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestResourceCenter`:
 
 ```json
-[ 
-  { "name": "CityMapping", "uri": "http://simpleVP/CityMapping", "version": "0.2", "type": "EMF",
-    "id": "f455f327a9f3a57de0", "url": "/rc/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
-  { "name": "CityViews", "uri": "http://simpleVP/CityViews", "version": "0.2", "type": "EMF",
-    "id": "890822e1ec66f5b1a6", "url": "/rc/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
-]
+[ {
+  "name" : "DocumentWithImage.docx",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestResourceCenter/DocumentWithImage.docx",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhJbWFnZS5kb2N4",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhJbWFnZS5kb2N4",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhJbWFnZS5kb2N4/contents",
+  "technologyAdapterId" : "docx",
+  "technologyAdapterUrl" : "/ta/docx"
+}, {
+  "name" : "DocumentWithManyTables.docx",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestResourceCenter/DocumentWithManyTables.docx",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhNYW55VGFibGVzLmRvY3g",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhNYW55VGFibGVzLmRvY3g",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9Eb2N1bWVudFdpdGhNYW55VGFibGVzLmRvY3g/contents",
+  "technologyAdapterId" : "docx",
+  "technologyAdapterUrl" : "/ta/docx"
+} ]
 ```
 
 ## Resources list
@@ -69,16 +118,33 @@ Example results for `/rc/347d5ab625ede4b9d7/resource/ViewPointRC/EMF/Cities`:
 Example results for `/resource`:
 
 ```json
-[ 
-  { "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03" },
-  { "name": "People.diagram", "uri": "http://people", "version": "0.5", "type": "Diagram",
-    "id": "db835d8f1a32e5234c", "url": "/rc/347d5ab625ede4b9d7/resource/db835d8f1a32e5234c" }
-  { "name": "CityMapping", "uri": "http://simpleVP/CityMapping", "version": "0.2", "type": "EMF",
-    "id": "f455f327a9f3a57de0", "url": "/rc/347d5ab625ede4b9d7/resource/f455f327a9f3a57de0" },
-  { "name": "CityViews", "uri": "http://simpleVP/CityViews", "version": "0.2", "type": "EMF",
-    "id": "890822e1ec66f5b1a6", "url": "/rc/347d5ab625ede4b9d7/resource/890822e1ec66f5b1a6" }
-]
+[ {
+  "name" : "TestLibraryViewPoint",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestLibraryViewPoint",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50/contents",
+  "technologyAdapterId" : "fml",
+  "technologyAdapterUrl" : "/ta/fml",
+  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50/object/2"
+}, {
+  "name" : "DocumentVirtualModel",
+  "type" : "Resource",
+  "uri" : "http://openflexo.org/docx-test/TestLibraryViewPoint/DocumentVirtualModel",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs",
+  "modified" : false,
+  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs/contents",
+  "technologyAdapterId" : "fml",
+  "technologyAdapterUrl" : "/ta/fml",
+  "modelUrl" : "/ta/fml/virtualmodel/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs/object/1"
+}]
 ```
 
 ## Resources
