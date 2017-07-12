@@ -172,7 +172,7 @@ public class JsonUtils {
 						}
 					}
 				}
-				resourceDescription.put("objectsUrl", prefix + "/object");
+				resourceDescription.put("objectsUrl", prefix + "/" + id + "/object");
 			}
 		}
 		return resourceDescription;
