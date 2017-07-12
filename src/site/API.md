@@ -36,11 +36,11 @@ For instance, a `FlexoConceptInstance` refers to it `FlexoConcept` using a refer
 
 ## Resource Centers
 
-Resource centers are presented with the prefix: `/rc`.
+The registered resource centers are presented with the prefix: `/rc`.
 
 ### Get
 
-- Get on **`/rc`**  returns the list of resource centers, for instance:
+- Get on **`/rc`**  lists of resource centers, for instance:
 
 ```json
 [{
@@ -60,7 +60,7 @@ Resource centers are presented with the prefix: `/rc`.
 }]
 ```
 
-- Get on **`/rc/{rc_id}`:** returns the information for resource center with given id.
+- Get on **`/rc/{rc_id}`** returns the information for resource center with given id.
 
 Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0`:
 
@@ -75,7 +75,7 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0`:
 }
 ```
 
-- Get on **`/rc/{rc_id}/resource{path}`:** returns the list of resources for resource center with given id.
+- Get on **`/rc/{rc_id}/resource{path}`** lists of resources for resource center with given id.
 
 Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource`:
 
@@ -139,11 +139,11 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestR
 
 ## Resources 
 
-Resources are presented with the prefix `/resource`
+The resources in all resource centers are presented with the prefix `/resource`.
 
 ### Get
 
-- **`/resource`:** List of all resources
+- Get on **`/resource`** lists of all resources in all resource centers.
 
 Example results for `/resource`:
 
@@ -177,78 +177,71 @@ Example results for `/resource`:
 }]
 ```
 
-## Resources
+- Get on **`/resource/{resource_id}`** retrieves information for one resource with given id.
 
-- **`/resource/{resource_id}`:** Information for resource with given id in the given resource center.
+- Get on **`/resource/{resource_id}/contents`** retrieves raw content for the resource with given id.
 
-Example results for `/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03`:
+### Post
 
-```json 
-{
-    "name": "Animals.diagram", "uri": "http://animals", "version": "0.1", "type": "Diagram",
-    "id": "af8bca0b3983d28a03", "url": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03",
-    "contentUrl": "/rc/347d5ab625ede4b9d7/resource/af8bca0b3983d28a03/contents"
-}
-```
-
-- **`/resource/{resource_id}/contents`**: Raw content for the resource with given id.
-
-Example results for `/resource/af8bca0b3983d28a03/contents`:
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<Diagram id="1" name="Animals" uri="http://www.agilebirds.com/openflexo/ViewPoints/Basic/BasicOntology.owl/DiagramSpecification/DiagramSpecification.diagramspecification/Animals" userID="FLX">
-  <DrawingGraphicalRepresentation id="2" width="1000.0" height="1000.0" drawWorkingArea="true" selectionColor="0,0,255" 
-        focusColor="255,0,0" backgroundColor="255,255,255" identifier="root" layer="0" hasText="true" isMultilineAllowed="false" 
-        continuousTextEditing="true" relativeTextX="0.5" relativeTextY="0.5" absoluteTextX="0.0" absoluteTextY="0.0" textAlignment="CENTER" 
-        isSelectable="true" isFocusable="true" drawControlPointsWhenFocused="true" drawControlPointsWhenSelected="true" isReadOnly="false" 
-        isLabelEditable="true" isVisible="true" userID="FLX">
-...
-```
+- Post on **`/resource/{resource_id}`** will **save** the resource with the given id.
 
 ## Technology adapters
 
-- **`/ta`:** List of technology adapters
+All found technology adapters are presented with the prefix: `/ta`.
+
+### Get
+
+- Get on **`/ta`** lists of technology adapters
 
 Example results for `/ta`:
 
 ```json
-[ 
-  { "name": "FML technology adapter", "id": "org.openflexo.foundation.fml.FMLTechnologyAdapter", 
-    "type" : "TechnologyAdapter", "url": "/ta/org.openflexo.foundation.fml.FMLTechnologyAdapter"},
-  { "name": "FML@runtime technology adapter", "id": "org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter", 
-    "type" : "TechnologyAdapter", "url": "/ta/org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter"},
-  { "name" : "DocX Technology Adapter", "id" : "org.openflexo.technologyadapter.docx.DocXTechnologyAdapter",
-    "type" : "TechnologyAdapter", "url" : "/ta/org.openflexo.technologyadapter.docx.DocXTechnologyAdapter" }
-]
+[ {
+  "name" : "FML technology adapter",
+  "type" : "TechnologyAdapter",
+  "id" : "fml",
+  "activated" : true,
+  "url" : "/ta/fml",
+  "complemented" : true,
+  "VirtualModelResourceUrl" : "/ta/fml/virtualmodel",
+  "ViewPointResourceUrl" : "/ta/fml/viewpoint"
+}, {
+  "name" : "FML@runtime technology adapter",
+  "type" : "TechnologyAdapter",
+  "id" : "fmlrt",
+  "activated" : true,
+  "url" : "/ta/fmlrt",
+  "complemented" : true,
+  "ViewResourceUrl" : "/ta/fmlrt/view",
+  "VirtualModelInstanceResourceUrl" : "/ta/fmlrt/vmi"
+}, {
+  "name" : "DocX Technology Adapter",
+  "type" : "TechnologyAdapter",
+  "id" : "docx",
+  "activated" : true,
+  "url" : "/ta/docx",
+  "complemented" : false
+}]
 ```
 
-- **`/ta/{id}`:** Information for the technology adapter of given id
+- Get on **`/ta/{id}`** retrieves information for the technology adapter of given id
 
-Example results for `/ta/org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter`:
-
-```json
-{
-  "name": "FML technology adapter", "id": "org.openflexo.foundation.fml.FMLTechnologyAdapter",
-  "url": "/ta/org.openflexo.foundation.fml.FMLTechnologyAdapter", "activated": true,
-  "type" : "TechnologyAdapter"
-}
-```
-
-Each technology adapter presents a series of standard entries for resources, actions and models...
-
-**ToDo**
-
-A technology adapter can also provide new API entries using the interface `To Be Defined`
+If a technology adapters provides 
 
 ## FML
 
-
+**TODO**
 
 ## FML@runtime
 
+**TODO**
+
 ## Gina
+
+Gina isn't implemented yet.
 
 ## Diana
 
-## Excel
+Diana isn't implemented yet.
+
+
