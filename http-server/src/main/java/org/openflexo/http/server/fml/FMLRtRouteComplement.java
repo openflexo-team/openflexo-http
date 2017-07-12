@@ -35,37 +35,28 @@
 
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.Router;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
-import org.openflexo.foundation.fml.rt.ViewModelFactory;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.fml.rt.rm.ViewResource;
 import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
-import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
+import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 
 /**
- * Created by charlie on 08/02/2017.
+ * Route complements for FML@RT technology adapter
  */
-public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRTTechnologyAdapter> {
+public class FMLRtRouteComplement implements TechnologyAdapterRouteComplement {
 
 	private FMLRTTechnologyAdapter technologyAdapter;
-
-	private PamelaResourceRestService<View, ViewResource> viewConverter;
-	private PamelaResourceRestService<VirtualModelInstance, VirtualModelInstanceResource> virtualModelInstanceConverter;
 
 	@Override
 	public Class<FMLRTTechnologyAdapter> getTechnologyAdapterClass() {
@@ -73,31 +64,38 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 	}
 
 	@Override
-	public void initialize(HttpService service, FMLRTTechnologyAdapter technologyAdapter) throws Exception {
-		this.technologyAdapter = technologyAdapter;
-
+	public void initialize(HttpService service, TechnologyAdapterRouteService taRouteService) throws Exception {
+		technologyAdapter = service.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(getTechnologyAdapterClass());
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 		TechnologyAdapterService technologyAdapterService = technologyAdapter.getServiceManager().getTechnologyAdapterService();
-		ViewModelFactory viewFactory = new ViewModelFactory(null, null, technologyAdapterService);
-		viewConverter = new PamelaResourceRestService<>(
+
+		// Adds pamela rest service for View resources
+		PamelaResourceRestService<View, ViewResource> viewConverter = new PamelaResourceRestService<>(
 				"/view",
 				this::getViewResources,
 				this::getViewResource,
 				ViewResource.class, taService
 		);
+		taRouteService.registerPamelaResourceRestService(technologyAdapter, viewConverter);
 
+		// Adds pamela rest service for VirtualModelInstance resources
 		VirtualModelInstanceModelFactory vmiFactory = new VirtualModelInstanceModelFactory(null, null, technologyAdapterService);
-		virtualModelInstanceConverter = new PamelaResourceRestService<>(
+		PamelaResourceRestService<VirtualModelInstance, VirtualModelInstanceResource> virtualModelInstanceConverter = new PamelaResourceRestService<>(
 				"/vmi",
 				this::getVirtualModelInstanceResources,
 				this::getVirtualModelInstanceResource,
 				VirtualModelInstanceResource.class, taService
 		);
+		taRouteService.registerPamelaResourceRestService(technologyAdapter, virtualModelInstanceConverter);
 
 	}
 
 	private List<ViewResource> getViewResources() {
-		return Collections.emptyList();
+		ArrayList<ViewResource> result = new ArrayList<>();
+		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+			result.addAll(viewLibrary.getAllResources());
+		}
+		return result;
 	}
 
 	private ViewResource getViewResource(String uri) {
@@ -109,7 +107,11 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 	}
 
 	private List<VirtualModelInstanceResource> getVirtualModelInstanceResources() {
-		return Collections.emptyList();
+		ArrayList<VirtualModelInstanceResource> result = new ArrayList<>();
+		for (ViewResource viewResource : getViewResources()) {
+			result.addAll(viewResource.getVirtualModelInstanceResources());
+		}
+		return result;
 	}
 
 	private VirtualModelInstanceResource getVirtualModelInstanceResource(String uri) {
@@ -121,19 +123,4 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 		}
 		return null;
 	}
-
-	public void addRoutes(Vertx vertx, Router router) {
-		viewConverter.addRoutes(router);
-		virtualModelInstanceConverter.addRoutes(router);
-	}
-
-	@Override
-	public Map<Class<? extends FlexoResource<?>>, String> getResourceRoots() {
-		Map<Class<? extends FlexoResource<?>>, String> result = new HashMap<>();
-		result.put(viewConverter.getResourceClass(), viewConverter.getPrefix());
-		result.put(virtualModelInstanceConverter.getResourceClass(), virtualModelInstanceConverter.getPrefix());
-		return result;
-	}
-
-
 }

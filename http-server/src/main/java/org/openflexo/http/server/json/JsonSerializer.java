@@ -84,7 +84,7 @@ import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;

@@ -14,7 +14,7 @@ public interface RouteService<Context> {
 
 	void initialize(HttpService service, Context context) throws Exception;
 
-	void addRoutes(Vertx vertx, Router router);
+	default void addRoutes(Vertx vertx, Router router) { /* Do nothing by default. */ }
 
 	default void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();

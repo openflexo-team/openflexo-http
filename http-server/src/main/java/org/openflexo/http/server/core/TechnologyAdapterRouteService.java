@@ -33,16 +33,54 @@
  *
  */
 
-package org.openflexo.http.server.core.ta;
+/*
+ * Copyright (c) 2013-2017, Openflexo
+ *
+ * This file is part of Flexo-foundation, a component of the software infrastructure
+ * developed at Openflexo.
+ *
+ * Openflexo is dual-licensed under the European Union Public License (EUPL, either
+ * version 1.1 of the License, or any later version ), which is available at
+ * https://joinup.ec.europa.eu/software/page/eupl/licence-eupl
+ * and the GNU General Public License (GPL, either version 3 of the License, or any
+ * later version), which is available at http://www.gnu.org/licenses/gpl.html .
+ *
+ * You can redistribute it and/or modify under the terms of either of these licenses
+ *
+ * If you choose to redistribute it and/or modify under the terms of the GNU GPL, you
+ * must include the following additional permission.
+ *
+ *           Additional permission under GNU GPL version 3 section 7
+ *           If you modify this Program, or any covered work, by linking or
+ *           combining it with software containing parts covered by the terms
+ *           of EPL 1.0, the licensors of this Program grant you additional permission
+ *           to convey the resulting work.
+ *
+ * This software is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.
+ *
+ * See http://www.openflexo.org/license.html for details.
+ *
+ *
+ * Please contact Openflexo (openflexo-contacts@openflexo.org)
+ * or visit www.openflexo.org if you need additional information.
+ *
+ */
+
+package org.openflexo.http.server.core;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.TreeMap;
@@ -57,9 +95,12 @@ import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.PamelaResourceRestService;
+import org.openflexo.toolbox.StringUtils;
 
 /**
- * Created by charlie on 11/02/2017.
+ * Route service for TechnologyAdapters. It's completable with {@link TechnologyAdapterRouteComplement} for specific
+ * {@link TechnologyAdapter}.
  */
 public class TechnologyAdapterRouteService implements RouteService<FlexoServiceManager> {
 
@@ -67,11 +108,20 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 
 	private TechnologyAdapterService technologyAdapterService;
 
+	/** Centralized JsonSerializer */
 	private final JsonSerializer serializer = new JsonSerializer(this);
 
+	/** Map of prefix to corresponding {@link TechnologyAdapter} */
 	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
-	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> complementMap = new LinkedHashMap<>();
+
+	/** Map of technology adapters to corresponding {@link TechnologyAdapterRouteComplement} */
+	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement> complementMap = new LinkedHashMap<>();
+
+	/** Map of FlexoResource classes to the prefix for this type of resource */
 	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(Comparator.comparing(Class::getSimpleName));
+
+	/** Map of registered {@link org.openflexo.http.server.util.PamelaResourceRestService}s for each technology adapters */
+	private final Map<TechnologyAdapter, List<PamelaResourceRestService>> pamelaRestServices = new HashMap<>();
 
 	@Override
 	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
@@ -87,7 +137,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		ServiceLoader<TechnologyAdapterRouteComplement> complements = ServiceLoader.load(TechnologyAdapterRouteComplement.class);
 
 		// initializes complements
-		for (TechnologyAdapterRouteComplement<TechnologyAdapter> complement : complements) {
+		for (TechnologyAdapterRouteComplement complement : complements) {
 
 			String name = complement.getClass().getName();
 			try {
@@ -96,15 +146,9 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 				TechnologyAdapter technologyAdapter = technologyAdapterService.getTechnologyAdapter(technologyAdapterClass);
 				if (technologyAdapter != null) {
 					logger.log(Level.INFO, "Initializing Technology Adapter complement " + name);
-					complement.initialize(service, technologyAdapter);
+					complement.initialize(service, this);
 
 					complementMap.put(technologyAdapter, complement);
-
-					String prefix = "/ta/" + IdUtils.getTechnologyAdapterId(technologyAdapter);
-					for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : complement.getResourceRoots().entrySet()) {
-						resourcePrefixes.put(entry.getKey(), prefix + entry.getValue());
-					}
-
 				}
 			} catch (Exception e) {
 				logger.log(Level.SEVERE, "Unable to initialize Technology Adapter complement " + name, e);
@@ -112,9 +156,18 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 	}
 
-	public TechnologyAdapterRouteComplement<TechnologyAdapter> getComplement(TechnologyAdapter adapter) {
-		if (adapter == null) return null;
-		return complementMap.get(adapter);
+	public void registerPamelaResourceRestService(TechnologyAdapter adapter, PamelaResourceRestService service) {
+		pamelaRestServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
+	}
+
+	public void complementTechnologyAdapter(TechnologyAdapter adapter, JsonObject result) {
+		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
+		result.put("complemented", complement != null);
+		for (PamelaResourceRestService service : pamelaRestServices.getOrDefault(adapter, Collections.emptyList())) {
+			String simpleName = service.getResourceClass().getSimpleName();
+			String route = result.getString("url") + service.getPrefix();
+			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
+		}
 	}
 
 	@Override
@@ -122,22 +175,24 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
-		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRouteComplement<TechnologyAdapter>> entry : complementMap.entrySet()) {
+		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRouteComplement> entry : complementMap.entrySet()) {
 			Router subRouter = Router.router(vertx);
 			String route = "/ta/" + IdUtils.getTechnologyAdapterId(entry.getKey());
 			router.mountSubRouter(route, subRouter);
 			entry.getValue().addRoutes(vertx, subRouter);
+
+			for (PamelaResourceRestService service : pamelaRestServices.getOrDefault(entry.getKey(), Collections.emptyList())) {
+				service.addRoutes(subRouter);
+				resourcePrefixes.put(service.getResourceClass(), route + service.getPrefix());
+			}
 		}
 	}
 
+
 	public String getPrefix(FlexoResource resource) {
 		if (resource == null) return null;
-		return getPrefix(resource.getClass());
-	}
-
-	public String getPrefix(Class<? extends FlexoResource> resourceClass) {
 		for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : resourcePrefixes.entrySet()) {
-			if (entry.getKey().isAssignableFrom(resourceClass)) {
+			if (entry.getKey().isAssignableFrom(resource.getClass())) {
 				return entry.getValue();
 			}
 		}

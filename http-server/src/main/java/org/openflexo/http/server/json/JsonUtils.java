@@ -71,7 +71,6 @@
 package org.openflexo.http.server.json;
 
 import io.vertx.core.json.JsonObject;
-import java.util.Map;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -80,8 +79,7 @@ import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
-import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
+import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceUtils;
 
@@ -145,6 +143,8 @@ public class JsonUtils {
 		resourceDescription.put("uri", uri);
 		resourceDescription.put("id", id);
 		resourceDescription.put("modified", resource.isModified());
+		resourceDescription.put("loaded", resource.isLoaded());
+
 		if (resource.getResourceCenter() != null) {
 			String centerId = IdUtils.encodeuri(resource.getResourceCenter().getDefaultBaseURI());
 			resourceDescription.put("resourceCenterId", centerId);
@@ -161,18 +161,13 @@ public class JsonUtils {
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 
-			String prefix = service.getPrefix(resource);
-			if (prefix != null) {
+			if (resource.isLoaded()) {
 				ResourceData data = ResourceUtils.safeGetResourceOrNull(resource);
 				if (data instanceof FlexoObject) {
-					// constructs model url assuming that the object id is 1
-					StringBuilder modelUrl = new StringBuilder();
-					modelUrl.append(prefix);
-					modelUrl.append("/");
-					modelUrl.append(IdUtils.encodeuri(resource.getURI()));
-					modelUrl.append("/object/");
-					modelUrl.append(((FlexoObject) data).getFlexoID());
-					resourceDescription.put("modelUrl", modelUrl.toString());
+					String url = IdUtils.getUrl(data, service);
+					if (url != null) {
+						resourceDescription.put("modelUrl", url);
+					}
 				}
 			}
 		}
@@ -180,24 +175,19 @@ public class JsonUtils {
 	}
 
 	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter adapter, TechnologyAdapterRouteService service) {
-		JsonObject resourceDescription = new JsonObject();
-		resourceDescription.put("name", adapter.getName());
-		resourceDescription.put("type", "TechnologyAdapter");
+		JsonObject result = new JsonObject();
+		result.put("name", adapter.getName());
+		result.put("type", "TechnologyAdapter");
 
-		resourceDescription.put("id", id);
-		resourceDescription.put("activated", adapter.isActivated());
+		result.put("id", id);
+		result.put("activated", adapter.isActivated());
 
 		String url = "/ta/" + id;
-		resourceDescription.put("url", url);
+		result.put("url", url);
 
-		TechnologyAdapterRouteComplement<TechnologyAdapter> complement = service.getComplement(adapter);
-		resourceDescription.put("complemented", complement != null);
-		if (complement != null) {
-			for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : complement.getResourceRoots().entrySet()) {
-				resourceDescription.put(entry.getKey().getSimpleName() + "Url", url + entry.getValue());
-			}
-		}
-		return resourceDescription;
+		service.complementTechnologyAdapter(adapter, result);
+
+		return result;
 	}
 
 }
