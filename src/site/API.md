@@ -8,11 +8,39 @@ The OpenFlexo's HTTP server provides a REST API to access:
 	- federated models `FML`/`FML-RT` 
 	- gina views `Gina`
 	- diagrams `Diana`
-- connie expressions
+
+It also provides a WebSocket API to handle connie expressions and updates the server.
+
+## General view
+
+Each REST object provided by the server will contain: 
+
+- `id` is the internal id for the object, 
+- `type` gives information concerning it's type,
+- `url` provide a path to access the object,
+- a `name` if it exists and
+- a series of properties specific to the object.
+
+The first 4 fields constitute a reference for an object. 
+For instance, a `FlexoConceptInstance` refers to it `FlexoConcept` using a reference like so:
+
+```json
+"flexoConcept" : {
+    "name" : "Hub",
+    "id" : "6",
+    "type" : "FlexoConcept",
+    "url" : "/ta/fml/virtualmodel/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50L0luc3RhbGxhdGlvbg/object/6"
+}
+```
+
 
 ## Resource Centers
 
-- **`/rc`:** List of resource centers
+Resource centers are presented with the prefix: `/rc`.
+
+### Get
+
+- Get on **`/rc`**  returns the list of resource centers, for instance:
 
 ```json
 [{
@@ -32,7 +60,7 @@ The OpenFlexo's HTTP server provides a REST API to access:
 }]
 ```
 
-- **`/rc/{rc_id}`:** Information for resource center with given id.
+- Get on **`/rc/{rc_id}`:** returns the information for resource center with given id.
 
 Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0`:
 
@@ -47,9 +75,7 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0`:
 }
 ```
 
-## Resources lists for center
-
-- **`/rc/{rc_id}/resource{path}`:** List of resources for resource center with given id.
+- Get on **`/rc/{rc_id}/resource{path}`:** returns the list of resources for resource center with given id.
 
 Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource`:
 
@@ -111,7 +137,11 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestR
 } ]
 ```
 
-## Resources list
+## Resources 
+
+Resources are presented with the prefix `/resource`
+
+### Get
 
 - **`/resource`:** List of all resources
 
