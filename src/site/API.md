@@ -141,6 +141,12 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestR
 
 The resources in all resource centers are presented with the prefix `/resource`.
 
+### Description
+
+A resource description indicates if the resource is loaded or not with the `loaded` property. 
+
+If the resource as a `PamelaResourceRestService` associated a `objectUrl` property contains the URL to list it's content. If the resource is loaded the `modelUrl` property gives the URL to the model object behind the resource (the root object).
+
 ### Get
 
 - Get on **`/resource`** lists of all resources in all resource centers.
@@ -149,37 +155,42 @@ Example results for `/resource`:
 
 ```json
 [ {
-  "name" : "TestLibraryViewPoint",
+  "name" : "Eurofins",
   "type" : "Resource",
-  "uri" : "http://openflexo.org/docx-test/TestLibraryViewPoint",
-  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50",
+  "uri" : "http://openflexo.org/CarboSource/Analyses/Eurofins",
+  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM",
   "modified" : false,
-  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
-  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
-  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50",
-  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50/contents",
+  "loaded" : true,
+  "resourceCenterId" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
+  "resourceCenterUrl" : "/rc/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
+  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM",
+  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/contents",
   "technologyAdapterId" : "fml",
   "technologyAdapterUrl" : "/ta/fml",
-  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50/object/2"
+  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/object/3",
+  "objectsUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/object"
 }, {
-  "name" : "DocumentVirtualModel",
+  "name" : "Modelisation",
   "type" : "Resource",
-  "uri" : "http://openflexo.org/docx-test/TestLibraryViewPoint/DocumentVirtualModel",
-  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs",
+  "uri" : "http://www.cyane.eu/carbosource/Modelisation.viewpoint",
+  "id" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50",
   "modified" : false,
-  "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
-  "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
-  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs",
-  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs/contents",
+  "loaded" : true,
+  "resourceCenterId" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
+  "resourceCenterUrl" : "/rc/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
+  "url" : "/resource/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50",
+  "contentUrl" : "/resource/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/contents",
   "technologyAdapterId" : "fml",
   "technologyAdapterUrl" : "/ta/fml",
-  "modelUrl" : "/ta/fml/virtualmodel/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RMaWJyYXJ5Vmlld1BvaW50L0RvY3VtZW50VmlydHVhbE1vZGVs/object/1"
+  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/object/2",
+  "objectsUrl" : "/ta/fml/viewpoint/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/object"
 }]
 ```
 
 - Get on **`/resource/{resource_id}`** retrieves information for one resource with given id.
 
 - Get on **`/resource/{resource_id}/contents`** retrieves raw content for the resource with given id.
+
 
 ### Post
 
@@ -226,7 +237,12 @@ Example results for `/ta`:
 
 - Get on **`/ta/{id}`** retrieves information for the technology adapter of given id
 
-If a technology adapters provides 
+### Complements
+
+When a technology adapters provides specific objects by implementing a `TechnologyAdapterRouteComplement` it sets the `complemented` field to true.
+It may also provide new routes for new objects. The next sections are technology adapter complements.
+
+See how to complement a technology adapter [here](ComplementTA.md).
 
 ## FML
 
