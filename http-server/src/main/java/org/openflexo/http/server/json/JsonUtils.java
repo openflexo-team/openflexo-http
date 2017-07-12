@@ -168,7 +168,7 @@ public class JsonUtils {
 					if (data instanceof FlexoObject) {
 						String url = IdUtils.getUrl(data, service);
 						if (url != null) {
-							resourceDescription.put("rootUrl", url);
+							resourceDescription.put("modelUrl", url);
 						}
 					}
 				}
