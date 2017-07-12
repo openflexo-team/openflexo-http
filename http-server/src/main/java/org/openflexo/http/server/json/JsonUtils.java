@@ -161,14 +161,18 @@ public class JsonUtils {
 			resourceDescription.put("technologyAdapterId", taId);
 			resourceDescription.put("technologyAdapterUrl", "/ta/"+taId);
 
-			if (resource.isLoaded()) {
-				ResourceData data = ResourceUtils.safeGetResourceOrNull(resource);
-				if (data instanceof FlexoObject) {
-					String url = IdUtils.getUrl(data, service);
-					if (url != null) {
-						resourceDescription.put("modelUrl", url);
+			String prefix = service.getPrefix(resource);
+			if (prefix != null) {
+				if (resource.isLoaded()) {
+					ResourceData data = ResourceUtils.safeGetResourceOrNull(resource);
+					if (data instanceof FlexoObject) {
+						String url = IdUtils.getUrl(data, service);
+						if (url != null) {
+							resourceDescription.put("rootUrl", url);
+						}
 					}
 				}
+				resourceDescription.put("objectsUrl", prefix + "/object");
 			}
 		}
 		return resourceDescription;

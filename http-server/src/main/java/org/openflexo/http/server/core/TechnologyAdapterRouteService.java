@@ -188,7 +188,6 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 	}
 
-
 	public String getPrefix(FlexoResource resource) {
 		if (resource == null) return null;
 		for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : resourcePrefixes.entrySet()) {
