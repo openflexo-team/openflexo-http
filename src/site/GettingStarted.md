@@ -66,7 +66,7 @@ Once the server runs, it provides the REST and WebSocket API described [here][1]
 
 The `index.html` provides a simple page showing the technology adapters, resource centers and resources provided by the server. The `test.html` file provides a simple application allowing testing the API through simple exploration.  
 
-![][image-1]
+![ServerTestApplication.png]
 
 The `Context` field can receive urls for objects in the federation server to show its contents. The contents is navigable click on hyperlinks allowing the exploration of the content.
 
