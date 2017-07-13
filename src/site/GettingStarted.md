@@ -8,7 +8,7 @@ The OpenFlexo server as all OpenFlexo components doesn't do much own it's own, i
 
 ### Package a server
 
-One easy way to package the server is to use a build tool, gradle for instance. Here is an example of a gradle buid file that packages the server and a handfull of connectors:
+One easy way to package the server is to use a build tool, gradle for instance. Here is an example of a gradle build file that packages the server and a handful of connectors:
 
 ```gradle
 group 'org.openflexo.test'
@@ -70,13 +70,81 @@ The `index.html` provides a simple page showing the technology adapters, resourc
 
 The `Context` field can receive urls for objects in the federation server to show its contents. The contents is navigable click on hyperlinks allowing the exploration of the content.
 
-The `Right` field supports the evaluation of [Connie][2] expressions (named bindings). A such expression must have a context to evaluated upon, it’s uses the `Context` field as its context.
+The `Right` field supports the evaluation of [Connie][2] expressions (named bindings). A such expression must have a context to evaluated upon, it’s uses the `Context` field as its context. When the `detailed` checkbox is checked the result will contains more details.
 
 The expandable `Left` field supports [Connie][3] expressions as `Right` field does. These expressions must be settable allowing to assign its value to the `Right` field. 
 
+The save icon will send a post request on the given `Context`. In case of resource urls it saves the resource.
+
 ### Javascript libraries
 
-**TODO**
+OpenFlexo client side is developed using [TypeScript][4], both TypeScript and Javascript files are provided. 
+
+**Api**
+
+The folder `/js/openflexo/api` contains utility classes and interfaces to help the use of the federation server [API][5]. An instance of the `Api` class in `/js/openflexo/api/Api.ts` provides call to REST objects and Connie expressions on a given server. While it’s not required to use this library to access the federation server, it’s recommended to simplify the use of Connie expressions.
+
+- Here is an example to retrieve information for a REST object:
+```typescript
+import { Api } from "./openflexo/api/Api";
+import { Resource } from "./openflexo/api/resource";
+
+const api = new Api();
+let promise = api.call<Resource>("/resource/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50");
+promise.then(resource => {
+    console.log(resource);
+}).catch((error) => {
+    console.log(error);
+});
+```
+
+- Here is an example to evaluate a binding:
+```typescript
+import { Api, runtimeBinding } from "./openflexo/api/Api";
+
+const api = new Api();
+const vmi = "/ta/fmlrt/vmi/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvNC9zb3VyY2VfMTQ5MjE4MjI3NTEwNC9UeUFyTWVuZXpSZXRELnZpZXcvaW5zdGFsbGF0aW9uLnZteG1s/object/3";
+// constructs the binding
+const binding = runtimeBinding("name", vmi, vmi);
+const promise = api.evaluate(binding, false);
+promise.then(value => {
+    console.log("Name = " + value);
+}).catch((error) => {
+    console.log(error);
+});
+
+// listens to changes for this binding
+api.addChangeListener(binding, (event) => {
+    console.log("Name changed to " + event.value);
+});
+```
+
+- Here is an example to assign a binding:
+```typescript
+import { Api, runtimeBinding } from "./openflexo/api/Api";
+
+const api = new Api();
+const vmi = "/ta/fmlrt/vmi/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvNC9zb3VyY2VfMTQ5MjE4MjI3NTEwNC9UeUFyTWVuZXpSZXRELnZpZXcvaW5zdGFsbGF0aW9uLnZteG1s/object/3";
+// constructs the binding
+const binding = runtimeBinding("name", vmi, vmi);
+const newValue = runtimeBinding('"newName"', vmi, vmi);
+const promise = api.assign(binding, newValue, false);
+promise.then(value => {
+    console.log("Name = " + value);
+}).catch((error) => {
+    console.log(error);
+});
+```
+
+These typescript examples need to have the OpenFlexo typescript files on hand to compile without errors.
+
+**UI**
+
+*TODO*
+
+**MVC**
+
+*TODO*
 
 ## Customize the server
 
@@ -89,5 +157,7 @@ The expandable `Left` field supports [Connie][3] expressions as `Right` field do
 [1]:	API.md
 [2]:	https://connie.openflexo.org/
 [3]:	https://connie.openflexo.org/
+[4]:	https://www.typescriptlang.org
+[5]:	API.md
 
 [image-1]:	ServerTestApplication.png "Test Application"
