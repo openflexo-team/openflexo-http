@@ -13,3 +13,4 @@
 /.gradle/
 http-server/rc/*
 *.js.map
+/src/site/.Ulysses-Group.plist
