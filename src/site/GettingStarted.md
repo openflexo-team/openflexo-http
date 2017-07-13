@@ -80,6 +80,8 @@ The save icon will send a post request on the given `Context`. In case of resour
 
 OpenFlexo client side is developed using [TypeScript][4], both TypeScript and Javascript files are provided. 
 
+The following typescript examples need to have the OpenFlexo typescript files on hand to compile without errors.
+
 **Api**
 
 The folder `/js/openflexo/api` contains utility classes and interfaces to help the use of the federation server [API][5]. An instance of the `Api` class in `/js/openflexo/api/Api.ts` provides call to REST objects and Connie expressions on a given server. While it’s not required to use this library to access the federation server, it’s recommended to simplify the use of Connie expressions.
@@ -136,19 +138,106 @@ promise.then(value => {
 });
 ```
 
-These typescript examples need to have the OpenFlexo typescript files on hand to compile without errors.
-
 **UI**
 
-*TODO*
+The folder `/js/openflexo/ui` contains a set of UI classes based on [MDL][6]. It allows to construct:
+
+- [Buttons][7]
+- [Cards][8]
+ - [Grids][9]
+- [Tabs][10]
+- [Icons][11]
+- [List][12]
+- [List][13]
+- [Tables][14]
+- [TextFields][15]
+
+- Here is an example for a button
+```typescript
+import { Button } from "./openflexo/ui/Button";
+const button = new Button("Name");
+button.container.onclick = (event) => {
+    console.log("click");
+}
+```
+
+- Here is an example for a textfield
+```typescript
+import { TextField } from "./openflexo/ui/TextField";
+const textfield = new TextField("test", "here a value", "Label", true);
+textfield.container.onchange = (event) => {
+    console.log("Changed test");
+}
+```
 
 **MVC**
 
-*TODO*
+The folder `/js/openflexo/mvc` contains a set of classes of UI classes controlled by Connie expression. 
+They combine the two previous sections: API and UI. 
+For example, a `BoundTextField` constructs a textfield controlled by a binding. 
+Every time the value is changed on the client it assigns the new value and sends it to the server. 
+It also listens to the changes from the server and update the value on the client when changed.
+
+Here is the current list of bound controllers:
+
+- `BoundButton`
+- `BoundLabel`
+- `BoundTable`
+- `BoundTextField`
+
+- Here is an exemple for a table, label, button and textfield:
+```typescript
+let binding = runtimeBinding("virtualModelInstance.allDevices()", resource.modelUrl, resource.modelUrl);
+let columns = [
+    new BoundColumn(
+        "Type", 
+        (api, element: any) => element.flexoConcept.name
+    ),
+    new BoundColumn(
+        "Nom",  
+        (api, element) => new BoundTextField(api, runtimeBinding("name", element.url), "Nom", false)
+    ),
+    new BoundColumn(
+        "URI", 
+        (api, element) => new BoundTextField(api, runtimeBinding("uri", element.url), "URI", true)
+    ),
+    new BoundColumn(
+        "Status", 
+        (api, element) => new BoundLabel(api, runtimeBinding("status", element.url))
+    ),
+    new BoundColumn(
+        "Delete", (api, element) => 
+            new BoundButton(api, 
+                runtimeBinding("virtualModelInstance.delete(flexoConceptInstance)", element.url), 
+                null, new Icon("delete"), "icon"
+            )
+    )
+];
+const table = new BoundTable(this.api, binding, columns);
+```
 
 ## Customize the server
 
 **TODO**
+
+### Static resources
+
+The OpenFlexo server packaging contains a set of static resources (as seen in previous section) embedded in the jar of the application.
+To embedded your own content there are two solutions: 
+- adds a `webroot` folder in the directory where you run the server.
+- adds a `webroot` folder in the sources you add to the server.
+
+In the latter, the resources will be added to the jar simplify the deployment of the server. 
+It the deployment part, we will assume that you have used this solution.
+  
+See [Vertx][16] documentation for more information on this matter.
+
+
+### REST Api
+
+**Technology Adapter**
+
+**Application routes**
 
 ## Deploy the server
 
@@ -159,5 +248,16 @@ These typescript examples need to have the OpenFlexo typescript files on hand to
 [3]:	https://connie.openflexo.org/
 [4]:	https://www.typescriptlang.org
 [5]:	API.md
+[6]:	https://getmdl.io "Material Design Lite"
+[7]:	https://getmdl.io/components/index.html#buttons-section
+[8]:	https://getmdl.io/components/index.html#cards-section
+[9]:	https://getmdl.io/components/index.html#layout-section/grid
+[10]:	https://getmdl.io/components/index.html#layout-section/tabs
+[11]:	http://google.github.io/material-design-icons/
+[12]:	https://getmdl.io/components/index.html#lists-section
+[13]:	https://getmdl.io/components/index.html#tables-section
+[14]:	https://getmdl.io/components/index.html#textfields-section
+[15]:	https://getmdl.io/components/index.html#textfields-section
+[16]:	http://vertx.io/docs/vertx-web/java/#_serving_static_resources
 
 [image-1]:	ServerTestApplication.png "Test Application"
