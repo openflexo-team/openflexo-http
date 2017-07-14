@@ -2,6 +2,8 @@
 
 OpenFlexo federation server provides HTTP/REST and WebSocket access to federated models. This page explains how to build, access and customize your own server to allow its deployment.
 
+**Important**: To run and build an OpenFlexo application a Java 8 virtual machine is required.
+
 ## Build the server
 
 The OpenFlexo server as all OpenFlexo components doesn't do much own it's own, it's with connectors and resources that it reaches its full potential. The first thing to do it to package the server with the needed connectors and resource centers.
@@ -87,6 +89,7 @@ The following typescript examples need to have the OpenFlexo typescript files on
 The folder `/js/openflexo/api` contains utility classes and interfaces to help the use of the federation server [API][5]. An instance of the `Api` class in `/js/openflexo/api/Api.ts` provides call to REST objects and Connie expressions on a given server. While it’s not required to use this library to access the federation server, it’s recommended to simplify the use of Connie expressions.
 
 - Here is an example to retrieve information for a REST object:
+
 ```typescript
 import { Api } from "./openflexo/api/Api";
 import { Resource } from "./openflexo/api/resource";
@@ -101,6 +104,7 @@ promise.then(resource => {
 ```
 
 - Here is an example to evaluate a binding:
+
 ```typescript
 import { Api, runtimeBinding } from "./openflexo/api/Api";
 
@@ -122,6 +126,7 @@ api.addChangeListener(binding, (event) => {
 ```
 
 - Here is an example to assign a binding:
+
 ```typescript
 import { Api, runtimeBinding } from "./openflexo/api/Api";
 
@@ -152,7 +157,8 @@ The folder `/js/openflexo/ui` contains a set of UI classes based on [MDL][6]. It
 - [Tables][14]
 - [TextFields][15]
 
-- Here is an example for a button
+- Here is an example for a button:
+
 ```typescript
 import { Button } from "./openflexo/ui/Button";
 const button = new Button("Name");
@@ -161,7 +167,8 @@ button.container.onclick = (event) => {
 }
 ```
 
-- Here is an example for a textfield
+- Here is an example for a text field:
+
 ```typescript
 import { TextField } from "./openflexo/ui/TextField";
 const textfield = new TextField("test", "here a value", "Label", true);
@@ -186,6 +193,7 @@ Here is the current list of bound controllers:
 - `BoundTextField`
 
 - Here is an exemple for a table, label, button and textfield:
+
 ```typescript
 let binding = runtimeBinding("virtualModelInstance.allDevices()", resource.modelUrl, resource.modelUrl);
 let columns = [
@@ -218,30 +226,47 @@ const table = new BoundTable(this.api, binding, columns);
 
 ## Customize the server
 
-**TODO**
+The federation server can be customize for client and server side. Static resources may be added or replaced allowing to write a new client. On the other side, Java services add new behaviors to the federation server.
 
 ### Static resources
 
 The OpenFlexo server packaging contains a set of static resources (as seen in previous section) embedded in the jar of the application.
 To embedded your own content there are two solutions: 
-- adds a `webroot` folder in the directory where you run the server.
+- adds a `webroot` folder in the directory where you run the server or
 - adds a `webroot` folder in the sources you add to the server.
+In the latter, the resources will be added to the jar simplify the deployment of the server (See [Vertx][16] documentation for more information on this matter).
 
-In the latter, the resources will be added to the jar simplify the deployment of the server. 
-It the deployment part, we will assume that you have used this solution.
-  
-See [Vertx][16] documentation for more information on this matter.
+Alls the files in our `webroot` folder will be served with a higher priority than the existing one in the federation server (allowing to replace existing one like `index.html`).
 
+### Server services
 
-### REST Api
+** TODO**
 
 **Technology Adapter**
 
+[TechnologyAdatperRoutes][17]
+
+[ComplementJson][18]
+
 **Application routes**
+ 
+[ApplicationRoutes][19]
 
 ## Deploy the server
 
-**TODO**
+There are many ways to deploy the server. An easy one is to use the gradle `application` plugin. Add the following to grade build file in the `build` section (See [gradle][20] documentation on the plugin):
+
+```gradle
+apply plugin: 'application'
+mainClassName = "org.openflexo.http.server.OpenFlexoServer"
+distributions {
+    main {
+        contents { from('./webroot') into "./webroot" }
+    }
+}
+```
+
+This will allow you to run and construct a distribution for deployment.
 
 [1]:	API.md
 [2]:	https://connie.openflexo.org/
@@ -259,5 +284,9 @@ See [Vertx][16] documentation for more information on this matter.
 [14]:	https://getmdl.io/components/index.html#textfields-section
 [15]:	https://getmdl.io/components/index.html#textfields-section
 [16]:	http://vertx.io/docs/vertx-web/java/#_serving_static_resources
+[17]:	TechnologyAdatperRoutes.md
+[18]:	ComplementJson.md
+[19]:	ApplicationRoutes.md
+[20]:	https://docs.gradle.org/current/userguide/application_plugin.html
 
 [image-1]:	ServerTestApplication.png "Test Application"
