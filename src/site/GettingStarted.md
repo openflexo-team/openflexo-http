@@ -240,7 +240,7 @@ Alls the files in our `webroot` folder will be served with a higher priority tha
 
 ### Server services
 
-** TODO**
+**TODO**
 
 **Technology Adapter**
 
