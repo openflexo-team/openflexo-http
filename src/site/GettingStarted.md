@@ -266,7 +266,7 @@ distributions {
 }
 ```
 
-This will allow you to run and construct a distribution for deployment.
+This will allow you to run the server and construct a distribution for deployment.
 
 [1]:	API.md
 [2]:	https://connie.openflexo.org/
