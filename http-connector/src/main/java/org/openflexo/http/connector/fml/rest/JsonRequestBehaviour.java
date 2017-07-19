@@ -145,7 +145,7 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 				try {
 					TechnologyAdapterService adapterService = getServiceManager().getTechnologyAdapterService();
 					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
-					this.flexoConcept = technologyAdapter.getViewPointLibrary().getFlexoConcept(flexoConceptURI, false);
+					this.flexoConcept = technologyAdapter.getVirtualModelLibrary().getFlexoConcept(flexoConceptURI, false);
 				} catch (Exception e) {
 					logger.log(Level.SEVERE, "Can't find virtual model '" + flexoConceptURI + "'", e);
 				}
