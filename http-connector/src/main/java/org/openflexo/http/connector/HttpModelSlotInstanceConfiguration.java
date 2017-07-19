@@ -26,7 +26,9 @@ import org.openflexo.foundation.technologyadapter.FreeModelSlot;
 import org.openflexo.foundation.technologyadapter.FreeModelSlotInstanceConfiguration;
 import org.openflexo.http.connector.model.AccessPoint;
 
-public class HttpModelSlotInstanceConfiguration<MS extends FreeModelSlot<AccessPoint>> extends FreeModelSlotInstanceConfiguration<AccessPoint, MS> {
+@Deprecated
+public class HttpModelSlotInstanceConfiguration<MS extends FreeModelSlot<AccessPoint>>
+		extends FreeModelSlotInstanceConfiguration<AccessPoint, MS> {
 
 	protected HttpModelSlotInstanceConfiguration(MS ms, FlexoConceptInstance fci, FlexoResourceCenter<?> rc) {
 		super(ms, fci, rc);

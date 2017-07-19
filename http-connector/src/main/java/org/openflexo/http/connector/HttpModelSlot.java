@@ -31,11 +31,11 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoRole;
-import org.openflexo.foundation.fml.ViewPointLibrary;
+import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -209,7 +209,7 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	 * @param serviceManager
 	 * @return
 	 */
-	public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
+	public VirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
 
 	abstract class HttpModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements HttpModelSlot {
 
@@ -265,9 +265,9 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 		@Override
 		public VirtualModelResource getAccessedVirtualModelResource() {
-			ViewPointLibrary viewPointLibrary = getViewPointLibrary();
-			if (virtualModelResource == null && StringUtils.isNotEmpty(virtualModelURI) && viewPointLibrary != null) {
-				virtualModelResource = viewPointLibrary.getVirtualModelResource(virtualModelURI);
+			VirtualModelLibrary virtualModelLibrary = getVirtualModelLibrary();
+			if (virtualModelResource == null && StringUtils.isNotEmpty(virtualModelURI) && virtualModelLibrary != null) {
+				virtualModelResource = virtualModelLibrary.getVirtualModelResource(virtualModelURI);
 			}
 			return virtualModelResource;
 		}
@@ -327,8 +327,8 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 
 		@Override
 		public void _setCreationSchemeURI(String uri) {
-			if (getViewPointLibrary() != null) {
-				creationScheme = (HttpVirtualModelInitializer) getViewPointLibrary().getFlexoBehaviour(uri, true);
+			if (getVirtualModelLibrary() != null) {
+				creationScheme = (HttpVirtualModelInitializer) getVirtualModelLibrary().getFlexoBehaviour(uri, true);
 			}
 			_creationSchemeURI = uri;
 		}
@@ -336,8 +336,8 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 		@Override
 		public HttpVirtualModelInitializer getCreationScheme() {
 
-			if (creationScheme == null && _creationSchemeURI != null && getViewPointLibrary() != null) {
-				creationScheme = (HttpVirtualModelInitializer) getViewPointLibrary().getFlexoBehaviour(_creationSchemeURI, true);
+			if (creationScheme == null && _creationSchemeURI != null && getVirtualModelLibrary() != null) {
+				creationScheme = (HttpVirtualModelInitializer) getVirtualModelLibrary().getFlexoBehaviour(_creationSchemeURI, true);
 				updateParameters();
 			}
 			/*if (creationScheme == null && getAssignedFlexoProperty() instanceof FlexoConceptInstanceRole) {
