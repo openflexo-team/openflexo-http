@@ -8,7 +8,7 @@ import java.util.Map;
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.ViewPoint;
-import org.openflexo.foundation.fml.ViewPointLibrary;
+import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.ViewPointResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
@@ -36,14 +36,14 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 	@Override
 	public void initialize(HttpService service, FMLTechnologyAdapter technologyAdapter) throws Exception {
 		this.technologyAdapter = technologyAdapter;
-		ViewPointLibrary viewPointLibrary = technologyAdapter.getViewPointLibrary();
+		VirtualModelLibrary virtualModelLibrary = technologyAdapter.getVirtualModelLibrary();
 		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
 
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 		viewPointConverter = new PamelaResourceRestService<>(
 			"/viewpoint",
-			viewPointLibrary::getViewPoints,
-			viewPointLibrary::getViewPointResource,
+			virtualModelLibrary::getViewPoints,
+			virtualModelLibrary::getViewPointResource,
 			ViewPointResource.class, taService
 		);
 		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
@@ -51,7 +51,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 		virtualModelConverter = new PamelaResourceRestService<>(
 			"/virtualmodel",
 			() -> Collections.emptyList(),
-			viewPointLibrary::getVirtualModelResource,
+			virtualModelLibrary::getVirtualModelResource,
 			VirtualModelResource.class, taService
 		);
 	}

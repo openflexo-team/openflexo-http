@@ -44,10 +44,10 @@ import java.util.Map;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.ViewLibrary;
-import org.openflexo.foundation.fml.rt.ViewModelFactory;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
-import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.fml.rt.rm.ViewResource;
 import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
@@ -78,7 +78,7 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 		TechnologyAdapterService technologyAdapterService = technologyAdapter.getServiceManager().getTechnologyAdapterService();
-		ViewModelFactory viewFactory = new ViewModelFactory(null, null, technologyAdapterService);
+		FMLRTVirtualModelInstanceModelFactory viewFactory = new FMLRTVirtualModelInstanceModelFactory(null, null, technologyAdapterService);
 		viewConverter = new PamelaResourceRestService<>(
 				"/view",
 				this::getViewResources,
@@ -101,7 +101,7 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 	}
 
 	private ViewResource getViewResource(String uri) {
-		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+		for (ViewLibrary<?> viewLibrary : technologyAdapter.getVirtualModelInstanceRepositories()) {
 			ViewResource view = viewLibrary.getView(uri);
 			if (view != null) return view;
 		}
@@ -113,8 +113,8 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 	}
 
 	private VirtualModelInstanceResource getVirtualModelInstanceResource(String uri) {
-		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
-			AbstractVirtualModelInstanceResource<?, ?> virtualModelInstance = viewLibrary.getVirtualModelInstance(uri);
+		for (ViewLibrary<?> viewLibrary : technologyAdapter.getVirtualModelInstanceRepositories()) {
+			VirtualModelInstanceResource<?, ?> virtualModelInstance = viewLibrary.getVirtualModelInstance(uri);
 			if (virtualModelInstance instanceof VirtualModelInstanceResource) {
 				return (VirtualModelInstanceResource) virtualModelInstance;
 			}

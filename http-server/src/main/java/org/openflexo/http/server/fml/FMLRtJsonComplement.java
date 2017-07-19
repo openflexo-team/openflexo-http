@@ -124,8 +124,8 @@ public class FMLRtJsonComplement implements JsonComplement {
 	/*
 	@Override
 	public boolean identifyObject(Object object, JsonObject result) {
-		if (object instanceof AbstractVirtualModelInstance) {
-			result.put("name", ((AbstractVirtualModelInstance) object).getName());
+		if (object instanceof VirtualModelInstance) {
+			result.put("name", ((VirtualModelInstance) object).getName());
 		}
 		return super.identifyObject(object, result);
 	}

@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
-import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
@@ -98,7 +98,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	void setInstance(HttpVirtualModelInstance<?> instance);
 
 	/**
-	 * Return the AbstractVirtualModelInstance in which this AccessPoint has been defined<br>
+	 * Return the VirtualModelInstance in which this AccessPoint has been defined<br>
 	 * Related VirtualModel is the VirtualModel where the HttpModelSlot has been declared
 	 * 
 	 * @return
@@ -142,7 +142,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 				try {
 					TechnologyAdapterService adapterService = getResource().getServiceManager().getTechnologyAdapterService();
 					FMLTechnologyAdapter technologyAdapter = adapterService.getTechnologyAdapter(FMLTechnologyAdapter.class);
-					modelSlot = (HttpModelSlot) technologyAdapter.getViewPointLibrary().getFlexoProperty(modelSlotURI, true);
+					modelSlot = (HttpModelSlot) technologyAdapter.getVirtualModelLibrary().getFlexoProperty(modelSlotURI, true);
 				} catch (Exception e) {
 					logger.log(Level.SEVERE, "Can't find model slot'" + modelSlotURI + "'", e);
 				}
@@ -200,7 +200,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 		}
 
 		/**
-		 * Return the AbstractVirtualModelInstance in which this AccessPoint has been defined<br>
+		 * Return the VirtualModelInstance in which this AccessPoint has been defined<br>
 		 * Related VirtualModel is the VirtualModel where the HttpModelSlot has been declared
 		 * 
 		 * @return
@@ -211,7 +211,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 			System.out.println("Et hop, je dois trouver le VMI: " + ownerInstanceURI);
 			if (ownerInstance == null && ownerInstanceURI != null) {
 				try {
-					AbstractVirtualModelInstanceResource<?, ?> vmiResource = (AbstractVirtualModelInstanceResource<?, ?>) getResource()
+					VirtualModelInstanceResource<?, ?> vmiResource = (VirtualModelInstanceResource<?, ?>) getResource()
 							.getServiceManager().getResourceManager().getResource(ownerInstanceURI);
 					ownerInstance = vmiResource.getResourceData(null);
 				} catch (Exception e) {

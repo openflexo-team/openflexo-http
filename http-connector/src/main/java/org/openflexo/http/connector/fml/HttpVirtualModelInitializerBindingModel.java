@@ -42,7 +42,7 @@ import java.beans.PropertyChangeEvent;
 
 import org.openflexo.connie.BindingModel;
 import org.openflexo.connie.BindingVariable;
-import org.openflexo.foundation.fml.AbstractVirtualModel;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.binding.FlexoBehaviourBindingModel;
@@ -66,9 +66,9 @@ public class HttpVirtualModelInitializerBindingModel extends FlexoBehaviourBindi
 	}
 
 	private void updateAccessPointBindingVariable() {
-		if (getFlexoBehaviour() != null && getFlexoBehaviour().getFlexoConcept() instanceof AbstractVirtualModel) {
+		if (getFlexoBehaviour() != null && getFlexoBehaviour().getFlexoConcept() instanceof VirtualModel) {
 			VirtualModelInstanceType instanceType = VirtualModelInstanceType
-					.getVirtualModelInstanceType((AbstractVirtualModel) getFlexoBehaviour().getFlexoConcept());
+					.getVirtualModelInstanceType((VirtualModel) getFlexoBehaviour().getFlexoConcept());
 			AccessPointType accessPointType = new AccessPointType(instanceType);
 			if (accessPointBindingVariable == null) {
 				accessPointBindingVariable = new BindingVariable(HttpVirtualModelInitializerBindingModel.ACCESS_POINT, accessPointType);
