@@ -31,13 +31,13 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoRole;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
+import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.FreeModelSlot;
@@ -209,7 +209,7 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 	 * @param serviceManager
 	 * @return
 	 */
-	public VirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
+	public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
 
 	abstract class HttpModelSlotImpl extends FreeModelSlotImpl<AccessPoint> implements HttpModelSlot {
 
@@ -251,7 +251,8 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 		}
 
 		@Override
-		public AccessPointResource createProjectSpecificEmptyResource(View view, String filename, String modelUri) {
+		public AccessPointResource createProjectSpecificEmptyResource(AbstractVirtualModelInstance<?, ?> view, String filename,
+				String modelUri) {
 			// TODO create empty resource
 			return null;
 		}

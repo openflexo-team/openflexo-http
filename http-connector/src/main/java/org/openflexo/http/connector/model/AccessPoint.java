@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
-import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
@@ -211,7 +211,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 			System.out.println("Et hop, je dois trouver le VMI: " + ownerInstanceURI);
 			if (ownerInstance == null && ownerInstanceURI != null) {
 				try {
-					VirtualModelInstanceResource<?, ?> vmiResource = (VirtualModelInstanceResource<?, ?>) getResource()
+					AbstractVirtualModelInstanceResource<?, ?> vmiResource = (AbstractVirtualModelInstanceResource<?, ?>) getResource()
 							.getServiceManager().getResourceManager().getResource(ownerInstanceURI);
 					ownerInstance = vmiResource.getResourceData(null);
 				} catch (Exception e) {

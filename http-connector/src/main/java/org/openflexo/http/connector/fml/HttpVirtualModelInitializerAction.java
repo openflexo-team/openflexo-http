@@ -50,7 +50,6 @@ import org.openflexo.foundation.action.FlexoActionType;
 import org.openflexo.foundation.action.InvalidParametersException;
 import org.openflexo.foundation.action.NotImplementedException;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.http.connector.HttpModelSlot.Format;
@@ -154,7 +153,7 @@ public class HttpVirtualModelInitializerAction
 	}
 
 	@Override
-	public VirtualModelInstance retrieveVirtualModelInstance() {
+	public HttpVirtualModelInstance<?> retrieveVirtualModelInstance() {
 		return httpVirtualModelInstance;
 	}
 
