@@ -1,22 +1,22 @@
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.Vertx;
-import io.vertx.ext.web.Router;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.openflexo.foundation.fml.FMLModelFactory;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.ViewPoint;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.rm.ViewPointResource;
+import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.ta.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
+
+import io.vertx.core.Vertx;
+import io.vertx.ext.web.Router;
 
 /**
  * Created by charlie on 08/02/2017.
@@ -25,7 +25,7 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 
 	private FMLTechnologyAdapter technologyAdapter;
 
-	private PamelaResourceRestService<ViewPoint, ViewPointResource> viewPointConverter;
+	private PamelaResourceRestService<VirtualModel, VirtualModelResource> topLevelVirtualModelConverter;
 	private PamelaResourceRestService<VirtualModel, VirtualModelResource> virtualModelConverter;
 
 	@Override
@@ -39,32 +39,26 @@ public class FMLRouteService implements TechnologyAdapterRouteComplement<FMLTech
 		VirtualModelLibrary virtualModelLibrary = technologyAdapter.getVirtualModelLibrary();
 		FMLModelFactory factory = new FMLModelFactory(null, technologyAdapter.getServiceManager());
 
+		// TODO: ask Jean-Charles: i don't understand this
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
-		viewPointConverter = new PamelaResourceRestService<>(
-			"/viewpoint",
-			virtualModelLibrary::getViewPoints,
-			virtualModelLibrary::getViewPointResource,
-			ViewPointResource.class, taService
-		);
-		viewPointConverter.setPostLoader((ViewPoint vp) -> vp.loadVirtualModelsWhenUnloaded());
+		topLevelVirtualModelConverter = new PamelaResourceRestService<>("/viewpoint", virtualModelLibrary::getVirtualModels,
+				virtualModelLibrary::getVirtualModelResource, VirtualModelResource.class, taService);
+		topLevelVirtualModelConverter.setPostLoader((VirtualModel vm) -> vm.loadContainedVirtualModelsWhenUnloaded());
 
-		virtualModelConverter = new PamelaResourceRestService<>(
-			"/virtualmodel",
-			() -> Collections.emptyList(),
-			virtualModelLibrary::getVirtualModelResource,
-			VirtualModelResource.class, taService
-		);
+		virtualModelConverter = new PamelaResourceRestService<>("/virtualmodel", () -> Collections.emptyList(),
+				virtualModelLibrary::getVirtualModelResource, VirtualModelResource.class, taService);
 	}
 
+	@Override
 	public void addRoutes(Vertx vertx, Router router) {
-		viewPointConverter.addRoutes(router);
+		topLevelVirtualModelConverter.addRoutes(router);
 		virtualModelConverter.addRoutes(router);
 	}
 
 	@Override
 	public Map<Class<? extends FlexoResource<?>>, String> getResourceRoots() {
 		Map<Class<? extends FlexoResource<?>>, String> result = new HashMap<>();
-		result.put(viewPointConverter.getResourceClass(), viewPointConverter.getPrefix());
+		result.put(topLevelVirtualModelConverter.getResourceClass(), topLevelVirtualModelConverter.getPrefix());
 		result.put(virtualModelConverter.getResourceClass(), virtualModelConverter.getPrefix());
 		return result;
 	}
