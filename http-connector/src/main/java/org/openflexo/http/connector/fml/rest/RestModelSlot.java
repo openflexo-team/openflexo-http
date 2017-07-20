@@ -23,7 +23,7 @@ package org.openflexo.http.connector.fml.rest;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
-import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.fml.CreateAccessPointResource;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
@@ -62,7 +62,7 @@ public interface RestModelSlot extends HttpModelSlot {
 		private RestVirtualModelInstanceModelFactory factory;
 
 		@Override
-		public VirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager) {
+		public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager) {
 
 			if (factory == null) {
 				try {

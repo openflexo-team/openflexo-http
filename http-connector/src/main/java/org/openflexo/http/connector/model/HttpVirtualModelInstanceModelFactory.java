@@ -39,10 +39,10 @@
 package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
-import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;
@@ -53,9 +53,10 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public abstract class HttpVirtualModelInstanceModelFactory extends VirtualModelInstanceModelFactory<VirtualModelInstanceResource> {
+public abstract class HttpVirtualModelInstanceModelFactory
+		extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource> {
 
-	public HttpVirtualModelInstanceModelFactory(VirtualModelInstanceResource virtualModelInstanceResource,
+	public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource virtualModelInstanceResource,
 			Class<? extends AbstractVirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext,
 			TechnologyAdapterService taService) throws ModelDefinitionException {
 		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);

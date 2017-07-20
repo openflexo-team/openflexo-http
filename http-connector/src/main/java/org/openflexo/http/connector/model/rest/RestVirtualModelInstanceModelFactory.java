@@ -38,9 +38,9 @@
 
 package org.openflexo.http.connector.model.rest;
 
-import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
+import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;
@@ -53,8 +53,8 @@ import org.openflexo.model.factory.ModelFactory;
  */
 public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
 
-	public RestVirtualModelInstanceModelFactory(VirtualModelInstanceResource virtualModelInstanceResource, EditingContext editingContext,
-			TechnologyAdapterService taService) throws ModelDefinitionException {
+	public RestVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource virtualModelInstanceResource,
+			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
 		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
 	}
 
