@@ -54,7 +54,7 @@ import org.openflexo.model.annotations.Parameter;
 public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends FlexoConceptInstance {
 
 	@Initializer
-	void initialize(@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance<S> owner, S support,
+	void initialize(@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner, S support,
 			@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept);
 
 	abstract class HttpFlexoConceptInstanceImpl<S extends ContentSupport<?>> extends FlexoConceptInstanceImpl
@@ -88,8 +88,8 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 		}
 
 		@Override
-		public HttpVirtualModelInstance<S> getVirtualModelInstance() {
-			return (HttpVirtualModelInstance<S>) super.getVirtualModelInstance();
+		public HttpVirtualModelInstance getVirtualModelInstance() {
+			return (HttpVirtualModelInstance) super.getVirtualModelInstance();
 		}
 
 		@Override
@@ -98,7 +98,7 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 		}
 
 		@Override
-		public void initialize(HttpVirtualModelInstance<S> owner, S support, FlexoConcept concept) {
+		public void initialize(HttpVirtualModelInstance owner, S support, FlexoConcept concept) {
 			System.out.println("Est ce qu'on passe la ????");
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);

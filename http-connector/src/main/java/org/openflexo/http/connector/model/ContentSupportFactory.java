@@ -59,7 +59,7 @@ public interface ContentSupportFactory<S extends ContentSupport<T>, T extends Ob
 	 *            (may be null).
 	 * @return a list of {@link ContentSupport}, never null, may be empty.
 	 */
-	List<S> newSupports(HttpVirtualModelInstance<S> owner, T supportObject);
+	List<S> newSupports(HttpVirtualModelInstance owner, T supportObject);
 
 	/**
 	 * Creates a support for the given support object. The support may be empty if the stream is null.
@@ -75,6 +75,6 @@ public interface ContentSupportFactory<S extends ContentSupport<T>, T extends Ob
 	 *            (may be null).
 	 * @return a support for the given object, never null.
 	 */
-	S newSupport(HttpVirtualModelInstance<S> owner, T supportObject);
+	S newSupport(HttpVirtualModelInstance owner, T supportObject);
 
 }

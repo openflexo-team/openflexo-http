@@ -60,7 +60,7 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @ModelEntity
 @ImplementationClass(XmlRpcVirtualModelInstance.XmlRpcVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<MapSupport> {
+public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance {
 
 	String ACCESS_POINT = "accessPoint";
 
@@ -68,7 +68,7 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 
 	public List<HttpFlexoConceptInstance<MapSupport>> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept);
 
-	abstract class XmlRpcVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<MapSupport> implements XmlRpcVirtualModelInstance {
+	abstract class XmlRpcVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl implements XmlRpcVirtualModelInstance {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
@@ -77,8 +77,7 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Map
 		private final Map<Object, HttpFlexoConceptInstance<MapSupport>> instances = new HashMap<>();
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager,
-				ContentSupportFactory<MapSupport, ?> supportFactory) {
+		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
 
 			super.initialize(accessPoint, serviceManager, supportFactory);
 

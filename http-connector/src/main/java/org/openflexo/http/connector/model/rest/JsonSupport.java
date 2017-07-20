@@ -64,7 +64,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 
 	private static final Logger logger = FlexoLogger.getLogger(JsonSupport.class.getPackage().toString());
 
-	private final HttpVirtualModelInstance<JsonSupport> owner;
+	private final HttpVirtualModelInstance owner;
 
 	// private final String path;
 	// private ObjectNode source;
@@ -132,7 +132,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 		}
 	}
 
-	public JsonSupport(HttpVirtualModelInstance<JsonSupport> owner, JsonResponse response) {
+	public JsonSupport(HttpVirtualModelInstance owner, JsonResponse response) {
 		this.owner = owner;
 		this.response = response;
 
@@ -169,7 +169,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 
 	}
 
-	public JsonSupport(HttpVirtualModelInstance<JsonSupport> owner, String identifier, ObjectNode source, JsonResponse response) {
+	public JsonSupport(HttpVirtualModelInstance owner, String identifier, ObjectNode source, JsonResponse response) {
 		this.owner = owner;
 		this.response = response;
 		this.identifier = identifier;

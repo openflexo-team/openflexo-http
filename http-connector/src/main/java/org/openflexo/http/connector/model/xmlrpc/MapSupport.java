@@ -61,14 +61,14 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 
 	private static final Logger logger = FlexoLogger.getLogger(MapSupport.class.getPackage().toString());
 
-	private final HttpVirtualModelInstance<MapSupport> owner;
+	private final HttpVirtualModelInstance owner;
 
 	private Map<?, ?> map;
 
 	private boolean complete = false;
 	private long lastUpdated = -1l;
 
-	public MapSupport(HttpVirtualModelInstance<MapSupport> owner, Map<?, ?> map) {
+	public MapSupport(HttpVirtualModelInstance owner, Map<?, ?> map) {
 		this.owner = owner;
 		this.map = map;
 		lastUpdated = System.nanoTime();

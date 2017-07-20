@@ -63,7 +63,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport, Js
 	}
 
 	@Override
-	public List<JsonSupport> newSupports(HttpVirtualModelInstance<JsonSupport> owner, JsonResponse response) {
+	public List<JsonSupport> newSupports(HttpVirtualModelInstance owner, JsonResponse response) {
 
 		List<JsonSupport> result = new ArrayList<>();
 
@@ -99,11 +99,11 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport, Js
 	}
 
 	@Override
-	public JsonSupport newSupport(HttpVirtualModelInstance<JsonSupport> owner, JsonResponse response) {
+	public JsonSupport newSupport(HttpVirtualModelInstance owner, JsonResponse response) {
 		return new JsonSupport(owner, response);
 	}
 
-	private String getPath(HttpVirtualModelInstance<JsonSupport> owner, ObjectNode node) {
+	private String getPath(HttpVirtualModelInstance owner, ObjectNode node) {
 		JsonNode urlNode = node.get(urlPropertyName);
 		if (urlNode == null)
 			return null;
