@@ -40,12 +40,12 @@ import java.util.logging.Logger;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.FlexoServiceManager;
-import org.openflexo.foundation.fml.ViewPoint;
-import org.openflexo.foundation.fml.rt.View;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
-import org.openflexo.foundation.fml.rt.rm.ViewResource;
+import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.logging.FlexoLogger;
@@ -64,7 +64,8 @@ import org.openflexo.model.annotations.Setter;
 @ModelEntity
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface HttpVirtualModelInstance<S extends ContentSupport<?>> extends VirtualModelInstance {
+public interface HttpVirtualModelInstance<S extends ContentSupport<?>>
+		extends AbstractVirtualModelInstance<HttpVirtualModelInstance<S>, HttpTechnologyAdapter> {
 
 	String ACCESS_POINT = "accessPoint";
 
@@ -87,8 +88,8 @@ public interface HttpVirtualModelInstance<S extends ContentSupport<?>> extends V
 
 	public CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport<?>> extends VirtualModelInstanceImpl
-			implements HttpVirtualModelInstance<S> {
+	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport<?>> extends
+			AbstractVirtualModelInstanceImpl<HttpVirtualModelInstance<S>, HttpTechnologyAdapter> implements HttpVirtualModelInstance<S> {
 
 		@SuppressWarnings("unused")
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
@@ -120,15 +121,15 @@ public interface HttpVirtualModelInstance<S extends ContentSupport<?>> extends V
 		}
 
 		@Override
-		public ViewPoint getViewPoint() {
-			return getView().getViewPoint();
+		public VirtualModel getVirtualModel() {
+			return getContainerVirtualModelInstance().getVirtualModel();
 		}
 
 		@Override
-		public View getView() {
+		public AbstractVirtualModelInstance<?, ?> getContainerVirtualModelInstance() {
 			AccessPointResource resource = getAccessPointResource();
-			if (resource != null && resource.getContainer() instanceof ViewResource) {
-				return ((ViewResource) resource.getContainer()).getView();
+			if (resource != null && resource.getContainer() instanceof AbstractVirtualModelInstanceResource) {
+				return ((AbstractVirtualModelInstanceResource) resource.getContainer()).getVirtualModelInstance();
 			}
 			return null;
 		}
