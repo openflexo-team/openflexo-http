@@ -52,14 +52,14 @@ public class MapSupportFactory implements ContentSupportFactory<MapSupport, Map<
 	}
 
 	@Override
-	public List<MapSupport> newSupports(HttpVirtualModelInstance<MapSupport> owner, Map<?, ?> supportObject) {
+	public List<MapSupport> newSupports(HttpVirtualModelInstance owner, Map<?, ?> supportObject) {
 		System.out.println("On retourne une liste de MapSupport avec " + supportObject);
 		System.out.println("Not implemented yet !!!!");
 		return null;
 	}
 
 	@Override
-	public MapSupport newSupport(HttpVirtualModelInstance<MapSupport> owner, Map<?, ?> supportObject) {
+	public MapSupport newSupport(HttpVirtualModelInstance owner, Map<?, ?> supportObject) {
 		System.out.println("On retourne un MapSupport avec " + supportObject);
 		return new MapSupport(owner, supportObject);
 	}

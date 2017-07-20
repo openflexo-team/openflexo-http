@@ -66,7 +66,7 @@ import org.openflexo.model.annotations.ModelEntity;
 @ModelEntity
 @ImplementationClass(RestVirtualModelInstance.RestVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonSupport> {
+public interface RestVirtualModelInstance extends HttpVirtualModelInstance {
 
 	String ACCESS_POINT = "accessPoint";
 
@@ -74,7 +74,7 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonS
 
 	HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
 
-	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<JsonSupport> implements RestVirtualModelInstance {
+	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl implements RestVirtualModelInstance {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
@@ -83,8 +83,7 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<JsonS
 		private final Map<String, HttpFlexoConceptInstance<JsonSupport>> instances = new HashMap<>();
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager,
-				ContentSupportFactory<JsonSupport, ?> supportFactory) {
+		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
 
 			super.initialize(accessPoint, serviceManager, supportFactory);
 

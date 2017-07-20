@@ -61,14 +61,14 @@ import org.openflexo.rm.ResourceLocator;
  * 
  */
 public abstract class HttpVirtualModelInstanceResourceImpl
-		extends AbstractVirtualModelInstanceResourceImpl<HttpVirtualModelInstance<?>, HttpTechnologyAdapter>
+		extends AbstractVirtualModelInstanceResourceImpl<HttpVirtualModelInstance, HttpTechnologyAdapter>
 		implements HttpVirtualModelInstanceResource {
 
 	static final Logger logger = Logger.getLogger(HttpVirtualModelInstanceResourceImpl.class.getPackage().getName());
 
 	@Override
-	public Class<HttpVirtualModelInstance<?>> getResourceDataClass() {
-		return (Class) HttpVirtualModelInstance.class;
+	public Class<HttpVirtualModelInstance> getResourceDataClass() {
+		return HttpVirtualModelInstance.class;
 	}
 
 	@Override
@@ -133,12 +133,12 @@ public abstract class HttpVirtualModelInstanceResourceImpl
 	}
 
 	@Override
-	public HttpVirtualModelInstance<?> getModelData() {
+	public HttpVirtualModelInstance getModelData() {
 		return getVirtualModelInstance();
 	}
 
 	@Override
-	public HttpVirtualModelInstance<?> getModel() {
+	public HttpVirtualModelInstance getModel() {
 		return getVirtualModelInstance();
 	}
 

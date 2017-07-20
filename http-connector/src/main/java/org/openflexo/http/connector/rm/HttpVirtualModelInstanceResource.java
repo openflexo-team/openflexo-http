@@ -61,8 +61,8 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(HttpVirtualModelInstanceResourceImpl.class)
 @XMLElement
 public interface HttpVirtualModelInstanceResource
-		extends AbstractVirtualModelInstanceResource<HttpVirtualModelInstance<?>, HttpTechnologyAdapter>,
-		FlexoModelResource<HttpVirtualModelInstance<?>, VirtualModel, HttpTechnologyAdapter, FMLTechnologyAdapter> {
+		extends AbstractVirtualModelInstanceResource<HttpVirtualModelInstance, HttpTechnologyAdapter>,
+		FlexoModelResource<HttpVirtualModelInstance, VirtualModel, HttpTechnologyAdapter, FMLTechnologyAdapter> {
 
 	public enum HttpResourceType {
 		Rest, XMLRpc
