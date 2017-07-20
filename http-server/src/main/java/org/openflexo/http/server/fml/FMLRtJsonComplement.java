@@ -105,16 +105,15 @@
 
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.View;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
+
+import io.vertx.core.json.JsonObject;
 
 /**
  * Json Complement for FML@runtime
@@ -131,42 +130,48 @@ public class FMLRtJsonComplement implements JsonComplement {
 	}
 	*/
 
-	private void describeFlexoConceptInstance(JsonSerializer serializer, FlexoConceptInstance instance, JsonObject result, boolean detailed) {
+	private void describeFlexoConceptInstance(JsonSerializer serializer, FlexoConceptInstance instance, JsonObject result,
+			boolean detailed) {
 
 		FlexoConcept flexoConcept = instance.getFlexoConcept();
-		if (flexoConcept instanceof ViewPoint) {
+		/*if (flexoConcept instanceof ViewPoint) {
 			result.put("viewPoint", serializer.toReference(flexoConcept));
-		} else if (flexoConcept instanceof VirtualModel) {
-			result.put("view", serializer.toReference(instance.getView()));
+		} else*/ if (flexoConcept instanceof VirtualModel) {
+			// result.put("view", serializer.toReference(instance.getView()));
 			result.put("virtualModel", serializer.toReference(flexoConcept));
-		} else {
+		}
+		else {
 			result.put("flexoConcept", serializer.toReference(flexoConcept));
 
 			result.put("virtualModelInstance", serializer.toReference(instance.getVirtualModelInstance()));
-			result.put("view", serializer.toReference(instance.getView()));
+			// result.put("view", serializer.toReference(instance.getView()));
 			result.put("container", serializer.toReference(instance.getContainerFlexoConceptInstance()));
 		}
 
-		result.put("actors", serializer.toMap(instance.getActors(), ActorReference::getRoleName , detailed));
+		result.put("actors", serializer.toMap(instance.getActors(), ActorReference::getRoleName, detailed));
 		result.put("embeddedFlexoConceptInstance", serializer.toReferenceArray(instance.getEmbeddedFlexoConceptInstances()));
 	}
 
 	@Override
 	public void describeObject(JsonSerializer serializer, Object object, JsonObject result, boolean detailed) {
-		if (object instanceof View) {
+		// TODO: ask Jean-Charles: i don't understand this
+		/*if (object instanceof View) {
 			View view = (View) object;
 			describeFlexoConceptInstance(serializer, view, result, detailed);
 			result.put("virtualModelInstances", serializer.toReferenceArray(view.getVirtualModelInstances()));
-
-		} else if (object instanceof VirtualModelInstance) {
+		
+		}
+		else*/ if (object instanceof VirtualModelInstance) {
 			VirtualModelInstance instance = (VirtualModelInstance) object;
 			describeFlexoConceptInstance(serializer, instance, result, detailed);
 			result.put("flexoConceptInstances", serializer.toArray(instance.getFlexoConceptInstances(), detailed));
 
-		} else if (object instanceof FlexoConceptInstance) {
+		}
+		else if (object instanceof FlexoConceptInstance) {
 			describeFlexoConceptInstance(serializer, (FlexoConceptInstance) object, result, detailed);
 
-		} else if (object instanceof ActorReference) {
+		}
+		else if (object instanceof ActorReference) {
 			ActorReference actorReference = (ActorReference) object;
 			result.put("instance", serializer.toReference(actorReference.getFlexoConceptInstance()));
 			result.put("value", serializer.toJson(actorReference.getModellingElement(), detailed));

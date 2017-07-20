@@ -105,16 +105,16 @@
 
 package org.openflexo.http.server.fml;
 
-import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
-import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
+
+import io.vertx.core.json.JsonObject;
 
 /**
  * Specific JSON complement for FML Rest services
@@ -136,34 +136,39 @@ public class FMLJsonComplement implements JsonComplement {
 
 	@Override
 	public void describeObject(JsonSerializer serializer, Object object, JsonObject result, boolean detailed) {
-		if (object instanceof ViewPoint) {
+		// TODO: ask Jean-Charles: i don't understand this
+		/*if (object instanceof ViewPoint) {
 			ViewPoint viewPoint = (ViewPoint) object;
 			describeFlexoConcept(serializer, viewPoint, result, detailed);
 			result.put("virtualModels", serializer.toReferenceArray(viewPoint.getVirtualModels()));
-
-		} else if (object instanceof VirtualModel) {
+		
+		} else*/ if (object instanceof VirtualModel) {
 			VirtualModel model = (VirtualModel) object;
 			describeFlexoConcept(serializer, model, result, detailed);
 			result.put("flexoConcepts", serializer.toReferenceArray(model.getFlexoConcepts()));
 
-		} else if (object instanceof FlexoConcept) {
+		}
+		else if (object instanceof FlexoConcept) {
 			FlexoConcept concept = (FlexoConcept) object;
 			describeFlexoConcept(serializer, concept, result, detailed);
 
-		} else if (object instanceof FlexoRole) {
-			FlexoRole role= (FlexoRole) object;
+		}
+		else if (object instanceof FlexoRole) {
+			FlexoRole role = (FlexoRole) object;
 			result.put("cardinality", serializer.toJson(role.getCardinality(), detailed));
 			result.put("declaredType", serializer.toJson(role.getType(), detailed));
 			result.put("flexoConcept", serializer.toReference(role.getFlexoConcept()));
 
-		} else if (object instanceof FlexoBehaviour) {
+		}
+		else if (object instanceof FlexoBehaviour) {
 			FlexoBehaviour behavior = (FlexoBehaviour) object;
 			result.put("parameters", serializer.toArray(behavior.getParameters(), detailed));
 			result.put("returnType", serializer.toJson(behavior.getReturnType(), detailed));
 			result.put("flexoConcept", serializer.toReference(behavior.getFlexoConcept()));
 			result.put("controlGraph", serializer.toArray(behavior.getControlGraph().getFlattenedSequence(), detailed));
 
-		} else if (object instanceof FlexoBehaviourParameter) {
+		}
+		else if (object instanceof FlexoBehaviourParameter) {
 			FlexoBehaviourParameter parameter = (FlexoBehaviourParameter) object;
 			result.put("declaredType", serializer.toJson(parameter.getType(), detailed));
 			result.put("behavior", serializer.toReference(parameter.getBehaviour()));
