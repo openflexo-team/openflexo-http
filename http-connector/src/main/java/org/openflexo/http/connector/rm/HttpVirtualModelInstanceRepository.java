@@ -42,11 +42,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openflexo.foundation.FlexoServiceManager;
-import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.technologyadapter.ModelRepository;
+import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
@@ -57,10 +55,13 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance;
  * 
  */
 public class HttpVirtualModelInstanceRepository<I> extends
-		ModelRepository<HttpVirtualModelInstanceResource, HttpVirtualModelInstance<?>, VirtualModel, HttpTechnologyAdapter, FMLTechnologyAdapter, I> {
-
+		// ModelRepository<HttpVirtualModelInstanceResource, HttpVirtualModelInstance, VirtualModel, HttpTechnologyAdapter,
+		// FMLTechnologyAdapter, I> {
+		// TechnologyAdapterResourceRepository<HttpVirtualModelInstanceResource<S>, HttpTechnologyAdapter, HttpVirtualModelInstance, I> {
+		ResourceRepository<HttpVirtualModelInstanceResource, I> {
 	public HttpVirtualModelInstanceRepository(HttpTechnologyAdapter adapter, FlexoResourceCenter<I> resourceCenter) {
-		super(adapter, resourceCenter);
+		// super(adapter, resourceCenter);
+		super(resourceCenter, resourceCenter.getBaseArtefact());
 		getRootFolder().setRepositoryContext(null);
 	}
 
@@ -72,8 +73,8 @@ public class HttpVirtualModelInstanceRepository<I> extends
 		return null;
 	}
 
-	public List<HttpVirtualModelInstance<?>> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
-		List<HttpVirtualModelInstance<?>> views = new ArrayList<>();
+	public List<HttpVirtualModelInstance> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
+		List<HttpVirtualModelInstance> views = new ArrayList<>();
 		for (HttpVirtualModelInstanceResource vmiRes : getAllResources()) {
 			if (vmiRes.getVirtualModelResource() != null && vmiRes.getVirtualModelResource().getURI().equals(virtualModelURI)) {
 				views.add(vmiRes.getVirtualModelInstance());
@@ -101,6 +102,16 @@ public class HttpVirtualModelInstanceRepository<I> extends
 			return null;
 		}
 		return getResource(virtualModelInstanceURI);
+	}
+
+	@Override
+	public final String getDefaultBaseURI() {
+		return getResourceCenter().getDefaultBaseURI() /*+ "/" + getTechnologyAdapter().getIdentifier()*/;
+	}
+
+	@Override
+	public String getDisplayableName() {
+		return getResourceCenter().getDisplayableName();
 	}
 
 }

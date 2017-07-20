@@ -61,17 +61,16 @@ import org.openflexo.model.annotations.Setter;
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
  */
-@ModelEntity
+@ModelEntity(isAbstract = true)
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface HttpVirtualModelInstance<S extends ContentSupport<?>>
-		extends AbstractVirtualModelInstance<HttpVirtualModelInstance<S>, HttpTechnologyAdapter> {
+public interface HttpVirtualModelInstance extends AbstractVirtualModelInstance<HttpVirtualModelInstance, HttpTechnologyAdapter> {
 
 	String ACCESS_POINT = "accessPoint";
 
 	@Initializer
 	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, FlexoServiceManager serviceManager,
-			ContentSupportFactory<S, ?> supportFactory);
+			ContentSupportFactory<?, ?> supportFactory);
 
 	@Getter(ACCESS_POINT)
 	AccessPoint getAccessPoint();
@@ -88,18 +87,18 @@ public interface HttpVirtualModelInstance<S extends ContentSupport<?>>
 
 	public CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl<S extends ContentSupport<?>> extends
-			AbstractVirtualModelInstanceImpl<HttpVirtualModelInstance<S>, HttpTechnologyAdapter> implements HttpVirtualModelInstance<S> {
+	abstract class HttpVirtualModelInstanceImpl extends AbstractVirtualModelInstanceImpl<HttpVirtualModelInstance, HttpTechnologyAdapter>
+			implements HttpVirtualModelInstance {
 
 		@SuppressWarnings("unused")
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
 		private final CloseableHttpClient httpclient = HttpClients.createDefault();
 
-		private ContentSupportFactory<S, ?> supportFactory;
+		private ContentSupportFactory<?, ?> supportFactory;
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<S, ?> supportFactory) {
+		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
 
 			System.out.println("Hop, on initialise un HttpVirtualModelInstance");
 
@@ -145,7 +144,7 @@ public interface HttpVirtualModelInstance<S extends ContentSupport<?>>
 			return "HttpVirtualModelInstance:" + super.toString();
 		}
 
-		public ContentSupportFactory<S, ?> getSupportFactory() {
+		public ContentSupportFactory<?, ?> getSupportFactory() {
 			return supportFactory;
 		}
 

@@ -48,7 +48,7 @@ import org.openflexo.xml.XMLRootElementInfo;
  *
  */
 public abstract class HttpVirtualModelInstanceResourceFactory extends
-		AbstractVirtualModelInstanceResourceFactory<HttpVirtualModelInstance<?>, HttpTechnologyAdapter, HttpVirtualModelInstanceResource> {
+		AbstractVirtualModelInstanceResourceFactory<HttpVirtualModelInstance, HttpTechnologyAdapter, HttpVirtualModelInstanceResource> {
 
 	private static final Logger logger = Logger.getLogger(HttpVirtualModelInstanceResourceFactory.class.getPackage().getName());
 
@@ -61,7 +61,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 	}
 
 	@Override
-	public HttpVirtualModelInstance<?> makeEmptyResourceData(HttpVirtualModelInstanceResource resource) {
+	public HttpVirtualModelInstance makeEmptyResourceData(HttpVirtualModelInstanceResource resource) {
 		return resource.getFactory().newInstance(HttpVirtualModelInstance.class);
 	}
 
@@ -94,7 +94,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 		registerResource(returned, resourceCenter, technologyContextManager);
 
 		if (createEmptyContents) {
-			HttpVirtualModelInstance<?> resourceData = createEmptyContents(returned);
+			HttpVirtualModelInstance resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {
@@ -139,7 +139,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 		registerResource(returned, resourceCenter, technologyContextManager);
 
 		if (createEmptyContents) {
-			HttpVirtualModelInstance<?> resourceData = createEmptyContents(returned);
+			HttpVirtualModelInstance resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {

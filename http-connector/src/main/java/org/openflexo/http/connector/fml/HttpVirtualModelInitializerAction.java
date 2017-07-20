@@ -115,7 +115,7 @@ public class HttpVirtualModelInitializerAction
 		return super.getLocales();
 	}
 
-	private HttpVirtualModelInstance<?> httpVirtualModelInstance;
+	private HttpVirtualModelInstance httpVirtualModelInstance;
 	private HttpVirtualModelInitializer initializer;
 	private AccessPointFactory factory;
 
@@ -153,7 +153,7 @@ public class HttpVirtualModelInitializerAction
 	}
 
 	@Override
-	public HttpVirtualModelInstance<?> retrieveVirtualModelInstance() {
+	public HttpVirtualModelInstance retrieveVirtualModelInstance() {
 		return httpVirtualModelInstance;
 	}
 

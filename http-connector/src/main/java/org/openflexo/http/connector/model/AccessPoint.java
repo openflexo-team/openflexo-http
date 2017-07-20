@@ -92,10 +92,10 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	void setModelSlot(HttpModelSlot modelSlot);
 
 	@Getter(VIRTUAL_MODEL_INSTANCE_KEY)
-	HttpVirtualModelInstance<?> getInstance();
+	HttpVirtualModelInstance getInstance();
 
 	@Setter(VIRTUAL_MODEL_INSTANCE_KEY)
-	void setInstance(HttpVirtualModelInstance<?> instance);
+	void setInstance(HttpVirtualModelInstance instance);
 
 	/**
 	 * Return the VirtualModelInstance in which this AccessPoint has been defined<br>
