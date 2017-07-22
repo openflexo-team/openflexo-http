@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
@@ -98,16 +98,16 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 	void setInstance(HttpVirtualModelInstance instance);
 
 	/**
-	 * Return the VirtualModelInstance in which this AccessPoint has been defined<br>
+	 * Return the FMLRTVirtualModelInstance in which this AccessPoint has been defined<br>
 	 * Related VirtualModel is the VirtualModel where the HttpModelSlot has been declared
 	 * 
 	 * @return
 	 */
 	@Getter(OWNER_VIRTUAL_MODEL_INSTANCE_KEY)
-	AbstractVirtualModelInstance<?, ?> getOwnerInstance();
+	VirtualModelInstance<?, ?> getOwnerInstance();
 
 	@Setter(OWNER_VIRTUAL_MODEL_INSTANCE_KEY)
-	void setOwnerInstance(AbstractVirtualModelInstance<?, ?> instance);
+	void setOwnerInstance(VirtualModelInstance<?, ?> instance);
 
 	@Getter(OWNER_VIRTUAL_MODEL_INSTANCE_URI_KEY)
 	@XMLAttribute
@@ -125,7 +125,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 		private static final Logger logger = Logger.getLogger(AccessPoint.class.getPackage().getName());
 
 		private HttpModelSlot modelSlot;
-		private AbstractVirtualModelInstance<?, ?> ownerInstance;
+		private VirtualModelInstance<?, ?> ownerInstance;
 
 		@Override
 		public Format getFormat() {
@@ -200,13 +200,13 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 		}
 
 		/**
-		 * Return the VirtualModelInstance in which this AccessPoint has been defined<br>
+		 * Return the FMLRTVirtualModelInstance in which this AccessPoint has been defined<br>
 		 * Related VirtualModel is the VirtualModel where the HttpModelSlot has been declared
 		 * 
 		 * @return
 		 */
 		@Override
-		public AbstractVirtualModelInstance<?, ?> getOwnerInstance() {
+		public VirtualModelInstance<?, ?> getOwnerInstance() {
 			String ownerInstanceURI = getOwnerInstanceURI();
 			System.out.println("Et hop, je dois trouver le VMI: " + ownerInstanceURI);
 			if (ownerInstance == null && ownerInstanceURI != null) {
@@ -222,8 +222,8 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 		}
 
 		@Override
-		public void setOwnerInstance(AbstractVirtualModelInstance<?, ?> ownerInstance) {
-			AbstractVirtualModelInstance<?, ?> oldOwnerInstance = this.ownerInstance;
+		public void setOwnerInstance(VirtualModelInstance<?, ?> ownerInstance) {
+			VirtualModelInstance<?, ?> oldOwnerInstance = this.ownerInstance;
 			if (oldOwnerInstance != ownerInstance) {
 				this.ownerInstance = ownerInstance;
 				getPropertyChangeSupport().firePropertyChange(OWNER_VIRTUAL_MODEL_INSTANCE_KEY, oldOwnerInstance, ownerInstance);

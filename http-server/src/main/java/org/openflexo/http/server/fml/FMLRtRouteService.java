@@ -43,7 +43,7 @@ import java.util.Map;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceRepository;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
@@ -62,8 +62,8 @@ public class FMLRtRouteService implements TechnologyAdapterRouteComplement<FMLRT
 
 	private FMLRTTechnologyAdapter technologyAdapter;
 
-	private PamelaResourceRestService<VirtualModelInstance, FMLRTVirtualModelInstanceResource> viewConverter;
-	private PamelaResourceRestService<VirtualModelInstance, FMLRTVirtualModelInstanceResource> virtualModelInstanceConverter;
+	private PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> viewConverter;
+	private PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> virtualModelInstanceConverter;
 
 	@Override
 	public Class<FMLRTTechnologyAdapter> getTechnologyAdapterClass() {

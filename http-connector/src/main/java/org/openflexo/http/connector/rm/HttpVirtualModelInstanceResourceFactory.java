@@ -98,7 +98,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {
-				// TODO: today VirtualModelInstance is a RunTimeEvaluationContext
+				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext
 				// This inheritance should disappear
 				resourceData.getFMLRunTimeEngine().addToExecutionContext(resourceData, resourceData);
@@ -143,7 +143,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {
-				// TODO: today VirtualModelInstance is a RunTimeEvaluationContext
+				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext
 				// This inheritance should disappear
 				resourceData.getFMLRunTimeEngine().addToExecutionContext(resourceData, resourceData);
@@ -378,7 +378,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory extends
 			return null;
 		}
 
-		if (xmlRootElementInfo.getName().equals("VirtualModelInstance")) {
+		if (xmlRootElementInfo.getName().equals("FMLRTVirtualModelInstance")) {
 			returned.name = xmlRootElementInfo.getAttribute("name");
 			returned.uri = xmlRootElementInfo.getAttribute("uri");
 			returned.virtualModelURI = xmlRootElementInfo.getAttribute("virtualModelURI");
