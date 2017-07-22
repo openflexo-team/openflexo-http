@@ -35,7 +35,7 @@ import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -251,7 +251,7 @@ public interface HttpModelSlot extends FreeModelSlot<AccessPoint> {
 		}
 
 		@Override
-		public AccessPointResource createProjectSpecificEmptyResource(AbstractVirtualModelInstance<?, ?> view, String filename,
+		public AccessPointResource createProjectSpecificEmptyResource(VirtualModelInstance<?, ?> view, String filename,
 				String modelUri) {
 			// TODO create empty resource
 			return null;
