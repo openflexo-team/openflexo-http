@@ -41,7 +41,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -64,7 +64,7 @@ import org.openflexo.model.annotations.Setter;
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface HttpVirtualModelInstance extends AbstractVirtualModelInstance<HttpVirtualModelInstance, HttpTechnologyAdapter> {
+public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtualModelInstance, HttpTechnologyAdapter> {
 
 	String ACCESS_POINT = "accessPoint";
 
@@ -87,7 +87,7 @@ public interface HttpVirtualModelInstance extends AbstractVirtualModelInstance<H
 
 	public CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl extends AbstractVirtualModelInstanceImpl<HttpVirtualModelInstance, HttpTechnologyAdapter>
+	abstract class HttpVirtualModelInstanceImpl extends VirtualModelInstanceImpl<HttpVirtualModelInstance, HttpTechnologyAdapter>
 			implements HttpVirtualModelInstance {
 
 		@SuppressWarnings("unused")
@@ -125,7 +125,7 @@ public interface HttpVirtualModelInstance extends AbstractVirtualModelInstance<H
 		}
 
 		@Override
-		public AbstractVirtualModelInstance<?, ?> getContainerVirtualModelInstance() {
+		public VirtualModelInstance<?, ?> getContainerVirtualModelInstance() {
 			AccessPointResource resource = getAccessPointResource();
 			if (resource != null && resource.getContainer() instanceof AbstractVirtualModelInstanceResource) {
 				return ((AbstractVirtualModelInstanceResource) resource.getContainer()).getVirtualModelInstance();

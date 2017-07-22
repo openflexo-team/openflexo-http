@@ -109,7 +109,7 @@ import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
 
@@ -123,8 +123,8 @@ public class FMLRtJsonComplement implements JsonComplement {
 	/*
 	@Override
 	public boolean identifyObject(Object object, JsonObject result) {
-		if (object instanceof VirtualModelInstance) {
-			result.put("name", ((VirtualModelInstance) object).getName());
+		if (object instanceof FMLRTVirtualModelInstance) {
+			result.put("name", ((FMLRTVirtualModelInstance) object).getName());
 		}
 		return super.identifyObject(object, result);
 	}
@@ -161,8 +161,8 @@ public class FMLRtJsonComplement implements JsonComplement {
 			result.put("virtualModelInstances", serializer.toReferenceArray(view.getVirtualModelInstances()));
 		
 		}
-		else*/ if (object instanceof VirtualModelInstance) {
-			VirtualModelInstance instance = (VirtualModelInstance) object;
+		else*/ if (object instanceof FMLRTVirtualModelInstance) {
+			FMLRTVirtualModelInstance instance = (FMLRTVirtualModelInstance) object;
 			describeFlexoConceptInstance(serializer, instance, result, detailed);
 			result.put("flexoConceptInstances", serializer.toArray(instance.getFlexoConceptInstances(), detailed));
 
