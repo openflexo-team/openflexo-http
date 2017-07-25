@@ -1,0 +1,13 @@
+VirtualModel GithubV3 {
+
+  FML::JsonRequestBehaviour searchUsers(String query) {  
+  
+  }  
+
+
+  FlexoConcept User {  
+    abstract FlexoProperty login as String cardinality=ZeroOne;  
+    abstract FlexoProperty avatar_url as String cardinality=ZeroOne;  
+  }  
+
+}
