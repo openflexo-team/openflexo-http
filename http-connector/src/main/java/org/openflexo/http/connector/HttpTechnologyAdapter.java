@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.openflexo.foundation.fml.annotations.DeclareModelSlots;
 import org.openflexo.foundation.fml.annotations.DeclareResourceTypes;
-import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceRepository;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
@@ -69,7 +68,7 @@ public class HttpTechnologyAdapter extends TechnologyAdapter {
 		HttpVirtualModelInstanceRepository<I> returned = resourceCenter.retrieveRepository(HttpVirtualModelInstanceRepository.class, this);
 		if (returned == null) {
 			returned = new HttpVirtualModelInstanceRepository<I>(this, resourceCenter);
-			resourceCenter.registerRepository(returned, FMLRTVirtualModelInstanceRepository.class, this);
+			resourceCenter.registerRepository(returned, HttpVirtualModelInstanceRepository.class, this);
 		}
 		return returned;
 	}
