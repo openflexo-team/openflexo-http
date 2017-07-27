@@ -1,0 +1,129 @@
+VirtualModel Odoo {
+
+  FlexoRole version as FlexoConceptInstance conformTo OdooObject cardinality=ZeroOne;
+  ModelSlot accessPoint as HTTP::XmlRpcModelSlot required=true readOnly=false;
+  FlexoRole uid as Integer cardinality=ZeroOne;
+  FlexoProperty partners as List<FlexoConceptInstanceType<OdooObject>> cardinality=ZeroOne get={  
+    return FML@RT::SelectFlexoConceptInstance from this as OdooObject;  
+  };  
+
+  FlexoProperty companies as List<FlexoConceptInstanceType<OdooObject>> cardinality=ZeroOne get={  
+    return FML@RT::SelectFlexoConceptInstance from this as OdooObject;  
+  };  
+
+
+  FML::ActionScheme retrieveVersion() {  
+    return accessPoint.HTTP::PerformXmlRpcRequest();  
+  }  
+
+  FML::HttpVirtualModelInitializer init(String database) {  
+    log ((("Initializing " + initializingAccessPoint) + " with ") + parameters.database)    
+    accessPoint = initializingAccessPoint;    
+    version = this.retrieveVersion();    
+    log ("version=" + version)    
+    this.authenticate(parameters.database,accessPoint.user,accessPoint.password)  
+  }  
+
+  FML::ActionScheme authenticate(String database, String username, String password) {  
+    uid = accessPoint.HTTP::PerformXmlRpcRequest();  
+  }  
+
+  FML::ActionScheme retrieveInstances(String conceptName, String odooEntityName, Integer limit, Integer offset) {  
+    org.openflexo.foundation.fml.FlexoConcept flexoConcept = this.virtualModel.getFlexoConcept(parameters.conceptName);    
+    log ((("Searching " + flexoConcept) + " entity=") + parameters.odooEntityName)    
+    log ("limit=" + parameters.limit)    
+    log ("offset=" + parameters.offset)    
+    java.util.HashMap<java.lang.Object,java.lang.Object> requestParameters = new HashMap<Object,Object>();    
+    requestParameters.put("limit",parameters.limit)    
+    requestParameters.put("offset",parameters.offset)    
+    java.util.ArrayList<java.lang.Object> fieldsList = new ArrayList<Object>();    
+    for (property : flexoConcept.accessibleAbstractProperties) {    
+      fieldsList.add(property.name)    
+    }    
+    requestParameters.put("fields",fieldsList)    
+    java.util.ArrayList<java.lang.Object> requestConditions = new ArrayList<Object>();    
+    accessPoint.HTTP::PerformXmlRpcRequest()  
+  }  
+
+  FML::ActionScheme retrieveResPartners() {  
+    this.retrieveInstances("ResPartner","res.partner",30,0)    
+    this.firePropertyChange partners  
+  }  
+
+  FML::ActionScheme retrieveResCompanies() {  
+    this.retrieveInstances("ResCompany","res.company",30,0)    
+    this.firePropertyChange companies  
+  }  
+
+  FML::ActionScheme findInstance(String conceptName, String odooEntityName, Integer id) {  
+    java.util.List<org.openflexo.foundation.fml.FlexoConceptInstanceType<http://openflexo.org/http/API/Odoo.fml#OdooObject>> matchingList = FML@RT::SelectFlexoConceptInstance from this as OdooObject where=(selected.id = parameters.id);    
+    if (matchingList.size > 0) {    
+      return matchingList.get(0);    
+    }    
+    org.openflexo.foundation.fml.FlexoConcept flexoConcept = this.virtualModel.getFlexoConcept(parameters.conceptName);    
+    log ("Looking up object with id " + parameters.id)    
+    java.util.HashMap<java.lang.Object,java.lang.Object> requestParameters = new HashMap<Object,Object>();    
+    java.util.ArrayList<java.lang.Object> fieldsList = new ArrayList<Object>();    
+    for (property : flexoConcept.accessibleAbstractProperties) {    
+      fieldsList.add(property.name)    
+    }    
+    requestParameters.put("fields",fieldsList)    
+    java.util.ArrayList<java.lang.Object> requestConditions = new ArrayList<Object>();    
+    java.util.ArrayList<java.lang.Object> conditionsList = new ArrayList<Object>();    
+    java.util.ArrayList<java.lang.Object> firstCondition = new ArrayList<Object>();    
+    firstCondition.add("id")    
+    firstCondition.add("=")    
+    firstCondition.add(parameters.id)    
+    conditionsList.add(firstCondition)    
+    requestConditions.add(conditionsList)    
+    org.openflexo.foundation.fml.FlexoConceptInstanceType<http://openflexo.org/http/resources/API/Odoo.fml#OdooObject> foundObject = accessPoint.HTTP::PerformXmlRpcRequest();    
+    return foundObject;  
+  }  
+
+
+  FlexoConcept Version {  
+    abstract FlexoProperty protocol_version as Integer cardinality=ZeroOne;  
+    abstract FlexoProperty server_serie as String cardinality=ZeroOne;  
+    abstract FlexoProperty server_version as String cardinality=ZeroOne;  
+  
+    FML::DeletionScheme delete() {    
+      
+    }    
+  
+  }  
+
+  FlexoConcept ResPartner {  
+    abstract FlexoProperty name as String cardinality=ZeroOne;  
+    abstract FlexoProperty siren as String cardinality=ZeroOne;  
+    abstract FlexoProperty comment as String cardinality=ZeroOne;  
+    abstract FlexoProperty is_company as Boolean cardinality=ZeroOne;  
+    abstract FlexoProperty customer as Boolean cardinality=ZeroOne;  
+    abstract FlexoProperty employee as Boolean cardinality=ZeroOne;  
+    abstract FlexoProperty street as String cardinality=ZeroOne;  
+    abstract FlexoProperty street2 as String cardinality=ZeroOne;  
+    abstract FlexoProperty zip as String cardinality=ZeroOne;  
+    abstract FlexoProperty city as String cardinality=ZeroOne;  
+    abstract FlexoProperty email as String cardinality=ZeroOne;  
+    abstract FlexoProperty phone as String cardinality=ZeroOne;  
+    abstract FlexoProperty fax as String cardinality=ZeroOne;  
+    abstract FlexoProperty mobile as String cardinality=ZeroOne;  
+    FlexoProperty company as FlexoConceptInstanceType<NotFound:null> cardinality=ZeroOne get={    
+      return container.findInstance("ResCompany","res.company",company_id);    
+    };    
+  
+    abstract FlexoProperty company_id as Integer cardinality=ZeroOne;  
+  }  
+
+  FlexoConcept OdooObject {  
+    abstract FlexoProperty id as Integer cardinality=ZeroOne;  
+  }  
+
+  FlexoConcept ResCompany {  
+    abstract FlexoProperty name as String cardinality=ZeroOne;  
+    abstract FlexoProperty street as String cardinality=ZeroOne;  
+    abstract FlexoProperty street2 as String cardinality=ZeroOne;  
+    abstract FlexoProperty zip as String cardinality=ZeroOne;  
+    abstract FlexoProperty city as String cardinality=ZeroOne;  
+  }  
+
+}
