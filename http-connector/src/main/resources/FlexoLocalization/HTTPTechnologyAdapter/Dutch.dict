@@ -1,5 +1,6 @@
 Configuration=Configuration
 HttpRequestBehavior=HttpRequestBehavior
+JsonRequestBehaviour=JsonRequestBehaviour
 Private=Private
 Protected=Protected
 Public=Public
