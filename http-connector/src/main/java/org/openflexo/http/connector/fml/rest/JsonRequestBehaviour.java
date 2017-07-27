@@ -55,6 +55,7 @@ import org.openflexo.http.connector.fml.HttpRequestBehaviour;
 import org.openflexo.http.connector.fml.HttpRequestBehaviourAction;
 import org.openflexo.http.connector.model.rest.JsonSupport;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
+import org.openflexo.model.annotations.DefineValidationRule;
 import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -63,6 +64,9 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.model.validation.ValidationError;
+import org.openflexo.model.validation.ValidationIssue;
+import org.openflexo.model.validation.ValidationRule;
 
 /**
  * A behaviour that natively execute an REST request using FML parameters of that behaviour.<br>
@@ -184,6 +188,26 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 					return modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
 				}
 
+			}
+			return null;
+		}
+
+	}
+
+	@DefineValidationRule
+	@SuppressWarnings({ "rawtypes" })
+	public static class JsonRequestBehaviourMustAddressAFlexoConceptType
+			extends ValidationRule<JsonRequestBehaviourMustAddressAFlexoConceptType, JsonRequestBehaviour> {
+		public JsonRequestBehaviourMustAddressAFlexoConceptType() {
+			super(JsonRequestBehaviour.class, "JsonRequestBehaviour_($validable.name)_must_address_a_valid_returned_flexo_concept_type");
+		}
+
+		@Override
+		public ValidationIssue<JsonRequestBehaviourMustAddressAFlexoConceptType, JsonRequestBehaviour> applyValidation(
+				JsonRequestBehaviour action) {
+			if (action.getReturnedFlexoConcept() == null) {
+				return new ValidationError<>(this, action,
+						"JsonRequestBehaviour_($validable.name)_doesn't_define_any_returned_flexo_concept_type");
 			}
 			return null;
 		}
