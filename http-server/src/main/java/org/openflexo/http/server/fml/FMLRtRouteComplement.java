@@ -37,14 +37,13 @@ package org.openflexo.http.server.fml;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
-import org.openflexo.foundation.fml.rt.View;
-import org.openflexo.foundation.fml.rt.ViewLibrary;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceRepository;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
-import org.openflexo.foundation.fml.rt.rm.ViewResource;
-import org.openflexo.foundation.fml.rt.rm.VirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
@@ -69,56 +68,53 @@ public class FMLRtRouteComplement implements TechnologyAdapterRouteComplement {
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 		TechnologyAdapterService technologyAdapterService = technologyAdapter.getServiceManager().getTechnologyAdapterService();
 
+		// TODO: Jean-Charles, could you check this ???
+
 		// Adds pamela rest service for View resources
-		PamelaResourceRestService<View, ViewResource> viewConverter = new PamelaResourceRestService<>(
-				"/view",
-				this::getViewResources,
-				this::getViewResource,
-				ViewResource.class, taService
-		);
+		PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> viewConverter = new PamelaResourceRestService<>(
+				"/vmi", this::getVirtualModelInstanceResources, this::getVirtualModelInstanceResource,
+				FMLRTVirtualModelInstanceResource.class, taService);
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, viewConverter);
 
 		// Adds pamela rest service for VirtualModelInstance resources
-		VirtualModelInstanceModelFactory vmiFactory = new VirtualModelInstanceModelFactory(null, null, technologyAdapterService);
-		PamelaResourceRestService<VirtualModelInstance, VirtualModelInstanceResource> virtualModelInstanceConverter = new PamelaResourceRestService<>(
-				"/vmi",
-				this::getVirtualModelInstanceResources,
-				this::getVirtualModelInstanceResource,
-				VirtualModelInstanceResource.class, taService
-		);
+		FMLRTVirtualModelInstanceModelFactory vmiFactory = new FMLRTVirtualModelInstanceModelFactory(null, null, technologyAdapterService);
+		PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> virtualModelInstanceConverter = new PamelaResourceRestService<>(
+				"/containedvmi", this::getVirtualModelInstanceResources, this::getVirtualModelInstanceResource,
+				FMLRTVirtualModelInstanceResource.class, taService);
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, virtualModelInstanceConverter);
 
 	}
 
-	private List<ViewResource> getViewResources() {
-		ArrayList<ViewResource> result = new ArrayList<>();
-		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+	private List<FMLRTVirtualModelInstanceResource> getViewResources() {
+		ArrayList<FMLRTVirtualModelInstanceResource> result = new ArrayList<>();
+		for (FMLRTVirtualModelInstanceRepository<?> viewLibrary : technologyAdapter.getVirtualModelInstanceRepositories()) {
 			result.addAll(viewLibrary.getAllResources());
 		}
 		return result;
 	}
 
-	private ViewResource getViewResource(String uri) {
-		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
-			ViewResource view = viewLibrary.getView(uri);
-			if (view != null) return view;
+	private FMLRTVirtualModelInstanceResource getViewResource(String uri) {
+		for (FMLRTVirtualModelInstanceRepository<?> viewLibrary : technologyAdapter.getVirtualModelInstanceRepositories()) {
+			FMLRTVirtualModelInstanceResource view = viewLibrary.getVirtualModelInstance(uri);
+			if (view != null)
+				return view;
 		}
 		return null;
 	}
 
-	private List<VirtualModelInstanceResource> getVirtualModelInstanceResources() {
-		ArrayList<VirtualModelInstanceResource> result = new ArrayList<>();
-		for (ViewResource viewResource : getViewResources()) {
+	private List<FMLRTVirtualModelInstanceResource> getVirtualModelInstanceResources() {
+		ArrayList<FMLRTVirtualModelInstanceResource> result = new ArrayList<>();
+		for (FMLRTVirtualModelInstanceResource viewResource : getViewResources()) {
 			result.addAll(viewResource.getVirtualModelInstanceResources());
 		}
 		return result;
 	}
 
-	private VirtualModelInstanceResource getVirtualModelInstanceResource(String uri) {
-		for (ViewLibrary<?> viewLibrary : technologyAdapter.getViewLibraries()) {
+	private FMLRTVirtualModelInstanceResource getVirtualModelInstanceResource(String uri) {
+		for (FMLRTVirtualModelInstanceRepository<?> viewLibrary : technologyAdapter.getVirtualModelInstanceRepositories()) {
 			AbstractVirtualModelInstanceResource<?, ?> virtualModelInstance = viewLibrary.getVirtualModelInstance(uri);
-			if (virtualModelInstance instanceof VirtualModelInstanceResource) {
-				return (VirtualModelInstanceResource) virtualModelInstance;
+			if (virtualModelInstance instanceof FMLRTVirtualModelInstanceResource) {
+				return (FMLRTVirtualModelInstanceResource) virtualModelInstance;
 			}
 		}
 		return null;
