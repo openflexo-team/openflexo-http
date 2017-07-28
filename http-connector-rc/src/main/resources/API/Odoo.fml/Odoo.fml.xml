@@ -64,7 +64,6 @@
   <UseModelSlotDeclaration id="51" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
   <UseModelSlotDeclaration id="52" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
   <FlexoConceptInstanceRole id="53" virtualModelInstance="this" flexoConceptTypeURI="http://openflexo.org/http/API/Odoo.fml#OdooObject" cloningStrategy="Reference" cardinality="ZeroOne" name="version" userID="FLX" flexoID="58" />
-  <XmlRpcModelSlot id="54" creationSchemeURI="http://openflexo.org/http/resources/API/Odoo.fml/OdooModel.init" format="map" accessedVirtualModelURI="http://openflexo.org/http/resources/API/Odoo.fml/OdooModel" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="accessPoint" userID="FLX" flexoID="75" />
   <PrimitiveRole id="55" primitiveType="Integer" cloningStrategy="Clone" cardinality="ZeroOne" name="uid" userID="FLX" flexoID="144" />
   <GetSetProperty id="56" name="partners" userID="FLX" flexoID="199">
     <SetControlGraph_EmptyControlGraph id="57" ownerContext="setControlGraph" userID="FLX" flexoID="200" />
