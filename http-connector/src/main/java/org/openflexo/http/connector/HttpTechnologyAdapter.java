@@ -13,14 +13,15 @@ import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.fml.HttpBindingFactory;
 import org.openflexo.http.connector.fml.rest.RestModelSlot;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot;
-import org.openflexo.http.connector.rm.AccessPointResourceFactory;
+import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceResourceFactory;
+import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstanceResourceFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceRepository;
 
 /**
  * Created by charlie on 02/02/2017.
  */
 @DeclareModelSlots({ RestModelSlot.class, XmlRpcModelSlot.class })
-@DeclareResourceTypes({ AccessPointResourceFactory.class })
+@DeclareResourceTypes({ XmlRpcVirtualModelInstanceResourceFactory.class, RestVirtualModelInstanceResourceFactory.class })
 public class HttpTechnologyAdapter extends TechnologyAdapter {
 
 	private HttpBindingFactory bindingFactory;

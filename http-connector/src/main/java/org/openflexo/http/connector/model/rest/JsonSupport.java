@@ -44,7 +44,6 @@ import java.util.logging.Logger;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.connie.type.TypeUtils;
-import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport.JsonResponse;
@@ -224,10 +223,10 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 			synchronized (this) {
 				if (needUpdate() || force) {
 
-					AccessPoint accessPoint = owner.getAccessPoint();
-					String url = accessPoint.getUrl() + getIdentifier();
+					// AccessPoint accessPoint = owner.getAccessPoint();
+					String url = owner.getUrl() + getIdentifier();
 					HttpGet httpGet = new HttpGet(url);
-					accessPoint.contributeHeaders(httpGet);
+					owner.contributeHeaders(httpGet);
 					try (CloseableHttpResponse response = owner.getHttpclient().execute(httpGet);
 							InputStream stream = response.getEntity().getContent()) {
 

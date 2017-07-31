@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright (c) 2014-2015, Openflexo
+ * Copyright (c) 2014, Openflexo
  * 
  * This file is part of Flexo-foundation, a component of the software infrastructure 
  * developed at Openflexo.
@@ -36,25 +36,39 @@
  * 
  */
 
-package org.openflexo.http.connector.model.rest;
+package org.openflexo.http.connector.model.xmlrpc;
 
-import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
-import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.EditingContext;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
+import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.XMLElement;
 
 /**
- * {@link ModelFactory} used to handle RestVirtualModelInstance models<br>
+ * This is the {@link FlexoResource} encoding a {@link XmlRpcVirtualModelInstance}
  * 
  * @author sylvain
  * 
  */
-public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
+@ModelEntity
+@ImplementationClass(XmlRpcVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
+@XMLElement
+public interface XmlRpcVirtualModelInstanceResource extends HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
 
-	public RestVirtualModelInstanceModelFactory(RestVirtualModelInstanceResource virtualModelInstanceResource,
-			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
-		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
+	/**
+	 * Default implementation for {@link XmlRpcVirtualModelInstanceResource}
+	 * 
+	 * 
+	 * @author Sylvain
+	 * 
+	 */
+	public abstract class XmlRpcVirtualModelInstanceResourceImpl extends HttpVirtualModelInstanceResourceImpl<XmlRpcVirtualModelInstance>
+			implements HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
+
+		@Override
+		public String getSuffix() {
+			return XmlRpcVirtualModelInstanceResourceFactory.HTTP_XMLRPC_SUFFIX;
+		}
+
 	}
-
 }

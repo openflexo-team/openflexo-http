@@ -109,7 +109,7 @@ public class JsonSupportFactory implements ContentSupportFactory<JsonSupport, Js
 			return null;
 
 		String url = urlNode.asText();
-		String baseUrl = owner.getAccessPoint().getUrl();
+		String baseUrl = owner.getUrl();
 		if (url.startsWith(baseUrl)) {
 			url = url.substring(baseUrl.length());
 		}
