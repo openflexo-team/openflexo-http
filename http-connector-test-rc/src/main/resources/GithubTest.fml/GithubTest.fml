@@ -1,0 +1,62 @@
+use org.openflexo.http.connector.fml.rest.RestModelSlot;
+use org.openflexo.technologyadapter.gina.FIBComponentModelSlot;
+
+/**
+ * 
+ * @version 0.1
+ */
+@VirtualModel(uri="http://openflexo.org/http-test/GithubTest.fml")
+public class GithubTest {
+
+  @RestModelSlot(cardinality=ZeroOne,readOnly=false)  
+  public FlexoConceptInstanceType<NotFound:null> github;
+  @FIBComponentModelSlot(cardinality=ZeroOne,readOnly=false)  
+  public GINAFIBComponent ui;
+  @GetSetProperty(value="utilisateurs", access=get)  
+  public List<FlexoConceptInstanceType<Utilisateur>> getUtilisateurs {  
+    return this.SelectFlexoConceptInstance(type=Utilisateur);  
+  }
+
+  @CreationScheme  
+  Void create(String url, String user, String password) {  
+    github = <no_assignable_action>;    
+    ui = ui.ConfigureGINAFIBComponent();  
+  }  
+
+  @ActionScheme  
+  public Void recherche(String query) {  
+    MatchingSet set = virtualModelInstance.initiateMatching(null);    
+    for (user : github.instance.searchUsers(parameters.query)) {    
+      FML@RT::MatchFlexoConceptInstance as no type specified match=() using no creation scheme specified:no creation scheme specified(user)    
+    }    
+    set.finalizeMatching()    
+    virtualModelInstance.firePropertyChange utilisateurs  
+  }  
+
+  @DeletionScheme  
+  Void delete() {  
+  
+  }  
+
+
+  @FlexoConcept  
+  public class Utilisateur {  
+  
+    @FlexoConceptInstanceRole(cardinality=ZeroOne,readOnly=false)    
+    public FlexoConceptInstanceType<NotFound:null> user;  
+    @ExpressionProperty    
+    public Object login = user.login;  
+  
+    @CreationScheme    
+    Void create(FlexoConceptInstanceType<NotFound:http://openflexo.org/http/API/Github.viewpoint/GithubV3#User> user) {    
+      user = parameters.user;    
+    }    
+  
+    @DeletionScheme    
+    Void delete() {    
+      
+    }    
+  
+  }  
+
+}
