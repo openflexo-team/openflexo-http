@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" modelVersion="1.0" version="0.1" name="MyGithub" userID="FLX" flexoID="2">
+<VirtualModel id="0" modelVersion="1.0" version="0.1" name="GithubTest" userID="FLX" flexoID="2">
   <FlexoConcept id="1" name="Utilisateur" userID="FLX" flexoID="12">
     <FlexoConceptInstanceRole id="2" virtualModelInstance="github.instance" flexoConceptTypeURI="http://openflexo.org/http/API/Github.viewpoint/GithubV3#User" cloningStrategy="Reference" cardinality="ZeroOne" name="user" userID="FLX" flexoID="18" />
     <ExpressionProperty id="3" expression="user.login" name="login" userID="FLX" flexoID="22" />
