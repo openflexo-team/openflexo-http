@@ -1,5 +1,5 @@
 #Metadata for directory /Users/sylvain/GIT-1.9.0/openflexo-http/http-connector-rc/src/main/resources/API/Odoo.fml
-#Mon Jul 31 16:20:52 CEST 2017
+#Mon Jul 31 17:18:49 CEST 2017
 Odoo.fml.xml.version=0.1
 Odoo.fml.xml.name=Odoo
 Odoo.fml.xml.requiredModelSlotList=org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot,org.openflexo.http.connector.fml.rest.RestModelSlot
