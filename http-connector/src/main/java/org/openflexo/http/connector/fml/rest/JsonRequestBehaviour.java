@@ -180,13 +180,17 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 		public Object execute(RestVirtualModelInstance modelInstance, BindingEvaluationContext context) throws Exception {
 			PathBuilder builder = getBuilder();
 			if (builder != null) {
+				System.out.println("Hop, j'execute un JsonRequestBehaviour");
 				String url = builder.evaluateUrl(this, context);
+				System.out.println("J'execute la requete " + url);
+				Object returned;
 				if (isMultiple()) {
-					return modelInstance.getFlexoConceptInstances(url, getPointer(), getReturnedFlexoConcept());
+					returned = modelInstance.getFlexoConceptInstances(url, getPointer(), getReturnedFlexoConcept());
 				}
 				else {
-					return modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
+					returned = modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
 				}
+				System.out.println("Hop, on retourne: " + returned);
 
 			}
 			return null;

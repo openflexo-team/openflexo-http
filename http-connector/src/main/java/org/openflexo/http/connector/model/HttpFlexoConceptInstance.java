@@ -44,12 +44,14 @@ import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Parameter;
+import org.openflexo.model.annotations.XMLElement;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
  */
 @ModelEntity
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
+@XMLElement
 public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends FlexoConceptInstance {
 
 	@Initializer

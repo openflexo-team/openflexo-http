@@ -52,7 +52,7 @@ import org.openflexo.model.annotations.XMLElement;
  * 
  */
 @ModelEntity
-@ImplementationClass(XmlRpcVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
+@ImplementationClass(XmlRpcVirtualModelInstanceResource.XmlRpcVirtualModelInstanceResourceImpl.class)
 @XMLElement
 public interface XmlRpcVirtualModelInstanceResource extends HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
 
@@ -64,11 +64,16 @@ public interface XmlRpcVirtualModelInstanceResource extends HttpVirtualModelInst
 	 * 
 	 */
 	public abstract class XmlRpcVirtualModelInstanceResourceImpl extends HttpVirtualModelInstanceResourceImpl<XmlRpcVirtualModelInstance>
-			implements HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
+			implements XmlRpcVirtualModelInstanceResource {
 
 		@Override
 		public String getSuffix() {
 			return XmlRpcVirtualModelInstanceResourceFactory.HTTP_XMLRPC_SUFFIX;
+		}
+
+		@Override
+		public Class<XmlRpcVirtualModelInstance> getResourceDataClass() {
+			return XmlRpcVirtualModelInstance.class;
 		}
 
 	}
