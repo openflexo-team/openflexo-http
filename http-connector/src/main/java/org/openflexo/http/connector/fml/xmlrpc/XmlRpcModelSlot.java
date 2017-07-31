@@ -27,7 +27,7 @@ import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.fml.CreateAccessPointResource;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
-import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot.RestModelSlotImpl;
+import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot.XmlRpcModelSlotImpl;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
@@ -43,12 +43,12 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
  */
 @ModelEntity
 @XMLElement
-@ImplementationClass(RestModelSlotImpl.class)
+@ImplementationClass(XmlRpcModelSlotImpl.class)
 @DeclareEditionActions({ CreateAccessPointResource.class, PerformXmlRpcRequest.class })
 @DeclareFlexoBehaviours({ HttpVirtualModelInitializer.class, XmlRpcRequestBehaviour.class })
 public interface XmlRpcModelSlot extends HttpModelSlot {
 
-	abstract class RestModelSlotImpl extends HttpModelSlotImpl implements XmlRpcModelSlot {
+	abstract class XmlRpcModelSlotImpl extends HttpModelSlotImpl implements XmlRpcModelSlot {
 
 		@Override
 		public Format getFormat() {
