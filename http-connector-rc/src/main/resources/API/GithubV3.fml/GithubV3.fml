@@ -1,13 +1,30 @@
-VirtualModel GithubV3 {
+use org.openflexo.http.connector.fml.rest.RestModelSlot;
 
-  FML::JsonRequestBehaviour searchUsers(String query) {  
+/**
+ * 
+ * @version 0.1
+ */
+@VirtualModel(uri="http://openflexo.org/http/API/GithubV3.fml")
+public class GithubV3 {
+
+  @JsonRequestBehaviour  
+  List<FlexoConceptInstanceType<User>> searchUsers(String query) {  
+  
+  }  
+
+  @CreationScheme  
+  Void init() {  
   
   }  
 
 
-  FlexoConcept User {  
-    abstract FlexoProperty login as String cardinality=ZeroOne;  
-    abstract FlexoProperty avatar_url as String cardinality=ZeroOne;  
+  @FlexoConcept  
+  public class User {  
+  
+    @AbstractProperty    
+    abstract String login;  
+    @AbstractProperty    
+    abstract String avatar_url;  
   }  
 
 }

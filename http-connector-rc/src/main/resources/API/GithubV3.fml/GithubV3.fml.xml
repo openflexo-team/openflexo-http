@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" uri="http://openflexo.org/http/API/GithubV3.fml" modelVersion="1.0" version="0.1" name="GithubV3" userID="FLX" flexoID="2">
+<VirtualModel id="0" modelVersion="1.0" version="0.1" name="GithubV3" userID="FLX" flexoID="2">
   <FlexoConcept id="1" name="User" isAbstract="true" userID="FLX" flexoID="7">
     <AbstractProperty id="2" type="java.lang.String" name="login" userID="FLX" flexoID="13" />
     <AbstractProperty id="3" type="java.lang.String" name="avatar_url" userID="FLX" flexoID="14" />
@@ -17,5 +17,8 @@
     <BehaviourControlGraph_EmptyControlGraph id="11" userID="FLX" flexoID="15" />
     <GenericBehaviourParameter id="12" isRequired="true" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="16" />
   </JsonRequestBehaviour>
-  <Inspector id="13" inspectorTitle="GithubV3" userID="FLX" flexoID="1" />
+  <CreationScheme id="13" name="init" width="800" label="init" height="600" userID="FLX" flexoID="23">
+    <BehaviourControlGraph_EmptyControlGraph id="14" userID="FLX" flexoID="24" />
+  </CreationScheme>
+  <Inspector id="15" inspectorTitle="GithubV3" userID="FLX" flexoID="1" />
 </VirtualModel>
