@@ -37,7 +37,7 @@
     </BehaviourControlGraph_Sequence>
     <GenericBehaviourParameter id="26" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;https://api.github.com&quot;" name="url" type="java.lang.String" userID="FLX" flexoID="76" />
     <GenericBehaviourParameter id="27" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;sylvain-openflexo&quot;" name="user" type="java.lang.String" userID="FLX" flexoID="75" />
-    <GenericBehaviourParameter id="28" widget="TEXT_FIELD" defaultValue="&quot;776c7f83b44a8b6413e52af4512a3086193a2ae7&quot;" name="password" type="java.lang.String" userID="FLX" flexoID="74" />
+    <GenericBehaviourParameter id="28" widget="TEXT_FIELD" defaultValue="&quot;faf37a109a5becc6b54f8558718582c4939502c2&quot;" name="password" type="java.lang.String" userID="FLX" flexoID="74" />
   </CreationScheme>
   <ActionScheme id="29" visibility="Public" name="recherche" width="800" label="recherche" height="600" userID="FLX" flexoID="25">
     <BehaviourControlGraph_Sequence id="30" userID="FLX" flexoID="35">
