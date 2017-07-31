@@ -43,7 +43,6 @@ import java.util.logging.Logger;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter;
-import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.model.annotations.DefineValidationRule;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -57,14 +56,14 @@ import org.openflexo.model.validation.ValidationIssue;
  *
  */
 @ModelEntity
-@ImplementationClass(CreateAccessPointParameter.CreateAccessPointParameterImpl.class)
+@ImplementationClass(CreateParameter.CreateAccessPointParameterImpl.class)
 @XMLElement
-public interface CreateAccessPointParameter extends BehaviourParameter<HttpModelSlot> {
+public interface CreateParameter extends BehaviourParameter<CreateHttpResource<?>> {
 
-	public static abstract class CreateAccessPointParameterImpl extends BehaviourParameterImpl<HttpModelSlot>
-			implements CreateAccessPointParameter {
+	public static abstract class CreateAccessPointParameterImpl extends BehaviourParameterImpl<CreateHttpResource<?>>
+			implements CreateParameter {
 
-		static final Logger logger = Logger.getLogger(CreateAccessPointParameter.class.getPackage().getName());
+		static final Logger logger = Logger.getLogger(CreateParameter.class.getPackage().getName());
 
 		@Override
 		public FlexoBehaviour getAccessedBehaviour() {
@@ -73,19 +72,18 @@ public interface CreateAccessPointParameter extends BehaviourParameter<HttpModel
 	}
 
 	@DefineValidationRule
-	public static class ValueBindingMustBeValid extends BindingIsRequiredAndMustBeValid<CreateAccessPointParameter> {
+	public static class ValueBindingMustBeValid extends BindingIsRequiredAndMustBeValid<CreateParameter> {
 		public ValueBindingMustBeValid() {
-			super("'value'_binding_is_required_and_must_be_valid", CreateAccessPointParameter.class);
+			super("'value'_binding_is_required_and_must_be_valid", CreateParameter.class);
 		}
 
 		@Override
-		public DataBinding<?> getBinding(CreateAccessPointParameter object) {
+		public DataBinding<?> getBinding(CreateParameter object) {
 			return object.getValue();
 		}
 
 		@Override
-		public ValidationIssue<BindingIsRequiredAndMustBeValid<CreateAccessPointParameter>, CreateAccessPointParameter> applyValidation(
-				CreateAccessPointParameter object) {
+		public ValidationIssue<BindingIsRequiredAndMustBeValid<CreateParameter>, CreateParameter> applyValidation(CreateParameter object) {
 			// Should return an issue only if parameter is required
 			if (object.getParam().getIsRequired()) {
 				return super.applyValidation(object);

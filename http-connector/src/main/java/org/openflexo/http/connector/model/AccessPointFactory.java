@@ -48,7 +48,7 @@ import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
-import org.openflexo.http.connector.fml.CreateAccessPointParameter;
+import org.openflexo.http.connector.fml.CreateParameter;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializerAction;
 import org.openflexo.http.connector.rm.AccessPointResource;
@@ -98,7 +98,7 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 	 * @return
 	 */
 	public void initializeModel(AccessPoint accessPoint, HttpVirtualModelInitializer creationScheme,
-			List<CreateAccessPointParameter> parameters, RunTimeEvaluationContext evaluationContext) {
+			List<CreateParameter> parameters, RunTimeEvaluationContext evaluationContext) {
 
 		System.out.println("initializeModel for AccessPoint=" + accessPoint);
 
@@ -117,7 +117,7 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 
 		if (creationScheme != null) {
 			int i = 0;
-			for (CreateAccessPointParameter parameter : parameters) {
+			for (CreateParameter parameter : parameters) {
 				Object paramValue = null;
 				try {
 					paramValue = parameter.getValue().getBindingValue(evaluationContext);

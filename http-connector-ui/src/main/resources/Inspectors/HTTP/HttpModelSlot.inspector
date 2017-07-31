@@ -35,20 +35,6 @@
 				localize="true" index="28" data="data.password"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)">
 			</Custom>
-			<Label id="5" label="virtual_model" align="left" localize="true"
-				index="29"
-				constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
-				name="VirtualModelLabel" />
-			<Custom id="6" index="30"
-				componentClassName="org.openflexo.fml.controller.widget.FIBVirtualModelSelector"
-				dataClassForComponent="org.openflexo.foundation.fml.rm.VirtualModelResource"
-				localize="true" manageDynamicModel="true"
-				data="data.accessedVirtualModelResource"
-				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
-				name="VirtualModelSelector">
-				<Assignment id="11" variable="component.virtualModelLibrary"
-					value="data.virtualModelLibrary" mandatory="true" />
-			</Custom>
 
 			<Label label="format" index="31"
 				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)" />
@@ -59,43 +45,6 @@
 				autoSelectFirstRow="false">
 			</DropDown>
 
-			<Label label="creation_scheme" index="35"
-				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)" />
-			<DropDown index="36" data="data.creationScheme"
-				constraints="twocols(anchor=west;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=0;gridX=-1;gridY=-1;index=11;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right;padX=0;padY=0;weightX=0.0;weightY=0.0)"
-				name="CreationSchemeDropDown" format="object.signature"
-				icon="controller.iconForObject(object)" localize="false"
-				list="data.availableCreationSchemes" showIcon="true"
-				iteratorClassName="org.openflexo.http.connector.fml.HttpVirtualModelInitializer"
-				autoSelectFirstRow="false">
-			</DropDown>
-			<Label label="parameters" index="37"
-				constraints="twocols(expandHorizontally=true;expandVertically=false;index=12;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left)" />
-			<Table index="38"
-				iteratorClassName="org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter"
-				visibleRowCount="4" rowHeight="18" autoSelectFirstRow="false"
-				createNewRowOnClick="false" boundToSelectionManager="false"
-				showFooter="false" selectionMode="MultipleIntervalSelection"
-				textSelectionColor="255,255,255" textNonSelectionColor="0,0,0"
-				backgroundSelectionColor="41,90,209"
-				backgroundSecondarySelectionColor="173,215,255"
-				backgroundNonSelectionColor="255,255,255" localize="true"
-				manageDynamicModel="true" opaque="false" data="data.parameters"
-				constraints="twocols(expandHorizontally=true;expandVertically=true;index=13;insetsBottom=0;insetsLeft=5;insetsRight=5;insetsTop=0;location=right)">
-				<IconColumn data="controller.iconForObject(iterator.param)"
-					title="icon" columnWidth="25" resizable="false" displayTitle="false"
-					name="icon" />
-				<LabelColumn data="iterator.param.name" title="parameter"
-					columnWidth="80" resizable="true" displayTitle="true" name="label" />
-				<CustomColumn componentClassName="org.openflexo.gina.swing.utils.BindingSelector"
-					customRendering="false" disableTerminateEditOnFocusLost="false"
-					data="iterator.value" title="value" columnWidth="200" resizable="true"
-					displayTitle="true" name="value">
-					<ColumnAssignment variable="component.bindable"
-						value="iterator" />
-				</CustomColumn>
-				<LocalizedDictionary />
-			</Table>
 
 		</Tab>
 		<Tab id="12" title="Advanced" align="left" borderTop="0"
