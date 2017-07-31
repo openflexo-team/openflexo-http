@@ -35,19 +35,17 @@
 
 package org.openflexo.http.connector.model;
 
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.logging.Logger;
 
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.FlexoServiceManager;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
-import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
-import org.openflexo.foundation.resource.FlexoResource;
-import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
-import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -55,8 +53,8 @@ import org.openflexo.model.annotations.Import;
 import org.openflexo.model.annotations.Imports;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.Parameter;
 import org.openflexo.model.annotations.Setter;
+import org.openflexo.model.annotations.XMLAttribute;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
@@ -64,19 +62,48 @@ import org.openflexo.model.annotations.Setter;
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtualModelInstance, HttpTechnologyAdapter> {
+public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<VMI>>
+		extends VirtualModelInstance<VMI, HttpTechnologyAdapter> {
 
-	String ACCESS_POINT = "accessPoint";
+	String URL_KEY = "url";
+	String USER_KEY = "user";
+	String PASSWORD_KEY = "password";
 
+	@Getter(URL_KEY)
+	@XMLAttribute
+	String getUrl();
+
+	@Setter(URL_KEY)
+	void setUrl(String url);
+
+	@Getter(USER_KEY)
+	@XMLAttribute
+	String getUser();
+
+	@Setter(USER_KEY)
+	void setUser(String user);
+
+	@Getter(PASSWORD_KEY)
+	@XMLAttribute
+	String getPassword();
+
+	@Setter(PASSWORD_KEY)
+	void setPassword(String password);
+
+	@Initializer
+	void initialize(FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory);
+
+	/*String ACCESS_POINT = "accessPoint";
+	
 	@Initializer
 	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, FlexoServiceManager serviceManager,
 			ContentSupportFactory<?, ?> supportFactory);
-
+	
 	@Getter(ACCESS_POINT)
 	AccessPoint getAccessPoint();
-
+	
 	@Setter(ACCESS_POINT)
-	void setAccessPoint(AccessPoint accessPoint);
+	void setAccessPoint(AccessPoint accessPoint);*/
 
 	// List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
 
@@ -87,8 +114,10 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtu
 
 	public CloseableHttpClient getHttpclient();
 
-	abstract class HttpVirtualModelInstanceImpl extends VirtualModelInstanceImpl<HttpVirtualModelInstance, HttpTechnologyAdapter>
-			implements HttpVirtualModelInstance {
+	void contributeHeaders(HttpUriRequest request);
+
+	abstract class HttpVirtualModelInstanceImpl<VMI extends HttpVirtualModelInstance<VMI>>
+			extends VirtualModelInstanceImpl<VMI, HttpTechnologyAdapter> implements HttpVirtualModelInstance<VMI> {
 
 		@SuppressWarnings("unused")
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
@@ -98,11 +127,12 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtu
 		private ContentSupportFactory<?, ?> supportFactory;
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
+		public void initialize(/*AccessPoint accessPoint,*/ FlexoServiceManager serviceManager,
+				ContentSupportFactory<?, ?> supportFactory) {
 
 			System.out.println("Hop, on initialise un HttpVirtualModelInstance");
 
-			performSuperSetter(ACCESS_POINT, accessPoint);
+			// performSuperSetter(ACCESS_POINT, accessPoint);
 			this.supportFactory = supportFactory;
 		}
 
@@ -111,19 +141,19 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtu
 			return httpclient;
 		}
 
-		public AccessPointResource getAccessPointResource() {
+		/*public AccessPointResource getAccessPointResource() {
 			return (AccessPointResource) this.getAccessPoint().getResource();
 		}
-
+		
 		public AccessPointFactory getAccessPointFactory() {
 			return getAccessPointResource().getFactory();
-		}
+		}*/
 
-		@Override
+		/*@Override
 		public VirtualModel getVirtualModel() {
 			return getContainerVirtualModelInstance().getVirtualModel();
 		}
-
+		
 		@Override
 		public VirtualModelInstance<?, ?> getContainerVirtualModelInstance() {
 			AccessPointResource resource = getAccessPointResource();
@@ -132,17 +162,17 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtu
 			}
 			return null;
 		}
-
+		
 		@Override
 		public FlexoResourceCenter<?> getResourceCenter() {
 			FlexoResource<AccessPoint> resource = getAccessPoint().getResource();
 			return resource != null ? resource.getResourceCenter() : null;
-		}
+		}*/
 
-		@Override
+		/*@Override
 		public String toString() {
 			return "HttpVirtualModelInstance:" + super.toString();
-		}
+		}*/
 
 		public ContentSupportFactory<?, ?> getSupportFactory() {
 			return supportFactory;
@@ -151,5 +181,19 @@ public interface HttpVirtualModelInstance extends VirtualModelInstance<HttpVirtu
 		/*public HttpFlexoConceptInstance retrieveFlexoConceptInstance(FlexoConcept type, Map<?,?> values) {
 			
 		}*/
+
+		@Override
+		public void contributeHeaders(HttpUriRequest request) {
+			String user = getUser();
+			String password = getPassword();
+			if (user != null && user.length() > 0 && password != null && password.length() > 0) {
+				StringBuilder value = new StringBuilder();
+				value.append("Basic ");
+				String authentication = user + ":" + password;
+				value.append(Base64.getEncoder().encodeToString(authentication.getBytes(StandardCharsets.UTF_8)));
+				request.addHeader("Authorization", value.toString());
+			}
+		}
+
 	}
 }

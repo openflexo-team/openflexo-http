@@ -25,7 +25,7 @@ import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
-import org.openflexo.http.connector.fml.CreateAccessPointResource;
+import org.openflexo.http.connector.fml.CreateHttpResource;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.rest.RestModelSlot.RestModelSlotImpl;
 import org.openflexo.http.connector.model.AccessPoint;
@@ -44,11 +44,11 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @ModelEntity
 @XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
-@DeclareEditionActions({ CreateAccessPointResource.class })
+@DeclareEditionActions({ CreateHttpResource.class })
 @DeclareFlexoBehaviours({ HttpVirtualModelInitializer.class, JsonRequestBehaviour.class })
-public interface RestModelSlot extends HttpModelSlot {
+public interface RestModelSlot extends HttpModelSlot<RestVirtualModelInstance> {
 
-	abstract class RestModelSlotImpl extends HttpModelSlotImpl implements RestModelSlot {
+	abstract class RestModelSlotImpl extends HttpModelSlotImpl<RestVirtualModelInstance> implements RestModelSlot {
 
 		@Override
 		public Format getFormat() {

@@ -55,10 +55,10 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance;
  * 
  */
 public class HttpVirtualModelInstanceRepository<I> extends
-		// ModelRepository<HttpVirtualModelInstanceResource, HttpVirtualModelInstance, VirtualModel, HttpTechnologyAdapter,
+		// ModelRepository<RestVirtualModelInstanceResource, HttpVirtualModelInstance, VirtualModel, HttpTechnologyAdapter,
 		// FMLTechnologyAdapter, I> {
-		// TechnologyAdapterResourceRepository<HttpVirtualModelInstanceResource<S>, HttpTechnologyAdapter, HttpVirtualModelInstance, I> {
-		ResourceRepository<HttpVirtualModelInstanceResource, I> {
+		// TechnologyAdapterResourceRepository<RestVirtualModelInstanceResource<S>, HttpTechnologyAdapter, HttpVirtualModelInstance, I> {
+		ResourceRepository<HttpVirtualModelInstanceResource<?>, I> {
 	public HttpVirtualModelInstanceRepository(HttpTechnologyAdapter adapter, FlexoResourceCenter<I> resourceCenter) {
 		// super(adapter, resourceCenter);
 		super(resourceCenter, resourceCenter.getBaseArtefact());
@@ -73,11 +73,11 @@ public class HttpVirtualModelInstanceRepository<I> extends
 		return null;
 	}
 
-	public List<HttpVirtualModelInstance> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
-		List<HttpVirtualModelInstance> views = new ArrayList<>();
-		for (HttpVirtualModelInstanceResource vmiRes : getAllResources()) {
+	public List<HttpVirtualModelInstance<?>> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
+		List<HttpVirtualModelInstance<?>> views = new ArrayList<>();
+		for (HttpVirtualModelInstanceResource<?> vmiRes : getAllResources()) {
 			if (vmiRes.getVirtualModelResource() != null && vmiRes.getVirtualModelResource().getURI().equals(virtualModelURI)) {
-				views.add(vmiRes.getVirtualModelInstance());
+				views.add((HttpVirtualModelInstance) vmiRes.getVirtualModelInstance());
 			}
 		}
 		return views;

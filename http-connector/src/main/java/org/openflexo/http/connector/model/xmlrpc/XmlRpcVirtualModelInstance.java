@@ -43,16 +43,18 @@ import java.util.logging.Logger;
 
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.logging.FlexoLogger;
+import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Import;
 import org.openflexo.model.annotations.Imports;
 import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.model.annotations.PropertyIdentifier;
+import org.openflexo.model.annotations.Setter;
+import org.openflexo.model.annotations.XMLAttribute;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
@@ -60,43 +62,60 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @ModelEntity
 @ImplementationClass(XmlRpcVirtualModelInstance.XmlRpcVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance {
+public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<XmlRpcVirtualModelInstance> {
 
-	String ACCESS_POINT = "accessPoint";
+	@PropertyIdentifier(type = String.class)
+	String ID_PROPERTY_NAME_KEY = "idPropertyName";
+
+	// String ACCESS_POINT = "accessPoint";
 
 	public HttpFlexoConceptInstance<MapSupport> getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept);
 
 	public List<HttpFlexoConceptInstance<MapSupport>> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept);
 
-	abstract class XmlRpcVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl implements XmlRpcVirtualModelInstance {
+	@Getter(value = ID_PROPERTY_NAME_KEY, defaultValue = "id")
+	@XMLAttribute
+	String getIdPropertyName();
+
+	@Setter(ID_PROPERTY_NAME_KEY)
+	void setIdPropertyName(String propertyName);
+
+	abstract class XmlRpcVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<XmlRpcVirtualModelInstance>
+			implements XmlRpcVirtualModelInstance {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
-		private XmlRpcVirtualModelInstanceModelFactory modelFactory;
+		// private XmlRpcVirtualModelInstanceModelFactory modelFactory;
 
 		private final Map<Object, HttpFlexoConceptInstance<MapSupport>> instances = new HashMap<>();
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
+		public void initialize(/*AccessPoint accessPoint,*/ FlexoServiceManager serviceManager,
+				ContentSupportFactory<?, ?> supportFactory) {
 
-			super.initialize(accessPoint, serviceManager, supportFactory);
+			super.initialize(/*accessPoint,*/ serviceManager, supportFactory);
 
 			System.out.println("Hop, on initialise un XmlRpcVirtualModelInstance");
 
-			try {
+			/*try {
 				modelFactory = new XmlRpcVirtualModelInstanceModelFactory(null, serviceManager.getEditingContext(),
 						serviceManager.getTechnologyAdapterService());
 			} catch (ModelDefinitionException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 
 		}
 
 		@Override
 		public XmlRpcVirtualModelInstanceModelFactory getFactory() {
-			return modelFactory;
+			return (XmlRpcVirtualModelInstanceModelFactory) super.getFactory();
 		}
+
+		/*@Override
+		public XmlRpcVirtualModelInstanceModelFactory getFactory() {
+			return modelFactory;
+		}*/
 
 		@Override
 		public ContentSupportFactory<MapSupport, Map<?, ?>> getSupportFactory() {
@@ -105,7 +124,7 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance {
 
 		@Override
 		public HttpFlexoConceptInstance<MapSupport> getFlexoConceptInstance(Map<?, ?> map, FlexoConcept concept) {
-			Object id = map.get(getAccessPoint().getModelSlot().getIdPropertyName());
+			Object id = map.get(/*getAccessPoint().getModelSlot().*/getIdPropertyName());
 
 			return instances.computeIfAbsent(id, (newId) -> {
 				MapSupport support = getSupportFactory().newSupport(this, map);
@@ -119,7 +138,7 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance {
 
 		@Override
 		public List<HttpFlexoConceptInstance<MapSupport>> getFlexoConceptInstances(List<Map<?, ?>> maps, FlexoConcept concept) {
-			AccessPoint accessPoint = getAccessPoint();
+			// AccessPoint accessPoint = getAccessPoint();
 			/*HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
 			accessPoint.contributeHeaders(httpGet);
 			try (CloseableHttpResponse response = getHttpclient().execute(httpGet);

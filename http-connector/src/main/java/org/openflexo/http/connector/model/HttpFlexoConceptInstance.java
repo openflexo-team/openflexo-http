@@ -39,7 +39,6 @@ import org.openflexo.foundation.fml.AbstractProperty;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.utils.FlexoObjectReference;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
@@ -105,13 +104,14 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 			this.support = support;
 		}
 
-		@Override
+		/*@Override
 		public String getReferenceForSerialization(boolean serializeClassName) {
 			AccessPoint accessPoint = getVirtualModelInstance().getAccessPoint();
 			String resourceURI = accessPoint.getResource().getURI();
 			String conceptName = getFlexoConcept().getName();
 			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(),
 					support.getIdentifier(), conceptName);
-		}
+		}*/
+
 	}
 }

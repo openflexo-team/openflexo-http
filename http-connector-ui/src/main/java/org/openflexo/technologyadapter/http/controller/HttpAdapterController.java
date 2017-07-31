@@ -63,7 +63,7 @@ import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.gina.utils.InspectorGroup;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.fml.CreateAccessPointResource;
+import org.openflexo.http.connector.fml.CreateHttpResource;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.rest.JsonRequestBehaviour;
 import org.openflexo.http.connector.fml.xmlrpc.PerformXmlRpcRequest;
@@ -173,7 +173,7 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
 	@Override
 	public ImageIcon getIconForEditionAction(Class<? extends EditionAction> editionActionClass) {
-		if (CreateAccessPointResource.class.isAssignableFrom(editionActionClass)) {
+		if (CreateHttpResource.class.isAssignableFrom(editionActionClass)) {
 			return IconFactory.getImageIcon(HttpIconLibrary.ACCESSPOINT_ICON, IconLibrary.NEW_MARKER);
 		}
 		if (PerformXmlRpcRequest.class.isAssignableFrom(editionActionClass)) {

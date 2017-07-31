@@ -61,7 +61,7 @@ public class TestHTTPInspectors extends GenericFIBInspectorTestCase {
 
 	@Test
 	public void testCreateAccessPointResourceInspector() {
-		validateFIB("Inspectors/HTTP/CreateAccessPointResource.inspector");
+		validateFIB("Inspectors/HTTP/CreateHttpResource.inspector");
 	}
 
 	@Test

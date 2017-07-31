@@ -49,7 +49,6 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
@@ -66,7 +65,7 @@ import org.openflexo.model.annotations.ModelEntity;
 @ModelEntity
 @ImplementationClass(RestVirtualModelInstance.RestVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
-public interface RestVirtualModelInstance extends HttpVirtualModelInstance {
+public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestVirtualModelInstance> {
 
 	String ACCESS_POINT = "accessPoint";
 
@@ -74,29 +73,36 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance {
 
 	HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
 
-	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl implements RestVirtualModelInstance {
+	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<RestVirtualModelInstance>
+			implements RestVirtualModelInstance {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
-		private RestVirtualModelInstanceModelFactory modelFactory;
+		// private RestVirtualModelInstanceModelFactory modelFactory;
 
 		private final Map<String, HttpFlexoConceptInstance<JsonSupport>> instances = new HashMap<>();
 
 		@Override
-		public void initialize(AccessPoint accessPoint, FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
+		public void initialize(/*AccessPoint accessPoint,*/ FlexoServiceManager serviceManager,
+				ContentSupportFactory<?, ?> supportFactory) {
 
-			super.initialize(accessPoint, serviceManager, supportFactory);
+			super.initialize(/*accessPoint,*/ serviceManager, supportFactory);
 
 			System.out.println("Hop, on initialise un RestVirtualModelInstance");
 
-			modelFactory = (RestVirtualModelInstanceModelFactory) accessPoint.getModelSlot()
-					.getVirtualModelInstanceModelFactory(serviceManager);
+			// modelFactory = (RestVirtualModelInstanceModelFactory) accessPoint.getModelSlot()
+			// .getVirtualModelInstanceModelFactory(serviceManager);
 
 		}
 
-		@Override
+		/*@Override
 		public RestVirtualModelInstanceModelFactory getFactory() {
 			return modelFactory;
+		}*/
+
+		@Override
+		public RestVirtualModelInstanceModelFactory getFactory() {
+			return (RestVirtualModelInstanceModelFactory) super.getFactory();
 		}
 
 		@Override
@@ -115,9 +121,9 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance {
 
 		@Override
 		public List<HttpFlexoConceptInstance<JsonSupport>> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
-			AccessPoint accessPoint = getAccessPoint();
-			HttpGet httpGet = new HttpGet(accessPoint.getUrl() + path);
-			accessPoint.contributeHeaders(httpGet);
+			// AccessPoint accessPoint = getAccessPoint();
+			HttpGet httpGet = new HttpGet(getUrl() + path);
+			contributeHeaders(httpGet);
 			try (CloseableHttpResponse httpResponse = getHttpclient().execute(httpGet);
 					InputStream stream = httpResponse.getEntity().getContent()) {
 				JsonResponse response = new JsonResponse(path, stream, pointer);

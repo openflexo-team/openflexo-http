@@ -1,6 +1,6 @@
 /**
  * 
- * Copyright (c) 2014-2015, Openflexo
+ * Copyright (c) 2014, Openflexo
  * 
  * This file is part of Flexo-foundation, a component of the software infrastructure 
  * developed at Openflexo.
@@ -38,23 +38,36 @@
 
 package org.openflexo.http.connector.model.rest;
 
-import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
-import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.EditingContext;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
+import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.XMLElement;
 
 /**
- * {@link ModelFactory} used to handle RestVirtualModelInstance models<br>
+ * This is the {@link FlexoResource} encoding a {@link RestVirtualModelInstance}
  * 
  * @author sylvain
  * 
  */
-public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
+@ModelEntity
+@ImplementationClass(RestVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
+@XMLElement
+public interface RestVirtualModelInstanceResource extends HttpVirtualModelInstanceResource<RestVirtualModelInstance> {
 
-	public RestVirtualModelInstanceModelFactory(RestVirtualModelInstanceResource virtualModelInstanceResource,
-			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
-		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
+	/**
+	 * Default implementation for {@link RestVirtualModelInstanceResource}
+	 * 
+	 * 
+	 * @author Sylvain
+	 * 
+	 */
+	public abstract class RestVirtualModelInstanceResourceImpl extends HttpVirtualModelInstanceResourceImpl<RestVirtualModelInstance>
+			implements HttpVirtualModelInstanceResource<RestVirtualModelInstance> {
+
+		@Override
+		public String getSuffix() {
+			return RestVirtualModelInstanceResourceFactory.HTTP_REST_SUFFIX;
+		}
 	}
-
 }
