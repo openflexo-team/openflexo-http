@@ -1,7 +1,7 @@
 #Metadata for directory /Users/sylvain/GIT-1.9.0/openflexo-http/http-connector-rc/src/main/resources/API/GithubV3.fml
-#Fri Jul 28 15:20:43 CEST 2017
-GithubV3.fml.xml.version=0.1
+#Mon Jul 31 15:46:24 CEST 2017
 GithubV3.fml.xml.name=GithubV3
+GithubV3.fml.xml.version=0.1
 GithubV3.fml.xml.uri=http\://openflexo.org/http/API/GithubV3.fml
-GithubV3.fml.xml.requiredModelSlotList=org.openflexo.http.connector.fml.rest.RestModelSlot
 GithubV3.fml.xml.modelVersion=1.0
+GithubV3.fml.xml.requiredModelSlotList=org.openflexo.http.connector.fml.rest.RestModelSlot

@@ -12,32 +12,22 @@ public class Odoo {
   public FlexoConceptInstanceType<OdooObject> version;
   @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
   public Integer uid;
-  
   @GetSetProperty(value="partners", access=get)  
   public List<FlexoConceptInstanceType<OdooObject>> getPartners {  
-    return FML@RT::SelectFlexoConceptInstance from this as OdooObject;  
-  }  
-  @GetSetProperty(value="partners", access=set)  
-  public void setPartners(List<FlexoConceptInstanceType<OdooObject>> value) {  
-  
-  }  
-
-  
+    return this.SelectFlexoConceptInstance(type=OdooObject);  
+  }
   @GetSetProperty(value="companies", access=get)  
   public List<FlexoConceptInstanceType<OdooObject>> getCompanies {  
-    return FML@RT::SelectFlexoConceptInstance from this as OdooObject;  
-  }  
-  @GetSetProperty(value="companies", access=set)  
-  public void setCompanies(List<FlexoConceptInstanceType<OdooObject>> value) {  
-  
-  }  
+    return this.SelectFlexoConceptInstance(type=OdooObject);  
+  }
 
-
-  FML::ActionScheme retrieveVersion() {  
-    return <???accessPoint>HTTP::PerformXmlRpcRequest();  
+  @ActionScheme  
+  FlexoConceptInstanceType<NotFound:http://openflexo.org/http/resources/API/Odoo.fml/OdooModel#Version> retrieveVersion() {  
+    return accessPoint.PerformXmlRpcRequest();  
   }  
 
-  FML::HttpVirtualModelInitializer init(String database) {  
+  @HttpVirtualModelInitializer  
+  Void init(String database) {  
     log ((("Initializing " + initializingAccessPoint) + " with ") + parameters.database)    
     accessPoint = initializingAccessPoint;    
     version = this.retrieveVersion();    
@@ -45,11 +35,13 @@ public class Odoo {
     this.authenticate(parameters.database,accessPoint.user,accessPoint.password)  
   }  
 
-  FML::ActionScheme authenticate(String database, String username, String password) {  
-    uid = <???accessPoint>HTTP::PerformXmlRpcRequest();  
+  @ActionScheme  
+  Void authenticate(String database, String username, String password) {  
+    uid = accessPoint.PerformXmlRpcRequest();  
   }  
 
-  FML::ActionScheme retrieveInstances(String conceptName, String odooEntityName, Integer limit, Integer offset) {  
+  @ActionScheme  
+  Void retrieveInstances(String conceptName, String odooEntityName, Integer limit, Integer offset) {  
     FlexoConcept flexoConcept = this.virtualModel.getFlexoConcept(parameters.conceptName);    
     log ((("Searching " + flexoConcept) + " entity=") + parameters.odooEntityName)    
     log ("limit=" + parameters.limit)    
@@ -63,21 +55,24 @@ public class Odoo {
     }    
     requestParameters.put("fields",fieldsList)    
     ArrayList<Object> requestConditions = new ArrayList<Object>();    
-    <???accessPoint>HTTP::PerformXmlRpcRequest()  
+    accessPoint.PerformXmlRpcRequest()  
   }  
 
-  FML::ActionScheme retrieveResPartners() {  
+  @ActionScheme  
+  Void retrieveResPartners() {  
     this.retrieveInstances("ResPartner","res.partner",30,0)    
     this.firePropertyChange partners  
   }  
 
-  FML::ActionScheme retrieveResCompanies() {  
+  @ActionScheme  
+  Void retrieveResCompanies() {  
     this.retrieveInstances("ResCompany","res.company",30,0)    
     this.firePropertyChange companies  
   }  
 
-  FML::ActionScheme findInstance(String conceptName, String odooEntityName, Integer id) {  
-    List<FlexoConceptInstanceType<OdooObject>> matchingList = FML@RT::SelectFlexoConceptInstance from this as OdooObject where=(selected.id = parameters.id);    
+  @ActionScheme  
+  FlexoConceptInstanceType<NotFound:null> findInstance(String conceptName, String odooEntityName, Integer id) {  
+    List<FlexoConceptInstanceType<OdooObject>> matchingList = this.SelectFlexoConceptInstance(type=OdooObject,where=where=(selected.id = parameters.id));    
     if (matchingList.size > 0) {    
       return matchingList.get(0);    
     }    
@@ -97,7 +92,7 @@ public class Odoo {
     firstCondition.add(parameters.id)    
     conditionsList.add(firstCondition)    
     requestConditions.add(conditionsList)    
-    FlexoConceptInstanceType<NotFound:http://openflexo.org/http/resources/API/Odoo.fml#OdooObject> foundObject = <???accessPoint>HTTP::PerformXmlRpcRequest();    
+    FlexoConceptInstanceType<NotFound:http://openflexo.org/http/resources/API/Odoo.fml#OdooObject> foundObject = accessPoint.PerformXmlRpcRequest();    
     return foundObject;  
   }  
 
@@ -112,7 +107,8 @@ public class Odoo {
     @AbstractProperty    
     abstract String server_version;  
   
-    FML::DeletionScheme delete() {    
+    @DeletionScheme    
+    Void delete() {    
       
     }    
   
@@ -149,16 +145,10 @@ public class Odoo {
     abstract String fax;  
     @AbstractProperty    
     abstract String mobile;  
-      
     @GetSetProperty(value="company", access=get)    
     public FlexoConceptInstanceType<NotFound:null> getCompany {    
       return container.findInstance("ResCompany","res.company",company_id);    
-    }    
-    @GetSetProperty(value="company", access=set)    
-    public void setCompany(FlexoConceptInstanceType<NotFound:null> value) {    
-      
-    }    
-  
+    }  
     @AbstractProperty    
     abstract Integer company_id;  
   }  

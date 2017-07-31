@@ -9,7 +9,7 @@ use org.openflexo.technologyadapter.gina.FIBComponentModelSlot;
 public class GithubTest {
 
   @RestModelSlot(cardinality=ZeroOne,readOnly=false)  
-  public FlexoConceptInstanceType<NotFound:null> github;
+  public VirtualModelInstanceType<GithubV3> github;
   @FIBComponentModelSlot(cardinality=ZeroOne,readOnly=false)  
   public GINAFIBComponent ui;
   @GetSetProperty(value="utilisateurs", access=get)  
@@ -19,18 +19,18 @@ public class GithubTest {
 
   @CreationScheme  
   Void create(String url, String user, String password) {  
-    github = <no_assignable_action>;    
+    github = null.CreateHttpRestResource();    
     ui = ui.ConfigureGINAFIBComponent();  
   }  
 
   @ActionScheme  
   public Void recherche(String query) {  
-    MatchingSet set = virtualModelInstance.initiateMatching(null);    
-    for (user : github.instance.searchUsers(parameters.query)) {    
-      FML@RT::MatchFlexoConceptInstance as no type specified match=() using no creation scheme specified:no creation scheme specified(user)    
+    MatchingSet set = this.initiateMatching(Utilisateur);    
+    for (user : github.searchUsers(parameters.query)) {    
+      FML@RT::MatchFlexoConceptInstance as Utilisateur match=(user=user) using Utilisateur:create(user)    
     }    
     set.finalizeMatching()    
-    virtualModelInstance.firePropertyChange utilisateurs  
+    this.firePropertyChange utilisateurs  
   }  
 
   @DeletionScheme  
@@ -43,9 +43,9 @@ public class GithubTest {
   public class Utilisateur {  
   
     @FlexoConceptInstanceRole(cardinality=ZeroOne,readOnly=false)    
-    public FlexoConceptInstanceType<NotFound:null> user;  
+    public FlexoConceptInstanceType<User> user;  
     @ExpressionProperty    
-    public Object login = user.login;  
+    public String login = user.login;  
   
     @CreationScheme    
     Void create(FlexoConceptInstanceType<NotFound:http://openflexo.org/http/API/Github.viewpoint/GithubV3#User> user) {    
