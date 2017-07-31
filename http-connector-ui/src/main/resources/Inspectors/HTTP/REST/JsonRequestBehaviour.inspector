@@ -4,9 +4,7 @@
     <Tab id="2" title="Basic" align="left" borderTop="0" borderTitle="Request" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" titleFont="SansSerif,0,11" layout="twocols" borderRight="0" useScrollBar="true" verticalScrollbarPolicy="VERTICAL_SCROLLBAR_AS_NEEDED" index="0" horizontalScrollbarPolicy="HORIZONTAL_SCROLLBAR_AS_NEEDED" font="SansSerif,0,11" name="BasicTab">
         <Label id="4" index="10" label="Concept" align="left" localize="true" constraints="twocols(expandHorizontally=true;expandVertically=false;index=0;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="concept_label" />
         <Custom id="5" index="11" componentClassName="org.openflexo.fml.controller.widget.FIBFlexoConceptSelector" dataClassForComponent="org.openflexo.foundation.fml.FlexoConcept" localize="true" manageDynamicModel="true" data="data.returnedFlexoConcept" opaque="false" minWidth="200" constraints="twocols(expandHorizontally=true;expandVertically=false;index=1;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" minHeight="25" name="concept_filed">
-          <Assignment id="6" variable="component.viewPointLibrary" mandatory="true" />
-          <Assignment id="7" variable="component.viewPoint" mandatory="true" />
-          <Assignment id="8" variable="component.serviceManager" mandatory="true" />
+           <Assignment id="8" variable="component.serviceManager" mandatory="true" />
           <Assignment id="9" variable="component.flexoController" mandatory="true" />
           <Assignment id="10" variable="component.selectableCondition" mandatory="true" />
           <Assignment id="11" variable="component.virtualModel" value="data.owningVirtualModel" mandatory="true" />

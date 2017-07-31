@@ -18,13 +18,15 @@
  *
  */
 
-package org.openflexo.http.connector.model.xmlrpc;
+package org.openflexo.http.connector.rm.xmlrpc;
 
 import java.util.logging.Logger;
 
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
+import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
+import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
 import org.openflexo.model.exceptions.ModelDefinitionException;

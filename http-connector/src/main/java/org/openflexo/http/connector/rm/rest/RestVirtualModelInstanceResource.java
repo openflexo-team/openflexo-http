@@ -36,39 +36,39 @@
  * 
  */
 
-package org.openflexo.http.connector.model.xmlrpc;
+package org.openflexo.http.connector.rm.rest;
 
 import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * This is the {@link FlexoResource} encoding a {@link XmlRpcVirtualModelInstance}
+ * This is the {@link FlexoResource} encoding a {@link RestVirtualModelInstance}
  * 
  * @author sylvain
  * 
  */
 @ModelEntity
-@ImplementationClass(XmlRpcVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
+@ImplementationClass(RestVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
 @XMLElement
-public interface XmlRpcVirtualModelInstanceResource extends HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
+public interface RestVirtualModelInstanceResource extends HttpVirtualModelInstanceResource<RestVirtualModelInstance> {
 
 	/**
-	 * Default implementation for {@link XmlRpcVirtualModelInstanceResource}
+	 * Default implementation for {@link RestVirtualModelInstanceResource}
 	 * 
 	 * 
 	 * @author Sylvain
 	 * 
 	 */
-	public abstract class XmlRpcVirtualModelInstanceResourceImpl extends HttpVirtualModelInstanceResourceImpl<XmlRpcVirtualModelInstance>
-			implements HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> {
+	public abstract class RestVirtualModelInstanceResourceImpl extends HttpVirtualModelInstanceResourceImpl<RestVirtualModelInstance>
+			implements HttpVirtualModelInstanceResource<RestVirtualModelInstance> {
 
 		@Override
 		public String getSuffix() {
-			return XmlRpcVirtualModelInstanceResourceFactory.HTTP_XMLRPC_SUFFIX;
+			return RestVirtualModelInstanceResourceFactory.HTTP_REST_SUFFIX;
 		}
-
 	}
 }

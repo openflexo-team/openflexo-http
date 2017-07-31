@@ -45,7 +45,6 @@ import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.InvalidArgumentException;
 import org.openflexo.foundation.fml.FlexoProperty;
-import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
@@ -53,7 +52,6 @@ import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.fml.CreateHttpResource.CreateAccessPointResourceImpl;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
@@ -72,10 +70,9 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
  * @author charlie, sylvain
  *
  */
-@ModelEntity
-@ImplementationClass(CreateAccessPointResourceImpl.class)
+@ModelEntity(isAbstract = true)
+@ImplementationClass(CreateHttpResource.CreateHttpResourceImpl.class)
 @XMLElement
-@FML("CreateHttpResource")
 public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		extends AbstractCreateResource<HttpModelSlot<VMI>, VMI, HttpTechnologyAdapter> {
 
@@ -107,7 +104,11 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 	@Setter(PASSWORD_KEY)
 	void setPassword(DataBinding<String> password);
 
-	abstract class CreateAccessPointResourceImpl<VMI extends HttpVirtualModelInstance<VMI>>
+	public abstract Class<? extends HttpVirtualModelInstanceResourceFactory<VMI>> getResourceFactoryClass();
+
+	public abstract String getSuffix();
+
+	abstract class CreateHttpResourceImpl<VMI extends HttpVirtualModelInstance<VMI>>
 			extends AbstractCreateResourceImpl<HttpModelSlot<VMI>, VMI, HttpTechnologyAdapter> implements CreateHttpResource<VMI> {
 
 		private DataBinding<String> url;
@@ -130,10 +131,6 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 			return AccessPoint.class;*/
 			return HttpVirtualModelInstance.class;
 		}
-
-		public abstract Class<HttpVirtualModelInstanceResourceFactory<VMI>> getResourceFactoryClass();
-
-		public abstract String getSuffix();
 
 		@Override
 		public VMI execute(RunTimeEvaluationContext evaluationContext) throws FlexoException {
