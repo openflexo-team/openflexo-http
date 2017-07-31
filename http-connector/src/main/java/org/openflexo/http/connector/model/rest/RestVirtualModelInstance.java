@@ -58,6 +58,7 @@ import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Import;
 import org.openflexo.model.annotations.Imports;
 import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.annotations.XMLElement;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
@@ -65,6 +66,7 @@ import org.openflexo.model.annotations.ModelEntity;
 @ModelEntity
 @ImplementationClass(RestVirtualModelInstance.RestVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
+@XMLElement
 public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestVirtualModelInstance> {
 
 	String ACCESS_POINT = "accessPoint";

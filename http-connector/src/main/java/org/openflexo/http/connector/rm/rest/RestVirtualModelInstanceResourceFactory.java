@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
+import org.openflexo.http.connector.model.rest.JsonSupportFactory;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
@@ -52,7 +53,8 @@ public class RestVirtualModelInstanceResourceFactory extends HttpVirtualModelIns
 
 	@Override
 	public RestVirtualModelInstance makeEmptyResourceData(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource) {
-		return resource.getFactory().newInstance(RestVirtualModelInstance.class);
+		return resource.getFactory().newInstance(RestVirtualModelInstance.class, resource.getServiceManager(),
+				new JsonSupportFactory("url"));
 	}
 
 	@Override

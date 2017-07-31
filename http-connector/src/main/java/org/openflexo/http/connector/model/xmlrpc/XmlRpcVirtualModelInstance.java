@@ -55,6 +55,7 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.PropertyIdentifier;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
+import org.openflexo.model.annotations.XMLElement;
 
 /**
  * VirtualModel instance that represents a distant object set through an AccessPoint
@@ -62,6 +63,7 @@ import org.openflexo.model.annotations.XMLAttribute;
 @ModelEntity
 @ImplementationClass(XmlRpcVirtualModelInstance.XmlRpcVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
+@XMLElement
 public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<XmlRpcVirtualModelInstance> {
 
 	@PropertyIdentifier(type = String.class)
