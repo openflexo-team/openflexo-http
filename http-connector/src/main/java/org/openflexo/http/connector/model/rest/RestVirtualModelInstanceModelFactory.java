@@ -40,6 +40,7 @@ package org.openflexo.http.connector.model.rest;
 
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
+import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;

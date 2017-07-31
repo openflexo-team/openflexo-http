@@ -61,7 +61,7 @@ public class TestHTTPInspectors extends GenericFIBInspectorTestCase {
 
 	@Test
 	public void testCreateAccessPointResourceInspector() {
-		validateFIB("Inspectors/HTTP/CreateHttpResource.inspector");
+		validateFIB("Inspectors/HTTP/CreateAccessPointResource.inspector");
 	}
 
 	@Test
@@ -71,32 +71,32 @@ public class TestHTTPInspectors extends GenericFIBInspectorTestCase {
 
 	@Test
 	public void testJsonRequestBehaviourInspector() {
-		validateFIB("Inspectors/HTTP/JsonRequestBehaviour.inspector");
+		validateFIB("Inspectors/HTTP/REST/JsonRequestBehaviour.inspector");
 	}
 
 	@Test
 	public void testPathBuilderInspector() {
-		validateFIB("Inspectors/HTTP/PathBuilder.inspector");
-	}
-
-	@Test
-	public void testPerformXmlRpcRequestInspector() {
-		validateFIB("Inspectors/HTTP/PerformXmlRpcRequest.inspector");
+		validateFIB("Inspectors/HTTP/REST/PathBuilder.inspector");
 	}
 
 	@Test
 	public void testRestModelSlotInspector() {
-		validateFIB("Inspectors/HTTP/RestModelSlot.inspector");
+		validateFIB("Inspectors/HTTP/REST/RestModelSlot.inspector");
+	}
+
+	@Test
+	public void testPerformXmlRpcRequestInspector() {
+		validateFIB("Inspectors/HTTP/XMLRPC/PerformXmlRpcRequest.inspector");
 	}
 
 	@Test
 	public void testXmlRpcModelSlotInspector() {
-		validateFIB("Inspectors/HTTP/XmlRpcModelSlot.inspector");
+		validateFIB("Inspectors/HTTP/XMLRPC/XmlRpcModelSlot.inspector");
 	}
 
 	@Test
 	public void testXmlRpcRequestBehaviourInspector() {
-		validateFIB("Inspectors/HTTP/XmlRpcRequestBehaviour.inspector");
+		validateFIB("Inspectors/HTTP/XMLRPC/XmlRpcRequestBehaviour.inspector");
 	}
 
 }

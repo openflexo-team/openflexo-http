@@ -46,16 +46,8 @@
 				data="data.accessedVirtualModelResource"
 				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
 				name="VirtualModelSelector">
-				<Assignment id="7" variable="component.viewPoint"
-					mandatory="true" />
-				<Assignment id="8" variable="component.serviceManager"
-					mandatory="true" />
-				<Assignment id="9" variable="component.flexoController"
-					mandatory="true" />
-				<Assignment id="10" variable="component.selectableCondition"
-					mandatory="true" />
-				<Assignment id="11" variable="component.viewPointLibrary"
-					value="data.viewPointLibrary" mandatory="true" />
+				<Assignment id="11" variable="component.virtualModelLibrary"
+					value="data.virtualModelLibrary" mandatory="true" />
 			</Custom>
 
 			<Label label="format" index="31"
@@ -66,13 +58,6 @@
 				iteratorClassName="org.openflexo.http.connector.HttpModelSlot$Format"
 				autoSelectFirstRow="false">
 			</DropDown>
-
-			<Label index="33" label="id_property" align="left" localize="true"
-				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)"
-				name="IdPropertyNameLabel" />
-			<TextField index="34" columns="7" data="data.idPropertyName"
-				constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)"
-				name="IdPropertyNameTextField" />
 
 			<Label label="creation_scheme" index="35"
 				constraints="twocols(anchor=east;expandHorizontally=false;expandVertically=false;fill=none;gridHeight=1;gridWidth=1;gridX=-1;gridY=-1;index=10;insetsBottom=0;insetsLeft=2;insetsRight=2;insetsTop=5;location=left;padX=0;padY=0;weightX=0.0;weightY=0.0)" />

@@ -13,9 +13,9 @@ import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.fml.HttpBindingFactory;
 import org.openflexo.http.connector.fml.rest.RestModelSlot;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot;
-import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceResourceFactory;
-import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstanceResourceFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceRepository;
+import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResourceFactory;
+import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResourceFactory;
 
 /**
  * Created by charlie on 02/02/2017.
