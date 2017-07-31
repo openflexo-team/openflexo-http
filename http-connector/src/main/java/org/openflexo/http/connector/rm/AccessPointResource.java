@@ -85,7 +85,7 @@ public interface AccessPointResource
 		@Override
 		public AccessPoint loadResourceData(IProgress progress) throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
 				InconsistentDataException, InvalidModelDefinitionException {
-			AccessPoint accessPoint = super.loadResourceData(progress);
+			/*AccessPoint accessPoint = super.loadResourceData(progress);
 			if (accessPoint.getModelSlot() != null) {
 				getFactory().initializeModel(accessPoint, accessPoint.getModelSlot().getCreationScheme(),
 						accessPoint.getModelSlot().getParameters(), accessPoint.getOwnerInstance());
@@ -93,7 +93,8 @@ public interface AccessPointResource
 			else {
 				getFactory().initializeModel(accessPoint, null, null, accessPoint.getOwnerInstance());
 			}
-			return accessPoint;
+			return accessPoint;*/
+			return null;
 		}
 
 		@Override

@@ -38,15 +38,22 @@ package org.openflexo.http.connector.fml;
 import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.InvalidArgumentException;
+import org.openflexo.foundation.fml.CreationScheme;
+import org.openflexo.foundation.fml.FlexoBehaviourParameter;
+import org.openflexo.foundation.fml.FlexoConceptInstanceRole;
 import org.openflexo.foundation.fml.FlexoProperty;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
+import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
@@ -55,10 +62,16 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
+import org.openflexo.model.annotations.Adder;
+import org.openflexo.model.annotations.CloningStrategy;
+import org.openflexo.model.annotations.CloningStrategy.StrategyType;
+import org.openflexo.model.annotations.Embedded;
 import org.openflexo.model.annotations.Getter;
+import org.openflexo.model.annotations.Getter.Cardinality;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.PropertyIdentifier;
+import org.openflexo.model.annotations.Remover;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
@@ -77,11 +90,28 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		extends AbstractCreateResource<HttpModelSlot<VMI>, VMI, HttpTechnologyAdapter> {
 
 	@PropertyIdentifier(type = String.class)
+	public static final String CREATION_SCHEME_URI_KEY = "creationSchemeURI";
+	@PropertyIdentifier(type = CreationScheme.class)
+	public static final String CREATION_SCHEME_KEY = "creationScheme";
+	@PropertyIdentifier(type = VirtualModel.class)
+	public static final String VIRTUAL_MODEL_KEY = "virtualModel";
+	@PropertyIdentifier(type = CreateParameter.class, cardinality = Cardinality.LIST)
+	public static final String PARAMETERS_KEY = "parameters";
+
+	@PropertyIdentifier(type = String.class)
 	String URL_KEY = "url";
 	@PropertyIdentifier(type = String.class)
 	String USER_KEY = "user";
 	@PropertyIdentifier(type = String.class)
 	String PASSWORD_KEY = "password";
+
+	public VirtualModelResource getVirtualModelResource();
+
+	public void setVirtualModelResource(VirtualModelResource virtualModelResource);
+
+	public VirtualModel getVirtualModel();
+
+	public void setVirtualModel(VirtualModel virtualModel);
 
 	@Getter(URL_KEY)
 	@XMLAttribute
@@ -104,6 +134,34 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 	@Setter(PASSWORD_KEY)
 	void setPassword(DataBinding<String> password);
 
+	@Getter(value = CREATION_SCHEME_URI_KEY)
+	@XMLAttribute
+	public String _getCreationSchemeURI();
+
+	@Setter(CREATION_SCHEME_URI_KEY)
+	public void _setCreationSchemeURI(String creationSchemeURI);
+
+	public CreationScheme getCreationScheme();
+
+	public void setCreationScheme(CreationScheme creationScheme);
+
+	public List<CreationScheme> getAvailableCreationSchemes();
+
+	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = CreateParameter.OWNER_KEY)
+	@XMLElement
+	@Embedded
+	@CloningStrategy(StrategyType.CLONE)
+	public List<CreateParameter> getParameters();
+
+	@Setter(PARAMETERS_KEY)
+	public void setParameters(List<CreateParameter> parameters);
+
+	@Adder(PARAMETERS_KEY)
+	public void addToParameters(CreateParameter aParameter);
+
+	@Remover(PARAMETERS_KEY)
+	public void removeFromParameters(CreateParameter aParameter);
+
 	public abstract Class<? extends HttpVirtualModelInstanceResourceFactory<VMI>> getResourceFactoryClass();
 
 	public abstract String getSuffix();
@@ -115,12 +173,21 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		private DataBinding<String> user;
 		private DataBinding<String> password;
 
+		private VirtualModel virtualModel;
+		private VirtualModelResource virtualModelResource;
+
+		private CreationScheme creationScheme;
+		private String _creationSchemeURI;
+		private List<CreateParameter> parameters = null;
+
 		@Override
 		public Type getAssignableType() {
-			if (getAssignedFlexoProperty() != null) {
+			/*if (getAssignedFlexoProperty() != null) {
 				return getAssignedFlexoProperty().getResultingType();
+			}*/
+			if (getVirtualModel() != null) {
+				return getVirtualModel().getInstanceType();
 			}
-
 			/*FlexoProperty<VMI> flexoProperty = getAssignedFlexoProperty();
 			if (flexoProperty instanceof HttpModelSlot) {
 				HttpModelSlot<VMI> httpModelSlot = (HttpModelSlot<VMI>) flexoProperty;
@@ -130,6 +197,185 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 			}
 			return AccessPoint.class;*/
 			return HttpVirtualModelInstance.class;
+		}
+
+		@Override
+		public VirtualModelResource getVirtualModelResource() {
+			if (virtualModelResource != null) {
+				return virtualModelResource;
+			}
+			if (getVirtualModel() != null) {
+				return getVirtualModel().getVirtualModelResource();
+			}
+			return virtualModelResource;
+		}
+
+		@Override
+		public void setVirtualModelResource(VirtualModelResource virtualModelResource) {
+			if ((virtualModelResource == null && getVirtualModelResource() != null)
+					|| (virtualModelResource != null && !virtualModelResource.equals(getVirtualModelResource()))) {
+				VirtualModelResource oldValue = getVirtualModelResource();
+				this.virtualModelResource = virtualModelResource;
+				setVirtualModel(virtualModelResource.getVirtualModel());
+				getPropertyChangeSupport().firePropertyChange("virtualModelResource", oldValue, virtualModelResource);
+			}
+		}
+
+		@Override
+		public VirtualModel getVirtualModel() {
+			if (getCreationScheme() != null) {
+				return (VirtualModel) getCreationScheme().getFlexoConcept();
+			}
+			if (getAssignedFlexoProperty() instanceof HttpModelSlot) {
+				return ((HttpModelSlot<VMI>) getAssignedFlexoProperty()).getAccessedVirtualModel();
+			}
+			if (virtualModelResource != null) {
+				return virtualModelResource.getVirtualModel();
+			}
+			return virtualModel;
+		}
+
+		@Override
+		public void setVirtualModel(VirtualModel aVirtualModel) {
+			if (this.virtualModel != aVirtualModel) {
+				VirtualModel oldValue = this.virtualModel;
+				this.virtualModel = aVirtualModel;
+				this.virtualModelResource = aVirtualModel.getVirtualModelResource();
+				if (getCreationScheme() != null && getCreationScheme().getFlexoConcept() != aVirtualModel) {
+					if (aVirtualModel.getCreationSchemes().size() > 0) {
+						setCreationScheme(aVirtualModel.getCreationSchemes().get(0));
+					}
+					else {
+						setCreationScheme(null);
+					}
+				}
+				getPropertyChangeSupport().firePropertyChange(CreateHttpResource.VIRTUAL_MODEL_KEY, oldValue, aVirtualModel);
+				getPropertyChangeSupport().firePropertyChange("availableCreationSchemes", null, getAvailableCreationSchemes());
+			}
+		}
+
+		@Override
+		public String _getCreationSchemeURI() {
+			if (getCreationScheme() != null) {
+				return getCreationScheme().getURI();
+			}
+			return _creationSchemeURI;
+		}
+
+		@Override
+		public void _setCreationSchemeURI(String uri) {
+			if (getVirtualModelLibrary() != null) {
+				creationScheme = (CreationScheme) getVirtualModelLibrary().getFlexoBehaviour(uri, true);
+			}
+			_creationSchemeURI = uri;
+		}
+
+		@Override
+		public CreationScheme getCreationScheme() {
+
+			if (creationScheme == null && _creationSchemeURI != null && getVirtualModelLibrary() != null) {
+				creationScheme = (CreationScheme) getVirtualModelLibrary().getFlexoBehaviour(_creationSchemeURI, true);
+				updateParameters();
+			}
+			if (creationScheme == null && getAssignedFlexoProperty() instanceof FlexoConceptInstanceRole) {
+				creationScheme = ((FlexoConceptInstanceRole) getAssignedFlexoProperty()).getCreationScheme();
+				updateParameters();
+			}
+			return creationScheme;
+		}
+
+		@Override
+		public void setCreationScheme(CreationScheme creationScheme) {
+			if (this.creationScheme != creationScheme) {
+				CreationScheme oldValue = this.creationScheme;
+				this.creationScheme = creationScheme;
+				if (creationScheme != null) {
+					_creationSchemeURI = creationScheme.getURI();
+				}
+				else {
+					_creationSchemeURI = null;
+				}
+				updateParameters();
+				getPropertyChangeSupport().firePropertyChange(CREATION_SCHEME_KEY, oldValue, creationScheme);
+				getPropertyChangeSupport().firePropertyChange(VIRTUAL_MODEL_KEY, null, getVirtualModel());
+			}
+		}
+
+		@Override
+		public List<CreationScheme> getAvailableCreationSchemes() {
+			if (getVirtualModel() != null) {
+				return getVirtualModel().getCreationSchemes();
+			}
+			return null;
+		}
+
+		@Override
+		public List<CreateParameter> getParameters() {
+			// Comment this because of an infinite loop with updateParameters() method
+			if (parameters == null) {
+				parameters = new ArrayList<>();
+				updateParameters();
+			}
+			return parameters;
+		}
+
+		@Override
+		public void setParameters(List<CreateParameter> parameters) {
+			this.parameters = parameters;
+		}
+
+		@Override
+		public void addToParameters(CreateParameter parameter) {
+			parameter.setOwner(this);
+			if (parameters == null) {
+				parameters = new ArrayList<>();
+			}
+			parameters.add(parameter);
+		}
+
+		@Override
+		public void removeFromParameters(CreateParameter parameter) {
+			parameter.setOwner(null);
+			if (parameters == null) {
+				parameters = new ArrayList<>();
+			}
+			parameters.remove(parameter);
+		}
+
+		public CreateParameter getParameter(FlexoBehaviourParameter p) {
+			for (CreateParameter addEPParam : getParameters()) {
+				if (addEPParam.getParam() == p) {
+					return addEPParam;
+				}
+			}
+			return null;
+		}
+
+		private void updateParameters() {
+			if (parameters == null) {
+				parameters = new ArrayList<>();
+			}
+			List<CreateParameter> oldValue = new ArrayList<>(parameters);
+			List<CreateParameter> parametersToRemove = new ArrayList<>(parameters);
+			if (creationScheme != null) {
+				for (FlexoBehaviourParameter p : creationScheme.getParameters()) {
+					CreateParameter existingParam = getParameter(p);
+					if (existingParam != null) {
+						parametersToRemove.remove(existingParam);
+					}
+					else {
+						if (getFMLModelFactory() != null) {
+							CreateParameter newParam = getFMLModelFactory().newInstance(CreateParameter.class);
+							newParam.setParam(p);
+							addToParameters(newParam);
+						}
+					}
+				}
+			}
+			for (CreateParameter removeThis : parametersToRemove) {
+				removeFromParameters(removeThis);
+			}
+			getPropertyChangeSupport().firePropertyChange(PARAMETERS_KEY, oldValue, parameters);
 		}
 
 		@Override
