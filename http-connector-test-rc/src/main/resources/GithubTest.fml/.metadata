@@ -1,7 +1,0 @@
-#Metadata for directory /Users/sylvain/GIT-1.9.0/openflexo-http/http-connector-test-rc/src/main/resources/GithubTest.fml
-#Mon Jul 31 17:16:26 CEST 2017
-GithubTest.fml.xml.requiredModelSlotList=org.openflexo.http.connector.fml.rest.RestModelSlot,org.openflexo.technologyadapter.gina.FIBComponentModelSlot
-GithubTest.fml.xml.uri=http\://openflexo.org/http-test/GithubTest.fml
-GithubTest.fml.xml.modelVersion=1.0
-GithubTest.fml.xml.name=GithubTest
-GithubTest.fml.xml.version=0.1
