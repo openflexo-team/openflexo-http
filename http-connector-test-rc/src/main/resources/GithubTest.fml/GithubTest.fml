@@ -25,10 +25,11 @@ public class GithubTest {
 
   @ActionScheme  
   public Void recherche(String query) {  
+    log ("Nouvelle recherche avec " + parameters.query)    
     MatchingSet set = this.initiateMatching(Utilisateur);    
-    for (user : github.searchUsers(parameters.query)) {    
-      FML@RT::MatchFlexoConceptInstance as Utilisateur match=(user=user) using Utilisateur:create(user)      
-      log ("Found " + user)    
+    for (user : github) {    
+      log ("Found " + user)      
+      FML@RT::MatchFlexoConceptInstance as Utilisateur match=(user=user) using Utilisateur:create(user)    
     }    
     set.finalizeMatching()    
     this.firePropertyChange utilisateurs  
@@ -46,10 +47,10 @@ public class GithubTest {
     @FlexoConceptInstanceRole(cardinality=ZeroOne,readOnly=false)    
     public FlexoConceptInstanceType<User> user;  
     @ExpressionProperty    
-    public Object login = user.login;  
+    public String login = user.login;  
   
     @CreationScheme    
-    Void create(FlexoConceptInstanceType<NotFound:http://openflexo.org/http/API/Github.viewpoint/GithubV3#User> user) {    
+    Void create(FlexoConceptInstanceType<User> user) {    
       user = parameters.user;    
     }    
   
