@@ -191,7 +191,7 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 					returned = modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
 				}
 				System.out.println("Hop, on retourne: " + returned);
-
+				return returned;
 			}
 			return null;
 		}

@@ -100,7 +100,6 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 
 		@Override
 		public void initialize(HttpVirtualModelInstance owner, S support, FlexoConcept concept) {
-			System.out.println("Est ce qu'on passe la ????");
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
 			this.support = support;

@@ -39,8 +39,8 @@
 package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.exceptions.ModelDefinitionException;
@@ -57,17 +57,17 @@ public abstract class HttpVirtualModelInstanceModelFactory
 		extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource> {
 
 	public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource virtualModelInstanceResource,
-			Class<? extends VirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext,
-			TechnologyAdapterService taService) throws ModelDefinitionException {
+			Class<? extends VirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext, TechnologyAdapterService taService)
+			throws ModelDefinitionException {
 		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);
 	}
 
 	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(HttpVirtualModelInstance owner, S support,
 			FlexoConcept concept) {
-		System.out.println("attention on cree un nouveau FCI pour " + concept);
-		System.out.println("support=" + support);
+		// System.out.println("attention on cree un nouveau FCI pour " + concept);
+		// System.out.println("support=" + support);
 		HttpFlexoConceptInstance<S> returned = newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
-		System.out.println("Nouvelle instance: " + returned);
+		// System.out.println("Nouvelle instance: " + returned);
 		owner.addToFlexoConceptInstances(returned);
 		return returned;
 	}
