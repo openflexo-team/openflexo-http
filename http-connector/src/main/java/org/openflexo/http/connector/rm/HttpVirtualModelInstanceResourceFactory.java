@@ -76,8 +76,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	 * @throws SaveResourceException
 	 * @throws ModelDefinitionException
 	 */
-	public <I> HttpVirtualModelInstanceResource makeTopLevelFMLRTVirtualModelInstanceResource(String baseName, String uri,
-			VirtualModelResource virtualModelResource, RepositoryFolder<HttpVirtualModelInstanceResource, I> folder,
+	public <I> HttpVirtualModelInstanceResource<VMI> makeTopLevelFMLRTVirtualModelInstanceResource(String baseName, String uri,
+			VirtualModelResource virtualModelResource, RepositoryFolder<HttpVirtualModelInstanceResource<VMI>, I> folder,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager, boolean createEmptyContents)
 			throws SaveResourceException, ModelDefinitionException {
 
@@ -86,13 +86,13 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 				(baseName.endsWith(getExpectedDirectorySuffix()) ? baseName : baseName + getExpectedDirectorySuffix()),
 				folder.getSerializationArtefact());
 
-		HttpVirtualModelInstanceResource returned = initResourceForCreation(serializationArtefact, resourceCenter, technologyContextManager,
-				baseName, uri);
+		HttpVirtualModelInstanceResource<VMI> returned = initResourceForCreation(serializationArtefact, resourceCenter,
+				technologyContextManager, baseName, uri);
 		returned.setVirtualModelResource(virtualModelResource);
 		registerResource(returned, resourceCenter, technologyContextManager);
 
 		if (createEmptyContents) {
-			HttpVirtualModelInstance resourceData = createEmptyContents(returned);
+			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {
@@ -119,7 +119,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	 * @throws SaveResourceException
 	 * @throws ModelDefinitionException
 	 */
-	public <I> HttpVirtualModelInstanceResource makeContainedFMLRTVirtualModelInstanceResource(String baseName,
+	public <I> HttpVirtualModelInstanceResource<VMI> makeContainedFMLRTVirtualModelInstanceResource(String baseName,
 			VirtualModelResource virtualModelResource, AbstractVirtualModelInstanceResource<?, ?> containerResource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager, boolean createEmptyContents)
 			throws SaveResourceException, ModelDefinitionException {
@@ -132,13 +132,13 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		String viewURI = containerResource.getURI() + "/"
 				+ (baseName.endsWith(getExpectedDirectorySuffix()) ? baseName : (baseName + getExpectedDirectorySuffix()));
 
-		HttpVirtualModelInstanceResource returned = initResourceForCreation(serializationArtefact, resourceCenter, technologyContextManager,
-				baseName, viewURI);
+		HttpVirtualModelInstanceResource<VMI> returned = initResourceForCreation(serializationArtefact, resourceCenter,
+				technologyContextManager, baseName, viewURI);
 		returned.setVirtualModelResource(virtualModelResource);
 		registerResource(returned, resourceCenter, technologyContextManager);
 
 		if (createEmptyContents) {
-			HttpVirtualModelInstance resourceData = createEmptyContents(returned);
+			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
 			returned.save(null);
 			if (resourceData.getFMLRunTimeEngine() != null) {
@@ -164,10 +164,10 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	 * @throws ModelDefinitionException
 	 * @throws IOException
 	 */
-	public <I> HttpVirtualModelInstanceResource retrieveFMLRTVirtualModelInstanceResource(I serializationArtefact,
+	public <I> HttpVirtualModelInstanceResource<VMI> retrieveFMLRTVirtualModelInstanceResource(I serializationArtefact,
 			FlexoResourceCenter<I> resourceCenter, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager)
 			throws ModelDefinitionException, IOException {
-		HttpVirtualModelInstanceResource returned = retrieveResource(serializationArtefact, resourceCenter, technologyContextManager);
+		HttpVirtualModelInstanceResource<VMI> returned = retrieveResource(serializationArtefact, resourceCenter, technologyContextManager);
 		return returned;
 	}
 
@@ -183,10 +183,10 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	 * @throws ModelDefinitionException
 	 * @throws IOException
 	 */
-	public <I> HttpVirtualModelInstanceResource retrieveFMLRTVirtualModelInstanceResource(I serializationArtefact,
+	public <I> HttpVirtualModelInstanceResource<VMI> retrieveFMLRTVirtualModelInstanceResource(I serializationArtefact,
 			FlexoResourceCenter<I> resourceCenter, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager,
 			AbstractVirtualModelInstanceResource<?, ?> containerResource) throws ModelDefinitionException, IOException {
-		HttpVirtualModelInstanceResource returned = retrieveResource(serializationArtefact, resourceCenter, technologyContextManager);
+		HttpVirtualModelInstanceResource<VMI> returned = retrieveResource(serializationArtefact, resourceCenter, technologyContextManager);
 		containerResource.addToContents(returned);
 		containerResource.notifyContentsAdded(returned);
 		return returned;
@@ -223,9 +223,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		super.registerResource(resource, resourceCenter, technologyContextManager);
 
 		// Register the resource in the VirtualModelInstanceRepository of supplied resource center
-		registerResourceInResourceRepository((HttpVirtualModelInstanceResource) resource,
-				(HttpVirtualModelInstanceRepository) technologyContextManager.getTechnologyAdapter()
-						.getVirtualModelInstanceRepository(resourceCenter));
+		registerResourceInResourceRepository(resource, (HttpVirtualModelInstanceRepository) technologyContextManager.getTechnologyAdapter()
+				.getVirtualModelInstanceRepository(resourceCenter));
 
 		// Now look for virtual model instances and sub-views
 		// TODO: may be not required for HTTP ???

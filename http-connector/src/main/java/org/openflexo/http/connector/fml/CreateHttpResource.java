@@ -277,8 +277,8 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 				creationScheme = (CreationScheme) getVirtualModelLibrary().getFlexoBehaviour(_creationSchemeURI, true);
 				updateParameters();
 			}
-			if (creationScheme == null && getAssignedFlexoProperty() instanceof FlexoConceptInstanceRole) {
-				creationScheme = ((FlexoConceptInstanceRole) getAssignedFlexoProperty()).getCreationScheme();
+			if (creationScheme == null && ((FlexoProperty) getAssignedFlexoProperty()) instanceof FlexoConceptInstanceRole) {
+				creationScheme = ((FlexoConceptInstanceRole) (FlexoProperty) getAssignedFlexoProperty()).getCreationScheme();
 				updateParameters();
 			}
 			return creationScheme;
