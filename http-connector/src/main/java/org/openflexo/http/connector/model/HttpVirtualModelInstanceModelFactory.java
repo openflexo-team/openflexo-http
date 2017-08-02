@@ -53,16 +53,16 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public abstract class HttpVirtualModelInstanceModelFactory
-		extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource> {
+public abstract class HttpVirtualModelInstanceModelFactory<VMI extends HttpVirtualModelInstance<VMI>>
+		extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource<VMI>> {
 
-	public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource virtualModelInstanceResource,
+	public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource<VMI> virtualModelInstanceResource,
 			Class<? extends VirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext, TechnologyAdapterService taService)
 			throws ModelDefinitionException {
 		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);
 	}
 
-	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(HttpVirtualModelInstance owner, S support,
+	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(HttpVirtualModelInstance<VMI> owner, S support,
 			FlexoConcept concept) {
 		// System.out.println("attention on cree un nouveau FCI pour " + concept);
 		// System.out.println("support=" + support);
