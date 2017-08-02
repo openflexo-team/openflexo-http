@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" modelVersion="1.0" version="0.1" name="GithubV3" userID="FLX" flexoID="2">
+<VirtualModel id="0" modelVersion="1.0" URI="http://openflexo.org/http/API/GithubV3.fml" version="0.1" name="GithubV3" userID="FLX" flexoID="2">
   <FlexoConcept id="1" name="User" isAbstract="true" userID="FLX" flexoID="7">
     <AbstractProperty id="2" type="java.lang.String" name="login" userID="FLX" flexoID="13" />
     <AbstractProperty id="3" type="java.lang.String" name="avatar_url" userID="FLX" flexoID="14" />
