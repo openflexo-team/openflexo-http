@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GINAFIBComponent id="0" userID="FLX" flexoID="1">
-  <Panel id="1" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" layout="twocols" borderRight="0" controllerClassName="org.openflexo.technologyadapter.gina.controller.FMLControlledFIBController">
-    <Panel id="2" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="border" borderRight="0" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=10;insetsRight=10;insetsTop=10;location=north)" name="FIBPanel">
+  <Panel id="1" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="empty" sizeAdjustment="OriginalSize" layout="border" borderRight="0" controllerClassName="org.openflexo.technologyadapter.gina.controller.FMLControlledFIBController">
+    <Panel id="2" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="border" borderRight="0" constraints="border(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=10;insetsRight=10;insetsTop=10;location=north)" name="FIBPanel">
       <Label id="3" label="Search GitHub users:" align="left" constraints="border(location=west)" name="Label" />
       <TextField id="4" columns="7" manageDynamicModel="true" constraints="border(location=center)" name="SearchTextField" />
       <Button id="5" buttonType="Trigger" action="data.recherche(SearchTextField.value)" label="Search" constraints="border(location=east)" name="Button" />
     </Panel>
-    <Table id="6" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml#Utilisateur&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.utilisateurs" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=10;insetsLeft=10;insetsRight=10;insetsTop=10;location=center)" name="Table">
+    <Table id="6" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml#Utilisateur&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.utilisateurs" constraints="border(expandHorizontally=true;expandVertically=true;insetsBottom=10;insetsLeft=10;insetsRight=10;insetsTop=10;location=west)" name="Table">
       <IconColumn id="7" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
-      <LabelColumn id="8" data="iterator.login" resizable="true" title="User" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+      <LabelColumn id="8" data="iterator.login" resizable="true" title="User" displayTitle="true" columnWidth="200" showIcon="false" name="label" />
     </Table>
-    <FIBVariable id="9" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml&gt;" name="data" />
-    <LocalizedDictionary id="10" />
+    <Panel id="9" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="twocols" borderRight="0" constraints="border(location=center)" name="FIBPanel2">
+      <Label id="10" label="login" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label2" />
+      <TextField id="11" columns="7" data="Table.selected.login" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField" />
+      <Label id="12" label="name" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label3" />
+      <TextField id="13" columns="7" data="Table.selected.user.name" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField2" />
+      <Label id="14" label="company" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label4" />
+      <TextField id="15" columns="7" data="Table.selected.user.company" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField3" />
+      <Label id="16" label="blog" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label5" />
+      <TextField id="17" columns="7" data="Table.selected.user.blog" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField4" />
+      <Label id="18" label="location" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label6" />
+      <TextField id="19" columns="7" data="Table.selected.user.location" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField5" />
+      <Label id="20" label="followers" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label7" />
+      <Table id="21" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/GithubV3.fml#User&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="Table.selected.user.followers" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table2">
+        <IconColumn id="22" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
+        <LabelColumn id="23" data="iterator.login" resizable="true" title="user" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="24" data="iterator.company" resizable="true" title="company" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+      </Table>
+    </Panel>
+    <FIBVariable id="25" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml&gt;" name="data" />
+    <LocalizedDictionary id="26" />
   </Panel>
 </GINAFIBComponent>

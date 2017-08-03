@@ -66,10 +66,12 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.CreateHttpResource;
 import org.openflexo.http.connector.fml.rest.JsonRequestBehaviour;
 import org.openflexo.http.connector.fml.rest.RestObjectRetriever;
+import org.openflexo.http.connector.fml.rest.RestObjectRole;
 import org.openflexo.http.connector.fml.xmlrpc.PerformXmlRpcRequest;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.icon.FMLIconLibrary;
+import org.openflexo.icon.FMLRTIconLibrary;
 import org.openflexo.icon.IconFactory;
 import org.openflexo.icon.IconLibrary;
 import org.openflexo.technologyadapter.http.library.HttpIconLibrary;
@@ -143,6 +145,9 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
 	@Override
 	public ImageIcon getIconForFlexoRole(Class<? extends FlexoRole<?>> flexoRoleClass) {
+		if (RestObjectRole.class.isAssignableFrom(flexoRoleClass)) {
+			return IconFactory.getImageIcon(FMLRTIconLibrary.FLEXO_CONCEPT_INSTANCE_ICON, HttpIconLibrary.HTTP_MARKER);
+		}
 		return HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 
