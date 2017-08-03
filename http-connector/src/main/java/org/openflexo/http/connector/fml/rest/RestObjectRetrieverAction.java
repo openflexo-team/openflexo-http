@@ -77,7 +77,7 @@ public class RestObjectRetrieverAction
 	private static final Logger logger = Logger.getLogger(RestObjectRetrieverAction.class.getPackage().getName());
 
 	public static FlexoActionType<RestObjectRetrieverAction, RestVirtualModelInstance, VirtualModelInstanceObject> actionType = new FlexoActionType<RestObjectRetrieverAction, RestVirtualModelInstance, VirtualModelInstanceObject>(
-			"initialize_http_access_point", FlexoActionType.newMenu, FlexoActionType.defaultGroup, FlexoActionType.ADD_ACTION_TYPE) {
+			"rest_object_retriever", FlexoActionType.newMenu, FlexoActionType.defaultGroup, FlexoActionType.ADD_ACTION_TYPE) {
 
 		/**
 		 * Factory method

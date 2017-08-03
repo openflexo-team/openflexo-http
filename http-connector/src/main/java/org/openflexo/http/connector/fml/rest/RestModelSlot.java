@@ -24,6 +24,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.annotations.DeclareActorReferences;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
+import org.openflexo.foundation.fml.annotations.DeclareFlexoRoles;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.fml.rest.RestModelSlot.RestModelSlotImpl;
@@ -38,12 +39,13 @@ import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 
 /**
- * REST model slot for Http technology adapter
+ * Rest model slot for HTTP technology adapter
  *
  */
 @ModelEntity
 @XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
+@DeclareFlexoRoles({ RestObjectRole.class })
 @DeclareEditionActions({ CreateHttpRestResource.class })
 @DeclareFlexoBehaviours({ RestObjectRetriever.class, JsonRequestBehaviour.class })
 @DeclareActorReferences({ HttpObjectActorReference.class })
