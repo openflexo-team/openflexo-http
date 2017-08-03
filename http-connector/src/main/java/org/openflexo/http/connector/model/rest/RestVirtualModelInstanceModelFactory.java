@@ -51,7 +51,7 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
+public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<RestVirtualModelInstance> {
 
 	public RestVirtualModelInstanceModelFactory(RestVirtualModelInstanceResource virtualModelInstanceResource,
 			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {

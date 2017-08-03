@@ -352,7 +352,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 			return null;
 		}
 
-		if (xmlRootElementInfo.getName().equals("FMLRTVirtualModelInstance")) {
+		// TODO: it relies on the fact that serialized element name ends with VirtualModelInstance
+		if (xmlRootElementInfo.getName().endsWith("VirtualModelInstance")) {
 			returned.name = xmlRootElementInfo.getAttribute("name");
 			returned.uri = xmlRootElementInfo.getAttribute("uri");
 			returned.virtualModelURI = xmlRootElementInfo.getAttribute("virtualModelURI");

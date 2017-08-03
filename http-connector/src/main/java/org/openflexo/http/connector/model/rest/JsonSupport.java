@@ -129,6 +129,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 		public String getPointer() {
 			return pointer;
 		}
+
 	}
 
 	public JsonSupport(HttpVirtualModelInstance owner, JsonResponse response) {
@@ -146,6 +147,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 				node = source;
 				if (response.getPointer() != null) {
 					node = node.at(response.getPointer());
+					System.out.println("Support: " + node.toString());
 				}
 
 				if (!(node instanceof ObjectNode)) {
@@ -177,6 +179,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 			lastUpdated = System.nanoTime();
 		}
 		complete = source != null;
+		System.out.println("Support(2): " + source.toString());
 	}
 
 	private boolean needUpdate() {

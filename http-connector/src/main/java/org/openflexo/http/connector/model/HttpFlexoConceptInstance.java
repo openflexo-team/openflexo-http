@@ -37,7 +37,11 @@ package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.AbstractProperty;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoConceptInstanceRole;
 import org.openflexo.foundation.fml.FlexoProperty;
+import org.openflexo.foundation.fml.FlexoRole;
+import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
+import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -57,6 +61,8 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 	@Initializer
 	void initialize(@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner, S support,
 			@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept);
+
+	public String getIdentifier();
 
 	abstract class HttpFlexoConceptInstanceImpl<S extends ContentSupport<?>> extends FlexoConceptInstanceImpl
 			implements HttpFlexoConceptInstance<S> {
@@ -113,6 +119,36 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 			return FlexoObjectReference.constructSerializationRepresentation(null, resourceURI, getUserIdentifier(),
 					support.getIdentifier(), conceptName);
 		}*/
+
+		@Override
+		public String getIdentifier() {
+			if (getFlexoConcept() != null) {
+				if (getFlexoConcept().getKeyProperties().size() > 1) {
+					StringBuffer sb = new StringBuffer();
+					boolean isFirst = true;
+					for (FlexoProperty<?> keyP : getFlexoConcept().getKeyProperties()) {
+						sb.append((isFirst ? "" : ",") + keyP.getName() + "=" + getFlexoPropertyValue(keyP));
+						isFirst = false;
+					}
+					return sb.toString();
+				}
+				if (getFlexoConcept().getKeyProperties().size() > 0) {
+					return getFlexoPropertyValue(getFlexoConcept().getKeyProperties().get(0)).toString();
+				}
+			}
+			return "null";
+		}
+
+		@Override
+		public ActorReference<? extends FlexoConceptInstance> makeActorReference(FlexoConceptInstanceRole role, FlexoConceptInstance fci) {
+			System.out.println("Tiens, faudrait encoder le HttpFlexoConceptInstance");
+			AbstractVirtualModelInstanceModelFactory<?> factory = getFactory();
+			HttpObjectActorReference returned = factory.newInstance(HttpObjectActorReference.class);
+			returned.setFlexoRole((FlexoRole) role);
+			returned.setFlexoConceptInstance(fci);
+			returned.setModellingElement(this);
+			return returned;
+		}
 
 	}
 }

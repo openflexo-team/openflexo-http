@@ -37,12 +37,14 @@ package org.openflexo.http.connector.model;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.FlexoServiceManager;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
@@ -116,6 +118,10 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 
 	void contributeHeaders(HttpUriRequest request);
 
+	public ContentSupportFactory<?, ?> getSupportFactory();
+
+	public void setSupportFactory(ContentSupportFactory<?, ?> supportFactory);
+
 	abstract class HttpVirtualModelInstanceImpl<VMI extends HttpVirtualModelInstance<VMI>>
 			extends VirtualModelInstanceImpl<VMI, HttpTechnologyAdapter> implements HttpVirtualModelInstance<VMI> {
 
@@ -174,8 +180,19 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 			return "HttpVirtualModelInstance:" + super.toString();
 		}*/
 
+		@Override
 		public ContentSupportFactory<?, ?> getSupportFactory() {
 			return supportFactory;
+		}
+
+		@Override
+		public void setSupportFactory(ContentSupportFactory<?, ?> supportFactory) {
+			if ((supportFactory == null && this.supportFactory != null)
+					|| (supportFactory != null && !supportFactory.equals(this.supportFactory))) {
+				ContentSupportFactory<?, ?> oldValue = this.supportFactory;
+				this.supportFactory = supportFactory;
+				getPropertyChangeSupport().firePropertyChange("supportFactory", oldValue, supportFactory);
+			}
 		}
 
 		/*public HttpFlexoConceptInstance retrieveFlexoConceptInstance(FlexoConcept type, Map<?,?> values) {
@@ -193,6 +210,15 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 				value.append(Base64.getEncoder().encodeToString(authentication.getBytes(StandardCharsets.UTF_8)));
 				request.addHeader("Authorization", value.toString());
 			}
+		}
+
+		@Override
+		public List<FlexoConceptInstance> getFlexoConceptInstances() {
+			if (isSerializing()) {
+				// FCI are not serialized
+				return null;
+			}
+			return (List<FlexoConceptInstance>) performSuperGetter(FLEXO_CONCEPT_INSTANCES_KEY);
 		}
 
 	}

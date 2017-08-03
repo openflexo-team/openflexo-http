@@ -78,4 +78,21 @@ public class RestVirtualModelInstanceResourceFactory extends HttpVirtualModelIns
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getTechnologyAdapterService());
 	}
 
+	/*	@Override
+		protected <I> HttpVirtualModelInstanceResource<RestVirtualModelInstance> initResourceForCreation(I serializationArtefact,
+				FlexoResourceCenter<I> resourceCenter, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager, String name,
+				String uri) throws ModelDefinitionException {
+			HttpVirtualModelInstanceResource<RestVirtualModelInstance> returned =  super.initResourceForCreation(serializationArtefact, resourceCenter, technologyContextManager, name, uri);
+			returned.set
+			return returned;
+		}
+		
+		@Override
+		protected <I> HttpVirtualModelInstanceResource<RestVirtualModelInstance> initResourceForRetrieving(I serializationArtefact,
+				FlexoResourceCenter<I> resourceCenter, TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager)
+				throws ModelDefinitionException, IOException {
+			HttpVirtualModelInstanceResource<RestVirtualModelInstance> returned = super.initResourceForRetrieving(serializationArtefact, resourceCenter, technologyContextManager);
+			return returned;
+		}*/
+
 }

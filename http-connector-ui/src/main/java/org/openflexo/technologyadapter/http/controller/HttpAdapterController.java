@@ -64,8 +64,8 @@ import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.gina.utils.InspectorGroup;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.CreateHttpResource;
-import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.rest.JsonRequestBehaviour;
+import org.openflexo.http.connector.fml.rest.RestObjectRetriever;
 import org.openflexo.http.connector.fml.xmlrpc.PerformXmlRpcRequest;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
@@ -159,7 +159,7 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
 	@Override
 	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
-		if (HttpVirtualModelInitializer.class.isAssignableFrom(flexoBehaviourClass)) {
+		if (RestObjectRetriever.class.isAssignableFrom(flexoBehaviourClass)) {
 			return IconFactory.getImageIcon(FMLIconLibrary.CREATION_SCHEME_ICON, HttpIconLibrary.HTTP_MARKER);
 		}
 		if (XmlRpcRequestBehaviour.class.isAssignableFrom(flexoBehaviourClass)) {

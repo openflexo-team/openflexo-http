@@ -62,8 +62,7 @@ public abstract class HttpVirtualModelInstanceModelFactory<VMI extends HttpVirtu
 		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);
 	}
 
-	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(HttpVirtualModelInstance<VMI> owner, S support,
-			FlexoConcept concept) {
+	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(VMI owner, S support, FlexoConcept concept) {
 		// System.out.println("attention on cree un nouveau FCI pour " + concept);
 		// System.out.println("support=" + support);
 		HttpFlexoConceptInstance<S> returned = newInstance(HttpFlexoConceptInstance.class, owner, support, concept);
