@@ -55,6 +55,8 @@ import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
+import org.openflexo.foundation.fml.rt.action.CreationSchemeAction;
+import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.http.connector.HttpModelSlot;
@@ -389,11 +391,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 						getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class),
 						getResourceFactoryClass(), rc, resourceName, resourceURI, getRelativePath(), getSuffix(), true);
 				VMI data = newResource.getResourceData(null);
-
-				/*AccessPointResource newResource = createResource(
-						getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class),
-						AccessPointResourceFactory.class, rc, resourceName, resourceURI, getRelativePath(), ".url", true);
-				AccessPoint data = newResource.getResourceData(null);*/
+				data.setVirtualModel(getVirtualModel());
 
 				FlexoProperty<VMI> flexoProperty = getAssignedFlexoProperty();
 				if (flexoProperty instanceof HttpModelSlot) {
@@ -435,6 +433,27 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 					data.setUrl(url);
 					data.setUser(user);
 					data.setPassword(password);
+
+					// Now we should execute CreationScheme
+					// System.out.println("Executing FML: " + getCreationScheme().getFMLRepresentation());
+					CreationSchemeAction creationSchemeAction = CreationSchemeAction.actionType.makeNewEmbeddedAction(null, null,
+							(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
+					// creationSchemeAction.setVirtualModelInstance(vmInstance);
+					creationSchemeAction.initWithFlexoConceptInstance(data);
+					creationSchemeAction.setCreationScheme(getCreationScheme());
+					for (CreateParameter p : getParameters()) {
+						FlexoBehaviourParameter param = p.getParam();
+						Object value = p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext);
+						// System.out.println("For parameter " + param + " value is " + value);
+						if (value != null) {
+							creationSchemeAction.setParameterValue(p.getParam(),
+									p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext));
+						}
+					}
+					creationSchemeAction.doAction();
+
+					// newResource.getFactory().initializeModel(data, getCreationScheme(), getParameters(), evaluationContext);
+
 					/*data.setModelSlot(httpModelSlot);
 					data.setOwnerInstance(evaluationContext.getVirtualModelInstance());
 					newResource.getFactory().initializeModel(data, httpModelSlot.getCreationScheme(), httpModelSlot.getParameters(),
