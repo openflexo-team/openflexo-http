@@ -4,7 +4,7 @@
     <Panel id="2" align="left" borderTop="0" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="border" borderRight="0" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=10;insetsRight=10;insetsTop=10;location=north)" name="FIBPanel">
       <Label id="3" label="Search GitHub users:" align="left" constraints="border(location=west)" name="Label" />
       <TextField id="4" columns="7" manageDynamicModel="true" constraints="border(location=center)" name="SearchTextField" />
-      <Button id="5" buttonType="Trigger" action="data.recherche((&quot;a&quot; + SearchTextField.value))" label="Prout" constraints="border(location=east)" name="Button" />
+      <Button id="5" buttonType="Trigger" action="data.recherche(SearchTextField.value)" label="Search" constraints="border(location=east)" name="Button" />
     </Panel>
     <Table id="6" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml#Utilisateur&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.utilisateurs" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=10;insetsLeft=10;insetsRight=10;insetsTop=10;location=center)" name="Table">
       <IconColumn id="7" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />

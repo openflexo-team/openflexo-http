@@ -18,7 +18,7 @@ public class GithubTest {
   }
 
   @CreationScheme  
-  Void create(String url, String user, String password) {  
+  GithubTest:create(String url, String user, String password) {  
     github = null.CreateHttpRestResource();    
     ui = ui.ConfigureGINAFIBComponent();  
   }  
@@ -27,7 +27,7 @@ public class GithubTest {
   public Void recherche(String query) {  
     log ("Nouvelle recherche avec " + parameters.query)    
     MatchingSet set = this.initiateMatching(Utilisateur);    
-    for (user : github) {    
+    for (user : github.searchUsers(parameters.query)) {    
       log ("Found " + user)      
       FML@RT::MatchFlexoConceptInstance as Utilisateur match=(user=user) using Utilisateur:create(user)    
     }    
@@ -50,7 +50,7 @@ public class GithubTest {
     public String login = user.login;  
   
     @CreationScheme    
-    Void create(FlexoConceptInstanceType<User> user) {    
+    Utilisateur:create(FlexoConceptInstanceType<User> user) {    
       user = parameters.user;    
     }    
   

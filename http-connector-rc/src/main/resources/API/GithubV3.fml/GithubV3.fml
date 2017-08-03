@@ -7,14 +7,17 @@ use org.openflexo.http.connector.fml.rest.RestModelSlot;
 @VirtualModel(uri="http://openflexo.org/http/API/GithubV3.fml")
 public class GithubV3 {
 
+  @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
+  public String baseURL;
+
   @JsonRequestBehaviour  
   List<FlexoConceptInstanceType<User>> searchUsers(String query) {  
   
   }  
 
   @CreationScheme  
-  Void init() {  
-  
+  GithubV3:init(String baseUrl) {  
+    baseURL = parameters.baseUrl;  
   }  
 
 
@@ -22,9 +25,32 @@ public class GithubV3 {
   public class User {  
   
     @AbstractProperty    
+    @Key    
     abstract String login;  
     @AbstractProperty    
     abstract String avatar_url;  
+    @AbstractProperty    
+    abstract String url;  
+    @AbstractProperty    
+    abstract String type;  
+    @AbstractProperty    
+    abstract String name;  
+    @AbstractProperty    
+    abstract String company;  
+    @AbstractProperty    
+    abstract String blog;  
+    @AbstractProperty    
+    abstract String location;  
+    @AbstractProperty    
+    abstract Boolean site_admin;  
+    @AbstractProperty    
+    abstract Integer id;  
+  
+    @RestObjectRetriever    
+    User:retrieve() {    
+      
+    }    
+  
   }  
 
 }
