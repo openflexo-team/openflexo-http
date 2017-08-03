@@ -38,12 +38,19 @@
 
 package org.openflexo.http.connector.rm.rest;
 
+import org.openflexo.foundation.IOFlexoException;
+import org.openflexo.foundation.InconsistentDataException;
+import org.openflexo.foundation.InvalidModelDefinitionException;
+import org.openflexo.foundation.InvalidXMLException;
+import org.openflexo.foundation.resource.FlexoFileNotFoundException;
 import org.openflexo.foundation.resource.FlexoResource;
+import org.openflexo.http.connector.model.rest.JsonSupportFactory;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.toolbox.IProgress;
 
 /**
  * This is the {@link FlexoResource} encoding a {@link RestVirtualModelInstance}
@@ -74,6 +81,14 @@ public interface RestVirtualModelInstanceResource extends HttpVirtualModelInstan
 		@Override
 		public Class<RestVirtualModelInstance> getResourceDataClass() {
 			return RestVirtualModelInstance.class;
+		}
+
+		@Override
+		public RestVirtualModelInstance loadResourceData(IProgress progress) throws FlexoFileNotFoundException, IOFlexoException,
+				InvalidXMLException, InconsistentDataException, InvalidModelDefinitionException {
+			RestVirtualModelInstance returned = super.loadResourceData(progress);
+			returned.setSupportFactory(new JsonSupportFactory("url"));
+			return returned;
 		}
 	}
 }

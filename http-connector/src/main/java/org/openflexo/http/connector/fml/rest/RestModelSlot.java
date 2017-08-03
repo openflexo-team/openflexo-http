@@ -21,14 +21,15 @@
 package org.openflexo.http.connector.fml.rest;
 
 import org.openflexo.foundation.FlexoServiceManager;
+import org.openflexo.foundation.fml.annotations.DeclareActorReferences;
 import org.openflexo.foundation.fml.annotations.DeclareEditionActions;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
-import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
 import org.openflexo.http.connector.fml.rest.RestModelSlot.RestModelSlotImpl;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
+import org.openflexo.http.connector.model.HttpObjectActorReference;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceModelFactory;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -44,7 +45,8 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @XMLElement
 @ImplementationClass(RestModelSlotImpl.class)
 @DeclareEditionActions({ CreateHttpRestResource.class })
-@DeclareFlexoBehaviours({ HttpVirtualModelInitializer.class, JsonRequestBehaviour.class })
+@DeclareFlexoBehaviours({ RestObjectRetriever.class, JsonRequestBehaviour.class })
+@DeclareActorReferences({ HttpObjectActorReference.class })
 public interface RestModelSlot extends HttpModelSlot<RestVirtualModelInstance> {
 
 	abstract class RestModelSlotImpl extends HttpModelSlotImpl<RestVirtualModelInstance> implements RestModelSlot {

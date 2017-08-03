@@ -51,7 +51,7 @@ import org.openflexo.model.factory.ModelFactory;
  * @author sylvain
  * 
  */
-public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory {
+public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<XmlRpcVirtualModelInstance> {
 
 	public XmlRpcVirtualModelInstanceModelFactory(XmlRpcVirtualModelInstanceResource virtualModelInstanceResource,
 			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
