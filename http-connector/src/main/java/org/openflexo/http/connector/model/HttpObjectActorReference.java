@@ -38,18 +38,10 @@
 
 package org.openflexo.http.connector.model;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.openflexo.foundation.FlexoObject;
-import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
-import org.openflexo.http.connector.fml.rest.RestObjectRetriever;
-import org.openflexo.http.connector.fml.rest.RestObjectRetrieverAction;
-import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
-import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
-import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
@@ -57,7 +49,6 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.PropertyIdentifier;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
 
 /**
  * Implements {@link ActorReference} for {@link FlexoObject} as modelling elements.<br>
@@ -66,9 +57,8 @@ import org.openflexo.model.annotations.XMLElement;
  * 
  * @param <T>
  */
-@ModelEntity
+@ModelEntity(isAbstract = true)
 @ImplementationClass(HttpObjectActorReference.HttpObjectActorReferenceImpl.class)
-@XMLElement
 public interface HttpObjectActorReference extends ActorReference<HttpFlexoConceptInstance<?>> {
 
 	@PropertyIdentifier(type = String.class)
@@ -124,75 +114,15 @@ public interface HttpObjectActorReference extends ActorReference<HttpFlexoConcep
 
 		@Override
 		public HttpFlexoConceptInstance<?> getModellingElement() {
+			// TODO: instantiate cache when retrieving fails and return null value
+			// Otherwise, this will continuously loop
 			if (modellingElement == null) {
-				HttpVirtualModelInstanceResource<?> httpVMIResource = (HttpVirtualModelInstanceResource<?>) getServiceManager()
-						.getResourceManager().getResource(getResourceURI());
-				if (httpVMIResource instanceof RestVirtualModelInstanceResource) {
-					RestVirtualModelInstance restVMI = ((RestVirtualModelInstanceResource) httpVMIResource).getVirtualModelInstance();
-					VirtualModel vm = httpVMIResource.getVirtualModel();
-					FlexoConcept concept = vm.getFlexoConcept(getFlexoConceptURI());
-					List<RestObjectRetriever> retrievers = concept.getFlexoBehaviours(RestObjectRetriever.class);
-					if (retrievers.size() > 1) {
-						logger.warning("More than one RestObjectRetriever for " + concept + " Using first one.");
-					}
-					if (retrievers.size() > 0) {
-						RestObjectRetrieverAction action = RestObjectRetrieverAction.actionType.makeNewAction(restVMI, null,
-								httpVMIResource.getVirtualModelInstance().getEditor());
-						action.setRetrieverBehaviour(retrievers.get(0));
-						action.setKey(getKey());
-						/*if (creationScheme != null) {
-							int i = 0;
-							for (CreateParameter parameter : parameters) {
-								Object paramValue = null;
-								try {
-									paramValue = parameter.getValue().getBindingValue(evaluationContext);
-								} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
-									e.printStackTrace();
-								}
-								action.setParameterValue(creationScheme.getParameters().get(i), paramValue);
-								i++;
-							}
-						
-						}*/
-						action.doAction();
-						modellingElement = action.getFlexoConceptInstance();
-					}
-				}
+				modellingElement = retrieveModellingElement();
 			}
 			return modellingElement;
 		}
 
-		/*@Override
-		public void setModellingElement(T object) {
-			if (object != null) {
-				setObjectReference(new FlexoObjectReference<T>(object));
-			}
-			else {
-				setObjectReference(null);
-			}
-		}
-		
-		@Override
-		public synchronized T getModellingElement() {
-			if (getResourceData() != null && getResourceData().getResource() instanceof PamelaResource
-					&& ((PamelaResource) getResourceData().getResource()).isIndexing()) {
-				return null;
-			}
-			if (isLoading) {
-				return null;
-			}
-			else if (getObjectReference() != null) {
-				isLoading = true;
-				T returned = getObjectReference().getObject(true);
-				if (returned == null) {
-					logger.warning("Could not retrieve object " + getObjectReference());
-				}
-				isLoading = false;
-				return returned;
-			}
-			isLoading = false;
-			return null;
-		}*/
+		protected abstract HttpFlexoConceptInstance<?> retrieveModellingElement();
 
 		@Override
 		public String toString() {

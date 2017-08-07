@@ -39,7 +39,7 @@
 package org.openflexo.http.connector.fml.rest;
 
 import org.openflexo.connie.DataBinding;
-import org.openflexo.foundation.fml.AbstractCreationScheme;
+import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
@@ -51,11 +51,18 @@ import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
+/**
+ * This behaviour is the specification of a REST request whose purpose it to obtain all informations stored by a RestFlexoConceptInstance (a
+ * "distant" object represented by an instance of FlexoConcept)
+ * 
+ * @author sylvain
+ *
+ */
 @ModelEntity
 @ImplementationClass(RestObjectRetriever.RestObjectRetrieverImpl.class)
 @XMLElement
 @FML("RestObjectRetriever")
-public interface RestObjectRetriever extends AbstractCreationScheme, TechnologySpecificFlexoBehaviour {
+public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
 
 	@PropertyIdentifier(type = DataBinding.class)
 	public static final String URL_KEY = "url";
@@ -76,7 +83,7 @@ public interface RestObjectRetriever extends AbstractCreationScheme, TechnologyS
 	@Setter(POINTER_KEY)
 	void setPointer(String pointer);
 
-	public static abstract class RestObjectRetrieverImpl extends AbstractCreationSchemeImpl implements RestObjectRetriever {
+	public static abstract class RestObjectRetrieverImpl extends AbstractActionSchemeImpl implements RestObjectRetriever {
 
 		private DataBinding<String> url;
 

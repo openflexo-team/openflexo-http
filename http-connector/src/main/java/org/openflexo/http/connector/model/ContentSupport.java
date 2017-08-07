@@ -63,7 +63,7 @@ public interface ContentSupport<T extends Object> {
 	 *            the returned type
 	 * @return the typed value for the given name or null.
 	 */
-	<T> T getValue(String name, Type type);
+	Object getValue(String name, Type type);
 
 	/**
 	 * Sets the value for the property with the given name.
@@ -77,4 +77,11 @@ public interface ContentSupport<T extends Object> {
 	 */
 	void setValue(String name, Object value);
 
+	/**
+	 * Return boolean indicating if this {@link ContentSupport} provides a value for supplied property name
+	 * 
+	 * @param name
+	 * @return
+	 */
+	boolean hasValue(String name);
 }

@@ -44,8 +44,10 @@ import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.openflexo.foundation.FlexoServiceManager;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance.HttpVirtualModelInstanceImpl;
 import org.openflexo.logging.FlexoLogger;
@@ -59,7 +61,9 @@ import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLAttribute;
 
 /**
- * VirtualModel instance that represents a distant object set through an AccessPoint
+ * An HTTP-specific {@link VirtualModelInstance} reflecting distants objects accessible through a {@link HttpModelSlot} configured with a
+ * {@link VirtualModel}
+ * 
  */
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
@@ -133,12 +137,8 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 		private ContentSupportFactory<?, ?> supportFactory;
 
 		@Override
-		public void initialize(/*AccessPoint accessPoint,*/ FlexoServiceManager serviceManager,
-				ContentSupportFactory<?, ?> supportFactory) {
+		public void initialize(FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
 
-			System.out.println("Hop, on initialise un HttpVirtualModelInstance");
-
-			// performSuperSetter(ACCESS_POINT, accessPoint);
 			this.supportFactory = supportFactory;
 		}
 

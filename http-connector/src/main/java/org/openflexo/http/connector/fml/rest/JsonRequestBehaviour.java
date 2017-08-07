@@ -185,10 +185,10 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 				System.out.println("J'execute la requete " + url);
 				Object returned;
 				if (isMultiple()) {
-					returned = modelInstance.getFlexoConceptInstances(url, getPointer(), getReturnedFlexoConcept());
+					returned = modelInstance.getFlexoConceptInstances(url, getPointer(), modelInstance, getReturnedFlexoConcept());
 				}
 				else {
-					returned = modelInstance.getFlexoConceptInstance(url, getPointer(), getReturnedFlexoConcept());
+					returned = modelInstance.getFlexoConceptInstance(url, getPointer(), modelInstance, getReturnedFlexoConcept());
 				}
 				System.out.println("Hop, on retourne: " + returned);
 				return returned;

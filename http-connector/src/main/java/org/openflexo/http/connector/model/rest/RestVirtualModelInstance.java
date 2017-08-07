@@ -49,8 +49,12 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.task.Progress;
+import org.openflexo.http.connector.fml.rest.RestModelSlot;
 import org.openflexo.http.connector.model.ContentSupportFactory;
-import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport.JsonResponse;
 import org.openflexo.logging.FlexoLogger;
@@ -61,46 +65,40 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * VirtualModel instance that represents a distant object set through an AccessPoint
+ * REST implementatation for HTTP-specific {@link VirtualModelInstance} reflecting distants objects accessible through a
+ * {@link RestModelSlot} configured with a {@link VirtualModel}
  */
 @ModelEntity
 @ImplementationClass(RestVirtualModelInstance.RestVirtualModelInstanceImpl.class)
-@Imports(@Import(HttpFlexoConceptInstance.class))
+@Imports(@Import(RestFlexoConceptInstance.class))
 @XMLElement
 public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestVirtualModelInstance> {
 
 	String ACCESS_POINT = "accessPoint";
 
-	List<HttpFlexoConceptInstance<JsonSupport>> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
+	List<RestFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConceptInstance container,
+			FlexoConcept concept);
 
-	HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
+	RestFlexoConceptInstance getFlexoConceptInstance(String url, String pointer, FlexoConceptInstance container, FlexoConcept concept);
+
+	public JsonSupport retrieveSupport(String url, String pointer);
+
+	public RestFlexoConceptInstance makeFlexoConceptInstance(String key, FlexoConceptInstance container, FlexoConcept concept);
 
 	abstract class RestVirtualModelInstanceImpl extends HttpVirtualModelInstanceImpl<RestVirtualModelInstance>
 			implements RestVirtualModelInstance {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());
 
-		// private RestVirtualModelInstanceModelFactory modelFactory;
-
-		private final Map<String, HttpFlexoConceptInstance<JsonSupport>> instances = new HashMap<>();
+		private final Map<String, RestFlexoConceptInstance> instances = new HashMap<>();
 
 		@Override
-		public void initialize(/*AccessPoint accessPoint,*/ FlexoServiceManager serviceManager,
-				ContentSupportFactory<?, ?> supportFactory) {
+		public void initialize(FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
 
-			super.initialize(/*accessPoint,*/ serviceManager, supportFactory);
+			super.initialize(serviceManager, supportFactory);
 
-			System.out.println("Hop, on initialise un RestVirtualModelInstance");
-
-			// modelFactory = (RestVirtualModelInstanceModelFactory) accessPoint.getModelSlot()
-			// .getVirtualModelInstanceModelFactory(serviceManager);
-
+			System.out.println("Initializing RestVirtualModelInstance");
 		}
-
-		/*@Override
-		public RestVirtualModelInstanceModelFactory getFactory() {
-			return modelFactory;
-		}*/
 
 		@Override
 		public RestVirtualModelInstanceModelFactory getFactory() {
@@ -113,17 +111,26 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 		}
 
 		@Override
-		public HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance(String path, String pointer, FlexoConcept concept) {
+		public JsonSupport retrieveSupport(String url, String pointer) {
+			Progress.progress("Executing REST request: " + url);
+			JsonResponse response = new JsonResponse(url, null, pointer);
+			Progress.progress("Receiving response from: " + url);
+			return getSupportFactory().newSupport(this, response);
+		}
+
+		@Override
+		public RestFlexoConceptInstance getFlexoConceptInstance(String path, String pointer, FlexoConceptInstance container,
+				FlexoConcept concept) {
 			JsonResponse response = new JsonResponse(path, null, pointer);
 			return instances.computeIfAbsent(path, (newPath) -> {
 				JsonSupport support = getSupportFactory().newSupport(this, response);
-				return getFactory().newFlexoConceptInstance(this, support, concept);
+				return (RestFlexoConceptInstance) getFactory().newFlexoConceptInstance(this, container, support, concept);
 			});
 		}
 
 		@Override
-		public List<HttpFlexoConceptInstance<JsonSupport>> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept) {
-			// AccessPoint accessPoint = getAccessPoint();
+		public List<RestFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConceptInstance container,
+				FlexoConcept concept) {
 			HttpGet httpGet = new HttpGet(getUrl() + path);
 			contributeHeaders(httpGet);
 			try (CloseableHttpResponse httpResponse = getHttpclient().execute(httpGet);
@@ -137,7 +144,7 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 					System.out.println(" > " + support.getIdentifier() + " support=" + support);
 				}
 				// return supports.stream().map((s) -> getFactory().newFlexoConceptInstance(this, s, concept)).collect(Collectors.toList());
-				return supports.stream().map((s) -> retrieveFlexoConceptInstance(s, concept)).collect(Collectors.toList());
+				return supports.stream().map((s) -> retrieveFlexoConceptInstance(s, container, concept)).collect(Collectors.toList());
 
 			} catch (IOException e) {
 				logger.log(Level.SEVERE, "Can't read '" + httpGet.getURI(), e);
@@ -145,17 +152,44 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 			return Collections.emptyList();
 		}
 
-		private HttpFlexoConceptInstance<JsonSupport> retrieveFlexoConceptInstance(JsonSupport support, FlexoConcept concept) {
-			HttpFlexoConceptInstance<JsonSupport> returned = instances.get(support.getIdentifier());
+		@Override
+		public RestFlexoConceptInstance makeFlexoConceptInstance(String key, FlexoConceptInstance container, FlexoConcept concept) {
+			RestFlexoConceptInstance returned = (RestFlexoConceptInstance) getFactory().newFlexoConceptInstance(this, container,
+					(JsonSupport) null, concept);
+			returned.initializeIdentifiers(key);
+			return returned;
+		}
+
+		private RestFlexoConceptInstance retrieveFlexoConceptInstance(JsonSupport support, FlexoConceptInstance container,
+				FlexoConcept concept) {
+			RestFlexoConceptInstance returned = instances.get(support.getIdentifier());
 			if (returned == null) {
-				System.out.println("On trouve pas le FCI pour " + support.getIdentifier() + " on en cree un nouveau");
-				returned = getFactory().newFlexoConceptInstance(this, support, concept);
+				System.out.println("Creating new FCI for " + support.getIdentifier() + " container=" + container);
+				returned = (RestFlexoConceptInstance) getFactory().newFlexoConceptInstance(this, container, support, concept);
 				instances.put(support.getIdentifier(), returned);
 			}
 			else {
-				System.out.println("On trouve un FCI " + support.getIdentifier() + " qu'on connait deja: " + returned);
+				System.out.println("Identifying existing FCI " + support.getIdentifier() + " : " + returned);
 			}
 			return returned;
+		}
+
+		@Override
+		public void addToFlexoConceptInstances(FlexoConceptInstance fci) {
+			if (fci instanceof RestFlexoConceptInstance) {
+				RestFlexoConceptInstance restFCI = (RestFlexoConceptInstance) fci;
+				instances.put(restFCI.getIdentifier(), restFCI);
+			}
+			super.addToFlexoConceptInstances(fci);
+		}
+
+		@Override
+		public void removeFromFlexoConceptInstances(FlexoConceptInstance fci) {
+			if (fci instanceof RestFlexoConceptInstance) {
+				RestFlexoConceptInstance restFCI = (RestFlexoConceptInstance) fci;
+				instances.remove(restFCI.getIdentifier());
+			}
+			super.removeFromFlexoConceptInstances(fci);
 		}
 
 	}

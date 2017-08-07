@@ -38,7 +38,11 @@
 
 package org.openflexo.http.connector.model.xmlrpc;
 
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.connector.model.ContentSupport;
+import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource;
 import org.openflexo.model.exceptions.ModelDefinitionException;
@@ -56,6 +60,24 @@ public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInst
 	public XmlRpcVirtualModelInstanceModelFactory(XmlRpcVirtualModelInstanceResource virtualModelInstanceResource,
 			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
 		super(virtualModelInstanceResource, XmlRpcVirtualModelInstance.class, editingContext, taService);
+	}
+
+	@Override
+	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(XmlRpcVirtualModelInstance owner,
+			FlexoConceptInstance container, S support, FlexoConcept concept) {
+		if (support instanceof MapSupport) {
+			XmlRpcFlexoConceptInstance returned = newInstance(XmlRpcFlexoConceptInstance.class, owner, support, concept);
+			logger.info("Instantiate new XmlRpcFlexoConceptInstance");
+			if (container == null || container == owner) {
+				owner.addToFlexoConceptInstances(returned);
+			}
+			else {
+				container.addToEmbeddedFlexoConceptInstances(returned);
+			}
+			return (HttpFlexoConceptInstance<S>) returned;
+		}
+		logger.warning("Unexpected support for XmlRpcVirtualModelInstanceModelFactory: " + support);
+		return null;
 	}
 
 }
