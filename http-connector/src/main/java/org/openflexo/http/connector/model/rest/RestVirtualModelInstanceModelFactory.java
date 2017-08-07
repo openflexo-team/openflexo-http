@@ -72,12 +72,11 @@ public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstan
 			FlexoConceptInstance container, S support, FlexoConcept concept) {
 		if (support == null || support instanceof JsonSupport) {
 			RestFlexoConceptInstance returned = newInstance(RestFlexoConceptInstance.class, owner, support, concept);
-			logger.info("Instantiate new RestFlexoConceptInstance with " + support);
+			// logger.info("Instantiate new RestFlexoConceptInstance with " + support);
 			if (container == null || container == owner) {
 				owner.addToFlexoConceptInstances(returned);
 			}
 			else {
-				System.out.println("Et on ajoute " + returned + " a container=" + container);
 				container.addToEmbeddedFlexoConceptInstances(returned);
 			}
 			return (HttpFlexoConceptInstance<S>) returned;

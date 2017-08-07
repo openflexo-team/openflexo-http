@@ -179,7 +179,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 			lastUpdated = System.nanoTime();
 		}
 		complete = source != null;
-		System.out.println("Support(2): " + source.toString());
+		// System.out.println("Support: " + source.toString());
 	}
 
 	private boolean needUpdate() {

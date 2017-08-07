@@ -93,7 +93,7 @@ public interface RestFlexoConceptInstance extends HttpFlexoConceptInstance<JsonS
 		@Override
 		public void initialize(RestVirtualModelInstance owner, JsonSupport support, FlexoConcept concept) {
 
-			System.out.println("Initialize FCI for " + concept + " support=" + (support != null ? support.getSource() : null));
+			// System.out.println("Initialize FCI for " + concept + " support=" + (support != null ? support.getSource() : null));
 
 			setOwningVirtualModelInstance(owner);
 			setFlexoConcept(concept);
@@ -161,7 +161,7 @@ public interface RestFlexoConceptInstance extends HttpFlexoConceptInstance<JsonS
 			// We call it very early to be sure not to enter in a loop
 			fullInformationsHaveBeenRetrieved = true;
 
-			System.out.println("retrieveFullInformations() for " + this);
+			// System.out.println("retrieveFullInformations() for " + this);
 
 			RestVirtualModelInstance restVMI = getVirtualModelInstance();
 
