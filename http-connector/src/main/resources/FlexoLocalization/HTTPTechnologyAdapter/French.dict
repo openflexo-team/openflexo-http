@@ -15,4 +15,5 @@ object_type=object_type
 password=Mot de passe
 skip_confirmation_panel_when_possible=skip_confirmation_panel_when_possible
 user=Utilisateur
+virtual_model_instance=virtual_model_instance
 visibility=visibility
