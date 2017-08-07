@@ -15,4 +15,5 @@ object_type=Object type
 password=Password
 skip_confirmation_panel_when_possible=Skip confirmation panel when possible
 user=User
+virtual_model_instance=Virtual model instance
 visibility=Visibility
