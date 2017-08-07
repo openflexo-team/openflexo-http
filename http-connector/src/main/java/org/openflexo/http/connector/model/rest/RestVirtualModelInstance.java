@@ -136,13 +136,13 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 			try (CloseableHttpResponse httpResponse = getHttpclient().execute(httpGet);
 					InputStream stream = httpResponse.getEntity().getContent()) {
 				JsonResponse response = new JsonResponse(path, stream, pointer);
-				System.out.println("on recoit " + response);
-				System.out.println("path=" + path);
-				System.out.println("pointer=" + pointer);
+				// System.out.println("Receiving " + response);
+				// System.out.println("path=" + path);
+				// System.out.println("pointer=" + pointer);
 				List<JsonSupport> supports = getSupportFactory().newSupports(this, response);
-				for (JsonSupport support : supports) {
+				/*for (JsonSupport support : supports) {
 					System.out.println(" > " + support.getIdentifier() + " support=" + support);
-				}
+				}*/
 				// return supports.stream().map((s) -> getFactory().newFlexoConceptInstance(this, s, concept)).collect(Collectors.toList());
 				return supports.stream().map((s) -> retrieveFlexoConceptInstance(s, container, concept)).collect(Collectors.toList());
 
@@ -164,12 +164,12 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 				FlexoConcept concept) {
 			RestFlexoConceptInstance returned = instances.get(support.getIdentifier());
 			if (returned == null) {
-				System.out.println("Creating new FCI for " + support.getIdentifier() + " container=" + container);
+				// System.out.println("Creating new FCI for " + support.getIdentifier() + " container=" + container);
 				returned = (RestFlexoConceptInstance) getFactory().newFlexoConceptInstance(this, container, support, concept);
 				instances.put(support.getIdentifier(), returned);
 			}
 			else {
-				System.out.println("Identifying existing FCI " + support.getIdentifier() + " : " + returned);
+				// System.out.println("Identifying existing FCI " + support.getIdentifier() + " : " + returned);
 			}
 			return returned;
 		}

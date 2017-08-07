@@ -142,8 +142,6 @@ public interface RestObjectRole extends FlexoConceptInstanceRole {
 		 */
 		@Override
 		public List<? extends ActorReference<? extends FlexoConceptInstance>> selfInstantiate(FlexoConceptInstance fci) {
-			System.out.println("Tiens on va chercher les " + getName() + " pour " + fci);
-
 			try {
 				String url = getUrl().getBindingValue(fci);
 				logger.info("Executing REST request " + url);
@@ -151,17 +149,14 @@ public interface RestObjectRole extends FlexoConceptInstanceRole {
 				if (fci.getVirtualModelInstance() instanceof RestVirtualModelInstance) {
 					RestVirtualModelInstance vmi = (RestVirtualModelInstance) fci.getVirtualModelInstance();
 					FlexoConceptInstance container = vmi;
-					System.out.println("Hop, container=" + getContainer() + " valid=" + getContainer().isValid());
 					if (getContainer().isSet() && getContainer().isValid()) {
 						Object object = getContainer().getBindingValue(fci);
 						if (object instanceof FlexoConceptInstance) {
 							container = (FlexoConceptInstance) object;
-							System.out.println("Et donc container=" + container);
 						}
 					}
 					List<RestFlexoConceptInstance> flexoConceptInstances = vmi.getFlexoConceptInstances(url, getPointer(), container,
 							getFlexoConceptType());
-					System.out.println("On trouve " + flexoConceptInstances);
 					List returned = new ArrayList<>();
 					for (RestFlexoConceptInstance target : flexoConceptInstances) {
 						returned.add(makeActorReference(target, fci));
