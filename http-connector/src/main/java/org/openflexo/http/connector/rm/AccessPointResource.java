@@ -103,7 +103,8 @@ public interface AccessPointResource
 			AccessPoint accessPoint = getLoadedResourceData();
 			FlexoConcept concept = accessPoint.getModelSlot().getAccessedVirtualModel().getFlexoConcept(typeIdentifier);
 			if (accessPoint.getInstance() instanceof RestVirtualModelInstance) {
-				return ((RestVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance(objectIdentifier, null, concept);
+				return ((RestVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance(objectIdentifier, null,
+						accessPoint.getInstance(), concept);
 			}
 			else {
 				logger.warning("Don't know how to find object for " + accessPoint.getInstance());

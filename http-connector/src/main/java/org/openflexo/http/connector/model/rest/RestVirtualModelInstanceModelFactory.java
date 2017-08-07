@@ -38,9 +38,16 @@
 
 package org.openflexo.http.connector.model.rest;
 
+import java.util.logging.Logger;
+
+import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.http.connector.model.ContentSupport;
+import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
+import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EditingContext;
 import org.openflexo.model.factory.ModelFactory;
@@ -53,9 +60,30 @@ import org.openflexo.model.factory.ModelFactory;
  */
 public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<RestVirtualModelInstance> {
 
+	private static final Logger logger = FlexoLogger.getLogger(RestVirtualModelInstanceModelFactory.class.getPackage().toString());
+
 	public RestVirtualModelInstanceModelFactory(RestVirtualModelInstanceResource virtualModelInstanceResource,
 			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
 		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
+	}
+
+	@Override
+	public <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(RestVirtualModelInstance owner,
+			FlexoConceptInstance container, S support, FlexoConcept concept) {
+		if (support == null || support instanceof JsonSupport) {
+			RestFlexoConceptInstance returned = newInstance(RestFlexoConceptInstance.class, owner, support, concept);
+			logger.info("Instantiate new RestFlexoConceptInstance with " + support);
+			if (container == null || container == owner) {
+				owner.addToFlexoConceptInstances(returned);
+			}
+			else {
+				System.out.println("Et on ajoute " + returned + " a container=" + container);
+				container.addToEmbeddedFlexoConceptInstances(returned);
+			}
+			return (HttpFlexoConceptInstance<S>) returned;
+		}
+		logger.warning("Unexpected support for RestVirtualModelInstanceModelFactory: " + support);
+		return null;
 	}
 
 }

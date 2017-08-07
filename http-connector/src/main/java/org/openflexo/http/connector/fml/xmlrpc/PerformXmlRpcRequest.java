@@ -358,7 +358,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 
 					if (result instanceof Map) {
 						return (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance((Map<?, ?>) result,
-								getMappedFlexoConcept(evaluationContext));
+								null, getMappedFlexoConcept(evaluationContext));
 					}
 
 					else if (result.getClass().isArray()) {
@@ -368,7 +368,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 							System.out.println("objects[" + j + "]=" + objects[j]);
 							if (objects[j] instanceof Map) {
 								T mappedObject = (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance())
-										.getFlexoConceptInstance((Map<?, ?>) objects[j], getMappedFlexoConcept(evaluationContext));
+										.getFlexoConceptInstance((Map<?, ?>) objects[j], null, getMappedFlexoConcept(evaluationContext));
 								System.out.println("mappedObject=" + mappedObject);
 							}
 						}

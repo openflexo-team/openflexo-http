@@ -39,12 +39,9 @@
 package org.openflexo.http.connector.fml.rest;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
 
-import org.openflexo.connie.BindingVariable;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoEditor;
@@ -54,64 +51,60 @@ import org.openflexo.foundation.action.FlexoAction;
 import org.openflexo.foundation.action.FlexoActionType;
 import org.openflexo.foundation.action.InvalidParametersException;
 import org.openflexo.foundation.action.NotImplementedException;
-import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport;
+import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.localization.LocalizedDelegate;
 
 /**
- * Tooling for HttpVirtualModelInitializer in HTTP connector<br>
- * This feature is wrapped into a {@link FlexoAction}<br>
- * The focused object is an AccessPoint
+ * {@link FlexoAction} executing a {@link RestObjectRetriever} behaviour The focused object is the {@link RestVirtualModelInstance}
  * 
  * @author sylvain
  * 
  */
 public class RestObjectRetrieverAction
-		extends FlexoBehaviourAction<RestObjectRetrieverAction, RestObjectRetriever, RestVirtualModelInstance> {
+		extends FlexoBehaviourAction<RestObjectRetrieverAction, RestObjectRetriever, RestFlexoConceptInstance> {
 
 	private static final Logger logger = Logger.getLogger(RestObjectRetrieverAction.class.getPackage().getName());
 
-	public static FlexoActionType<RestObjectRetrieverAction, RestVirtualModelInstance, VirtualModelInstanceObject> actionType = new FlexoActionType<RestObjectRetrieverAction, RestVirtualModelInstance, VirtualModelInstanceObject>(
+	public static FlexoActionType<RestObjectRetrieverAction, RestFlexoConceptInstance, VirtualModelInstanceObject> actionType = new FlexoActionType<RestObjectRetrieverAction, RestFlexoConceptInstance, VirtualModelInstanceObject>(
 			"rest_object_retriever", FlexoActionType.newMenu, FlexoActionType.defaultGroup, FlexoActionType.ADD_ACTION_TYPE) {
 
 		/**
 		 * Factory method
 		 */
 		@Override
-		public RestObjectRetrieverAction makeNewAction(RestVirtualModelInstance focusedObject,
+		public RestObjectRetrieverAction makeNewAction(RestFlexoConceptInstance focusedObject,
 				Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
 			return new RestObjectRetrieverAction(focusedObject, globalSelection, editor);
 		}
 
 		@Override
-		public boolean isVisibleForSelection(RestVirtualModelInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
+		public boolean isVisibleForSelection(RestFlexoConceptInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
 			return false;
 		}
 
 		@Override
-		public boolean isEnabledForSelection(RestVirtualModelInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
+		public boolean isEnabledForSelection(RestFlexoConceptInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
 			return true;
 		}
 
 	};
 
 	static {
-		FlexoObjectImpl.addActionForClass(actionType, RestVirtualModelInstance.class);
+		FlexoObjectImpl.addActionForClass(actionType, RestFlexoConceptInstance.class);
 	}
 
 	private RestObjectRetriever retrieverBehaviour;
-	private Map<String, String> identifiers;
 	private HttpFlexoConceptInstance<JsonSupport> newFlexoConceptInstance;
 
-	RestObjectRetrieverAction(RestVirtualModelInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection,
+	RestObjectRetrieverAction(RestFlexoConceptInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection,
 			FlexoEditor editor) {
 		super(actionType, focusedObject, globalSelection, editor);
-		identifiers = new HashMap<>();
 	}
 
 	@Override
@@ -127,12 +120,13 @@ public class RestObjectRetrieverAction
 		// logger.info("Performing REST request to reinstantiate " + getFlexoBehaviour().getFlexoConcept());
 
 		try {
-			String url = getRetrieverBehaviour().getUrl().getBindingValue(this);
+			String url = getRetrieverBehaviour().getUrl().getBindingValue(getFocusedObject());
 			logger.info("Executing REST request " + url);
 
-			newFlexoConceptInstance = getFocusedObject().getFlexoConceptInstance(url, getRetrieverBehaviour().getPointer(),
-					getFlexoBehaviour().getFlexoConcept());
-			// System.out.println("Created: " + newFlexoConceptInstance);
+			JsonSupport retrievedSupport = getFocusedObject().getVirtualModelInstance().retrieveSupport(url,
+					getRetrieverBehaviour().getPointer());
+
+			getFocusedObject().setSupport(retrievedSupport);
 
 		} catch (TypeMismatchException e) {
 			// TODO Auto-generated catch block
@@ -149,15 +143,7 @@ public class RestObjectRetrieverAction
 
 	@Override
 	public RestVirtualModelInstance retrieveVirtualModelInstance() {
-		return getFocusedObject();
-	}
-
-	@Override
-	public Object getValue(BindingVariable variable) {
-		if (identifiers.get(variable.getVariableName()) != null) {
-			return identifiers.get(variable.getVariableName());
-		}
-		return super.getValue(variable);
+		return getFocusedObject().getVirtualModelInstance();
 	}
 
 	public RestObjectRetriever getRetrieverBehaviour() {
@@ -180,18 +166,6 @@ public class RestObjectRetrieverAction
 	@Override
 	public HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance() {
 		return newFlexoConceptInstance;
-	}
-
-	public void setKey(String key) {
-		if (getRetrieverBehaviour().getFlexoConcept().getKeyProperties().size() == 1) {
-			// Simple key
-			FlexoProperty<?> keyProperty = getRetrieverBehaviour().getFlexoConcept().getKeyProperties().get(0);
-			identifiers.put(keyProperty.getName(), key);
-			// System.out.println("On retient que " + keyProperty.getName() + "=" + key);
-		}
-		else if (getRetrieverBehaviour().getFlexoConcept().getKeyProperties().size() > 1) {
-			// TODO implement composite keys
-		}
 	}
 
 }

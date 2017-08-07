@@ -165,7 +165,7 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	@Override
 	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
 		if (RestObjectRetriever.class.isAssignableFrom(flexoBehaviourClass)) {
-			return IconFactory.getImageIcon(FMLIconLibrary.CREATION_SCHEME_ICON, HttpIconLibrary.HTTP_MARKER);
+			return IconFactory.getImageIcon(FMLIconLibrary.ACTION_SCHEME_ICON, HttpIconLibrary.HTTP_MARKER);
 		}
 		if (XmlRpcRequestBehaviour.class.isAssignableFrom(flexoBehaviourClass)) {
 			return HttpIconLibrary.REQUEST_BEHAVIOUR_ICON;

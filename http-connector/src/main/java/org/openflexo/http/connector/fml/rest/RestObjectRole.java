@@ -38,10 +38,22 @@
 
 package org.openflexo.http.connector.fml.rest;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Logger;
+
 import org.openflexo.connie.DataBinding;
+import org.openflexo.connie.exception.NullReferenceException;
+import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.fml.FlexoConceptInstanceRole;
+import org.openflexo.foundation.fml.FlexoRole;
+import org.openflexo.foundation.fml.rt.ActorReference;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
+import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -82,6 +94,8 @@ public interface RestObjectRole extends FlexoConceptInstanceRole {
 
 	public static abstract class RestObjectRoleImpl extends FlexoConceptInstanceRoleImpl implements RestObjectRole {
 
+		private static final Logger logger = Logger.getLogger(RestObjectRoleImpl.class.getPackage().getName());
+
 		private DataBinding<String> url;
 
 		@Override
@@ -108,6 +122,65 @@ public interface RestObjectRole extends FlexoConceptInstanceRole {
 		@Override
 		public Class<? extends TechnologyAdapter> getRoleTechnologyAdapterClass() {
 			return HttpTechnologyAdapter.class;
+		}
+
+		/**
+		 * Return a boolean indicating if this {@link FlexoRole} handles itself instantiation and management of related ActorReference
+		 * 
+		 * @return
+		 */
+		@Override
+		public boolean supportSelfInstantiation() {
+			return true;
+		}
+
+		/**
+		 * Performs self instantiation
+		 * 
+		 * @param fci
+		 * @return
+		 */
+		@Override
+		public List<? extends ActorReference<? extends FlexoConceptInstance>> selfInstantiate(FlexoConceptInstance fci) {
+			System.out.println("Tiens on va chercher les " + getName() + " pour " + fci);
+
+			try {
+				String url = getUrl().getBindingValue(fci);
+				logger.info("Executing REST request " + url);
+
+				if (fci.getVirtualModelInstance() instanceof RestVirtualModelInstance) {
+					RestVirtualModelInstance vmi = (RestVirtualModelInstance) fci.getVirtualModelInstance();
+					FlexoConceptInstance container = vmi;
+					System.out.println("Hop, container=" + getContainer() + " valid=" + getContainer().isValid());
+					if (getContainer().isSet() && getContainer().isValid()) {
+						Object object = getContainer().getBindingValue(fci);
+						if (object instanceof FlexoConceptInstance) {
+							container = (FlexoConceptInstance) object;
+							System.out.println("Et donc container=" + container);
+						}
+					}
+					List<RestFlexoConceptInstance> flexoConceptInstances = vmi.getFlexoConceptInstances(url, getPointer(), container,
+							getFlexoConceptType());
+					System.out.println("On trouve " + flexoConceptInstances);
+					List returned = new ArrayList<>();
+					for (RestFlexoConceptInstance target : flexoConceptInstances) {
+						returned.add(makeActorReference(target, fci));
+					}
+					return returned;
+				}
+
+			} catch (TypeMismatchException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (NullReferenceException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			return super.selfInstantiate(fci);
 		}
 
 	}

@@ -36,31 +36,31 @@
 package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.AbstractProperty;
-import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceRole;
 import org.openflexo.foundation.fml.FlexoProperty;
-import org.openflexo.foundation.fml.FlexoRole;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance.HttpFlexoConceptInstanceImpl;
 import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.Parameter;
-import org.openflexo.model.annotations.XMLElement;
 
 /**
- * VirtualModel instance that represents a distant object set through an AccessPoint
+ * An HTTP-specific {@link FlexoConceptInstance} reflecting a distant object accessible in an {@link HttpVirtualModelInstance} through a
+ * {@link HttpModelSlot}
+ * 
  */
-@ModelEntity
+@ModelEntity(isAbstract = true)
 @ImplementationClass(HttpFlexoConceptInstanceImpl.class)
-@XMLElement
 public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends FlexoConceptInstance {
 
-	@Initializer
+	/*@Initializer
 	void initialize(@Parameter(OWNING_VIRTUAL_MODEL_INSTANCE_KEY) HttpVirtualModelInstance owner, S support,
-			@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept);
+			@Parameter(FLEXO_CONCEPT_URI_KEY) FlexoConcept concept);*/
+
+	public S getSupport();
+
+	public void setSupport(S support);
 
 	public String getIdentifier();
 
@@ -70,21 +70,35 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 		private S support;
 
 		@Override
+		public S getSupport() {
+			return support;
+		}
+
+		@Override
+		public void setSupport(S support) {
+			if ((support == null && this.support != null) || (support != null && !support.equals(this.support))) {
+				S oldValue = this.support;
+				this.support = support;
+				getPropertyChangeSupport().firePropertyChange("support", oldValue, support);
+			}
+		}
+
+		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
-			if (flexoProperty instanceof AbstractProperty) {
+			if (getFlexoConcept().getDeclaredProperties().contains(flexoProperty) && flexoProperty instanceof AbstractProperty
+					&& getSupport() != null) {
 				// System.out.println("support = " + support);
-				return support.getValue(flexoProperty.getName(), flexoProperty.getType());
+				return (T) getSupport().getValue(flexoProperty.getName(), flexoProperty.getType());
 			}
 			return super.getFlexoPropertyValue(flexoProperty);
 		}
 
 		@Override
 		public <T> void setFlexoPropertyValue(FlexoProperty<T> flexoProperty, T value) {
-			// TODO create patch action
-			if (flexoProperty instanceof AbstractProperty) {
+			if (flexoProperty instanceof AbstractProperty && getSupport() != null) {
 				T oldValue = getFlexoPropertyValue(flexoProperty);
 				if ((value == null && oldValue != null) || (value != null && !value.equals(oldValue))) {
-					support.setValue(flexoProperty.getName(), value);
+					getSupport().setValue(flexoProperty.getName(), value);
 					setIsModified();
 					getPropertyChangeSupport().firePropertyChange(flexoProperty.getPropertyName(), oldValue, value);
 				}
@@ -92,23 +106,6 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 			else {
 				super.setFlexoPropertyValue(flexoProperty, value);
 			}
-		}
-
-		@Override
-		public HttpVirtualModelInstance getVirtualModelInstance() {
-			return (HttpVirtualModelInstance) super.getVirtualModelInstance();
-		}
-
-		@Override
-		public String toString() {
-			return super.toString();
-		}
-
-		@Override
-		public void initialize(HttpVirtualModelInstance owner, S support, FlexoConcept concept) {
-			setOwningVirtualModelInstance(owner);
-			setFlexoConcept(concept);
-			this.support = support;
 		}
 
 		/*@Override
@@ -122,33 +119,37 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 
 		@Override
 		public String getIdentifier() {
-			if (getFlexoConcept() != null) {
-				if (getFlexoConcept().getKeyProperties().size() > 1) {
-					StringBuffer sb = new StringBuffer();
-					boolean isFirst = true;
-					for (FlexoProperty<?> keyP : getFlexoConcept().getKeyProperties()) {
-						sb.append((isFirst ? "" : ",") + keyP.getName() + "=" + getFlexoPropertyValue(keyP));
-						isFirst = false;
+			// TODO: implement caching
+			if (getFlexoConcept() == null) {
+				return null;
+			}
+			if (identifier == null) {
+				if (getFlexoConcept() != null) {
+					if (getFlexoConcept().getKeyProperties().size() > 1) {
+						StringBuffer sb = new StringBuffer();
+						boolean isFirst = true;
+						for (FlexoProperty<?> keyP : getFlexoConcept().getKeyProperties()) {
+							sb.append((isFirst ? "" : ",") + keyP.getName() + "=" + getFlexoPropertyValue(keyP));
+							isFirst = false;
+						}
+						identifier = sb.toString();
 					}
-					return sb.toString();
-				}
-				if (getFlexoConcept().getKeyProperties().size() > 0) {
-					return getFlexoPropertyValue(getFlexoConcept().getKeyProperties().get(0)).toString();
+					else if (getFlexoConcept().getKeyProperties().size() > 0) {
+						Object keyValue = getFlexoPropertyValue(getFlexoConcept().getKeyProperties().get(0));
+						if (keyValue != null) {
+							identifier = keyValue.toString();
+						}
+					}
 				}
 			}
-			return "null";
+			return identifier;
 		}
 
+		private String identifier = null;
+
 		@Override
-		public ActorReference<? extends FlexoConceptInstance> makeActorReference(FlexoConceptInstanceRole role, FlexoConceptInstance fci) {
-			System.out.println("Tiens, faudrait encoder le HttpFlexoConceptInstance");
-			AbstractVirtualModelInstanceModelFactory<?> factory = getFactory();
-			HttpObjectActorReference returned = factory.newInstance(HttpObjectActorReference.class);
-			returned.setFlexoRole((FlexoRole) role);
-			returned.setFlexoConceptInstance(fci);
-			returned.setModellingElement(this);
-			return returned;
-		}
+		public abstract ActorReference<? extends FlexoConceptInstance> makeActorReference(FlexoConceptInstanceRole role,
+				FlexoConceptInstance fci);
 
 	}
 }

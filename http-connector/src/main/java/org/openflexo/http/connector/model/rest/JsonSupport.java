@@ -192,7 +192,17 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 	}
 
 	@Override
-	public <T> T getValue(String name, Type type) {
+	public boolean hasValue(String name) {
+		update(false);
+		if (source != null) {
+			JsonNode node = source.get(name);
+			return (node != null);
+		}
+		return false;
+	}
+
+	@Override
+	public Object getValue(String name, Type type) {
 		update(false);
 		if (source != null) {
 			JsonNode node = source.get(name);
@@ -208,6 +218,10 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 			}
 		}
 		return null;
+	}
+
+	public ObjectNode getSource() {
+		return source;
 	}
 
 	@Override

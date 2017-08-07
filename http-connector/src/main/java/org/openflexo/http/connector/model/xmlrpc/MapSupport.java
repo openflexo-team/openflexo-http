@@ -90,7 +90,12 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 	}
 
 	@Override
-	public <T> T getValue(String name, Type type) {
+	public boolean hasValue(String name) {
+		return map.get(name) != null;
+	}
+
+	@Override
+	public Object getValue(String name, Type type) {
 		// System.out.println("getValue() name=" + name + " type=" + type);
 
 		if (map.get(name) == null) {
@@ -109,7 +114,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			Object[] oList = (Object[]) map.get(name);
 			if (oList != null && oList.length > 0) {
 				// System.out.println("retrieve object with id " + oList[0]);
-				return (T) oList[0];
+				return oList[0];
 			}
 		}
 		/*if (type instanceof FlexoConceptInstanceType && map.get(name).getClass().isArray()) {
@@ -131,7 +136,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			return (T) new Integer(42);
 		}*/
 
-		return (T) TypeUtils.castTo(map.get(name), type);
+		return TypeUtils.castTo(map.get(name), type);
 
 	}
 
