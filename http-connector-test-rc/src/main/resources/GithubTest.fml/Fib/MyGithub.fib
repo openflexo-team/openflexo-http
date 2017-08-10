@@ -22,13 +22,19 @@
       <Label id="18" label="location" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label6" />
       <TextField id="19" columns="7" data="Table.selected.user.location" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField5" />
       <Label id="20" label="followers" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label7" />
-      <Table id="21" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/GithubV3.fml#User&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="Table.selected.user.followers" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table2">
+      <Table id="21" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/GithubV3.fml#User&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="Table.selected.user.followers" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table2">
         <IconColumn id="22" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
         <LabelColumn id="23" data="iterator.login" resizable="true" title="user" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="24" data="iterator.company" resizable="true" title="company" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
       </Table>
+      <Label id="25" label="repositories" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label8" />
+      <Table id="26" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/GithubV3.fml#Repository&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="Table.selected.user.repositories" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table3">
+        <IconColumn id="27" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
+        <LabelColumn id="28" data="iterator.name" resizable="true" title="repository" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="29" data="iterator.url" resizable="true" title="url" displayTitle="true" columnWidth="200" showIcon="false" name="label" />
+      </Table>
     </Panel>
-    <FIBVariable id="25" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml&gt;" name="data" />
-    <LocalizedDictionary id="26" />
+    <FIBVariable id="30" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/GithubTest.fml&gt;" name="data" />
+    <LocalizedDictionary id="31" />
   </Panel>
 </GINAFIBComponent>

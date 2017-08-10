@@ -25,6 +25,7 @@ import java.util.logging.Logger;
 import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
+import org.openflexo.http.connector.model.xmlrpc.MapSupportFactory;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
@@ -52,7 +53,7 @@ public class XmlRpcVirtualModelInstanceResourceFactory extends HttpVirtualModelI
 
 	@Override
 	public XmlRpcVirtualModelInstance makeEmptyResourceData(HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> resource) {
-		return resource.getFactory().newInstance(XmlRpcVirtualModelInstance.class);
+		return resource.getFactory().newInstance(XmlRpcVirtualModelInstance.class, resource.getServiceManager(), new MapSupportFactory());
 	}
 
 	@Override

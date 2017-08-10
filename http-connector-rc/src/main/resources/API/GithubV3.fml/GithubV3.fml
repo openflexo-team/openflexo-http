@@ -45,9 +45,54 @@ public class GithubV3 {
     abstract Boolean site_admin;  
     @AbstractProperty    
     abstract Integer id;  
+    @RestObjectRole(cardinality=ZeroMany,readOnly=false)    
+    public List<FlexoConceptInstanceType<User>> followers;  
+    @RestObjectRole(cardinality=ZeroMany,readOnly=false)    
+    public List<FlexoConceptInstanceType<Repository>> repositories;  
   
     @RestObjectRetriever    
-    User:retrieve() {    
+    Void retrieve() {    
+      
+    }    
+  
+  
+    @FlexoConcept    
+    public class Repository {    
+      
+      @AbstractProperty      
+      @Key      
+      abstract String name;    
+      @AbstractProperty      
+      abstract String description;    
+      @AbstractProperty      
+      abstract String url;    
+      @AbstractProperty      
+      abstract String homepage;    
+      
+      @RestObjectRetriever      
+      Void retrieve() {      
+          
+      }      
+      
+    }    
+  
+  }  
+
+  @FlexoConcept  
+  public class Repository {  
+  
+    @AbstractProperty    
+    @Key    
+    abstract String name;  
+    @AbstractProperty    
+    abstract String description;  
+    @AbstractProperty    
+    abstract String url;  
+    @AbstractProperty    
+    abstract String homepage;  
+  
+    @RestObjectRetriever    
+    Void retrieve() {    
       
     }    
   

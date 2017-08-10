@@ -2,7 +2,7 @@
  * 
  * Copyright (c) 2014-2015, Openflexo
  * 
- * This file is part of Flexodiagram, a component of the software infrastructure 
+ * This file is part of Flexo-foundation, a component of the software infrastructure 
  * developed at Openflexo.
  * 
  * 
@@ -38,35 +38,32 @@
 
 package org.openflexo.http.connector.fml;
 
-import org.openflexo.foundation.fml.AbstractCreationScheme;
-import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
-import org.openflexo.foundation.fml.annotations.FML;
-import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.connie.type.CustomTypeFactory;
+import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.VirtualModelInstanceType;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
-@ModelEntity
-@ImplementationClass(HttpVirtualModelInitializer.HTTPVirtualModelInitializerImpl.class)
-@XMLElement
-@FML("HttpVirtualModelInitializer")
-@Deprecated
-public interface HttpVirtualModelInitializer extends AbstractCreationScheme, TechnologySpecificFlexoBehaviour {
+/**
+ * Represent the type of an instance of a {@link VirtualModel} in the context of HTTP
+ * 
+ * @author sylvain
+ * 
+ */
+public class HttpVirtualModelInstanceType extends VirtualModelInstanceType {
 
-	public static abstract class HTTPVirtualModelInitializerImpl extends AbstractCreationSchemeImpl implements HttpVirtualModelInitializer {
+	public static HttpVirtualModelInstanceType UNDEFINED_VIRTUAL_MODEL_INSTANCE_TYPE = new HttpVirtualModelInstanceType(
+			(VirtualModel) null);
 
-		@Override
-		protected HttpVirtualModelInitializerBindingModel makeBindingModel() {
-			return new HttpVirtualModelInitializerBindingModel(this);
-		}
+	public HttpVirtualModelInstanceType(VirtualModel aVirtualModel) {
+		super(aVirtualModel);
+	}
 
-		@Override
-		public HttpTechnologyAdapter getSpecificTechnologyAdapter() {
-			if (getServiceManager() != null) {
-				return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
-			}
-			return null;
-		}
+	public HttpVirtualModelInstanceType(String virtualModelURI, CustomTypeFactory<?> factory) {
+		super(virtualModelURI, factory);
+	}
 
+	@Override
+	public Class<?> getBaseClass() {
+		return HttpVirtualModelInstance.class;
 	}
 }
