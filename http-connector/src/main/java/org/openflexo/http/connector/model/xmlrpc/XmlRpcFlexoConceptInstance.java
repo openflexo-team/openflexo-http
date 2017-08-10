@@ -42,7 +42,6 @@ import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
-import org.openflexo.http.connector.model.HttpObjectActorReference;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.Initializer;
 import org.openflexo.model.annotations.ModelEntity;
@@ -83,9 +82,8 @@ public interface XmlRpcFlexoConceptInstance extends HttpFlexoConceptInstance<Map
 
 		@Override
 		public ActorReference<? extends FlexoConceptInstance> makeActorReference(FlexoConceptInstanceRole role, FlexoConceptInstance fci) {
-			System.out.println("Tiens, faudrait encoder le XmlRpcFlexoConceptInstance");
 			AbstractVirtualModelInstanceModelFactory<?> factory = getFactory();
-			HttpObjectActorReference returned = factory.newInstance(HttpObjectActorReference.class);
+			XmlRpcObjectActorReference returned = factory.newInstance(XmlRpcObjectActorReference.class);
 			returned.setFlexoRole((FlexoRole) role);
 			returned.setFlexoConceptInstance(fci);
 			returned.setModellingElement(this);

@@ -36,7 +36,7 @@
  * 
  */
 
-package org.openflexo.http.connector.model.rest;
+package org.openflexo.http.connector.model.xmlrpc;
 
 import java.util.logging.Logger;
 
@@ -46,7 +46,7 @@ import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.http.connector.model.HttpObjectActorReference;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
-import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
+import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -60,25 +60,27 @@ import org.openflexo.model.annotations.XMLElement;
  * @param <T>
  */
 @ModelEntity
-@ImplementationClass(RestObjectActorReference.RestObjectActorReferenceImpl.class)
+@ImplementationClass(XmlRpcObjectActorReference.XmlRpcObjectActorReferenceImpl.class)
 @XMLElement
-public interface RestObjectActorReference extends HttpObjectActorReference<RestFlexoConceptInstance> {
+public interface XmlRpcObjectActorReference extends HttpObjectActorReference<XmlRpcFlexoConceptInstance> {
 
-	abstract class RestObjectActorReferenceImpl extends HttpObjectActorReferenceImpl<RestFlexoConceptInstance>
-			implements RestObjectActorReference {
+	abstract class XmlRpcObjectActorReferenceImpl extends HttpObjectActorReferenceImpl<XmlRpcFlexoConceptInstance>
+			implements XmlRpcObjectActorReference {
 
-		private static final Logger logger = FlexoLogger.getLogger(RestObjectActorReference.class.getPackage().toString());
+		private static final Logger logger = FlexoLogger.getLogger(XmlRpcObjectActorReference.class.getPackage().toString());
 
 		@Override
-		protected RestFlexoConceptInstance retrieveModellingElement() {
+		protected XmlRpcFlexoConceptInstance retrieveModellingElement() {
 			HttpVirtualModelInstanceResource<?> httpVMIResource = (HttpVirtualModelInstanceResource<?>) getServiceManager()
 					.getResourceManager().getResource(getResourceURI());
-			if (httpVMIResource instanceof RestVirtualModelInstanceResource) {
-				RestVirtualModelInstance restVMI = ((RestVirtualModelInstanceResource) httpVMIResource).getVirtualModelInstance();
+			if (httpVMIResource instanceof XmlRpcVirtualModelInstanceResource) {
+				XmlRpcVirtualModelInstance xmlRpcVMI = ((XmlRpcVirtualModelInstanceResource) httpVMIResource).getVirtualModelInstance();
 				VirtualModel vm = httpVMIResource.getVirtualModel();
 				FlexoConcept concept = vm.getFlexoConcept(getFlexoConceptURI());
-				// TODO: find the container !!!
-				return restVMI.makeFlexoConceptInstance(getKey(), restVMI, concept);
+				// TODO
+				// return xmlRpcVMI.makeFlexoConceptInstance(getKey(), xmlRpcVMI, concept);
+				System.out.println("To be implemented !!!!! retrieveModellingElement() from " + xmlRpcVMI + " key=" + getKey());
+				return null;
 			}
 			return null;
 		}

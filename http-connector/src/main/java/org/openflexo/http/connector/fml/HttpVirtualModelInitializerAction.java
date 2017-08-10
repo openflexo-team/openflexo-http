@@ -70,6 +70,7 @@ import org.openflexo.localization.LocalizedDelegate;
  * @author sylvain
  * 
  */
+@Deprecated
 public class HttpVirtualModelInitializerAction
 		extends FlexoBehaviourAction<HttpVirtualModelInitializerAction, HttpVirtualModelInitializer, AccessPoint> {
 

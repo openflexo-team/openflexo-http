@@ -59,7 +59,7 @@ import org.openflexo.model.annotations.XMLAttribute;
  */
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpObjectActorReference.HttpObjectActorReferenceImpl.class)
-public interface HttpObjectActorReference extends ActorReference<HttpFlexoConceptInstance<?>> {
+public interface HttpObjectActorReference<T extends HttpFlexoConceptInstance<?>> extends ActorReference<T> {
 
 	@PropertyIdentifier(type = String.class)
 	String RESOURCE_URI_KEY = "resourceURI";
@@ -89,17 +89,17 @@ public interface HttpObjectActorReference extends ActorReference<HttpFlexoConcep
 	@Setter(KEY_KEY)
 	void setKey(String key);
 
-	abstract class HttpObjectActorReferenceImpl extends ActorReferenceImpl<HttpFlexoConceptInstance<?>>
-			implements HttpObjectActorReference {
+	abstract class HttpObjectActorReferenceImpl<T extends HttpFlexoConceptInstance<?>> extends ActorReferenceImpl<T>
+			implements HttpObjectActorReference<T> {
 
 		private static final Logger logger = FlexoLogger.getLogger(HttpObjectActorReference.class.getPackage().toString());
 
 		// private boolean isLoading = false;
 
-		private HttpFlexoConceptInstance<?> modellingElement;
+		private T modellingElement;
 
 		@Override
-		public void setModellingElement(HttpFlexoConceptInstance<?> object) {
+		public void setModellingElement(T object) {
 			this.modellingElement = object;
 			if (object != null) {
 				setResourceURI(object.getVirtualModelInstance().getURI());
@@ -113,7 +113,7 @@ public interface HttpObjectActorReference extends ActorReference<HttpFlexoConcep
 		}
 
 		@Override
-		public HttpFlexoConceptInstance<?> getModellingElement() {
+		public T getModellingElement() {
 			// TODO: instantiate cache when retrieving fails and return null value
 			// Otherwise, this will continuously loop
 			if (modellingElement == null) {
@@ -122,7 +122,7 @@ public interface HttpObjectActorReference extends ActorReference<HttpFlexoConcep
 			return modellingElement;
 		}
 
-		protected abstract HttpFlexoConceptInstance<?> retrieveModellingElement();
+		protected abstract T retrieveModellingElement();
 
 		@Override
 		public String toString() {

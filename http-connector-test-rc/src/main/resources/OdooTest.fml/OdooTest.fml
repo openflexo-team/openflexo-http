@@ -1,0 +1,22 @@
+use org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot;
+use org.openflexo.technologyadapter.gina.FIBComponentModelSlot;
+
+/**
+ * 
+ * @version 0.1
+ */
+@VirtualModel(uri="http://openflexo.org/http-test/OdooTest.fml")
+public class OdooTest {
+
+  @XmlRpcModelSlot(cardinality=ZeroOne,readOnly=false)  
+  public HttpVirtualModelInstanceType<Odoo> odoo;
+  @FIBComponentModelSlot(cardinality=ZeroOne,readOnly=false)  
+  public GINAFIBComponent ui;
+
+  @CreationScheme  
+  OdooTest:create(String url, String database, String user, String passwd) {  
+    odoo = null.CreateHttpXmlRpcResource();    
+    ui = ui.ConfigureGINAFIBComponent();  
+  }  
+
+}

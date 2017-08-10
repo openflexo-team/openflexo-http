@@ -9,7 +9,7 @@ use org.openflexo.http.connector.fml.rest.RestModelSlot;
 public class Odoo {
 
   @FlexoConceptInstanceRole(cardinality=ZeroOne,readOnly=false)  
-  public FlexoConceptInstanceType<OdooObject> version;
+  public FlexoConceptInstanceType<Version> version;
   @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
   public Integer uid;
   @GetSetProperty(value="partners", access=get)  
@@ -20,24 +20,21 @@ public class Odoo {
   public List<FlexoConceptInstanceType<OdooObject>> getCompanies {  
     return this.SelectFlexoConceptInstance(type=OdooObject);  
   }
+  @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
+  public String database;
+  @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
+  public String username;
+  @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
+  public String password;
 
   @ActionScheme  
-  FlexoConceptInstanceType<NotFound:http://openflexo.org/http/resources/API/Odoo.fml/OdooModel#Version> retrieveVersion() {  
-    return accessPoint.PerformXmlRpcRequest();  
-  }  
-
-  @HttpVirtualModelInitializer  
-  Void init(String database) {  
-    log ((("Initializing " + initializingAccessPoint) + " with ") + parameters.database)    
-    accessPoint = initializingAccessPoint;    
-    version = this.retrieveVersion();    
-    log ("version=" + version)    
-    this.authenticate(parameters.database,accessPoint.user,accessPoint.password)  
+  FlexoConceptInstanceType<Version> retrieveVersion() {  
+    return this.PerformXmlRpcRequest();  
   }  
 
   @ActionScheme  
-  Void authenticate(String database, String username, String password) {  
-    uid = accessPoint.PerformXmlRpcRequest();  
+  Void authenticate(String username, String password) {  
+    uid = this.PerformXmlRpcRequest();  
   }  
 
   @ActionScheme  
@@ -55,7 +52,7 @@ public class Odoo {
     }    
     requestParameters.put("fields",fieldsList)    
     ArrayList<Object> requestConditions = new ArrayList<Object>();    
-    accessPoint.PerformXmlRpcRequest()  
+    this.PerformXmlRpcRequest()  
   }  
 
   @ActionScheme  
@@ -92,8 +89,19 @@ public class Odoo {
     firstCondition.add(parameters.id)    
     conditionsList.add(firstCondition)    
     requestConditions.add(conditionsList)    
-    FlexoConceptInstanceType<NotFound:http://openflexo.org/http/resources/API/Odoo.fml#OdooObject> foundObject = accessPoint.PerformXmlRpcRequest();    
+    FlexoConceptInstanceType<OdooObject> foundObject = this.PerformXmlRpcRequest();    
     return foundObject;  
+  }  
+
+  @CreationScheme  
+  Odoo:init(String database, String username, String password) {  
+    log ("Initializing Odoo VM with " + parameters.database)    
+    database = parameters.database;    
+    username = parameters.username;    
+    password = parameters.password;    
+    version = this.retrieveVersion();    
+    log ("version=" + version)    
+    this.authenticate(parameters.username,parameters.password)  
   }  
 
 

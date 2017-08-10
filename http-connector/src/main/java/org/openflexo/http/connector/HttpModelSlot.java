@@ -20,6 +20,8 @@
 
 package org.openflexo.http.connector;
 
+import java.lang.reflect.Type;
+
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoRole;
@@ -28,6 +30,7 @@ import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.InferedFMLRTModelSlot;
 import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.http.connector.HttpModelSlot.HttpModelSlotImpl;
+import org.openflexo.http.connector.fml.HttpVirtualModelInstanceType;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
@@ -390,6 +393,24 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 			}
 			getPropertyChangeSupport().firePropertyChange(PARAMETERS_KEY, oldValue, parameters);
 		}*/
+
+		private HttpVirtualModelInstanceType type;
+
+		@Override
+		public Type getType() {
+			if (type == null || type.getVirtualModel() != getAccessedVirtualModel()) {
+				type = new HttpVirtualModelInstanceType(getAccessedVirtualModel());
+			}
+			return type;
+		}
+
+		@Override
+		public void setAccessedVirtualModel(VirtualModel aVirtualModel) {
+			if (aVirtualModel != getAccessedVirtualModel()) {
+				super.setAccessedVirtualModel(aVirtualModel);
+				type = new HttpVirtualModelInstanceType(getAccessedVirtualModel());
+			}
+		}
 
 		@Override
 		public DataBinding<String> getUrl() {

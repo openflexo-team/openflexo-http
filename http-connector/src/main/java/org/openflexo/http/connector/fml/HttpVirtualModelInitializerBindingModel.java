@@ -42,8 +42,8 @@ import java.beans.PropertyChangeEvent;
 
 import org.openflexo.connie.BindingModel;
 import org.openflexo.connie.BindingVariable;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.FlexoBehaviour;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.foundation.fml.binding.FlexoBehaviourBindingModel;
 
@@ -53,6 +53,7 @@ import org.openflexo.foundation.fml.binding.FlexoBehaviourBindingModel;
  * @author sylvain
  * 
  */
+@Deprecated
 public class HttpVirtualModelInitializerBindingModel extends FlexoBehaviourBindingModel {
 
 	public static final String ACCESS_POINT = "initializingAccessPoint";

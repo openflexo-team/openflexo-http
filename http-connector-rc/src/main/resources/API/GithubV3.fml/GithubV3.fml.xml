@@ -6,35 +6,49 @@
       <GenericInspectorEntry id="4" widget="TEXT_FIELD" data="login" name="login" label="login" type="java.lang.String" userID="FLX" flexoID="10" />
       <GenericInspectorEntry id="5" widget="TEXT_FIELD" data="avatar_url" name="avatar_url" label="avatar_url" type="java.lang.String" userID="FLX" flexoID="11" />
     </Inspector>
+    <EmbeddedFlexoConcept id="6" isAbstract="true" name="Repository" userID="FLX" flexoID="98">
+      <Key_AbstractProperty idref="7" />
+      <Inspector id="8" inspectorTitle="Repository" userID="FLX" flexoID="76" />
+      <AbstractProperty id="7" type="java.lang.String" name="name" userID="FLX" flexoID="77" />
+      <AbstractProperty id="9" type="java.lang.String" name="description" userID="FLX" flexoID="78" />
+      <AbstractProperty id="10" type="java.lang.String" name="url" userID="FLX" flexoID="79" />
+      <AbstractProperty id="11" type="java.lang.String" name="homepage" userID="FLX" flexoID="80" />
+      <RestObjectRetriever id="12" url="(((&quot;/repos/&quot; + login) + &quot;/&quot;) + name)" name="retrieve" width="800" label="retrieve" height="600" userID="FLX" flexoID="102">
+        <BehaviourControlGraph_EmptyControlGraph id="13" userID="FLX" flexoID="103" />
+      </RestObjectRetriever>
+    </EmbeddedFlexoConcept>
     <AbstractProperty id="2" type="java.lang.String" name="login" userID="FLX" flexoID="13" />
-    <AbstractProperty id="6" type="java.lang.String" name="avatar_url" userID="FLX" flexoID="14" />
-    <AbstractProperty id="7" type="java.lang.String" name="url" userID="FLX" flexoID="31" />
-    <AbstractProperty id="8" type="java.lang.String" name="type" userID="FLX" flexoID="32" />
-    <AbstractProperty id="9" type="java.lang.String" name="name" userID="FLX" flexoID="33" />
-    <AbstractProperty id="10" type="java.lang.String" name="company" userID="FLX" flexoID="34" />
-    <AbstractProperty id="11" type="java.lang.String" name="blog" userID="FLX" flexoID="35" />
-    <AbstractProperty id="12" type="java.lang.String" name="location" userID="FLX" flexoID="36" />
-    <AbstractProperty id="13" type="java.lang.Boolean" name="site_admin" userID="FLX" flexoID="37" />
-    <AbstractProperty id="14" type="java.lang.Integer" name="id" userID="FLX" flexoID="38" />
-    <RestObjectRetriever id="15" url="(&quot;/users/&quot; + login)" name="retrieve" width="800" label="retrieve" height="600" userID="FLX" flexoID="45">
-      <BehaviourControlGraph_EmptyControlGraph id="16" userID="FLX" flexoID="46" />
+    <AbstractProperty id="14" type="java.lang.String" name="avatar_url" userID="FLX" flexoID="14" />
+    <AbstractProperty id="15" type="java.lang.String" name="url" userID="FLX" flexoID="31" />
+    <AbstractProperty id="16" type="java.lang.String" name="type" userID="FLX" flexoID="32" />
+    <AbstractProperty id="17" type="java.lang.String" name="name" userID="FLX" flexoID="33" />
+    <AbstractProperty id="18" type="java.lang.String" name="company" userID="FLX" flexoID="34" />
+    <AbstractProperty id="19" type="java.lang.String" name="blog" userID="FLX" flexoID="35" />
+    <AbstractProperty id="20" type="java.lang.String" name="location" userID="FLX" flexoID="36" />
+    <AbstractProperty id="21" type="java.lang.Boolean" name="site_admin" userID="FLX" flexoID="37" />
+    <AbstractProperty id="22" type="java.lang.Integer" name="id" userID="FLX" flexoID="38" />
+    <RestObjectRole id="23" url="((&quot;/users/&quot; + login) + &quot;/followers&quot;)" virtualModelInstance="container" flexoConceptTypeURI="http://openflexo.org/http/API/GithubV3.fml#User" container="" cloningStrategy="Reference" cardinality="ZeroMany" name="followers" userID="FLX" flexoID="71" />
+    <RestObjectRole id="24" url="((&quot;/users/&quot; + login) + &quot;/repos&quot;)" virtualModelInstance="container" flexoConceptTypeURI="http://openflexo.org/http/API/GithubV3.fml#Repository" container="this" cloningStrategy="Reference" cardinality="ZeroMany" name="repositories" userID="FLX" flexoID="104" />
+    <RestObjectRetriever id="25" url="(&quot;/users/&quot; + login)" name="retrieve" width="800" label="retrieve" height="600" userID="FLX" flexoID="45">
+      <BehaviourControlGraph_EmptyControlGraph id="26" userID="FLX" flexoID="46" />
     </RestObjectRetriever>
   </FlexoConcept>
-  <UseModelSlotDeclaration id="17" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
-  <Inspector id="18" inspectorTitle="GithubV3" userID="FLX" flexoID="1" />
-  <PrimitiveRole id="19" primitiveType="String" cloningStrategy="Clone" cardinality="ZeroOne" name="baseURL" userID="FLX" flexoID="64" />
-  <JsonRequestBehaviour id="20" pointer="/items" multiple="true" returnedFlexoConceptURI="http://openflexo.org/http/API/GithubV3.fml#User" name="searchUsers" width="800" label="searchUsers" height="600" userID="FLX" flexoID="12">
-    <PathBuilder id="21" template="/search/users">
-      <JsonRequestBehaviour idref="20" />
-      <PathParameter id="22" name="&quot;q&quot;" value="parameters.query" userID="FLX" flexoID="-1" />
+  <FlexoConcept idref="6" />
+  <UseModelSlotDeclaration id="27" modelSlotClass="org.openflexo.http.connector.fml.rest.RestModelSlot" userID="FLX" flexoID="-1" />
+  <Inspector id="28" inspectorTitle="GithubV3" userID="FLX" flexoID="1" />
+  <PrimitiveRole id="29" primitiveType="String" cloningStrategy="Clone" cardinality="ZeroOne" name="baseURL" userID="FLX" flexoID="64" />
+  <JsonRequestBehaviour id="30" pointer="/items" multiple="true" returnedFlexoConceptURI="http://openflexo.org/http/API/GithubV3.fml#User" name="searchUsers" width="800" label="searchUsers" height="600" userID="FLX" flexoID="12">
+    <PathBuilder id="31" template="/search/users">
+      <JsonRequestBehaviour idref="30" />
+      <PathParameter id="32" name="&quot;q&quot;" value="parameters.query" userID="FLX" flexoID="-1" />
     </PathBuilder>
-    <BehaviourControlGraph_EmptyControlGraph id="23" userID="FLX" flexoID="15" />
-    <GenericBehaviourParameter id="24" isRequired="true" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="16" />
+    <BehaviourControlGraph_EmptyControlGraph id="33" userID="FLX" flexoID="15" />
+    <GenericBehaviourParameter id="34" isRequired="true" widget="TEXT_FIELD" name="query" type="java.lang.String" userID="FLX" flexoID="16" />
   </JsonRequestBehaviour>
-  <CreationScheme id="25" name="init" width="800" label="init" height="600" userID="FLX" flexoID="23">
-    <BehaviourControlGraph_AssignationAction id="26" assign="baseURL" userID="FLX" flexoID="55">
-      <AssignableAction_ExpressionAction id="27" expression="parameters.baseUrl" userID="FLX" flexoID="54" />
+  <CreationScheme id="35" name="init" width="800" label="init" height="600" userID="FLX" flexoID="23">
+    <BehaviourControlGraph_AssignationAction id="36" assign="baseURL" userID="FLX" flexoID="55">
+      <AssignableAction_ExpressionAction id="37" expression="parameters.baseUrl" userID="FLX" flexoID="54" />
     </BehaviourControlGraph_AssignationAction>
-    <GenericBehaviourParameter id="28" widget="CUSTOM_WIDGET" name="baseUrl" type="java.lang.String" userID="FLX" flexoID="57" />
+    <GenericBehaviourParameter id="38" widget="CUSTOM_WIDGET" name="baseUrl" type="java.lang.String" userID="FLX" flexoID="57" />
   </CreationScheme>
 </VirtualModel>

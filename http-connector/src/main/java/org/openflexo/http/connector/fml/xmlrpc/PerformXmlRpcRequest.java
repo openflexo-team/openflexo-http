@@ -62,8 +62,8 @@ import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.editionaction.TechnologySpecificAction;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
-import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.model.annotations.Adder;
 import org.openflexo.model.annotations.CloningStrategy;
@@ -93,7 +93,7 @@ import de.timroes.axmlrpc.XMLRPCException;
 @ImplementationClass(PerformXmlRpcRequest.PerformXmlRpcRequestImpl.class)
 @XMLElement
 @FML("PerformXmlRpcRequest")
-public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpcModelSlot, AccessPoint, T> {
+public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T> {
 
 	@PropertyIdentifier(type = String.class)
 	public static final String END_POINT_NAME_KEY = "endPointName";
@@ -194,8 +194,8 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 		return parameter;
 	}
 
-	public static abstract class PerformXmlRpcRequestImpl<T> extends TechnologySpecificActionImpl<XmlRpcModelSlot, AccessPoint, T>
-			implements PerformXmlRpcRequest<T> {
+	public static abstract class PerformXmlRpcRequestImpl<T>
+			extends TechnologySpecificActionImpl<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T> implements PerformXmlRpcRequest<T> {
 
 		private static final Logger logger = Logger.getLogger(PerformXmlRpcRequestImpl.class.getPackage().getName());
 
@@ -290,18 +290,18 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 
 			System.out.println("PerformXmlRpcRequest" + getEndPointName() + " " + getMethodName());
 
-			AccessPoint accessPoint = getReceiver(evaluationContext);
+			XmlRpcVirtualModelInstance vmi = (XmlRpcVirtualModelInstance) getReceiver(evaluationContext);
 
-			System.out.println("receiver: " + getReceiver() + " = " + accessPoint);
+			System.out.println("receiver: " + getReceiver() + " = " + vmi);
 			System.out.println("valid: " + getReceiver().isValid() + " reason: " + getReceiver().invalidBindingReason());
 
-			if (accessPoint == null) {
+			if (vmi == null) {
 				logger.warning("Could not perform XML/RPC request on null AccessPoint");
 				return null;
 			}
 
 			String relativePath = getEndPointName();
-			if (accessPoint.getUrl().endsWith("/")) {
+			if (vmi.getUrl().endsWith("/")) {
 				if (relativePath.startsWith("/")) {
 					relativePath = relativePath.substring(1);
 				}
@@ -312,7 +312,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 				}
 			}
 
-			String urlString = accessPoint.getUrl() + relativePath;
+			String urlString = vmi.getUrl() + relativePath;
 
 			System.out.println("Requesting " + urlString);
 
@@ -349,16 +349,14 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 				Object result = object.call(getMethodName(), params);
 				System.out.println("Resultat de l'appel: " + result);
 
-				System.out.println("accessPoint=" + accessPoint);
-				System.out.println("accessPoint.getInstance()=" + accessPoint.getInstance());
+				System.out.println("vmi=" + vmi);
 
 				System.out.println("mapped concept : " + getMappedFlexoConcept(evaluationContext));
 
 				if (getMappedFlexoConcept(evaluationContext) != null) {
 
 					if (result instanceof Map) {
-						return (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance()).getFlexoConceptInstance((Map<?, ?>) result,
-								null, getMappedFlexoConcept(evaluationContext));
+						return (T) vmi.getFlexoConceptInstance((Map<?, ?>) result, null, getMappedFlexoConcept(evaluationContext));
 					}
 
 					else if (result.getClass().isArray()) {
@@ -367,8 +365,8 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 						for (int j = 0; j < objects.length; j++) {
 							System.out.println("objects[" + j + "]=" + objects[j]);
 							if (objects[j] instanceof Map) {
-								T mappedObject = (T) ((XmlRpcVirtualModelInstance) accessPoint.getInstance())
-										.getFlexoConceptInstance((Map<?, ?>) objects[j], null, getMappedFlexoConcept(evaluationContext));
+								T mappedObject = (T) vmi.getFlexoConceptInstance((Map<?, ?>) objects[j], null,
+										getMappedFlexoConcept(evaluationContext));
 								System.out.println("mappedObject=" + mappedObject);
 							}
 						}
