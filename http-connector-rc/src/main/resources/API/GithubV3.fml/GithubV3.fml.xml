@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" modelVersion="1.0" URI="http://openflexo.org/http/API/GithubV3.fml" version="0.1" isAbstract="true" name="GithubV3" userID="FLX" flexoID="2">
+<VirtualModel id="0" modelVersion="1.0" uri="http://openflexo.org/http/API/GithubV3.fml" version="0.1" isAbstract="true" name="GithubV3" userID="FLX" flexoID="2">
   <FlexoConcept id="1" isAbstract="true" name="User" userID="FLX" flexoID="7">
     <Key_AbstractProperty idref="2" />
     <Inspector id="3" renderer="(&quot;User:&quot; + instance.login)" inspectorTitle="User" userID="FLX" flexoID="6">

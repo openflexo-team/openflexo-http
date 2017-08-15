@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" modelVersion="1.0" URI="http://openflexo.org/http-test/GithubTest.fml" version="0.1" name="GithubTest" userID="FLX" flexoID="2">
+<VirtualModel id="0" modelVersion="1.0" uri="http://openflexo.org/http-test/GithubTest.fml" version="0.1" name="GithubTest" userID="FLX" flexoID="2">
   <FlexoConcept id="1" name="Utilisateur" userID="FLX" flexoID="12">
     <Inspector id="2" renderer="(&quot;Utilisateur:&quot; + login)" inspectorTitle="Utilisateur" userID="FLX" flexoID="13" />
     <FlexoConceptInstanceRole id="3" virtualModelInstance="github" flexoConceptTypeURI="http://openflexo.org/http/API/GithubV3.fml#User" cloningStrategy="Reference" cardinality="ZeroOne" name="user" userID="FLX" flexoID="18" />
