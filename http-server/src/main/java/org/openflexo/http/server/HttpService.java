@@ -57,6 +57,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 			ta.activate();
 		}
 
+		// TODO Why do I need to do this ?
 		for (FlexoResourceCenter<?> resourceCenter : serviceManager.getResourceCenterService().getResourceCenters()) {
 			for (TechnologyAdapter technologyAdapter : technologyAdapters) {
 				logger.info("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
