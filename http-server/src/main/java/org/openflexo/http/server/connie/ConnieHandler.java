@@ -173,14 +173,13 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				if (context != null) {
 					try {
 						Object value = binding.getBindingValue(context);
-						response.result = taRouteService.getSerializer().toJson(value, request.detailed);
+						response.result = toJson(value, request.detailed);
 
 						BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
 						if (listener == null) {
 							listener = new BindingValueChangeListener<Object>(binding, context) {
 								@Override
 								public void bindingValueChanged(Object source, Object newValue) {
-									String value = newValue != null ? newValue.toString() : "null";;
 									sendChangeEvent(runtimeBinding, value);
 								}
 							};
@@ -223,7 +222,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					try {
 						Object rightValue = valueBinding.getBindingValue(rightContext);
 						leftBinding.setBindingValue(rightValue, leftContext);
-						response.result = taRouteService.getSerializer().toJson(rightValue, request.detailed);
+						response.result = toJson(rightValue, request.detailed);
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
@@ -287,8 +286,12 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			unregister(this);
 		}
 
-		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, String newValue) {
-			socket.write(new ChangeEvent(runtimeBindingId, newValue).toBuffer());
+		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, Object newValue) {
+			socket.write(new ChangeEvent(runtimeBindingId, toJson(newValue, false)).toBuffer());
 		}
+	}
+
+	private Object toJson(Object object, boolean detailed) {
+		return taRouteService.getSerializer().toJson(object, detailed);
 	}
 }
