@@ -266,6 +266,11 @@ export class Api {
     private onEvaluationClose() {
         this.log("warning", "Websocket is closed", null);
         this.connie = null;
+
+        // registers listening messages when the connection resumes
+        this.bindingListeners.forEach(e => {
+            this.sendMessage(this.createListeningMessage(e[0]));
+        })   
     }
 
     /**
@@ -314,6 +319,11 @@ export class Api {
         if (this.connie != null) {
             this.connie.send(json);
         }
+    }
+
+    private createListeningMessage(binding: RuntimeBindingId): ListeningRequest {
+        let id = this.evaluationRequestSeed++;
+        return new ListeningRequest(id, binding, true);
     }
 
     /**
@@ -370,11 +380,7 @@ export class Api {
      */
     public addChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
-
-        let id = this.evaluationRequestSeed++;
-        let message = new ListeningRequest(id, binding, true);
-        this.log("info", "Sending listener", message);
-        this.sendMessage(message);
+        this.sendMessage(this.createListeningMessage(binding));
     }
 
     /**
