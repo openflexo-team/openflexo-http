@@ -35,36 +35,43 @@
 
 package org.openflexo.http.server.connie;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.json.Json;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.Objects;
 
 /**
- * Base class for exchanged messages with the WebSocket
+ * Response object for response
  */
-@JsonTypeInfo(
-	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.PROPERTY,
-	property = "type"
-)
-@JsonSubTypes({
-	@Type(value = EvaluationRequest.class, name = "EvaluationRequest"),
-	@Type(value = AssignationRequest.class, name = "AssignationRequest"),
-	@Type(value = ListeningRequest.class, name = "ListeningRequest"),
-	@Type(value = Response.class, name = "Response"),
-	@Type(value = ChangeEvent.class, name = "ChangeEvent"),
-})
-public class ConnieMessage {
+public final class Response extends ConnieMessage {
 
-	public final String type = getClass().getSimpleName();
+	public int id;
 
-	Buffer toBuffer() {
-		return Buffer.buffer(Json.encode(this));
+	public Object result;
+
+	public String error;
+
+	public Response(int id) {
+		this(id, null, null);
 	}
 
-	public static ConnieMessage read(String source) {
-		return Json.decodeValue(source, ConnieMessage.class);
+	public Response(
+			@JsonProperty("id") int id,
+			@JsonProperty("result") Object result,
+			@JsonProperty("error") String error
+	) {
+		this.id = id;
+		this.result = result;
+		this.error = error;
+	}
+	@Override
+	public String toString() {
+		return "Response " + error != null ? "[error]: " + error : Objects.toString(result);
+	}
+
+	public static Response error(String error) {
+		return error(-1, error);
+	}
+
+	public static Response error(int id, String error) {
+		return new Response(id, null, error);
 	}
 }

@@ -36,42 +36,31 @@
 package org.openflexo.http.server.connie;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
 
 /**
- * Response object for an evaluation response
+ * Simple class representing an listening request from a client through a WebSocket
  */
-public final class EvaluationResponse extends ConnieMessage {
+public class ListeningRequest extends ConnieMessage {
 
-	public int id;
+	public final int id;
 
-	public Object result;
+	public final RuntimeBindingId runtimeBinding;
 
-	public String error;
+	public final boolean detailed;
 
-	public EvaluationResponse(int id) {
-		this(id, null, null);
-	}
-
-	public EvaluationResponse(
-			@JsonProperty("id") int id,
-			@JsonProperty("result") Object result,
-			@JsonProperty("error") String error
+	public ListeningRequest(
+		@JsonProperty("id") int id,
+		@JsonProperty("runtimeBinding") RuntimeBindingId runtimeBinding,
+		@JsonProperty("detailed") boolean detailed
 	) {
 		this.id = id;
-		this.result = result;
-		this.error = error;
+		this.runtimeBinding = runtimeBinding;
+		this.detailed = detailed;
 	}
+
 	@Override
 	public String toString() {
-		return "Response " + error != null ? "[error]: " + error : Objects.toString(result);
+		return "Evaluate " + runtimeBinding;
 	}
 
-	public static EvaluationResponse error(String error) {
-		return error(-1, error);
-	}
-
-	public static EvaluationResponse error(int id, String error) {
-		return new EvaluationResponse(id, null, error);
-	}
 }

@@ -56,6 +56,20 @@ export class EvaluationRequest extends Message {
 }
 
 /**
+ * Class used to send listening request.
+ */
+export class ListeningRequest extends Message {
+    
+        constructor(
+            public id: number,
+            public runtimeBinding: RuntimeBindingId,
+            public detailed: boolean
+        ) {
+            super(id, "ListeningRequest");
+         }
+    }
+    
+/**
  * Class used to send assignation request.
  */
 export class AssignationRequest extends Message {
@@ -71,16 +85,16 @@ export class AssignationRequest extends Message {
 }
 
 /**
- * Class used for received evaluation response
+ * Class used for received response
  */
-export class EvaluationResponse extends Message {
+export class Response extends Message {
 
     constructor(
         public id: number,
         public result: string,
         public error: string
     ) { 
-        super(id, "EvaluationResponse");
+        super(id, "Response");
     }
 }
 
@@ -135,15 +149,24 @@ export type LogListener = (Log)=>void;
  */
 export class Api {
 
+    /** Webocket for connie evaluations */
     private connie: WebSocket|null;
+
+    /** Messages to send throught connie websocket when opened */
     private messageQueue: Message[] = [];
+
+    /** Map of pending evaluation from server */
     private pendingEvaluationQueue: Map<number, PendingEvaluation<any>> = new Map();
 
+    /** Seed of evaluation request ids */
     private evaluationRequestSeed: number = 0;
 
+    /** Registered listeners */
     private bindingListeners: Set<[RuntimeBindingId, ChangeListener]> = new Set();
 
+    /** Api listeners */
     private logListeners: Set<LogListener> = new Set();
+
 
     constructor(
         private host: string = ""
@@ -152,7 +175,7 @@ export class Api {
     }
 
     public call<T>(path: string, method: string = "get"): Promise<T> {
-        const result = new Promise((fullfilled, rejected) => {
+        const result = new Promise<T>((fullfilled, rejected) => {
             let request = new XMLHttpRequest();
             request.open(method, this.host + path);
             request.onload = (ev) => {
@@ -188,8 +211,8 @@ export class Api {
                 // parses the response
                 let message = <Message>JSON.parse(e.srcElement["result"]);
                 switch (message.type) {
-                    case "EvaluationResponse": {
-                        let response = <EvaluationResponse>message;
+                    case "Response": {
+                        let response = <Response>message;
                         // searches for the evaluation id
                         let pending = this.pendingEvaluationQueue.get(response.id);
                         if (pending) {
@@ -211,9 +234,9 @@ export class Api {
                     }
                     case "ChangeEvent": {
                         let event = <ChangeEvent>message;
-                        this.bindingListeners.forEach( (binding, listener) => {
-                            if (binding[0].equals(event.runtimeBinding)) {
-                                binding[1](event);
+                        this.bindingListeners.forEach( (entry) => {
+                            if (entry[0].equals(event.runtimeBinding)) {
+                                entry[1](event);
                             }
                         });
                     }
@@ -347,6 +370,11 @@ export class Api {
      */
     public addChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
+
+        let id = this.evaluationRequestSeed++;
+        let message = new ListeningRequest(id, binding, true);
+        this.log("info", "Sending listener", message);
+        this.sendMessage(message);
     }
 
     /**

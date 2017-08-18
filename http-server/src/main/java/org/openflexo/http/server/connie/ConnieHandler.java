@@ -149,23 +149,24 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			try {
 				ConnieMessage message = ConnieMessage.read(frame.textData());
 				if (message instanceof EvaluationRequest) {
-					EvaluationRequest request = (EvaluationRequest) message;
-					respondToEvaluationRequest(request);
+					respondToEvaluationRequest((EvaluationRequest) message);
+				}
+				if (message instanceof ListeningRequest) {
+					respondToListeningRequest((ListeningRequest) message);
 				}
 				if (message instanceof AssignationRequest) {
-					AssignationRequest request = (AssignationRequest) message;
-					respondToAssignationRequest(request);
+					respondToAssignationRequest((AssignationRequest) message);
 				}
 
 			} catch (DecodeException e) {
 				String message = "Can't decode request: " + e.getMessage();
 				System.out.println(message);
-				socket.write(EvaluationResponse.error(message).toBuffer());
+				socket.write(Response.error(message).toBuffer());
 			}
 		}
 
 		private void respondToEvaluationRequest(EvaluationRequest request) {
-			EvaluationResponse response = new EvaluationResponse(request.id);
+			Response response = new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
@@ -174,29 +175,49 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					try {
 						Object value = binding.getBindingValue(context);
 						response.result = toJson(value, request.detailed);
-
-						BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
-						if (listener == null) {
-							listener = new BindingValueChangeListener<Object>(binding, context) {
-								@Override
-								public void bindingValueChanged(Object source, Object newValue) {
-									sendChangeEvent(runtimeBinding, value);
-								}
-							};
-							listener.startObserving();
-						}
-						listenedBindings.put(runtimeBinding, listener);
-
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					}
 				}
 				else {
 					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
 					System.out.println(error);
-					socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+					socket.write(Response.error(request.id, error).toBuffer());
+				}
+
+			}
+			else {
+				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+			}
+			socket.write(response.toBuffer());
+		}
+
+		private void respondToListeningRequest(ListeningRequest request) {
+			Response response = new Response(request.id);
+			RuntimeBindingId runtimeBinding = request.runtimeBinding;
+			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
+			if (binding.isValid()) {
+				BindingEvaluationContext context = findObject(runtimeBinding.runtimeUrl, BindingEvaluationContext.class);
+				if (context != null) {
+					BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
+					if (listener == null) {
+						listener = new BindingValueChangeListener<Object>(binding, context) {
+							@Override
+							public void bindingValueChanged(Object source, Object newValue) {
+								sendChangeEvent(runtimeBinding, newValue);
+							}
+						};
+						listener.startObserving();
+					}
+					listenedBindings.put(runtimeBinding, listener);
+
+				}
+				else {
+					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
+					System.out.println(error);
+					socket.write(Response.error(request.id, error).toBuffer());
 				}
 
 			}
@@ -207,7 +228,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void respondToAssignationRequest(AssignationRequest request) {
-			EvaluationResponse response = new EvaluationResponse(request.id);
+			Response response = new Response(request.id);
 
 			RuntimeBindingId left = request.left;
 			DataBinding leftBinding = getOrCreateBinding(left.binding);
@@ -226,10 +247,10 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					} catch (NotSettableContextException e) {
 						String error = "Can't set expression '" + request.left.binding + "'";
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					}
 				}
 				else {
