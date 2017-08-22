@@ -225,7 +225,6 @@ export class Api {
                                 pending.rejected(response.error);
                             } else {
                                 // fullfilled the promise when it's ok
-                                this.log("info", "Received", message);
                                 pending.fullfilled(response.result);
                             }
 
@@ -255,7 +254,6 @@ export class Api {
         
         // evaluates pending request
         for (let message of this.messageQueue) {
-            this.log("info", "Sending message", message);
             this.readySendMessage(message);
         }
     }
@@ -315,7 +313,6 @@ export class Api {
      */
     private readySendMessage(message: Message) {
         let json = JSON.stringify(message); 
-        this.log("info", "Sending message", message);
         if (this.connie != null) {
             this.connie.send(json);
         }
@@ -426,7 +423,7 @@ export class Api {
      * @param message 
      * @param binding 
      */
-    public log(level: LogLevel, message: string, source: Message|null) {
+    public log(level: LogLevel, message: string, source: Message|null = null) {
         let event = new Log(level, message, source);
         this.logListeners.forEach(listener => {
             listener(event);
