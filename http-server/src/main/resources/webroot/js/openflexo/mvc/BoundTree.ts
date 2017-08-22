@@ -6,11 +6,13 @@ import { mdlUpgradeElement } from "../ui/utils"
 
 import { Tree, TreeItem } from "../ui/Tree"
 
+/** Common interface for BoundTree and BoundTreeItem that holds children */
 interface Item {
 
     children: BoundTreeItem[];
 
     addItem(value: Description<any>);
+
     removeItem(index: number);
 }
 
@@ -41,37 +43,30 @@ export class BoundTree implements Component, Item {
 
     elementForValue(value: Description<any>) {
         for (let element of this.elements) {
-            if (element.select(value)) return element;
+            try {
+                if (element.select(value)) return element;
+            } catch (e) {
+                // nothing to do pass to next element
+            }
         }
         return null;
     }
-
+    
     private updateRoot(root: Description<any>) {
         let rootElement = this.elementForValue(root);
-        console.log("--- Update root ---");
-        console.log(root);
-        console.log(rootElement);
         if (rootElement !== null && rootElement.children !== null) {
-            let childrenRtBindingId = new RuntimeBindingId(rootElement.children, root.url);
-            
+            let childrenRtBindingId = new RuntimeBindingId(rootElement.children(root), root.url); 
             let result = this.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
-            result.then((values => {
-                console.log("--- Updates values ---");
-                console.log(values);
-                updateValues(this, values);
-            }))
+            result.then((values => { updateValues(this, values); }))
+            this.api.addChangeListener(childrenRtBindingId, (event) => updateValues(this,event.value));
         }
     }
 
     addItem(value: Description<any>) {
-        let itemElement = this.elementForValue(value);
-        if (itemElement != null) {
-            let component = itemElement.component(this.api, value);
-            let item = new TreeItem(component);
-            let boundItem = new BoundTreeItem(this, value.url, itemElement, item);
-            
+        let boundItem = createBoundItem(this, value);
+        if (boundItem != null) {
             this.children.push(boundItem);
-            this.tree.addChild(item);
+            this.tree.addChild(boundItem.item);
         }
     }
 
@@ -85,9 +80,9 @@ export class BoundTree implements Component, Item {
 export class BoundTreeElement {   
     constructor(
         public name: string,
-        public select: (element: Description<any>) => boolean,
-        public children: BindingId|null = null,
-        public component: (api: Api, element: Description<any>) => Component|PhrasingCategory
+        public select: (element: any) => boolean,
+        public component: (api: Api, element: any) => Component|PhrasingCategory,
+        public children: ((element:any) => BindingId)|null = null
     ) { }
 }
 
@@ -97,18 +92,26 @@ class BoundTreeItem implements Item {
     
     constructor(
         public boundTree: BoundTree,
-        public url: string,
+        public object: Description<any>,
         public element: BoundTreeElement,
         public item: TreeItem,
         private root: boolean = false
     ) {
-        if (element.children != null) {
-            let childrenRtBindingId = new RuntimeBindingId(element.children, url);
-            item.expandCallback = (item) => {
-                let result = this.boundTree.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
-                result.then((values => {
-                    updateValues(this, values);
-                }))
+        item.expandCallback = (item) => {
+            if (item.data instanceof BoundTreeItem) {
+                let boundItem = item.data;
+                if (element.children != null) {
+                    let childrenRtBindingId = new RuntimeBindingId(element.children(boundItem.object), object.url);
+                
+                    let result = this.boundTree.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
+                    result.then((childrenValues => {
+                        updateValues(this, childrenValues);
+                    }))
+
+                    this.boundTree.api.addChangeListener(childrenRtBindingId, (event) => {
+                        updateValues(this, event.value);
+                    })
+                }
             }
         }
      }
@@ -119,17 +122,10 @@ class BoundTreeItem implements Item {
      }
 
     addItem(value: Description<any>) {
-        let itemElement = this.boundTree.elementForValue(value);
-        if (itemElement != null) {
-            let component = itemElement.component(this.boundTree.api, value);
-            let item = new TreeItem(component);
-            let boundItem = new BoundTreeItem(this.boundTree, value.url, itemElement, item);
-            
+        let boundItem = createBoundItem(this.boundTree, value);
+        if (boundItem != null) {
             this.children.push(boundItem);
-            this.item.addChild(item);
-            if (this.root) {
-                this.boundTree.tree.addChild(item);
-            }
+            this.item.addChild(boundItem.item);
         }
     }
 
@@ -143,19 +139,20 @@ class BoundTreeItem implements Item {
     }
 }
 
+/** Updates item children with given values. */
 function updateValues(container: Item, values: Description<any>[]) {
     let lineCount = 0;
     let valueCount = 0;
 
     // checks elements with current lines
     while (lineCount < container.children.length && valueCount < values.length) {
-        let line = container.children[lineCount];
-        let element = values[valueCount];
+        let boundItem = container.children[lineCount];
+        let value = values[valueCount];
 
-        if (line.url !== element.url) {
+        if (boundItem.object !== value) {
             // line if different from current element
             // removes the line current line
-            this.removeItem(lineCount);
+            container.removeItem(lineCount);
         } else {
             // line is the same checks next
             lineCount += 1;
@@ -173,4 +170,17 @@ function updateValues(container: Item, values: Description<any>[]) {
         container.addItem(values[valueCount]);
         valueCount += 1;
     }
+}
+
+/** Creates a BoundItem for a given value */
+function createBoundItem(tree: BoundTree, value: Description<any>): BoundTreeItem|null {
+    let itemElement = tree.elementForValue(value);
+    if (itemElement != null) {
+        let component = itemElement.component(tree.api, value);
+        let item = new TreeItem(component, itemElement.children === null);
+        let boundItem = new BoundTreeItem(tree, value, itemElement, item);
+        item.data = boundItem;
+        return boundItem;
+    }
+    return null;
 }

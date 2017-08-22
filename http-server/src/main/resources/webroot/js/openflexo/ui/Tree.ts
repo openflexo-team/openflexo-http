@@ -8,6 +8,7 @@ import { PhrasingCategory, FlowCategory, toElement } from "./category"
 const hiddenClass = "of-tree__hidden";
 const expandedIcon = "indeterminate_check_box";
 const foldedIcon = "add_box";
+const emptyIcon = "stop";
 
 function createDiv(): HTMLDivElement {
     let div = document.createElement("div");
@@ -71,9 +72,12 @@ export class TreeItem implements Component {
     expandCallback: ((TreeItem)=>void)|null = null;
     foldCallback: ((TreeItem)=>void)|null = null;
     
+    /** Internal data for advanced tree usage, not for user to use */
+    data: any = null;
+
     constructor(
         private contents : Component|PhrasingCategory,
-        private icon: string|null = null,
+        private noChildren: boolean = false
     ) {
         this.create();
     }
@@ -114,15 +118,13 @@ export class TreeItem implements Component {
         this.statusIcon = document.createElement("i");
         this.statusIcon.classList.add("material-icons");
         this.statusIcon.classList.add("mdl-list__item-icon");
-        this.statusIcon.innerText = foldedIcon;
+        this.statusIcon.innerText = this.noChildren ? emptyIcon : foldedIcon;
         primaryContent.appendChild(this.statusIcon);
     
         this.statusIcon.onclick = (event) => {
-            if (this.expanded) this.fold(); else this.expand();
-        }
-
-        if (this.icon !== null) {
-            primaryContent.appendChild(toHTMLElement(new Icon(this.icon)));
+            if (!this.noChildren) {
+                if (this.expanded) this.fold(); else this.expand();
+            }
         }
         
         primaryContent.appendChild(toHTMLElement(this.contents));

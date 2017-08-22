@@ -10,3 +10,7 @@
 .of-tree__hidden {
     display: none;
 }
+
+.of-tree__item > .mdl-list__item-primary-content > .material-icons,.mdl-list__item-icon {
+    font-size: 16px;
+}
