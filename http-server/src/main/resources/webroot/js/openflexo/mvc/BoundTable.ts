@@ -4,9 +4,6 @@ import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
 
-import { BoundLabel } from "../mvc/BoundLabel"
-import { BoundTextField } from "../mvc/BoundTextField"
-import { BoundButton } from "../mvc/BoundButton"
 import { Table, TableLine, TableCell } from "../ui/Table"
 
 export class BoundTable implements Component {
