@@ -190,6 +190,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			}
 			else {
 				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+				System.out.println(response.error);
 			}
 			socket.write(response.toBuffer());
 		}
