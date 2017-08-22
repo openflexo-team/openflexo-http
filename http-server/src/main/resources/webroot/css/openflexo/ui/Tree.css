@@ -1,0 +1,12 @@
+.ul,.of-tree {
+    margin-left: 25px;
+}
+
+.li,.of-tree__item {
+    padding: 5px;
+    min-height: 15px;
+}
+
+.of-tree__hidden {
+    display: none;
+}
