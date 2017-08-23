@@ -177,7 +177,7 @@ function createBoundItem(tree: BoundTree, value: Description<any>): BoundTreeIte
     let itemElement = tree.elementForValue(value);
     if (itemElement != null) {
         let component = itemElement.component(tree.api, value);
-        let item = new TreeItem(component, itemElement.children === null);
+        let item = new TreeItem(tree.tree, component, itemElement.children === null);
         let boundItem = new BoundTreeItem(tree, value, itemElement, item);
         item.data = boundItem;
         return boundItem;
