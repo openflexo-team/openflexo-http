@@ -94,8 +94,8 @@ export class TreeItem implements Component {
     
     private expanded: boolean = false;
 
-    expandCallback: ((TreeItem)=>void)|null = null;
-    foldCallback: ((TreeItem)=>void)|null = null;
+    onexpand: ((TreeItem)=>void)|null = null;
+    onfold: ((TreeItem)=>void)|null = null;
     
     /** Internal data for advanced tree usage, not for user to use */
     data: any = null;
@@ -173,8 +173,8 @@ export class TreeItem implements Component {
     expand() {
         if (!this.expanded) {
             // expands
-            if (this.expandCallback !== null) {
-                this.expandCallback(this);
+            if (this.onexpand !== null) {
+                this.onexpand(this);
             }
 
             this.childrenContainer.classList.remove(hiddenClass);
@@ -186,8 +186,8 @@ export class TreeItem implements Component {
     fold() {
         if (this.expand) {
             // folds
-            if (this.foldCallback !== null) {
-                this.foldCallback(this);
+            if (this.onfold !== null) {
+                this.onfold(this);
             }
 
             this.childrenContainer.classList.add(hiddenClass);

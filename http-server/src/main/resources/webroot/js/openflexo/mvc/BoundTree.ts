@@ -97,7 +97,7 @@ class BoundTreeItem implements Item {
         public item: TreeItem,
         private root: boolean = false
     ) {
-        item.expandCallback = (item) => {
+        item.onexpand = (item) => {
             if (item.data instanceof BoundTreeItem) {
                 let boundItem = item.data;
                 if (element.children != null) {
