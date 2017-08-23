@@ -14,6 +14,8 @@ interface Item {
     addItem(value: Description<any>);
 
     removeItem(index: number);
+
+    findItemForObject(url: string): BoundTreeItem|null;
 }
 
 export class BoundTree implements Component, Item {
@@ -74,6 +76,14 @@ export class BoundTree implements Component, Item {
         let item = this.children[index];
         this.children.splice(index, 1);
         this.tree.removeChild(item.item);
+    }
+
+    findItemForObject(url: string): BoundTreeItem|null {
+        for (let child of this.children) {
+            let found = child.findItemForObject(url);
+            if (found !== null) return found;
+        }
+        return null;
     }
 }
 
@@ -136,6 +146,15 @@ class BoundTreeItem implements Item {
         if (this.root) {
             this.boundTree.tree.removeChild(item.item);
         }
+    }
+
+    findItemForObject(url: string): BoundTreeItem|null {
+        if (this.object.url === url) return this;
+        for (let child of this.children) {
+            let found = child.findItemForObject(url);
+            if (found !== null) return found;
+        }
+        return null;
     }
 }
 
