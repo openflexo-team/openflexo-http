@@ -1,6 +1,6 @@
 import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./utils";
 
-import { Component } from "./component";
+import { Component, Selectable } from "./component";
 import { Icon } from "./icon";
 
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
@@ -24,7 +24,7 @@ function createUl(): HTMLUListElement {
     return ul
 }
 
-export class Tree implements Component {
+export class Tree implements Component, Selectable<TreeItem> {
 
     container: HTMLUListElement;
 
@@ -32,6 +32,8 @@ export class Tree implements Component {
     
     private selectedItems: Set<TreeItem> = new Set();
     
+    onselect: ((selection: ReadonlySet<TreeItem>)=>void)|null;
+
     constructor() {
         addCssIfNotAlreadyPresent("/css/openflexo/ui/Tree.css");
         this.create();
@@ -65,6 +67,9 @@ export class Tree implements Component {
         if (!append) this.clearSelection();
         this.selectedItems.add(item);
         item.setSelectionStatus(true);
+        if (this.onselect != null) {
+            this.onselect(this.selectedItems)
+        }
     }
 
     clearSelection() {
