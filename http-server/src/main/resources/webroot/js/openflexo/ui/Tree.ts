@@ -6,6 +6,8 @@ import { Icon } from "./icon";
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
 
 const hiddenClass = "of-tree__hidden";
+const selectedClass = "of-tree__selected";
+
 const expandedIcon = "indeterminate_check_box";
 const foldedIcon = "add_box";
 const emptyIcon = "stop";
@@ -27,6 +29,8 @@ export class Tree implements Component {
     container: HTMLUListElement;
 
     children: TreeItem[] = [];
+    
+    private selectedItems: Set<TreeItem> = new Set();
     
     constructor() {
         addCssIfNotAlreadyPresent("/css/openflexo/ui/Tree.css");
@@ -56,12 +60,33 @@ export class Tree implements Component {
             this.container.removeChild(child.container);
         }
     }
+
+    select(item: TreeItem, append = false) {
+        if (!append) this.clearSelection();
+        this.selectedItems.add(item);
+        item.setSelectionStatus(true);
+    }
+
+    clearSelection() {
+        this.selectedItems.forEach(item => item.setSelectionStatus(false));
+        this.selectedItems.clear();
+    }
+
+    isSelected(item: TreeItem) {
+        return this.selectedItems.has(item);
+    }
+
+    selection(): ReadonlySet<TreeItem> {
+        return this.selectedItems;
+    }
 }
 
 export class TreeItem implements Component {
 
     container: HTMLDivElement;
 
+    private primaryContent: HTMLSpanElement;
+    private itemContent: HTMLSpanElement;
     private childrenContainer: HTMLUListElement;
     private statusIcon: HTMLElement;
 
@@ -76,6 +101,7 @@ export class TreeItem implements Component {
     data: any = null;
 
     constructor(
+        private tree: Tree,
         private contents : Component|PhrasingCategory,
         private noChildren: boolean = false
     ) {
@@ -111,15 +137,15 @@ export class TreeItem implements Component {
         li.classList.add("mdl-list__item");
         li.classList.add("of-tree__item");
         
-        let primaryContent = document.createElement("span");
-        primaryContent.classList.add("mdl-list__item-primary-content");
-        li.appendChild(primaryContent);
+        this.primaryContent = document.createElement("span");
+        this.primaryContent.classList.add("mdl-list__item-primary-content");
+        li.appendChild(this.primaryContent);
     
         this.statusIcon = document.createElement("i");
         this.statusIcon.classList.add("material-icons");
         this.statusIcon.classList.add("mdl-list__item-icon");
         this.statusIcon.innerText = this.noChildren ? emptyIcon : foldedIcon;
-        primaryContent.appendChild(this.statusIcon);
+        this.primaryContent.appendChild(this.statusIcon);
     
         this.statusIcon.onclick = (event) => {
             if (!this.noChildren) {
@@ -127,8 +153,14 @@ export class TreeItem implements Component {
             }
         }
         
-        primaryContent.appendChild(toHTMLElement(this.contents));
-    
+        this.itemContent = document.createElement("span");
+        this.itemContent.appendChild(toHTMLElement(this.contents));
+        this.primaryContent.appendChild(this.itemContent);
+
+        this.itemContent.onclick = (event) => {
+            this.tree.select(this);
+        }
+
         this.container.appendChild(li);
         
         this.childrenContainer = createUl();
@@ -161,6 +193,17 @@ export class TreeItem implements Component {
             this.childrenContainer.classList.add(hiddenClass);
             this.statusIcon.innerText = foldedIcon;
             this.expanded = false;
+        }
+    }
+
+    setSelectionStatus(selected: boolean) {
+        let classList = this.itemContent.classList;
+        let contains = classList.contains(selectedClass);
+        if (selected && !contains) {
+            classList.add(selectedClass);
+        }
+        if (!selected && contains) {
+            classList.remove(selectedClass);
         }
     }
 }

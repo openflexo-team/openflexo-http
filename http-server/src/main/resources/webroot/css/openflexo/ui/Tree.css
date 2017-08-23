@@ -7,10 +7,15 @@
     min-height: 15px;
 }
 
+.of-tree__item > .mdl-list__item-primary-content > .material-icons,.mdl-list__item-icon {
+    font-size: 16px;
+}
+
 .of-tree__hidden {
     display: none;
 }
 
-.of-tree__item > .mdl-list__item-primary-content > .material-icons,.mdl-list__item-icon {
-    font-size: 16px;
+.of-tree__selected {
+    background-color: #b3d4fc;
+    border: 1px solid #303f9f;
 }
