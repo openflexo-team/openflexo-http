@@ -18,4 +18,6 @@
 .of-tree__selected {
     background-color: #b3d4fc;
     border: 1px solid #303f9f;
+    border-radius: 3px;
+    padding: 3px;
 }
