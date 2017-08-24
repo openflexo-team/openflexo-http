@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, ChangeEvent, runtimeBinding } from "../api/Api"
+import { Api, RuntimeBindingId, ChangeEvent, createRuntimeBinding } from "../api/Api"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
@@ -37,7 +37,7 @@ export class BoundTextField implements Component {
         input.onchange = (e) => this.sendToServer(e);
         input.onblur = (e) => this.sendToServer(e);
 
-        this.valueBinding = runtimeBinding("", this.binding.binding.contextUrl, this.binding.runtimeUrl);
+        this.valueBinding = createRuntimeBinding("", this.binding.binding.contextUrl, this.binding.runtimeUrl);
         this.api.evaluate<string>(this.binding).then( value => {
             input.value = value;
         });

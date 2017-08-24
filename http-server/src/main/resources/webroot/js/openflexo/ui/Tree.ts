@@ -117,7 +117,7 @@ export class TreeItem implements Component {
         this.children.push(child);
         this.childrenContainer.appendChild(child.container);
     }
-    
+
     removeChild(child: TreeItem) {
         let index = this.children.indexOf(child);
         if (index >= 0) {

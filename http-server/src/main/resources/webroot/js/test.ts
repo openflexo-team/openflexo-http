@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api, RuntimeBindingId, runtimeBinding, binding, ChangeEvent } from "./openflexo/api/Api";
+import { Api, RuntimeBindingId, createRuntimeBinding, ChangeEvent } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";
@@ -186,8 +186,8 @@ function evaluateBinding(left: string, right: string) {
     }
 
     let context = contextInput.value;
-    rightBinding = runtimeBinding(right, context, context);
-    leftBinding = left !== null && left.length > 0  ? runtimeBinding(left, context, context) : null;
+    rightBinding = createRuntimeBinding(right, context, context);
+    leftBinding = left !== null && left.length > 0  ? createRuntimeBinding(left, context, context) : null;
 
     let result = 
         leftBinding != null ?

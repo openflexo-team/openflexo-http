@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, ChangeEvent, runtimeBinding } from "../api/Api"
+import { Api, RuntimeBindingId, BindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
@@ -7,18 +7,32 @@ export class BoundLabel implements Component {
 
     container: HTMLSpanElement;
 
+    private runtimeBinding: RuntimeBindingId|null = null;
+
+    private readonly changelistener = event => this.container.innerText = event.value;
+
     constructor(
         private api: Api, 
-        private binding: RuntimeBindingId,
+        private binding:BindingId,
+        runtime: string|null = null
      ) {
         this.create();
+        this.updateModel(runtime);
     }
 
     create(): void {
         this.container = document.createElement("span");
-
-        this.api.evaluate<string>(this.binding).then( value => this.container.innerText = value );
-
-        this.api.addChangeListener(this.binding, event => this.container.innerText = event.value );
     }    
+
+    updateModel(runtime: string|null):void {
+        if (this.runtimeBinding !== null) {
+            this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
+        }
+        this.runtimeBinding = null;
+        if (runtime !== null) {
+            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
+            this.api.evaluate<string>(this.runtimeBinding).then( value => this.container.innerText = value );
+            this.api.addChangeListener(this.runtimeBinding, this.changelistener);
+        }
+    }
 }

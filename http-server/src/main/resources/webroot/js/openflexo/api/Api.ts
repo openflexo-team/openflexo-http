@@ -1,12 +1,12 @@
 import { Description } from "./general"
 import { TechnologyAdapter, Resource, ResourceCenter } from "./resource"
 
-export function binding(expression: string, context: string) {
+export function createBinding(expression: string, context: string) {
     return new BindingId(expression, context);
 }
 
-export function runtimeBinding(expression: string, context: string, runtime:string = context) {
-    return new RuntimeBindingId(binding(expression, context), runtime);
+export function createRuntimeBinding(expression: string, context: string, runtime:string = context) {
+    return new RuntimeBindingId(createBinding(expression, context), runtime);
 }
 
 export class BindingId {

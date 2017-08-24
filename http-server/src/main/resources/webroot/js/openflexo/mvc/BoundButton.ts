@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, ChangeEvent, runtimeBinding } from "../api/Api"
+import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
