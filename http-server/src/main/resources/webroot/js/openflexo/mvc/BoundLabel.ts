@@ -17,14 +17,14 @@ export class BoundLabel implements Component {
         runtime: string|null = null
      ) {
         this.create();
-        this.updateModel(runtime);
+        this.updateRuntime(runtime);
     }
 
     create(): void {
         this.container = document.createElement("span");
     }    
 
-    updateModel(runtime: string|null):void {
+    updateRuntime(runtime: string|null):void {
         if (this.runtimeBinding !== null) {
             this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
         }
