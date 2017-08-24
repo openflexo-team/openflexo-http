@@ -253,9 +253,9 @@ export class Api {
         this.log("info", "Openned " + event.data, null);
         
         // evaluates pending request
-        for (let message of this.messageQueue) {
+        this.messageQueue.forEach(message => {
             this.readySendMessage(message);
-        }
+        });
     }
 
     /**

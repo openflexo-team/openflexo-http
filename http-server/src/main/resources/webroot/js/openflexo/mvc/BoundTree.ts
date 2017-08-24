@@ -43,14 +43,14 @@ export class BoundTree implements Component, Item {
         this.container = this.tree.container;
     }    
 
-    elementForValue(value: Description<any>) {
-        for (let element of this.elements) {
+    elementForValue(value: Description<any>):BoundTreeElement|null {
+        this.elements.forEach(element => {
             try {
                 if (element.select(value)) return element;
             } catch (e) {
                 // nothing to do pass to next element
             }
-        }
+        });
         return null;
     }
     
@@ -79,10 +79,10 @@ export class BoundTree implements Component, Item {
     }
 
     findItemForObject(url: string): BoundTreeItem|null {
-        for (let child of this.children) {
+        this.children.forEach(child => {
             let found = child.findItemForObject(url);
             if (found !== null) return found;
-        }
+        });
         return null;
     }
 }
@@ -150,10 +150,10 @@ class BoundTreeItem implements Item {
 
     findItemForObject(url: string): BoundTreeItem|null {
         if (this.object.url === url) return this;
-        for (let child of this.children) {
+        this.children.forEach(child => {
             let found = child.findItemForObject(url);
             if (found !== null) return found;
-        }
+        });
         return null;
     }
 }

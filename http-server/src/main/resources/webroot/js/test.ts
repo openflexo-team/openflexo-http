@@ -71,7 +71,7 @@ function createJsonElement(source: any): HTMLElement {
             }
         } else {
             all.className = 'details';
-            for (let key of Object.keys(source)) {
+            Object.keys(source).forEach(key => {
                 let element = document.createElement("div");
                 
                 let keySpan = document.createElement("b");
@@ -94,7 +94,7 @@ function createJsonElement(source: any): HTMLElement {
                 }
 
                 all.appendChild(element);
-            }
+            });
             
         }
         return all;
@@ -242,14 +242,14 @@ if (dataDiv != null) {
     dataDiv.appendChild(tabs.container);
 
     api.technologyAdapters().then(tas => {
-        let grid = new Grid();
-        for (let ta of tas) {
+        const grid = new Grid();
+        tas.forEach(ta => {
             let card = new Card(
                 createDescriptionElement("gps_fixed",ta),
                 createJsonElement(ta)
             );
             grid.addCell(new GridCell(card));
-        }
+        });
 
         let tab = new Tab("tas", "Technology Adapters", grid);
         tabs.addTab(tab);
@@ -258,14 +258,14 @@ if (dataDiv != null) {
     });
 
     api.resourceCenters().then(centers => {
-        let grid = new Grid();
-        for (let center of centers) {
+        const grid = new Grid();
+        centers.forEach(center => {
             let card = new Card(
                 createDescriptionElement("folder",center),
                 createJsonElement(center)
             );
             grid.addCell(new GridCell(card, 12));
-        }
+        });
 
         let tab = new Tab("rc", "Resource Centers", grid);
         tabs.addTab(tab);
@@ -273,13 +273,13 @@ if (dataDiv != null) {
 
     api.resources().then(resources => {
         let grid = new Grid();
-        for (let resource of resources) {
+        resources.forEach(resource => {
             let card = new Card(
                 createDescriptionElement("storage",resource),
                 createJsonElement(resource)
             );
             grid.addCell(new GridCell(card, 6));
-        }
+        });
          
         let tab = new Tab("res", "Resources", grid);
         tabs.addTab(tab);

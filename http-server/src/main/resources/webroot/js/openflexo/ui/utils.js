@@ -32,14 +32,14 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.addCssIfNotAlreadyPresent = addCssIfNotAlreadyPresent;
     function addCss(reference) {
-        var link = document.createElement("link");
+        let link = document.createElement("link");
         link.href = reference;
         link.rel = "stylesheet";
         document.head.appendChild(link);
     }
     // forEach method, could be shipped as part of an Object Literal/Module
     function forEachNode(list, callback) {
-        for (var i = 0; i < list.length; i++) {
+        for (let i = 0; i < list.length; i++) {
             callback.call(callback, i, list.item(i));
         }
     }

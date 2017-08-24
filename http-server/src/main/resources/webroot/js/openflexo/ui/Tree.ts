@@ -117,7 +117,7 @@ export class TreeItem implements Component {
         this.children.push(child);
         this.childrenContainer.appendChild(child.container);
     }
-
+    
     removeChild(child: TreeItem) {
         let index = this.children.indexOf(child);
         if (index >= 0) {
@@ -130,9 +130,9 @@ export class TreeItem implements Component {
     }
 
     clear() {
-        for (let item of this.children) {
+        this.children.forEach(item => {
             this.removeChild(item);
-        }
+        });
     }
     
     create() {
@@ -159,6 +159,7 @@ export class TreeItem implements Component {
         }
         
         this.itemContent = document.createElement("span");
+        this.itemContent.classList.add("of-tree__content");
         this.itemContent.appendChild(toHTMLElement(this.contents));
         this.primaryContent.appendChild(this.itemContent);
 

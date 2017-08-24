@@ -2,7 +2,12 @@
     margin-left: 25px;
 }
 
+
 .li,.of-tree__item {
+    
+}
+
+.of-tree__content {
     padding: 5px;
     min-height: 15px;
 }

@@ -29,10 +29,10 @@ export class BoundTable implements Component {
 
         if (this.header) {        
             let header = new TableLine();
-            for (let column of this.columns) {
+            this.columns.forEach( column => {
                 let cell = new TableCell(column.name);
                 header.addCell(cell);
-            }
+            });
             this.table.head.addLine(header);
         }
 
@@ -82,11 +82,11 @@ export class BoundTable implements Component {
 
     private addLine(element: Description<any>) {
         let line = new TableLine();
-        for (let column of this.columns) {
+        this.columns.forEach( column => {
             let component = column.component(this.api, element);
             let cell = new TableCell(component);
             line.addCell(cell);
-        }
+        })
 
         this.lines.push(new BoundTableLine(element.url, line));
         this.table.body.addLine(line);
