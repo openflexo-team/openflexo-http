@@ -71,6 +71,7 @@
 package org.openflexo.http.server.json;
 
 import io.vertx.core.json.JsonObject;
+import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
 
 /**
@@ -78,7 +79,7 @@ import org.openflexo.model.factory.ModelFactory;
  */
 public interface JsonComplement {
 
-	default ModelFactory getFactory() {
+	default ModelFactory getFactory() throws ModelDefinitionException {
 		return null;
 	}
 
