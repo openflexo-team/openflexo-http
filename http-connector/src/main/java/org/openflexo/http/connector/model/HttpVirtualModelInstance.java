@@ -99,25 +99,6 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 	@Initializer
 	void initialize(FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory);
 
-	/*String ACCESS_POINT = "accessPoint";
-	
-	@Initializer
-	void initialize(@Parameter(ACCESS_POINT) AccessPoint accessPoint, FlexoServiceManager serviceManager,
-			ContentSupportFactory<?, ?> supportFactory);
-	
-	@Getter(ACCESS_POINT)
-	AccessPoint getAccessPoint();
-	
-	@Setter(ACCESS_POINT)
-	void setAccessPoint(AccessPoint accessPoint);*/
-
-	// List<HttpFlexoConceptInstance> getFlexoConceptInstances(String path, String pointer, FlexoConcept concept);
-
-	// HttpFlexoConceptInstance getFlexoConceptInstance(String url, String pointer, FlexoConcept concept);
-
-	// public VirtualModelInstanceModelFactory makeVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager)
-	// throws ModelDefinitionException;
-
 	public CloseableHttpClient getHttpclient();
 
 	void contributeHeaders(HttpUriRequest request);
@@ -147,39 +128,6 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 			return httpclient;
 		}
 
-		/*public AccessPointResource getAccessPointResource() {
-			return (AccessPointResource) this.getAccessPoint().getResource();
-		}
-		
-		public AccessPointFactory getAccessPointFactory() {
-			return getAccessPointResource().getFactory();
-		}*/
-
-		/*@Override
-		public VirtualModel getVirtualModel() {
-			return getContainerVirtualModelInstance().getVirtualModel();
-		}
-		
-		@Override
-		public VirtualModelInstance<?, ?> getContainerVirtualModelInstance() {
-			AccessPointResource resource = getAccessPointResource();
-			if (resource != null && resource.getContainer() instanceof AbstractVirtualModelInstanceResource) {
-				return ((AbstractVirtualModelInstanceResource) resource.getContainer()).getVirtualModelInstance();
-			}
-			return null;
-		}
-		
-		@Override
-		public FlexoResourceCenter<?> getResourceCenter() {
-			FlexoResource<AccessPoint> resource = getAccessPoint().getResource();
-			return resource != null ? resource.getResourceCenter() : null;
-		}*/
-
-		/*@Override
-		public String toString() {
-			return "HttpVirtualModelInstance:" + super.toString();
-		}*/
-
 		@Override
 		public ContentSupportFactory<?, ?> getSupportFactory() {
 			return supportFactory;
@@ -194,10 +142,6 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 				getPropertyChangeSupport().firePropertyChange("supportFactory", oldValue, supportFactory);
 			}
 		}
-
-		/*public HttpFlexoConceptInstance retrieveFlexoConceptInstance(FlexoConcept type, Map<?,?> values) {
-			
-		}*/
 
 		@Override
 		public void contributeHeaders(HttpUriRequest request) {

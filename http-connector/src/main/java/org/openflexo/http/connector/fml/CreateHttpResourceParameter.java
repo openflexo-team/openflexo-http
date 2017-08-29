@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter;
+import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.model.annotations.DefineValidationRule;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -50,20 +51,20 @@ import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.validation.ValidationIssue;
 
 /**
- * A parameter used to instanciate a new AccessPoint and a new HttpVirtualModelInstance
+ * A parameter used to instanciate a new {@link HttpVirtualModelInstanceResource}
  * 
  * @author sylvain
  *
  */
 @ModelEntity
-@ImplementationClass(CreateParameter.CreateAccessPointParameterImpl.class)
-@XMLElement
-public interface CreateParameter extends BehaviourParameter<CreateHttpResource<?>> {
+@ImplementationClass(CreateHttpResourceParameter.CreateHttpResourceParameterImpl.class)
+@XMLElement(xmlTag = "CreateParameter")
+public interface CreateHttpResourceParameter extends BehaviourParameter<CreateHttpResource<?>> {
 
-	public static abstract class CreateAccessPointParameterImpl extends BehaviourParameterImpl<CreateHttpResource<?>>
-			implements CreateParameter {
+	public static abstract class CreateHttpResourceParameterImpl extends BehaviourParameterImpl<CreateHttpResource<?>>
+			implements CreateHttpResourceParameter {
 
-		static final Logger logger = Logger.getLogger(CreateParameter.class.getPackage().getName());
+		static final Logger logger = Logger.getLogger(CreateHttpResourceParameter.class.getPackage().getName());
 
 		@Override
 		public FlexoBehaviour getAccessedBehaviour() {
@@ -72,18 +73,19 @@ public interface CreateParameter extends BehaviourParameter<CreateHttpResource<?
 	}
 
 	@DefineValidationRule
-	public static class ValueBindingMustBeValid extends BindingIsRequiredAndMustBeValid<CreateParameter> {
+	public static class ValueBindingMustBeValid extends BindingIsRequiredAndMustBeValid<CreateHttpResourceParameter> {
 		public ValueBindingMustBeValid() {
-			super("'value'_binding_is_required_and_must_be_valid", CreateParameter.class);
+			super("'value'_binding_is_required_and_must_be_valid", CreateHttpResourceParameter.class);
 		}
 
 		@Override
-		public DataBinding<?> getBinding(CreateParameter object) {
+		public DataBinding<?> getBinding(CreateHttpResourceParameter object) {
 			return object.getValue();
 		}
 
 		@Override
-		public ValidationIssue<BindingIsRequiredAndMustBeValid<CreateParameter>, CreateParameter> applyValidation(CreateParameter object) {
+		public ValidationIssue<BindingIsRequiredAndMustBeValid<CreateHttpResourceParameter>, CreateHttpResourceParameter> applyValidation(
+				CreateHttpResourceParameter object) {
 			// Should return an issue only if parameter is required
 			if (object.getParam().getIsRequired()) {
 				return super.applyValidation(object);
