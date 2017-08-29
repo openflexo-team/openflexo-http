@@ -97,7 +97,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 	public static final String CREATION_SCHEME_KEY = "creationScheme";
 	@PropertyIdentifier(type = VirtualModel.class)
 	public static final String VIRTUAL_MODEL_KEY = "virtualModel";
-	@PropertyIdentifier(type = CreateParameter.class, cardinality = Cardinality.LIST)
+	@PropertyIdentifier(type = CreateHttpResourceParameter.class, cardinality = Cardinality.LIST)
 	public static final String PARAMETERS_KEY = "parameters";
 
 	@PropertyIdentifier(type = String.class)
@@ -149,20 +149,20 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 	public List<CreationScheme> getAvailableCreationSchemes();
 
-	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = CreateParameter.OWNER_KEY)
+	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = CreateHttpResourceParameter.OWNER_KEY)
 	@XMLElement
 	@Embedded
 	@CloningStrategy(StrategyType.CLONE)
-	public List<CreateParameter> getParameters();
+	public List<CreateHttpResourceParameter> getParameters();
 
 	@Setter(PARAMETERS_KEY)
-	public void setParameters(List<CreateParameter> parameters);
+	public void setParameters(List<CreateHttpResourceParameter> parameters);
 
 	@Adder(PARAMETERS_KEY)
-	public void addToParameters(CreateParameter aParameter);
+	public void addToParameters(CreateHttpResourceParameter aParameter);
 
 	@Remover(PARAMETERS_KEY)
-	public void removeFromParameters(CreateParameter aParameter);
+	public void removeFromParameters(CreateHttpResourceParameter aParameter);
 
 	public abstract Class<? extends HttpVirtualModelInstanceResourceFactory<VMI>> getResourceFactoryClass();
 
@@ -180,7 +180,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 		private CreationScheme creationScheme;
 		private String _creationSchemeURI;
-		private List<CreateParameter> parameters = null;
+		private List<CreateHttpResourceParameter> parameters = null;
 
 		@Override
 		public Type getAssignableType() {
@@ -312,7 +312,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public List<CreateParameter> getParameters() {
+		public List<CreateHttpResourceParameter> getParameters() {
 			// Comment this because of an infinite loop with updateParameters() method
 			if (parameters == null) {
 				parameters = new ArrayList<>();
@@ -322,12 +322,12 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public void setParameters(List<CreateParameter> parameters) {
+		public void setParameters(List<CreateHttpResourceParameter> parameters) {
 			this.parameters = parameters;
 		}
 
 		@Override
-		public void addToParameters(CreateParameter parameter) {
+		public void addToParameters(CreateHttpResourceParameter parameter) {
 			parameter.setOwner(this);
 			if (parameters == null) {
 				parameters = new ArrayList<>();
@@ -336,7 +336,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public void removeFromParameters(CreateParameter parameter) {
+		public void removeFromParameters(CreateHttpResourceParameter parameter) {
 			parameter.setOwner(null);
 			if (parameters == null) {
 				parameters = new ArrayList<>();
@@ -344,8 +344,8 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 			parameters.remove(parameter);
 		}
 
-		public CreateParameter getParameter(FlexoBehaviourParameter p) {
-			for (CreateParameter addEPParam : getParameters()) {
+		public CreateHttpResourceParameter getParameter(FlexoBehaviourParameter p) {
+			for (CreateHttpResourceParameter addEPParam : getParameters()) {
 				if (addEPParam.getParam() == p) {
 					return addEPParam;
 				}
@@ -357,24 +357,24 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 			if (parameters == null) {
 				parameters = new ArrayList<>();
 			}
-			List<CreateParameter> oldValue = new ArrayList<>(parameters);
-			List<CreateParameter> parametersToRemove = new ArrayList<>(parameters);
+			List<CreateHttpResourceParameter> oldValue = new ArrayList<>(parameters);
+			List<CreateHttpResourceParameter> parametersToRemove = new ArrayList<>(parameters);
 			if (creationScheme != null) {
 				for (FlexoBehaviourParameter p : creationScheme.getParameters()) {
-					CreateParameter existingParam = getParameter(p);
+					CreateHttpResourceParameter existingParam = getParameter(p);
 					if (existingParam != null) {
 						parametersToRemove.remove(existingParam);
 					}
 					else {
 						if (getFMLModelFactory() != null) {
-							CreateParameter newParam = getFMLModelFactory().newInstance(CreateParameter.class);
+							CreateHttpResourceParameter newParam = getFMLModelFactory().newInstance(CreateHttpResourceParameter.class);
 							newParam.setParam(p);
 							addToParameters(newParam);
 						}
 					}
 				}
 			}
-			for (CreateParameter removeThis : parametersToRemove) {
+			for (CreateHttpResourceParameter removeThis : parametersToRemove) {
 				removeFromParameters(removeThis);
 			}
 			getPropertyChangeSupport().firePropertyChange(PARAMETERS_KEY, oldValue, parameters);
@@ -441,7 +441,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 					// creationSchemeAction.setVirtualModelInstance(vmInstance);
 					creationSchemeAction.initWithFlexoConceptInstance(data);
 					creationSchemeAction.setCreationScheme(getCreationScheme());
-					for (CreateParameter p : getParameters()) {
+					for (CreateHttpResourceParameter p : getParameters()) {
 						FlexoBehaviourParameter param = p.getParam();
 						Object value = p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext);
 						// System.out.println("For parameter " + param + " value is " + value);
