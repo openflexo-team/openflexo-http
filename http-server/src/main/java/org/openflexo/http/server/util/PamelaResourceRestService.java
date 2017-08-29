@@ -35,6 +35,7 @@
 
 package org.openflexo.http.server.util;
 
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
@@ -49,6 +50,7 @@ import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+import org.openflexo.http.server.json.JsonError;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.EmbeddingType;
@@ -115,7 +117,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 			context.response().end(result.encodePrettily());
 
 		} catch (Exception e) {
-			context.fail(e);
+			error(context,e);
 		}
 	}
 
@@ -156,7 +158,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 				notFound(context);
 			}
 		} catch (Exception e) {
-			context.fail(e);
+			error(context,e);
 		}
 	}
 
@@ -179,7 +181,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		} catch (NumberFormatException e) {
 			notFound(context);
 		} catch (Exception e) {
-			context.fail(e);
+			error(context,e);
 		}
 	}
 
@@ -206,11 +208,16 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		} catch (NumberFormatException e) {
 			notFound(context);
 		} catch (Exception e) {
-			context.fail(e);
+			error(context, e);
 		}
 	}
 
 	private void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();
+	}
+
+	private void error(RoutingContext context, Throwable e) {
+		HttpServerResponse response = context.response();
+		response.end(new JsonError(e).toString());
 	}
 }
