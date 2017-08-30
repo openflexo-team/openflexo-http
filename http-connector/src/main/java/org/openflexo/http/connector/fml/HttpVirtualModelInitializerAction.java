@@ -46,7 +46,7 @@ import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoObject.FlexoObjectImpl;
 import org.openflexo.foundation.action.FlexoAction;
-import org.openflexo.foundation.action.FlexoActionType;
+import org.openflexo.foundation.action.FlexoActionFactory;
 import org.openflexo.foundation.action.InvalidParametersException;
 import org.openflexo.foundation.action.NotImplementedException;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
@@ -76,8 +76,8 @@ public class HttpVirtualModelInitializerAction
 
 	private static final Logger logger = Logger.getLogger(HttpVirtualModelInitializerAction.class.getPackage().getName());
 
-	public static FlexoActionType<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject> actionType = new FlexoActionType<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject>(
-			"initialize_http_access_point", FlexoActionType.newMenu, FlexoActionType.defaultGroup, FlexoActionType.ADD_ACTION_TYPE) {
+	public static FlexoActionFactory<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject> actionType = new FlexoActionFactory<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject>(
+			"initialize_http_access_point", FlexoActionFactory.newMenu, FlexoActionFactory.defaultGroup, FlexoActionFactory.ADD_ACTION_TYPE) {
 
 		/**
 		 * Factory method

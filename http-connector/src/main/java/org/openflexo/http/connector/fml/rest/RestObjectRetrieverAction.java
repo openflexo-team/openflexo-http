@@ -46,13 +46,11 @@ import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.FlexoObject.FlexoObjectImpl;
 import org.openflexo.foundation.action.FlexoAction;
-import org.openflexo.foundation.action.FlexoActionType;
 import org.openflexo.foundation.action.InvalidParametersException;
 import org.openflexo.foundation.action.NotImplementedException;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
-import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
+import org.openflexo.foundation.fml.rt.action.AbstractActionSchemeAction;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport;
@@ -67,37 +65,9 @@ import org.openflexo.localization.LocalizedDelegate;
  * 
  */
 public class RestObjectRetrieverAction
-		extends FlexoBehaviourAction<RestObjectRetrieverAction, RestObjectRetriever, RestFlexoConceptInstance> {
+		extends AbstractActionSchemeAction<RestObjectRetrieverAction, RestObjectRetriever, RestFlexoConceptInstance> {
 
 	private static final Logger logger = Logger.getLogger(RestObjectRetrieverAction.class.getPackage().getName());
-
-	public static FlexoActionType<RestObjectRetrieverAction, RestFlexoConceptInstance, VirtualModelInstanceObject> actionType = new FlexoActionType<RestObjectRetrieverAction, RestFlexoConceptInstance, VirtualModelInstanceObject>(
-			"rest_object_retriever", FlexoActionType.newMenu, FlexoActionType.defaultGroup, FlexoActionType.ADD_ACTION_TYPE) {
-
-		/**
-		 * Factory method
-		 */
-		@Override
-		public RestObjectRetrieverAction makeNewAction(RestFlexoConceptInstance focusedObject,
-				Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
-			return new RestObjectRetrieverAction(focusedObject, globalSelection, editor);
-		}
-
-		@Override
-		public boolean isVisibleForSelection(RestFlexoConceptInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
-			return false;
-		}
-
-		@Override
-		public boolean isEnabledForSelection(RestFlexoConceptInstance object, Vector<VirtualModelInstanceObject> globalSelection) {
-			return true;
-		}
-
-	};
-
-	static {
-		FlexoObjectImpl.addActionForClass(actionType, RestFlexoConceptInstance.class);
-	}
 
 	private RestObjectRetriever retrieverBehaviour;
 	private HttpFlexoConceptInstance<JsonSupport> newFlexoConceptInstance;
