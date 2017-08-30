@@ -1,7 +1,7 @@
 import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./utils";
 
-import { Component, Selectable } from "./component";
-import { Icon } from "./icon";
+import { Component, Selectable } from "./Component";
+import { Icon } from "./Icon";
 
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
 

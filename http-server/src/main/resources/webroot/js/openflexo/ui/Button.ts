@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component } from "./Component";
 import { mdlUpgradeElement, toHTMLElement } from "./utils";
 import { PhrasingCategory } from "./category";
 
