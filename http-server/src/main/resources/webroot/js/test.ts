@@ -135,7 +135,7 @@ function retreiveContext() {
         clearElement(result);     
         var error = document.createElement("div");
         error.className = "details";  
-        error.innerText = "Error : " + event.srcElement.statusText;
+        error.innerText = "Error : " + event.currentTarget.statusText;
         result.appendChild(error);
         window.scrollTo(0, 0);
     });
