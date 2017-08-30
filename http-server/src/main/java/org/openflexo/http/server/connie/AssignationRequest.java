@@ -48,23 +48,27 @@ public final class AssignationRequest extends ConnieMessage {
 
 	public final RuntimeBindingId right;
 
+	public final String value;
+
 	public final boolean detailed;
 
 	public AssignationRequest(
 		@JsonProperty("id") int id,
 		@JsonProperty("left") RuntimeBindingId left,
 		@JsonProperty("right") RuntimeBindingId right,
+		@JsonProperty("value") String value,
 		@JsonProperty("detailed") boolean detailed
 	) {
 		this.id = id;
 		this.left = left;
 		this.right = right;
+		this.value = value;
 		this.detailed = detailed;
 	}
 
 	@Override
 	public String toString() {
-		return "Assign " + right + " on to " + left;
+		return "Assign " + (right != null ? right : value) + " on to " + left;
 	}
 
 }

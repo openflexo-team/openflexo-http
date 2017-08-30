@@ -77,7 +77,8 @@ export class AssignationRequest extends Message {
     constructor(
         public id: number,
         public left: RuntimeBindingId,
-        public right: RuntimeBindingId,
+        public right: RuntimeBindingId|null,
+        public value: string|null,
         public detailed: boolean
     ) {
         super(id, "AssignationRequest");
@@ -359,13 +360,18 @@ export class Api {
      * @param right binding of the new value.
      * @return a Promise for evaluated binding
      */
-    public assign<T>(left: RuntimeBindingId, right: RuntimeBindingId, detailed: boolean = false): Promise<T> {
+    public assign<T>(left: RuntimeBindingId, right: RuntimeBindingId|string, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         let connie = this.initializeConnieEvaluator();
 
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
-        let request = new AssignationRequest(id, left, right, detailed);
+        let request;
+        if (right instanceof RuntimeBindingId) {
+            request = new AssignationRequest(id, left, right, null, detailed);
+        } else {
+            request = new AssignationRequest(id, left, null, right, detailed);
+        }
         
         return this.sendMessage(request);
     }

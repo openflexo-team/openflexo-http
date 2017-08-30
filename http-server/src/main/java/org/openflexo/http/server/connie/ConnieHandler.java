@@ -234,17 +234,61 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			RuntimeBindingId left = request.left;
 			DataBinding leftBinding = getOrCreateBinding(left.binding);
 
-			RuntimeBindingId right = request.right;
-			DataBinding valueBinding = getOrCreateBinding(right.binding);
-
-			if (leftBinding.isValid() && valueBinding.isValid()) {
+			if (leftBinding.isValid()) {
 				BindingEvaluationContext leftContext = findObject(left.runtimeUrl, BindingEvaluationContext.class);
-				BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
-				if (leftContext != null && rightContext != null) {
+
+				if (leftContext != null) {
+
+					Object newValue = null;
+					RuntimeBindingId right = request.right;
+					if (right != null) {
+						// uses binding for new value
+						DataBinding valueBinding = getOrCreateBinding(right.binding);
+						if (valueBinding.isValid()) {
+							BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
+							if (rightContext != null) {
+								try {
+									Object rightValue = valueBinding.getBindingValue(rightContext);
+									leftBinding.setBindingValue(rightValue, leftContext);
+									response.result = toJson(rightValue, request.detailed);
+
+								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+									 String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
+									socket.write(Response.error(request.id, error).toBuffer());
+								} catch (NotSettableContextException e) {
+									String error = "Can't set expression '" + request.left.binding + "'";
+									socket.write(Response.error(request.id, error).toBuffer());
+								}
+							}
+							else {
+								StringBuilder message = new StringBuilder("Invalid runtime ");
+								message.append("'");
+								message.append(request.right.runtimeUrl);
+								message.append("': ");
+								message.append(valueBinding.invalidBindingReason());
+								response.error = message.toString();
+							}
+
+						}
+						else {
+							StringBuilder message = new StringBuilder("Invalid binding ");
+							message.append("'");
+							message.append(request.right.binding.expression);
+							message.append("': ");
+							message.append(valueBinding.invalidBindingReason());
+							response.error = message.toString();
+						}
+					}
+					else {
+						// uses string literal for new value
+						newValue = request.value;
+
+					}
+
+					// assigns the new value
 					try {
-						Object rightValue = valueBinding.getBindingValue(rightContext);
-						leftBinding.setBindingValue(rightValue, leftContext);
-						response.result = toJson(rightValue, request.detailed);
+						leftBinding.setBindingValue(newValue, leftContext);
+						response.result = toJson(newValue, request.detailed);
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
@@ -253,45 +297,26 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 						String error = "Can't set expression '" + request.left.binding + "'";
 						socket.write(Response.error(request.id, error).toBuffer());
 					}
-				}
-				else {
+
+				} else {
 					StringBuilder message = new StringBuilder("Invalid runtime ");
-					int length = message.length();
-					if (leftContext == null) {
-						message.append("'");
-						message.append(request.left.runtimeUrl);
-						message.append("': ");
-						message.append(leftBinding.invalidBindingReason());
-					}
-					if (rightContext == null) {
-						if (message.length() > length) message.append(" and ");
-						message.append("'");
-						message.append(request.right.runtimeUrl);
-						message.append("': ");
-						message.append(valueBinding.invalidBindingReason());
-					}
+					message.append("'");
+					message.append(request.left.runtimeUrl);
+					message.append("': ");
+					message.append(leftBinding.invalidBindingReason());
 					response.error = message.toString();
 				}
 
-			}
-			else {
+
+			} else {
 				StringBuilder message = new StringBuilder("Invalid binding ");
-				int length = message.length();
-				if (!leftBinding.isValid()) {
-					message.append("'");
-					message.append(request.left.binding.expression);
-					message.append("': ");
-					message.append(leftBinding.invalidBindingReason());
-				}
-				if (!valueBinding.isValid()) {
-					if (message.length() > length) message.append(" and ");
-					message.append("'");
-					message.append(request.right.binding.expression);
-					message.append("': ");
-					message.append(valueBinding.invalidBindingReason());
-				}
+				message.append("'");
+				message.append(request.left.binding.expression);
+				message.append("': ");
+				message.append(leftBinding.invalidBindingReason());
 				response.error = message.toString();
 			}
+
 			socket.write(response.toBuffer());
 		}
 
