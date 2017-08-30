@@ -82,12 +82,13 @@ function createJsonElement(source: any): HTMLElement {
                     let valueCode = document.createElement("a");
                     valueCode.href = source[key];
                     valueCode.innerText = source[key];
-                    valueCode.addEventListener("click", function(e) {
-                        var a = <HTMLAnchorElement>e.srcElement;
+                    valueCode.onclick = function(e) {
+                        var a = <HTMLAnchorElement>e.currentTarget;
                         setContext(a.href);
                         retreiveContext();
                         e.preventDefault();
-                    });
+                        return false;
+                    };
                     element.appendChild(valueCode);
                 } else {
                     element.appendChild(createJsonElement(source[key]));
@@ -248,7 +249,7 @@ if (dataDiv != null) {
                 createDescriptionElement("gps_fixed",ta),
                 createJsonElement(ta)
             );
-            grid.addCell(new GridCell(card));
+            grid.addCell(new GridCell(card, 4));
         });
 
         let tab = new Tab("tas", "Technology Adapters", grid);
