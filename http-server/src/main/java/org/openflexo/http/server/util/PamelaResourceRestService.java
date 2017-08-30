@@ -36,6 +36,7 @@
 package org.openflexo.http.server.util;
 
 import java.util.Collection;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.openflexo.foundation.resource.PamelaResource;
@@ -49,6 +50,12 @@ import org.openflexo.model.factory.EmbeddingType;
  */
 public class PamelaResourceRestService<D extends ResourceData<D>, R extends PamelaResource<D, ?>> extends ResourceRestService<D,R> {
 
+	private final Supplier<Collection<R>> supplier;
+
+	private final Function<String, R> finder;
+
+	private Consumer<D> postLoader = null;
+
 	public PamelaResourceRestService(
 		String prefix,
 		Supplier<Collection<R>> supplier,
@@ -56,17 +63,34 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		Class<R> resourceClass,
 		TechnologyAdapterRouteService service
 	) throws ModelDefinitionException {
-		super(prefix, supplier, finder, resourceClass, service);
+		super(prefix, resourceClass, service.getSerializer());
+		this.supplier = supplier;
+		this.finder = finder;
+	}
+
+	public void setPostLoader(Consumer<D> postLoader) {
+		this.postLoader = postLoader;
 	}
 
 	@Override
-	protected boolean isLoaded(R resource) {
-		return resource.isLoaded();
+	protected Collection<R> allResources() {
+		return supplier.get();
+	}
+
+	@Override
+	protected R findResource(String id) {
+		String uri = IdUtils.decodeId(id);
+		return finder.apply(uri);
 	}
 
 	@Override
 	protected D loadResource(R resource) throws Exception {
-		resource.loadResourceData(null);
+		if (!resource.isLoaded()) {
+			resource.loadResourceData(null);
+			if (postLoader != null) {
+				postLoader.accept(resource.getLoadedResourceData());
+			}
+		}
 		return resource.getLoadedResourceData();
 	}
 

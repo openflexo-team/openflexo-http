@@ -41,11 +41,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import org.openflexo.http.server.RouteService;
-import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.json.JsonError;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.model.exceptions.ModelDefinitionException;
@@ -59,28 +55,18 @@ public abstract class ResourceRestService<D, R> {
 
 	private final String prefix;
 
-	private final Supplier<Collection<R>> supplier;
-
-	private final Function<String, R> finder;
-
 	private final Class<R> resourceClass;
 
 	private final JsonSerializer serializer;
 
-	private Consumer<D> postLoader = null;
-
 	public ResourceRestService(
 		String prefix,
-		Supplier<Collection<R>> supplier,
-		Function<String, R> finder,
 		Class<R> resourceClass,
-		TechnologyAdapterRouteService service
+		JsonSerializer serializer
 	) throws ModelDefinitionException {
 		this.prefix = prefix;
-		this.supplier = supplier;
-		this.finder = finder;
 		this.resourceClass = resourceClass;
-		this.serializer = service.getSerializer();
+		this.serializer = serializer;
 	}
 
 	public String getPrefix() {
@@ -91,9 +77,15 @@ public abstract class ResourceRestService<D, R> {
 		return resourceClass;
 	}
 
-	public void setPostLoader(Consumer<D> postLoader) {
-		this.postLoader = postLoader;
-	}
+	protected abstract Collection<R> allResources();
+
+	protected abstract R findResource(String id);
+
+	protected abstract D loadResource(R resource) throws Exception;
+
+	protected abstract Collection<Object> allObjects(R resource);
+
+	protected abstract Object findObject(R resource, String id);
 
 	public void addRoutes(Router router) {
 		router.get(prefix).produces(RouteService.JSON).handler(this::serveResourceList);
@@ -106,7 +98,7 @@ public abstract class ResourceRestService<D, R> {
 		try {
 			boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 			JsonArray result = new JsonArray();
-			for (R served : supplier.get()) {
+			for (R served : allResources()) {
 				result.add(serializer.toJson(served, detailed));
 			}
 			context.response().end(result.encodePrettily());
@@ -126,28 +118,13 @@ public abstract class ResourceRestService<D, R> {
 	 */
 	protected R getLoadedResource(String id) throws Exception {
 		String uri = IdUtils.decodeId(id);
-
-		R served = finder.apply(uri);
+		R served = findResource(id);
 		if (served != null) {
-			if (!isLoaded(served)) {
-				// load data if needed
-				D data = loadResource(served);
-				if (postLoader != null) {
-					postLoader.accept(data);
-				}
-			}
+			// load data if needed
+			loadResource(served);
 		}
-
 		return served;
 	}
-
-	protected abstract boolean isLoaded(R resource);
-
-	protected abstract D loadResource(R resource) throws Exception;
-
-	protected abstract Collection<Object> allObjects(R resource);
-
-	protected abstract Object findObject(R resource, String id);
 
 	private void serveRoot(RoutingContext context) {
 		try {
