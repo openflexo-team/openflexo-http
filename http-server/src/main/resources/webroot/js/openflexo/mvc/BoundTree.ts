@@ -26,6 +26,8 @@ export class BoundTree implements Component, Item {
 
     children: BoundTreeItem[] = [];
 
+    onselect: ((selection: ReadonlySet<BoundTreeItem>)=>void)|null;
+    
     constructor(
         public api: Api, 
         private root: RuntimeBindingId,
@@ -36,7 +38,16 @@ export class BoundTree implements Component, Item {
 
     create(): void {
         this.tree = new Tree();
-
+        this.tree.onselect = (selection) => {
+            let onselect = this.onselect;
+            if (onselect !== null) {
+                let transformedSelection = new Set<BoundTreeItem>();
+                selection.forEach(item => { 
+                    transformedSelection.add(item.data)
+                })
+                onselect(transformedSelection);
+            }
+        };
         this.api.evaluate<Description<any>>(this.root).then(rootValue => this.updateRoot(rootValue));
         this.api.addChangeListener(this.root, event => this.updateRoot(event.value));    
 
@@ -55,6 +66,17 @@ export class BoundTree implements Component, Item {
         return null;
     }
     
+    private selectCallback(selection: ReadonlySet<TreeItem>) {
+        let onselect = this.onselect;
+        if (onselect !== null) {
+            let transformedSelection = new Set<BoundTreeItem>();
+            selection.forEach(item => { 
+                transformedSelection.add(item.data)
+            })
+            onselect(transformedSelection);
+        }
+    }
+
     private updateRoot(root: Description<any>) {
         let rootElement = this.elementForValue(root);
         if (rootElement !== null && rootElement.children !== null) {
