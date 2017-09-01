@@ -9,24 +9,24 @@ export function createRuntimeBinding(expression: string, context: string, runtim
     return new RuntimeBindingId(createBinding(expression, context), runtime);
 }
 
-export class BindingId {
+export class BindingId<T>  {
     constructor(
         public expression: string,
         public contextUrl: string
     ) { }
 
-    public equals(other: BindingId) {
+    public equals(other: BindingId<T>) {
         return this.expression === other.expression && this.contextUrl === other.contextUrl;
     }
 }
 
-export class RuntimeBindingId {
+export class RuntimeBindingId<T> {
     constructor(
-        public binding: BindingId,
+        public binding: BindingId<T>,
         public runtimeUrl: string 
     ) { }
 
-    public equals(other: RuntimeBindingId) {
+    public equals(other: RuntimeBindingId<T>) {
         return this.binding.equals(other.binding) && this.runtimeUrl === other.runtimeUrl;
     }
 }
@@ -48,7 +48,7 @@ export class EvaluationRequest extends Message {
 
     constructor(
         public id: number,
-        public runtimeBinding: RuntimeBindingId,
+        public runtimeBinding: RuntimeBindingId<any>,
         public detailed: boolean
     ) {
         super(id, "EvaluationRequest");
@@ -62,7 +62,7 @@ export class ListeningRequest extends Message {
     
         constructor(
             public id: number,
-            public runtimeBinding: RuntimeBindingId,
+            public runtimeBinding: RuntimeBindingId<any>,
             public detailed: boolean
         ) {
             super(id, "ListeningRequest");
@@ -76,8 +76,8 @@ export class AssignationRequest extends Message {
 
     constructor(
         public id: number,
-        public left: RuntimeBindingId,
-        public right: RuntimeBindingId|null,
+        public left: RuntimeBindingId<any>,
+        public right: RuntimeBindingId<any>|null,
         public value: string|null,
         public detailed: boolean
     ) {
@@ -104,7 +104,7 @@ export class Response extends Message {
  */
 export class ChangeEvent extends Message {
     constructor(
-        public runtimeBinding: RuntimeBindingId,
+        public runtimeBinding: RuntimeBindingId<any>,
         public value: string
     ) {
         super(-1, "ChangeEvent");
@@ -163,7 +163,7 @@ export class Api {
     private evaluationRequestSeed: number = 0;
 
     /** Registered listeners */
-    private bindingListeners: Set<[RuntimeBindingId, ChangeListener]> = new Set();
+    private bindingListeners: Set<[RuntimeBindingId<any>, ChangeListener]> = new Set();
 
     /** Api listeners */
     private logListeners: Set<LogListener> = new Set();
@@ -208,9 +208,9 @@ export class Api {
         // event contains a blob that needs reading
         let reader = new FileReader();
         reader.onloadend = (e: ProgressEvent) => {
-            if (e.srcElement != null) {
+            if (e.currentTarget != null) {
                 // parses the response
-                let message = <Message>JSON.parse(e.srcElement["result"]);
+                let message = <Message>JSON.parse(e.currentTarget["result"]);
                 switch (message.type) {
                     case "Response": {
                         let response = <Response>message;
@@ -319,7 +319,7 @@ export class Api {
         }
     }
 
-    private createListeningMessage(binding: RuntimeBindingId): ListeningRequest {
+    private createListeningMessage(binding: RuntimeBindingId<any>): ListeningRequest {
         let id = this.evaluationRequestSeed++;
         return new ListeningRequest(id, binding, true);
     }
@@ -338,7 +338,7 @@ export class Api {
      * @param runtimeBinding binding  to evaluate.
      * @return a Promise for evaluated binding
      */
-    public evaluate<T>(runtimeBinding: RuntimeBindingId, detailed: boolean = false): Promise<T> {
+    public evaluate<T>(runtimeBinding: RuntimeBindingId<T>, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         this.initializeConnieEvaluator();
         
@@ -360,7 +360,7 @@ export class Api {
      * @param right binding of the new value.
      * @return a Promise for evaluated binding
      */
-    public assign<T>(left: RuntimeBindingId, right: RuntimeBindingId|string, detailed: boolean = false): Promise<T> {
+    public assign<T>(left: RuntimeBindingId<T>, right: RuntimeBindingId<T>|string, detailed: boolean = false): Promise<T> {
         // connects the WebSocket if not already done
         let connie = this.initializeConnieEvaluator();
 
@@ -381,7 +381,7 @@ export class Api {
      * @param binding binding change to listen to
      * @param listener callback
      */
-    public addChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
+    public addChangeListener(binding: RuntimeBindingId<any>, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
         this.sendMessage(this.createListeningMessage(binding));
     }
@@ -391,7 +391,7 @@ export class Api {
      * @param binding binding change to listen to
      * @param listener callback
      */
-    public removeChangeListener(binding: RuntimeBindingId, listener : ChangeListener) {
+    public removeChangeListener(binding: RuntimeBindingId<any>, listener : ChangeListener) {
         this.bindingListeners.delete([binding, listener]);
     }
 
@@ -399,7 +399,7 @@ export class Api {
      * Removes all callbacks for the given binding
      * @param binding binding
      */
-    public removeChangeListeners(binding: RuntimeBindingId) {
+    public removeChangeListeners(binding: RuntimeBindingId<any>) {
         this.bindingListeners.forEach(e => {
             if (e[0].equals(binding)) {
                 this.bindingListeners.delete(e);

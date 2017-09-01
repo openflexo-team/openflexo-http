@@ -11,17 +11,17 @@ export class BoundButton implements Component {
 
     container: HTMLButtonElement;
 
-    private enabledRuntimeBinding: RuntimeBindingId|null = null
+    private enabledRuntimeBinding: RuntimeBindingId<string>|null = null
     private enabledChangeListener = (event) => this.listenFromServer(event);
 
-    private actionRuntimeBinding: RuntimeBindingId|null;
+    private actionRuntimeBinding: RuntimeBindingId<string>|null;
 
     constructor(
         private api: Api, 
         private label: Component|PhrasingCategory,
-        private action: BindingId,
+        public action: BindingId<string>,
         runtime: string|null = null,
-        private enabled: BindingId|null = null,
+        private enabled: BindingId<string>|null = null,
         private type: "raised"|"fab"|"mini-fab"|"icon" = "raised",
         private colored: boolean = false,
         private accent: boolean = false,
@@ -58,6 +58,7 @@ export class BoundButton implements Component {
         this.enabledRuntimeBinding = null;
         if (runtime !== null) {
             if (this.enabled !== null) {
+                this.enabled.contextUrl = runtime; 
                 this.enabledRuntimeBinding = new RuntimeBindingId(this.enabled, runtime);
                 this.api.evaluate<string>(this.enabledRuntimeBinding).then( value => {
                     this.button.setEnable(value === "true")
@@ -65,7 +66,10 @@ export class BoundButton implements Component {
                 this.api.addChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
             }
 
+            this.action.contextUrl = runtime; 
             this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime);
+        } else {
+            this.button.setEnable(true);
         }
     }
 }

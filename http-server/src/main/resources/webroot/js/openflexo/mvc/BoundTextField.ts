@@ -13,18 +13,18 @@ export class BoundTextField implements Component {
 
     container: HTMLDivElement;
 
-    private runtimeBinding: RuntimeBindingId|null = null;
+    private runtimeBinding: RuntimeBindingId<string>|null = null;
 
     private readonly changelistener = (event) => this.updateValue(event.value);
     
     constructor(
-        private api: Api, 
-        private binding: BindingId,
-        private label: PhrasingCategory|null = null,
+        private readonly api: Api, 
+        private binding: BindingId<string>,
+        private readonly label: PhrasingCategory|null = null,
         private runtime: string|null = null,
-        private floatingLabel: boolean = false,
-        private invalid: boolean = false,
-        private id: string|null = null
+        private readonly floatingLabel: boolean = false,
+        private readonly invalid: boolean = false,
+        private readonly id: string|null = null
      ) {
         this.create();
         this.updateRuntime(runtime);
@@ -64,9 +64,14 @@ export class BoundTextField implements Component {
         }
         this.runtimeBinding = null;
         if (runtime !== null) {
+            this.binding.contextUrl = runtime; 
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
             this.api.evaluate<string>(this.runtimeBinding).then( value => this.updateValue(value));
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
         }
+    }
+
+    setEnable(enable: boolean) {
+        this.textField.setEnable(enable);
     }
 }

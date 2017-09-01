@@ -30,7 +30,7 @@ export class BoundTree implements Component, Item {
     
     constructor(
         public api: Api, 
-        private root: RuntimeBindingId,
+        private root: RuntimeBindingId<any>,
         private elements: BoundTreeElement[]
      ) {
         this.create();
@@ -94,7 +94,7 @@ export class BoundTree implements Component, Item {
             this.tree.addChild(boundItem.item);
         }
     }
-
+    
     removeItem(index: number) {
         let item = this.children[index];
         this.children.splice(index, 1);
@@ -116,7 +116,7 @@ export class BoundTreeElement {
         public name: string,
         public select: (element: any) => boolean,
         public component: (api: Api, element: any) => Component|PhrasingCategory,
-        public children: ((element:any) => BindingId)|null = null
+        public children: ((element:any) => BindingId<Description<any>[]>)|null = null
     ) { }
 }
 

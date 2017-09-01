@@ -16,7 +16,7 @@ export class BoundTable implements Component {
 
     constructor(
         private api: Api, 
-        private elements: RuntimeBindingId,
+        private elements: RuntimeBindingId<Description<any>[]>,
         private columns: BoundColumn[],
         private header: boolean = true,
         private selectable: boolean = false
@@ -41,7 +41,7 @@ export class BoundTable implements Component {
 
         this.container = this.table.container;
     }    
-
+    
     refresh() {
         this.api.evaluate<Description<any>[]>(this.elements).then(elements => this.updateList(elements));
     }

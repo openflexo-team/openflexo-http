@@ -16,8 +16,8 @@ import { Tabs, Tab } from "./openflexo/ui/Tabs";
 
 const api = new Api();
 
-var leftBinding: RuntimeBindingId|null = null;
-var rightBinding: RuntimeBindingId|null = null;
+var leftBinding: RuntimeBindingId<any>|null = null;
+var rightBinding: RuntimeBindingId<any>|null = null;
 
 function getDataUrl(element : HTMLElement) {
     let current: HTMLElement|null = element;

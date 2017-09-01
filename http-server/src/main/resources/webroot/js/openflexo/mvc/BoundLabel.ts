@@ -7,13 +7,13 @@ export class BoundLabel implements Component {
 
     container: HTMLSpanElement;
 
-    private runtimeBinding: RuntimeBindingId|null = null;
+    private runtimeBinding: RuntimeBindingId<string>|null = null;
 
     private readonly changelistener = event => this.container.innerText = event.value;
 
     constructor(
         private api: Api, 
-        private binding:BindingId,
+        private binding:BindingId<string>,
         runtime: string|null = null
      ) {
         this.create();
