@@ -40,7 +40,7 @@
     </BehaviourControlGraph_Sequence>
     <GenericBehaviourParameter id="28" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;https://api.github.com&quot;" name="url" type="java.lang.String" userID="FLX" flexoID="76" />
     <GenericBehaviourParameter id="29" isRequired="true" widget="TEXT_FIELD" defaultValue="&quot;sylvain-openflexo&quot;" name="user" type="java.lang.String" userID="FLX" flexoID="75" />
-    <GenericBehaviourParameter id="30" widget="TEXT_FIELD" defaultValue="&quot;XXXX&quot;" name="password" type="java.lang.String" userID="FLX" flexoID="74" />
+    <GenericBehaviourParameter id="30" widget="TEXT_FIELD" defaultValue="&quot;d7559470d5a58122875a31f5cc082caf67e18677&quot;" name="password" type="java.lang.String" userID="FLX" flexoID="74" />
   </CreationScheme>
   <ActionScheme id="31" visibility="Public" name="recherche" width="800" label="recherche" height="600" userID="FLX" flexoID="25">
     <BehaviourControlGraph_Sequence id="32" userID="FLX" flexoID="99">

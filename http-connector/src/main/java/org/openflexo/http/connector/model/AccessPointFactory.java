@@ -38,18 +38,14 @@
 
 package org.openflexo.http.connector.model;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.openflexo.connie.exception.NullReferenceException;
-import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.PamelaResourceModelFactory;
 import org.openflexo.foundation.action.FlexoUndoManager;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
-import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
 import org.openflexo.foundation.resource.PamelaResourceImpl.IgnoreLoadingEdits;
 import org.openflexo.http.connector.fml.CreateHttpResourceParameter;
-import org.openflexo.http.connector.fml.HttpVirtualModelInitializer;
+import org.openflexo.http.connector.fml.HttpInitializer;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializerAction;
 import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.model.converter.RelativePathResourceConverter;
@@ -97,24 +93,24 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 	 * @param evaluationContext
 	 * @return
 	 */
-	public void initializeModel(AccessPoint accessPoint, HttpVirtualModelInitializer creationScheme,
-			List<CreateHttpResourceParameter> parameters, RunTimeEvaluationContext evaluationContext) {
+	public void initializeModel(AccessPoint accessPoint, HttpInitializer creationScheme, List<CreateHttpResourceParameter> parameters,
+			RunTimeEvaluationContext evaluationContext) {
 
 		System.out.println("initializeModel for AccessPoint=" + accessPoint);
 
 		HttpVirtualModelInitializerAction action;
 
-		if (evaluationContext instanceof FlexoBehaviourAction) {
+		/*if (evaluationContext instanceof FlexoBehaviourAction) {
 			action = HttpVirtualModelInitializerAction.actionType.makeNewEmbeddedAction(accessPoint, null,
 					(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
 		}
 		else {
 			action = HttpVirtualModelInitializerAction.actionType.makeNewAction(accessPoint, null, evaluationContext.getEditor());
 		}
-
+		
 		action.setFactory(this);
 		action.setInitializer(creationScheme);
-
+		
 		if (creationScheme != null) {
 			int i = 0;
 			for (CreateHttpResourceParameter parameter : parameters) {
@@ -127,10 +123,10 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 				action.setParameterValue(creationScheme.getParameters().get(i), paramValue);
 				i++;
 			}
-
+		
 		}
-
-		action.doAction();
+		
+		action.doAction();*/
 
 		/*HttpVirtualModelInstance virtualModelInstance = newInstance(HttpVirtualModelInstance.class, accessPoint, supportFactory);
 		virtualModelInstance.setVirtualModel(accessPoint.getVirtualModel());

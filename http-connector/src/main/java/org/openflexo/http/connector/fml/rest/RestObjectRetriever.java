@@ -40,9 +40,11 @@ package org.openflexo.http.connector.fml.rest;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.fml.AbstractActionScheme;
+import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
@@ -52,8 +54,8 @@ import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * This behaviour is the specification of a REST request whose purpose it to obtain all informations stored by a RestFlexoConceptInstance (a
- * "distant" object represented by an instance of FlexoConcept)
+ * This behaviour is the specification of a REST request whose purpose it to obtain all informations stored by a
+ * {@link RestFlexoConceptInstance} (a "distant" object reflected by an instance of {@link FlexoConcept})
  * 
  * @author sylvain
  *

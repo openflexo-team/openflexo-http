@@ -52,29 +52,48 @@ import org.openflexo.foundation.action.NotImplementedException;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.AbstractActionSchemeAction;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport;
 import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
-import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.localization.LocalizedDelegate;
 
 /**
- * {@link FlexoAction} executing a {@link RestObjectRetriever} behaviour The focused object is the {@link RestVirtualModelInstance}
+ * Provides execution environment of a {@link RestObjectRetriever} on a given {@link RestFlexoConceptInstance} as a {@link FlexoAction}
+ *
+ * An {@link RestObjectRetrieverAction} represents the execution (in the "instances" world) of an {@link RestObjectRetriever}.<br>
+ * To be used and executed on Openflexo platform, it is wrapped in a {@link FlexoAction}.<br>
  * 
  * @author sylvain
- * 
  */
 public class RestObjectRetrieverAction
 		extends AbstractActionSchemeAction<RestObjectRetrieverAction, RestObjectRetriever, RestFlexoConceptInstance> {
 
 	private static final Logger logger = Logger.getLogger(RestObjectRetrieverAction.class.getPackage().getName());
 
-	private RestObjectRetriever retrieverBehaviour;
-	private HttpFlexoConceptInstance<JsonSupport> newFlexoConceptInstance;
+	/**
+	 * Constructor to be used for creating a new action without factory
+	 * 
+	 * @param flexoBehaviour
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param editor
+	 */
+	public RestObjectRetrieverAction(RestObjectRetriever behaviour, RestFlexoConceptInstance focusedObject,
+			Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
+		super(behaviour, focusedObject, globalSelection, editor);
+	}
 
-	RestObjectRetrieverAction(RestFlexoConceptInstance focusedObject, Vector<VirtualModelInstanceObject> globalSelection,
-			FlexoEditor editor) {
-		super(actionType, focusedObject, globalSelection, editor);
+	/**
+	 * Constructor to be used for creating a new action as an action embedded in another one
+	 * 
+	 * @param flexoBehaviour
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param ownerAction
+	 *            Action in which action to be created will be embedded
+	 */
+	public RestObjectRetrieverAction(RestObjectRetriever behaviour, RestFlexoConceptInstance focusedObject,
+			Vector<VirtualModelInstanceObject> globalSelection, FlexoAction<?, ?, ?> ownerAction) {
+		super(behaviour, focusedObject, globalSelection, ownerAction);
 	}
 
 	@Override
@@ -90,11 +109,11 @@ public class RestObjectRetrieverAction
 		// logger.info("Performing REST request to reinstantiate " + getFlexoBehaviour().getFlexoConcept());
 
 		try {
-			String url = getRetrieverBehaviour().getUrl().getBindingValue(getFocusedObject());
+			String url = getFlexoBehaviour().getUrl().getBindingValue(getFocusedObject());
 			logger.info("Executing REST request " + url);
 
 			JsonSupport retrievedSupport = getFocusedObject().getVirtualModelInstance().retrieveSupport(url,
-					getRetrieverBehaviour().getPointer());
+					getFlexoBehaviour().getPointer());
 
 			getFocusedObject().setSupport(retrievedSupport);
 
@@ -111,31 +130,9 @@ public class RestObjectRetrieverAction
 
 	}
 
-	@Override
+	/*@Override
 	public RestVirtualModelInstance retrieveVirtualModelInstance() {
 		return getFocusedObject().getVirtualModelInstance();
-	}
-
-	public RestObjectRetriever getRetrieverBehaviour() {
-		return retrieverBehaviour;
-	}
-
-	public void setRetrieverBehaviour(RestObjectRetriever retriever) {
-		if ((retriever == null && this.retrieverBehaviour != null) || (retriever != null && !retriever.equals(this.retrieverBehaviour))) {
-			RestObjectRetriever oldValue = this.retrieverBehaviour;
-			this.retrieverBehaviour = retriever;
-			getPropertyChangeSupport().firePropertyChange("retriever", oldValue, retriever);
-		}
-	}
-
-	@Override
-	public RestObjectRetriever getFlexoBehaviour() {
-		return getRetrieverBehaviour();
-	}
-
-	@Override
-	public HttpFlexoConceptInstance<JsonSupport> getFlexoConceptInstance() {
-		return newFlexoConceptInstance;
-	}
+	}*/
 
 }

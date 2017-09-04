@@ -120,9 +120,9 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 	@Setter(CREATION_SCHEME_URI_KEY)
 	public void _setCreationSchemeURI(String creationSchemeURI);
 	
-	public HttpVirtualModelInitializer getCreationScheme();
+	public HttpInitializer getCreationScheme();
 	
-	public void setCreationScheme(HttpVirtualModelInitializer creationScheme);
+	public void setCreationScheme(HttpInitializer creationScheme);
 	
 	@Getter(value = PARAMETERS_KEY, cardinality = Cardinality.LIST, inverse = CreateParameter.OWNER_KEY)
 	@XMLElement
@@ -139,7 +139,7 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 	@Remover(PARAMETERS_KEY)
 	public void removeFromParameters(CreateParameter aParameter);
 	
-	public List<HttpVirtualModelInitializer> getAvailableCreationSchemes();*/
+	public List<HttpInitializer> getAvailableCreationSchemes();*/
 
 	@Override
 	HttpTechnologyAdapter getModelSlotTechnologyAdapter();
@@ -170,7 +170,7 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 		private DataBinding<String> user;
 		private DataBinding<String> password;
 
-		/*private HttpVirtualModelInitializer creationScheme;
+		/*private HttpInitializer creationScheme;
 		private String _creationSchemeURI;
 		private List<CreateParameter> parameters = null;*/
 
@@ -283,25 +283,25 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 		@Override
 		public void _setCreationSchemeURI(String uri) {
 			if (getVirtualModelLibrary() != null) {
-				creationScheme = (HttpVirtualModelInitializer) getVirtualModelLibrary().getFlexoBehaviour(uri, true);
+				creationScheme = (HttpInitializer) getVirtualModelLibrary().getFlexoBehaviour(uri, true);
 			}
 			_creationSchemeURI = uri;
 		}
 		
 		@Override
-		public HttpVirtualModelInitializer getCreationScheme() {
+		public HttpInitializer getCreationScheme() {
 		
 			if (creationScheme == null && _creationSchemeURI != null && getVirtualModelLibrary() != null) {
-				creationScheme = (HttpVirtualModelInitializer) getVirtualModelLibrary().getFlexoBehaviour(_creationSchemeURI, true);
+				creationScheme = (HttpInitializer) getVirtualModelLibrary().getFlexoBehaviour(_creationSchemeURI, true);
 				updateParameters();
 			}
 			return creationScheme;
 		}
 		
 		@Override
-		public void setCreationScheme(HttpVirtualModelInitializer creationScheme) {
+		public void setCreationScheme(HttpInitializer creationScheme) {
 			if (this.creationScheme != creationScheme) {
-				HttpVirtualModelInitializer oldValue = this.creationScheme;
+				HttpInitializer oldValue = this.creationScheme;
 				this.creationScheme = creationScheme;
 				if (creationScheme != null) {
 					_creationSchemeURI = creationScheme.getURI();
@@ -316,10 +316,10 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 		}
 		
 		@Override
-		public List<HttpVirtualModelInitializer> getAvailableCreationSchemes() {
+		public List<HttpInitializer> getAvailableCreationSchemes() {
 		
 			if (getAccessedVirtualModel() != null) {
-				return getAccessedVirtualModel().getFlexoBehaviours(HttpVirtualModelInitializer.class);
+				return getAccessedVirtualModel().getFlexoBehaviours(HttpInitializer.class);
 			}
 			return null;
 		}

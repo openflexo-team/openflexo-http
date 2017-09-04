@@ -37,22 +37,18 @@ package org.openflexo.http.connector.fml.rest;
 
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.type.ParameterizedTypeImpl;
-import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
-import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
-import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.fml.HttpRequestBehaviour;
-import org.openflexo.http.connector.fml.HttpRequestBehaviourAction;
+import org.openflexo.http.connector.fml.HttpRequestBehaviourActionFactory;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.model.annotations.DefineValidationRule;
@@ -132,14 +128,8 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 		}
 
 		@Override
-		public ActionSchemeActionType getActionFactory(FlexoConceptInstance fci) {
-			return new ActionSchemeActionType(this, fci) {
-				@Override
-				public ActionSchemeAction makeNewAction(FlexoConceptInstance focusedObject,
-						Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
-					return new HttpRequestBehaviourAction(this, focusedObject, globalSelection, editor);
-				}
-			};
+		public HttpRequestBehaviourActionFactory getActionFactory(FlexoConceptInstance fci) {
+			return new HttpRequestBehaviourActionFactory(this, (HttpVirtualModelInstance<?>) fci);
 		}
 
 		@Override

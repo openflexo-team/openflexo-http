@@ -436,11 +436,10 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 					// Now we should execute CreationScheme
 					// System.out.println("Executing FML: " + getCreationScheme().getFMLRepresentation());
-					CreationSchemeAction creationSchemeAction = CreationSchemeAction.actionType.makeNewEmbeddedAction(null, null,
+
+					CreationSchemeAction creationSchemeAction = new CreationSchemeAction(getCreationScheme(), null, null,
 							(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
-					// creationSchemeAction.setVirtualModelInstance(vmInstance);
 					creationSchemeAction.initWithFlexoConceptInstance(data);
-					creationSchemeAction.setCreationScheme(getCreationScheme());
 					for (CreateHttpResourceParameter p : getParameters()) {
 						FlexoBehaviourParameter param = p.getParam();
 						Object value = p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext);

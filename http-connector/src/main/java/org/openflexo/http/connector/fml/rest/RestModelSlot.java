@@ -27,6 +27,7 @@ import org.openflexo.foundation.fml.annotations.DeclareFlexoBehaviours;
 import org.openflexo.foundation.fml.annotations.DeclareFlexoRoles;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.HttpModelSlot;
+import org.openflexo.http.connector.fml.HttpInitializer;
 import org.openflexo.http.connector.fml.rest.RestModelSlot.RestModelSlotImpl;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.ContentSupportFactory;
@@ -47,7 +48,7 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 @ImplementationClass(RestModelSlotImpl.class)
 @DeclareFlexoRoles({ RestObjectRole.class })
 @DeclareEditionActions({ CreateHttpRestResource.class })
-@DeclareFlexoBehaviours({ RestObjectRetriever.class, JsonRequestBehaviour.class })
+@DeclareFlexoBehaviours({ HttpInitializer.class, RestObjectRetriever.class, JsonRequestBehaviour.class })
 @DeclareActorReferences({ RestObjectActorReference.class })
 public interface RestModelSlot extends HttpModelSlot<RestVirtualModelInstance> {
 

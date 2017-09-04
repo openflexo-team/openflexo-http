@@ -38,27 +38,32 @@
 
 package org.openflexo.http.connector.fml;
 
-import org.openflexo.foundation.fml.AbstractCreationScheme;
+import org.openflexo.foundation.fml.AbstractActionScheme;
 import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
+import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
 
+/**
+ * Behaviour beeing called when loading an existing {@link HttpVirtualModelInstance} (which has been serialized)<br>
+ * 
+ * This is a hook to perform required computation on a {@link HttpVirtualModelInstance} at reload.<br>
+ * Note that related {@link VirtualModel} should not define more than one {@link HttpInitializer}
+ * 
+ * @author sylvain
+ *
+ */
 @ModelEntity
-@ImplementationClass(HttpVirtualModelInitializer.HTTPVirtualModelInitializerImpl.class)
+@ImplementationClass(HttpInitializer.HttpVirtualModelInitializerImpl.class)
 @XMLElement
-@FML("HttpVirtualModelInitializer")
-@Deprecated
-public interface HttpVirtualModelInitializer extends AbstractCreationScheme, TechnologySpecificFlexoBehaviour {
+@FML("HttpInitializer")
+public interface HttpInitializer extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
 
-	public static abstract class HTTPVirtualModelInitializerImpl extends AbstractCreationSchemeImpl implements HttpVirtualModelInitializer {
-
-		@Override
-		protected HttpVirtualModelInitializerBindingModel makeBindingModel() {
-			return new HttpVirtualModelInitializerBindingModel(this);
-		}
+	public static abstract class HttpVirtualModelInitializerImpl extends AbstractActionSchemeImpl implements HttpInitializer {
 
 		@Override
 		public HttpTechnologyAdapter getSpecificTechnologyAdapter() {
@@ -69,4 +74,5 @@ public interface HttpVirtualModelInitializer extends AbstractCreationScheme, Tec
 		}
 
 	}
+
 }

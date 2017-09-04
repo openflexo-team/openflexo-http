@@ -74,9 +74,8 @@ public class RestObjectRetrieverTask extends CoreFlexoTask {
 			logger.warning("More than one RestObjectRetriever for " + concept + " Using first one.");
 		}
 		if (retrievers.size() > 0) {
-			RestObjectRetrieverAction action = RestObjectRetrieverAction.actionType.makeNewAction(restFlexoConceptInstance, null,
+			RestObjectRetrieverAction action = new RestObjectRetrieverAction(retrievers.get(0), restFlexoConceptInstance, null,
 					getEditor());
-			action.setRetrieverBehaviour(retrievers.get(0));
 			action.doAction();
 		}
 

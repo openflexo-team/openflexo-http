@@ -37,47 +37,74 @@ package org.openflexo.http.connector.fml;
 
 import java.util.List;
 import java.util.logging.Logger;
+
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.action.FlexoAction;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
-import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
-import org.openflexo.foundation.fml.rt.action.ActionSchemeActionType;
+import org.openflexo.foundation.fml.rt.action.AbstractActionSchemeAction;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 
 /**
  * Created by charlie on 21/03/2017.
  */
-public class HttpRequestBehaviourAction extends ActionSchemeAction {
+public class HttpRequestBehaviourAction
+		extends AbstractActionSchemeAction<HttpRequestBehaviourAction, HttpRequestBehaviour<?, ?>, HttpVirtualModelInstance<?>> {
 
-	private static final Logger logger = Logger.getLogger(ActionSchemeAction.class.getPackage().getName());
+	@SuppressWarnings("unused")
+	private static final Logger logger = Logger.getLogger(HttpRequestBehaviourAction.class.getPackage().getName());
 
-	public HttpRequestBehaviourAction(
-			ActionSchemeActionType actionType, FlexoConceptInstance focusedObject,
-			List<VirtualModelInstanceObject> globalSelection, FlexoEditor editor
-	) {
-		super(actionType, focusedObject, globalSelection, editor);
+	/**
+	 * Constructor to be used with a factory
+	 * 
+	 * @param actionFactory
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param editor
+	 */
+	public HttpRequestBehaviourAction(HttpRequestBehaviourActionFactory actionFactory, HttpVirtualModelInstance<?> focusedObject,
+			List<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
+		super(actionFactory, focusedObject, globalSelection, editor);
 	}
 
-	@Override
-	public HttpRequestBehaviour getActionScheme() {
-		return (HttpRequestBehaviour) super.getActionScheme();
+	/**
+	 * Constructor to be used for creating a new action without factory
+	 * 
+	 * @param flexoBehaviour
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param editor
+	 */
+	public HttpRequestBehaviourAction(HttpRequestBehaviour<?, ?> behaviour, HttpVirtualModelInstance<?> focusedObject,
+			List<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
+		super(behaviour, focusedObject, globalSelection, editor);
 	}
 
+	/**
+	 * Constructor to be used for creating a new action as an action embedded in another one
+	 * 
+	 * @param flexoBehaviour
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param ownerAction
+	 *            Action in which action to be created will be embedded
+	 */
+	public HttpRequestBehaviourAction(HttpRequestBehaviour<?, ?> behaviour, HttpVirtualModelInstance<?> focusedObject,
+			List<VirtualModelInstanceObject> globalSelection, FlexoAction<?, ?, ?> ownerAction) {
+		super(behaviour, focusedObject, globalSelection, ownerAction);
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void doAction(Object context) throws FlexoException {
-		HttpRequestBehaviour actionScheme = getActionScheme();
-		FlexoConceptInstance instance = getFlexoConceptInstance();
-		if (actionScheme != null && instance instanceof HttpVirtualModelInstance) {
-			try {
-				returnedValue = actionScheme.execute((HttpVirtualModelInstance) instance, this);
-			} catch (FlexoException e) {
-				throw e;
-			} catch (Exception e) {
-				throw new FlexoException(e);
-			}
-		} else {
-			logger.warning("Could not perform action " + actionScheme + " on " + instance);
+		try {
+			returnedValue = ((HttpRequestBehaviour) getFlexoBehaviour()).execute((HttpVirtualModelInstance<?>) getFlexoConceptInstance(),
+					this);
+		} catch (FlexoException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new FlexoException(e);
 		}
 	}
+
 }

@@ -38,93 +38,48 @@
 
 package org.openflexo.http.connector.fml;
 
-import java.util.Vector;
+import java.util.List;
 import java.util.logging.Logger;
 
-import org.openflexo.connie.BindingVariable;
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.FlexoObject.FlexoObjectImpl;
 import org.openflexo.foundation.action.FlexoAction;
-import org.openflexo.foundation.action.FlexoActionFactory;
-import org.openflexo.foundation.action.InvalidParametersException;
-import org.openflexo.foundation.action.NotImplementedException;
-import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
-import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
-import org.openflexo.http.connector.HttpModelSlot.Format;
-import org.openflexo.http.connector.HttpTechnologyAdapter;
-import org.openflexo.http.connector.model.AccessPoint;
-import org.openflexo.http.connector.model.AccessPointFactory;
-import org.openflexo.http.connector.model.ContentSupportFactory;
+import org.openflexo.foundation.fml.rt.action.AbstractActionSchemeAction;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.http.connector.model.rest.JsonSupportFactory;
-import org.openflexo.http.connector.model.xmlrpc.MapSupportFactory;
-import org.openflexo.localization.LocalizedDelegate;
 
 /**
- * Tooling for HttpVirtualModelInitializer in HTTP connector<br>
- * This feature is wrapped into a {@link FlexoAction}<br>
- * The focused object is an AccessPoint
+ * Provides execution environment of a {@link HttpInitializer} on a given {@link HttpVirtualModelInstance} as a {@link FlexoAction}
  * 
  * @author sylvain
- * 
+ *
  */
-@Deprecated
 public class HttpVirtualModelInitializerAction
-		extends FlexoBehaviourAction<HttpVirtualModelInitializerAction, HttpVirtualModelInitializer, AccessPoint> {
+		extends AbstractActionSchemeAction<HttpVirtualModelInitializerAction, HttpInitializer, HttpVirtualModelInstance<?>> {
 
+	@SuppressWarnings("unused")
 	private static final Logger logger = Logger.getLogger(HttpVirtualModelInitializerAction.class.getPackage().getName());
 
-	public static FlexoActionFactory<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject> actionType = new FlexoActionFactory<HttpVirtualModelInitializerAction, AccessPoint, VirtualModelInstanceObject>(
-			"initialize_http_access_point", FlexoActionFactory.newMenu, FlexoActionFactory.defaultGroup, FlexoActionFactory.ADD_ACTION_TYPE) {
-
-		/**
-		 * Factory method
-		 */
-		@Override
-		public HttpVirtualModelInitializerAction makeNewAction(AccessPoint focusedObject,
-				Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
-			return new HttpVirtualModelInitializerAction(focusedObject, globalSelection, editor);
-		}
-
-		@Override
-		public boolean isVisibleForSelection(AccessPoint object, Vector<VirtualModelInstanceObject> globalSelection) {
-			return false;
-		}
-
-		@Override
-		public boolean isEnabledForSelection(AccessPoint object, Vector<VirtualModelInstanceObject> globalSelection) {
-			return true;
-		}
-
-	};
-
-	static {
-		FlexoObjectImpl.addActionForClass(actionType, AccessPoint.class);
-	}
-
-	HttpVirtualModelInitializerAction(AccessPoint focusedObject, Vector<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
-		super(actionType, focusedObject, globalSelection, editor);
+	/**
+	 * Constructor to be used for creating a new action without factory
+	 * 
+	 * @param flexoBehaviour
+	 * @param focusedObject
+	 * @param globalSelection
+	 * @param editor
+	 */
+	public HttpVirtualModelInitializerAction(HttpInitializer behaviour, HttpVirtualModelInstance<?> focusedObject,
+			List<VirtualModelInstanceObject> globalSelection, FlexoEditor editor) {
+		super(behaviour, focusedObject, globalSelection, editor);
 	}
 
 	@Override
-	public LocalizedDelegate getLocales() {
-		if (getServiceManager() != null) {
-			return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class).getLocales();
+	protected void doAction(Object context) throws FlexoException {
+		if (getActionScheme() != null && getActionScheme().evaluateCondition(getFlexoConceptInstance())) {
+			executeControlGraph();
 		}
-		return super.getLocales();
-	}
 
-	private HttpVirtualModelInstance httpVirtualModelInstance;
-	private HttpVirtualModelInitializer initializer;
-	private AccessPointFactory factory;
-
-	@Override
-	protected void doAction(Object context) throws NotImplementedException, InvalidParametersException, FlexoException {
-		logger.info("On initialise un HTTPVirtualModelInstance avec " + getFlexoBehaviour());
-
-		ContentSupportFactory<?, ?> supportFactory = null;
+		/*ContentSupportFactory<?, ?> supportFactory = null;
 		Format format = getFocusedObject().getFormat();
 		if (format == null || format == Format.json) {
 			supportFactory = new JsonSupportFactory("url");
@@ -135,71 +90,18 @@ public class HttpVirtualModelInitializerAction
 		else {
 			throw new RuntimeException("AccessPoint ModelSlot format " + format + " isn't supported");
 		}
-
+		
 		if (getFocusedObject().getModelSlot() != null) {
 			httpVirtualModelInstance = getFocusedObject().getModelSlot().makeHttpVirtualModelInstance(getFocusedObject(), supportFactory,
 					getServiceManager());
 			getFocusedObject().setInstance(httpVirtualModelInstance);
 			executeControlGraph();
 		}
-
+		
 		else {
 			logger.warning("No model slot defined for access point");
-		}
+		}*/
 
-		// httpVirtualModelInstance = factory.newInstance(HttpVirtualModelInstance.class, getFocusedObject(), getServiceManager(),
-		// supportFactory);
-		// httpVirtualModelInstance.setVirtualModel(getFocusedObject().getModelSlot().getAccessedVirtualModel());
-
-	}
-
-	@Override
-	public HttpVirtualModelInstance retrieveVirtualModelInstance() {
-		return httpVirtualModelInstance;
-	}
-
-	@Override
-	public Object getValue(BindingVariable variable) {
-		if (variable.getVariableName().equals(HttpVirtualModelInitializerBindingModel.ACCESS_POINT)) {
-			System.out.println("Tiens faudrait retourner le AccessPoint");
-			return getFocusedObject();
-		}
-		return super.getValue(variable);
-	}
-
-	public AccessPointFactory getFactory() {
-		return factory;
-	}
-
-	public void setFactory(AccessPointFactory factory) {
-		if ((factory == null && this.factory != null) || (factory != null && !factory.equals(this.factory))) {
-			AccessPointFactory oldValue = this.factory;
-			this.factory = factory;
-			getPropertyChangeSupport().firePropertyChange("factory", oldValue, factory);
-		}
-	}
-
-	public HttpVirtualModelInitializer getInitializer() {
-		return initializer;
-	}
-
-	public void setInitializer(HttpVirtualModelInitializer initializer) {
-		if ((initializer == null && this.initializer != null) || (initializer != null && !initializer.equals(this.initializer))) {
-			HttpVirtualModelInitializer oldValue = this.initializer;
-			this.initializer = initializer;
-			getPropertyChangeSupport().firePropertyChange("initializer", oldValue, initializer);
-		}
-	}
-
-	@Override
-	public HttpVirtualModelInitializer getFlexoBehaviour() {
-		return getInitializer();
-	}
-
-	@Override
-	public FlexoConceptInstance getFlexoConceptInstance() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
