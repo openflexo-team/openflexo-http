@@ -1,4 +1,4 @@
-import { Component } from "./component";
+import { Component } from "./Component";
 import { mdlUpgradeElement } from "./utils";
 
 export class Icon implements Component {

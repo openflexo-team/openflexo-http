@@ -1,0 +1,11 @@
+dependencies {
+
+    compile project(':http-server')
+    compile flexoFoundation()
+
+    compile ginaConnector()
+
+    testCompile testUtils()
+    testCompile flexoFoundationTest()
+    
+}

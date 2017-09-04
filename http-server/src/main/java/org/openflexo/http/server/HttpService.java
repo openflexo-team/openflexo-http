@@ -4,6 +4,7 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.StaticHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 			ta.activate();
 		}
 
+		// TODO Why do I need to do this ?
 		for (FlexoResourceCenter<?> resourceCenter : serviceManager.getResourceCenterService().getResourceCenters()) {
 			for (TechnologyAdapter technologyAdapter : technologyAdapters) {
 				logger.info("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
@@ -112,6 +114,10 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
+	}
+
+	private void failed(RoutingContext context) {
+
 	}
 
 	public TechnologyAdapterRouteService getTechnologyAdapterRestService() {

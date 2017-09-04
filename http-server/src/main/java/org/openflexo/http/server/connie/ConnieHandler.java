@@ -149,23 +149,24 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			try {
 				ConnieMessage message = ConnieMessage.read(frame.textData());
 				if (message instanceof EvaluationRequest) {
-					EvaluationRequest request = (EvaluationRequest) message;
-					respondToEvaluationRequest(request);
+					respondToEvaluationRequest((EvaluationRequest) message);
+				}
+				if (message instanceof ListeningRequest) {
+					respondToListeningRequest((ListeningRequest) message);
 				}
 				if (message instanceof AssignationRequest) {
-					AssignationRequest request = (AssignationRequest) message;
-					respondToAssignationRequest(request);
+					respondToAssignationRequest((AssignationRequest) message);
 				}
 
 			} catch (DecodeException e) {
 				String message = "Can't decode request: " + e.getMessage();
 				System.out.println(message);
-				socket.write(EvaluationResponse.error(message).toBuffer());
+				socket.write(Response.error(message).toBuffer());
 			}
 		}
 
 		private void respondToEvaluationRequest(EvaluationRequest request) {
-			EvaluationResponse response = new EvaluationResponse(request.id);
+			Response response = new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
@@ -173,31 +174,51 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				if (context != null) {
 					try {
 						Object value = binding.getBindingValue(context);
-						response.result = taRouteService.getSerializer().toJson(value, request.detailed);
-
-						BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
-						if (listener == null) {
-							listener = new BindingValueChangeListener<Object>(binding, context) {
-								@Override
-								public void bindingValueChanged(Object source, Object newValue) {
-									String value = newValue != null ? newValue.toString() : "null";;
-									sendChangeEvent(runtimeBinding, value);
-								}
-							};
-							listener.startObserving();
-						}
-						listenedBindings.put(runtimeBinding, listener);
-
+						response.result = toJson(value, request.detailed);
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					}
 				}
 				else {
 					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
 					System.out.println(error);
-					socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+					socket.write(Response.error(request.id, error).toBuffer());
+				}
+
+			}
+			else {
+				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+				System.out.println(response.error);
+			}
+			socket.write(response.toBuffer());
+		}
+
+		private void respondToListeningRequest(ListeningRequest request) {
+			Response response = new Response(request.id);
+			RuntimeBindingId runtimeBinding = request.runtimeBinding;
+			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
+			if (binding.isValid()) {
+				BindingEvaluationContext context = findObject(runtimeBinding.runtimeUrl, BindingEvaluationContext.class);
+				if (context != null) {
+					BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
+					if (listener == null) {
+						listener = new BindingValueChangeListener<Object>(binding, context) {
+							@Override
+							public void bindingValueChanged(Object source, Object newValue) {
+								sendChangeEvent(runtimeBinding, newValue);
+							}
+						};
+						listener.startObserving();
+					}
+					listenedBindings.put(runtimeBinding, listener);
+
+				}
+				else {
+					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
+					System.out.println(error);
+					socket.write(Response.error(request.id, error).toBuffer());
 				}
 
 			}
@@ -208,69 +229,94 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void respondToAssignationRequest(AssignationRequest request) {
-			EvaluationResponse response = new EvaluationResponse(request.id);
+			Response response = new Response(request.id);
 
 			RuntimeBindingId left = request.left;
 			DataBinding leftBinding = getOrCreateBinding(left.binding);
 
-			RuntimeBindingId right = request.right;
-			DataBinding valueBinding = getOrCreateBinding(right.binding);
-
-			if (leftBinding.isValid() && valueBinding.isValid()) {
+			if (leftBinding.isValid()) {
 				BindingEvaluationContext leftContext = findObject(left.runtimeUrl, BindingEvaluationContext.class);
-				BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
-				if (leftContext != null && rightContext != null) {
+
+				if (leftContext != null) {
+
+					Object newValue = null;
+					RuntimeBindingId right = request.right;
+					if (right != null) {
+						// uses binding for new value
+						DataBinding valueBinding = getOrCreateBinding(right.binding);
+						if (valueBinding.isValid()) {
+							BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
+							if (rightContext != null) {
+								try {
+									Object rightValue = valueBinding.getBindingValue(rightContext);
+									leftBinding.setBindingValue(rightValue, leftContext);
+									response.result = toJson(rightValue, request.detailed);
+
+								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+									 String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
+									socket.write(Response.error(request.id, error).toBuffer());
+								} catch (NotSettableContextException e) {
+									String error = "Can't set expression '" + request.left.binding + "'";
+									socket.write(Response.error(request.id, error).toBuffer());
+								}
+							}
+							else {
+								StringBuilder message = new StringBuilder("Invalid runtime ");
+								message.append("'");
+								message.append(request.right.runtimeUrl);
+								message.append("': ");
+								message.append(valueBinding.invalidBindingReason());
+								response.error = message.toString();
+							}
+
+						}
+						else {
+							StringBuilder message = new StringBuilder("Invalid binding ");
+							message.append("'");
+							message.append(request.right.binding.expression);
+							message.append("': ");
+							message.append(valueBinding.invalidBindingReason());
+							response.error = message.toString();
+						}
+					}
+					else {
+						// uses string literal for new value
+						newValue = request.value;
+
+					}
+
+					// assigns the new value
 					try {
-						Object rightValue = valueBinding.getBindingValue(rightContext);
-						leftBinding.setBindingValue(rightValue, leftContext);
-						response.result = taRouteService.getSerializer().toJson(rightValue, request.detailed);
+						leftBinding.setBindingValue(newValue, leftContext);
+						response.result = toJson(newValue, request.detailed);
 
 					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					} catch (NotSettableContextException e) {
 						String error = "Can't set expression '" + request.left.binding + "'";
-						socket.write(EvaluationResponse.error(request.id, error).toBuffer());
+						socket.write(Response.error(request.id, error).toBuffer());
 					}
-				}
-				else {
+
+				} else {
 					StringBuilder message = new StringBuilder("Invalid runtime ");
-					int length = message.length();
-					if (leftContext == null) {
-						message.append("'");
-						message.append(request.left.runtimeUrl);
-						message.append("': ");
-						message.append(leftBinding.invalidBindingReason());
-					}
-					if (rightContext == null) {
-						if (message.length() > length) message.append(" and ");
-						message.append("'");
-						message.append(request.right.runtimeUrl);
-						message.append("': ");
-						message.append(valueBinding.invalidBindingReason());
-					}
+					message.append("'");
+					message.append(request.left.runtimeUrl);
+					message.append("': ");
+					message.append(leftBinding.invalidBindingReason());
 					response.error = message.toString();
 				}
 
-			}
-			else {
+
+			} else {
 				StringBuilder message = new StringBuilder("Invalid binding ");
-				int length = message.length();
-				if (!leftBinding.isValid()) {
-					message.append("'");
-					message.append(request.left.binding.expression);
-					message.append("': ");
-					message.append(leftBinding.invalidBindingReason());
-				}
-				if (!valueBinding.isValid()) {
-					if (message.length() > length) message.append(" and ");
-					message.append("'");
-					message.append(request.right.binding.expression);
-					message.append("': ");
-					message.append(valueBinding.invalidBindingReason());
-				}
+				message.append("'");
+				message.append(request.left.binding.expression);
+				message.append("': ");
+				message.append(leftBinding.invalidBindingReason());
 				response.error = message.toString();
 			}
+
 			socket.write(response.toBuffer());
 		}
 
@@ -287,8 +333,12 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			unregister(this);
 		}
 
-		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, String newValue) {
-			socket.write(new ChangeEvent(runtimeBindingId, newValue).toBuffer());
+		private void sendChangeEvent(RuntimeBindingId runtimeBindingId, Object newValue) {
+			socket.write(new ChangeEvent(runtimeBindingId, toJson(newValue, false)).toBuffer());
 		}
+	}
+
+	private Object toJson(Object object, boolean detailed) {
+		return taRouteService.getSerializer().toJson(object, detailed);
 	}
 }

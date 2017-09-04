@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, ChangeEvent, runtimeBinding } from "../api/Api"
+import { Api, RuntimeBindingId, BindingId, ChangeEvent, createRuntimeBinding } from "../api/Api"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
@@ -13,23 +13,27 @@ export class BoundTextField implements Component {
 
     container: HTMLDivElement;
 
-    valueBinding: RuntimeBindingId;
+    private runtimeBinding: RuntimeBindingId<string>|null = null;
 
+    private readonly changelistener = (event) => this.updateValue(event.value);
+    
     constructor(
-        private api: Api, 
-        private binding: RuntimeBindingId,
-        private label: PhrasingCategory|null = null,
-        private floatingLabel: boolean = false,
-        private invalid: boolean = false,
-        private id: string|null = null
+        private readonly api: Api, 
+        private binding: BindingId<string>,
+        private readonly label: PhrasingCategory|null = null,
+        private runtime: string|null = null,
+        private readonly floatingLabel: boolean = false,
+        private readonly invalid: boolean = false,
+        private readonly id: string|null = null
      ) {
         this.create();
+        this.updateRuntime(runtime);
     }
 
     create(): void {
         let actualId = this.id !== null ? this.id : "boundTextField"+idSeed++;
         this.textField = new TextField(
-            actualId, this.binding.binding.expression, this.label, 
+            actualId, this.binding.expression, this.label, 
             this.floatingLabel, this.invalid
         );
 
@@ -37,27 +41,37 @@ export class BoundTextField implements Component {
         input.onchange = (e) => this.sendToServer(e);
         input.onblur = (e) => this.sendToServer(e);
 
-        this.valueBinding = runtimeBinding("", this.binding.binding.contextUrl, this.binding.runtimeUrl);
-        this.api.evaluate<string>(this.binding).then( value => {
-            input.value = value;
-        });
-
-        this.api.addChangeListener(this.binding, (e) => this.listenFromServer(e));
-
-        this.container = this.textField.container;
+        this.container = this.textField.container;        
     }    
 
-    listenFromServer(event: ChangeEvent) {
-        this.textField.input.value = event.value;
+    private sendToServer(e: any) {
+        if (this.runtimeBinding !== null) {
+            this.api.assign(this.runtimeBinding, this.textField.input.value, false).then(value => {
+                this.container.classList.remove("is-invalid");
+            }).catch(error => {
+                this.container.classList.add("is-invalid");
+            });
+        }
     }
 
-    sendToServer(e: any) {
-        this.valueBinding.binding.expression = "'" + this.textField.input.value + "'";
-        this.api.assign(this.binding, this.valueBinding, false).then(value => {
-            this.container.classList.remove("is-invalid");
-        }).catch(error => {
-            this.container.classList.add("is-invalid");
-        });
+    private updateValue(value: any) {
+        this.textField.input.value = value;
     }
 
+    updateRuntime(runtime: string|null):void {
+        if (this.runtimeBinding !== null) {
+            this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
+        }
+        this.runtimeBinding = null;
+        if (runtime !== null) {
+            this.binding.contextUrl = runtime; 
+            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
+            this.api.evaluate<string>(this.runtimeBinding).then( value => this.updateValue(value));
+            this.api.addChangeListener(this.runtimeBinding, this.changelistener);
+        }
+    }
+
+    setEnable(enable: boolean) {
+        this.textField.setEnable(enable);
+    }
 }

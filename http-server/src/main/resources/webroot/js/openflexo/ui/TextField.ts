@@ -20,11 +20,11 @@ export class TextField implements Component {
     input: HTMLInputElement;
 
     constructor(
-        private id: string,
+        private readonly id: string,
         private value: string|null = null,
         private label: PhrasingCategory|null = null,
-        private floatingLabel: boolean = false,
-        private invalid: boolean = false
+        private readonly floatingLabel: boolean = false,
+        private readonly invalid: boolean = false,
      ) {
         this.create();
     }
@@ -60,4 +60,8 @@ export class TextField implements Component {
 
         mdlUpgradeElement(this.container);
     }    
+
+    setEnable(enable: boolean) {
+        this.input.disabled = !enable;
+    }
 }

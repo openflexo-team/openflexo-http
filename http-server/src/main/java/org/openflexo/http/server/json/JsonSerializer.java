@@ -119,9 +119,13 @@ public class JsonSerializer {
 		for (JsonComplement complement : foundComplements) {
 			complements.add(complement);
 
-			ModelFactory factory = complement.getFactory();
-			if (factory != null && factory.getStringEncoder() != null) {
-				encoders.add(factory.getStringEncoder());
+			try {
+				ModelFactory factory = complement.getFactory();
+				if (factory != null && factory.getStringEncoder() != null) {
+					encoders.add(factory.getStringEncoder());
+				}
+			} catch (ModelDefinitionException e) {
+				// nothing to do
 			}
 		}
 
@@ -173,11 +177,11 @@ public class JsonSerializer {
 
 		} else {
 			JsonObject result = new JsonObject();
-			boolean identified = identifyObject(object, result);
+			identifyObject(object, result);
 			for (JsonComplement complement : complements) {
 				complement.identifyObject(this, object, result);
 			}
-			if (identified && !reference) {
+			if (!reference) {
 				describeObject(object, result, detailed);
 				for (JsonComplement complement : complements) {
 					complement.describeObject(this, object, result, detailed);
@@ -211,7 +215,7 @@ public class JsonSerializer {
 		return new JsonArray(list.stream().map((i) -> toJson(i, true, false)).collect(Collectors.toList()));
 	}
 
-	public boolean identifyObject(Object object, JsonObject result) {
+	private boolean identifyObject(Object object, JsonObject result) {
 		String id = IdUtils.getId(object);
 
 		if (object instanceof FMLObject) {
@@ -220,12 +224,12 @@ public class JsonSerializer {
 
 		if (id != null) {
 			result.put("id", id);
-			result.put("type", getType(object));
 			String url = IdUtils.getUrl(object, service);
 			if (url != null) { result.put("url", url); }
 			// Used for debugging purposes
 			//result.put("__debug_object__", object.toString());
 		}
+		result.put("type", getType(object));
 		return id != null;
 	}
 

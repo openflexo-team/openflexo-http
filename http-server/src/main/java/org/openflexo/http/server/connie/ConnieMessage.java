@@ -52,7 +52,8 @@ import io.vertx.core.json.Json;
 @JsonSubTypes({
 	@Type(value = EvaluationRequest.class, name = "EvaluationRequest"),
 	@Type(value = AssignationRequest.class, name = "AssignationRequest"),
-	@Type(value = EvaluationResponse.class, name = "EvaluationResponse"),
+	@Type(value = ListeningRequest.class, name = "ListeningRequest"),
+	@Type(value = Response.class, name = "Response"),
 	@Type(value = ChangeEvent.class, name = "ChangeEvent"),
 })
 public class ConnieMessage {

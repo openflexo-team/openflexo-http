@@ -36,9 +36,9 @@ export class Grid implements Component {
             this.container.classList.add("mdl-grid--no-spacing");
         }
 
-        for (let cell of this.cells) {
+        this.cells.forEach(cell => {
             this.container.appendChild(cell.container);
-        }
+        });
 
         mdlUpgradeElement(this.container);
     }    

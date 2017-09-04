@@ -1,5 +1,5 @@
 import { Description } from "./openflexo/api/general";
-import { Api, RuntimeBindingId, runtimeBinding, binding, ChangeEvent } from "./openflexo/api/Api";
+import { Api, RuntimeBindingId, createRuntimeBinding, ChangeEvent } from "./openflexo/api/Api";
 import {
     ResourceCenter, ContainedByResourceCenter, Resource
 } from "./openflexo/api/resource";
@@ -16,8 +16,8 @@ import { Tabs, Tab } from "./openflexo/ui/Tabs";
 
 const api = new Api();
 
-var leftBinding: RuntimeBindingId|null = null;
-var rightBinding: RuntimeBindingId|null = null;
+var leftBinding: RuntimeBindingId<any>|null = null;
+var rightBinding: RuntimeBindingId<any>|null = null;
 
 function getDataUrl(element : HTMLElement) {
     let current: HTMLElement|null = element;
@@ -71,7 +71,7 @@ function createJsonElement(source: any): HTMLElement {
             }
         } else {
             all.className = 'details';
-            for (let key of Object.keys(source)) {
+            Object.keys(source).forEach(key => {
                 let element = document.createElement("div");
                 
                 let keySpan = document.createElement("b");
@@ -82,19 +82,20 @@ function createJsonElement(source: any): HTMLElement {
                     let valueCode = document.createElement("a");
                     valueCode.href = source[key];
                     valueCode.innerText = source[key];
-                    valueCode.addEventListener("click", function(e) {
-                        var a = <HTMLAnchorElement>e.srcElement;
+                    valueCode.onclick = function(e) {
+                        var a = <HTMLAnchorElement>e.currentTarget;
                         setContext(a.href);
                         retreiveContext();
                         e.preventDefault();
-                    });
+                        return false;
+                    };
                     element.appendChild(valueCode);
                 } else {
                     element.appendChild(createJsonElement(source[key]));
                 }
 
                 all.appendChild(element);
-            }
+            });
             
         }
         return all;
@@ -134,7 +135,7 @@ function retreiveContext() {
         clearElement(result);     
         var error = document.createElement("div");
         error.className = "details";  
-        error.innerText = "Error : " + event.srcElement.statusText;
+        error.innerText = "Error : " + event.currentTarget.statusText;
         result.appendChild(error);
         window.scrollTo(0, 0);
     });
@@ -186,13 +187,13 @@ function evaluateBinding(left: string, right: string) {
     }
 
     let context = contextInput.value;
-    rightBinding = runtimeBinding(right, context, context);
-    leftBinding = left !== null && left.length > 0  ? runtimeBinding(left, context, context) : null;
+    rightBinding = createRuntimeBinding(right, context, context);
+    leftBinding = left !== null && left.length > 0  ? createRuntimeBinding(left, context, context) : null;
 
     let result = 
         leftBinding != null ?
         api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
-        api.evaluate(rightBinding, false, detailedCheckbox.value == "true");
+        api.evaluate(rightBinding, detailedCheckbox.value == "true");
         
     api.addChangeListener(rightBinding, (event:ChangeEvent) => {
         var contextInput = <HTMLInputElement>document.getElementById("context");
@@ -242,14 +243,14 @@ if (dataDiv != null) {
     dataDiv.appendChild(tabs.container);
 
     api.technologyAdapters().then(tas => {
-        let grid = new Grid();
-        for (let ta of tas) {
+        const grid = new Grid();
+        tas.forEach(ta => {
             let card = new Card(
                 createDescriptionElement("gps_fixed",ta),
                 createJsonElement(ta)
             );
-            grid.addCell(new GridCell(card));
-        }
+            grid.addCell(new GridCell(card, 4));
+        });
 
         let tab = new Tab("tas", "Technology Adapters", grid);
         tabs.addTab(tab);
@@ -258,14 +259,14 @@ if (dataDiv != null) {
     });
 
     api.resourceCenters().then(centers => {
-        let grid = new Grid();
-        for (let center of centers) {
+        const grid = new Grid();
+        centers.forEach(center => {
             let card = new Card(
                 createDescriptionElement("folder",center),
                 createJsonElement(center)
             );
             grid.addCell(new GridCell(card, 12));
-        }
+        });
 
         let tab = new Tab("rc", "Resource Centers", grid);
         tabs.addTab(tab);
@@ -273,13 +274,13 @@ if (dataDiv != null) {
 
     api.resources().then(resources => {
         let grid = new Grid();
-        for (let resource of resources) {
+        resources.forEach(resource => {
             let card = new Card(
                 createDescriptionElement("storage",resource),
                 createJsonElement(resource)
             );
             grid.addCell(new GridCell(card, 6));
-        }
+        });
          
         let tab = new Tab("res", "Resources", grid);
         tabs.addTab(tab);

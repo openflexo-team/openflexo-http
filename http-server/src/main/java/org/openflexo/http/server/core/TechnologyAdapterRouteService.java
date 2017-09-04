@@ -95,7 +95,7 @@ import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.http.server.util.PamelaResourceRestService;
+import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.toolbox.StringUtils;
 
 /**
@@ -121,7 +121,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(Comparator.comparing(Class::getSimpleName));
 
 	/** Map of registered {@link org.openflexo.http.server.util.PamelaResourceRestService}s for each technology adapters */
-	private final Map<TechnologyAdapter, List<PamelaResourceRestService>> pamelaRestServices = new HashMap<>();
+	private final Map<TechnologyAdapter, List<ResourceRestService>> restServices = new HashMap<>();
 
 	@Override
 	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
@@ -156,14 +156,14 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 	}
 
-	public void registerPamelaResourceRestService(TechnologyAdapter adapter, PamelaResourceRestService service) {
-		pamelaRestServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
+	public void registerPamelaResourceRestService(TechnologyAdapter adapter, ResourceRestService service) {
+		restServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
 	}
 
 	public void complementTechnologyAdapter(TechnologyAdapter adapter, JsonObject result) {
 		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
 		result.put("complemented", complement != null);
-		for (PamelaResourceRestService service : pamelaRestServices.getOrDefault(adapter, Collections.emptyList())) {
+		for (ResourceRestService service : restServices.getOrDefault(adapter, Collections.emptyList())) {
 			String simpleName = service.getResourceClass().getSimpleName();
 			String route = result.getString("url") + service.getPrefix();
 			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
@@ -181,7 +181,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 			router.mountSubRouter(route, subRouter);
 			entry.getValue().addRoutes(vertx, subRouter);
 
-			for (PamelaResourceRestService service : pamelaRestServices.getOrDefault(entry.getKey(), Collections.emptyList())) {
+			for (ResourceRestService service : restServices.getOrDefault(entry.getKey(), Collections.emptyList())) {
 				service.addRoutes(subRouter);
 				resourcePrefixes.put(service.getResourceClass(), route + service.getPrefix());
 			}

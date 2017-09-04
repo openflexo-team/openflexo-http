@@ -44,11 +44,11 @@ public class ChangeEvent extends ConnieMessage {
 
 	public final RuntimeBindingId runtimeBinding;
 
-	public final String value;
+	public final Object value;
 
 	public ChangeEvent(
 			@JsonProperty("runtimeBinding") RuntimeBindingId runtimeBinding,
-			@JsonProperty("value") String value
+			@JsonProperty("value") Object value
 	) {
 		this.runtimeBinding = runtimeBinding;
 		this.value = value;

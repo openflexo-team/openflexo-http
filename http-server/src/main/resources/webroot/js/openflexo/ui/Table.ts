@@ -1,5 +1,5 @@
 import { Component } from "./Component";
-import { mdlUpgradeElement, toHTMLElement } from "./utils";
+import { mdlUpgradeElement, toHTMLElement, clearElement} from "./utils";
 import { PhrasingCategory } from "./category";
 
 // mdlUpgradeElement(this.container);
@@ -37,7 +37,7 @@ class TableSection implements Component {
 
     container: HTMLTableSectionElement;
 
-    private lines: TableLine[] = [];
+    lines: TableLine[] = [];
 
     constructor(
         private head:boolean = false
@@ -62,7 +62,11 @@ class TableSection implements Component {
     }
 
     removeLines() {
+        // removes all lines
         this.lines.splice(0, this.lines.length);
+
+        // clears dom
+        clearElement(this.container);
     }
 
     create() {

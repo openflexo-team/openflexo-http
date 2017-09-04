@@ -1,5 +1,5 @@
 import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./utils";
-import { Component } from "./component";
+import { Component } from "./Component";
 import { PhrasingCategory, FlowCategory, toElement } from "./category"
 
 export class Card implements Component {

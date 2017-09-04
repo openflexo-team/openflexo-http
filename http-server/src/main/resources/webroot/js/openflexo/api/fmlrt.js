@@ -1,77 +1,60 @@
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
 define(["require", "exports", "./general"], function (require, exports, general_1) {
     "use strict";
-    var FlexoConceptInstance = (function (_super) {
-        __extends(FlexoConceptInstance, _super);
-        function FlexoConceptInstance(id, url, type, flexoConcept, virtualModelInstance, view, container, embeddedFlexoConceptInstance, actors) {
-            var _this = _super.call(this, id, url, type) || this;
-            _this.id = id;
-            _this.url = url;
-            _this.type = type;
-            _this.flexoConcept = flexoConcept;
-            _this.virtualModelInstance = virtualModelInstance;
-            _this.view = view;
-            _this.container = container;
-            _this.embeddedFlexoConceptInstance = embeddedFlexoConceptInstance;
-            _this.actors = actors;
-            return _this;
+    class FlexoConceptInstance extends general_1.Description {
+        constructor(id, url, type, flexoConcept, virtualModelInstance, view, container, embeddedFlexoConceptInstance, actors) {
+            super(id, url, type);
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.flexoConcept = flexoConcept;
+            this.virtualModelInstance = virtualModelInstance;
+            this.view = view;
+            this.container = container;
+            this.embeddedFlexoConceptInstance = embeddedFlexoConceptInstance;
+            this.actors = actors;
         }
-        return FlexoConceptInstance;
-    }(general_1.Description));
+    }
     exports.FlexoConceptInstance = FlexoConceptInstance;
-    var VirtualModelInstance = (function (_super) {
-        __extends(VirtualModelInstance, _super);
-        function VirtualModelInstance(name, id, url, type, virtualModel, view, actors, flexoConceptInstances, resourceUrl) {
-            var _this = _super.call(this, id, url, type) || this;
-            _this.name = name;
-            _this.id = id;
-            _this.url = url;
-            _this.type = type;
-            _this.virtualModel = virtualModel;
-            _this.view = view;
-            _this.actors = actors;
-            _this.flexoConceptInstances = flexoConceptInstances;
-            _this.resourceUrl = resourceUrl;
-            return _this;
+    class VirtualModelInstance extends general_1.Description {
+        constructor(name, id, url, type, virtualModel, view, actors, flexoConceptInstances, resourceUrl) {
+            super(id, url, type);
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.virtualModel = virtualModel;
+            this.view = view;
+            this.actors = actors;
+            this.flexoConceptInstances = flexoConceptInstances;
+            this.resourceUrl = resourceUrl;
         }
-        return VirtualModelInstance;
-    }(general_1.Description));
+    }
     exports.VirtualModelInstance = VirtualModelInstance;
-    var View = (function (_super) {
-        __extends(View, _super);
-        function View(name, id, url, type, viewPoint, container, actors, flexoConceptInstances, resourceUrl) {
-            var _this = _super.call(this, id, url, type) || this;
-            _this.name = name;
-            _this.id = id;
-            _this.url = url;
-            _this.type = type;
-            _this.viewPoint = viewPoint;
-            _this.container = container;
-            _this.actors = actors;
-            _this.flexoConceptInstances = flexoConceptInstances;
-            _this.resourceUrl = resourceUrl;
-            return _this;
+    class View extends general_1.Description {
+        constructor(name, id, url, type, viewPoint, container, actors, flexoConceptInstances, resourceUrl) {
+            super(id, url, type);
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.viewPoint = viewPoint;
+            this.container = container;
+            this.actors = actors;
+            this.flexoConceptInstances = flexoConceptInstances;
+            this.resourceUrl = resourceUrl;
         }
-        return View;
-    }(general_1.Description));
+    }
     exports.View = View;
-    var FlexoActor = (function (_super) {
-        __extends(FlexoActor, _super);
-        function FlexoActor(name, id, url, type, value) {
-            var _this = _super.call(this, id, url, type) || this;
-            _this.name = name;
-            _this.id = id;
-            _this.url = url;
-            _this.type = type;
-            _this.value = value;
-            return _this;
+    class FlexoActor extends general_1.Description {
+        constructor(name, id, url, type, value) {
+            super(id, url, type);
+            this.name = name;
+            this.id = id;
+            this.url = url;
+            this.type = type;
+            this.value = value;
         }
-        return FlexoActor;
-    }(general_1.Description));
+    }
     exports.FlexoActor = FlexoActor;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm1scnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmbWxydC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7O0lBR0E7UUFBMEMsd0NBQWlDO1FBQ3ZFLDhCQUNXLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLFlBQXVDLEVBQ3ZDLG9CQUF1RCxFQUN2RCxJQUF1QixFQUN2QixTQUFpRCxFQUNqRCw0QkFBaUUsRUFDakUsTUFBb0I7WUFUL0IsWUFXSSxrQkFBTSxFQUFFLEVBQUUsR0FBRyxFQUFFLElBQUksQ0FBQyxTQUN2QjtZQVhVLFFBQUUsR0FBRixFQUFFLENBQVE7WUFDVixTQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsVUFBSSxHQUFKLElBQUksQ0FBUTtZQUNaLGtCQUFZLEdBQVosWUFBWSxDQUEyQjtZQUN2QywwQkFBb0IsR0FBcEIsb0JBQW9CLENBQW1DO1lBQ3ZELFVBQUksR0FBSixJQUFJLENBQW1CO1lBQ3ZCLGVBQVMsR0FBVCxTQUFTLENBQXdDO1lBQ2pELGtDQUE0QixHQUE1Qiw0QkFBNEIsQ0FBcUM7WUFDakUsWUFBTSxHQUFOLE1BQU0sQ0FBYzs7UUFHL0IsQ0FBQztRQUNMLDJCQUFDO0lBQUQsQ0FBQyxBQWRELENBQTBDLHFCQUFXLEdBY3BEO0lBZFksb0RBQW9CO0lBZ0JqQztRQUEwQyx3Q0FBaUM7UUFDdkUsOEJBQ1csSUFBWSxFQUNaLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLFlBQXVDLEVBQ3ZDLElBQXVCLEVBQ3ZCLE1BQW9CLEVBQ3BCLHFCQUEwRCxFQUMxRCxXQUFtQjtZQVQ5QixZQVdJLGtCQUFNLEVBQUUsRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLFNBQ3ZCO1lBWFUsVUFBSSxHQUFKLElBQUksQ0FBUTtZQUNaLFFBQUUsR0FBRixFQUFFLENBQVE7WUFDVixTQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsVUFBSSxHQUFKLElBQUksQ0FBUTtZQUNaLGtCQUFZLEdBQVosWUFBWSxDQUEyQjtZQUN2QyxVQUFJLEdBQUosSUFBSSxDQUFtQjtZQUN2QixZQUFNLEdBQU4sTUFBTSxDQUFjO1lBQ3BCLDJCQUFxQixHQUFyQixxQkFBcUIsQ0FBcUM7WUFDMUQsaUJBQVcsR0FBWCxXQUFXLENBQVE7O1FBRzlCLENBQUM7UUFDTCwyQkFBQztJQUFELENBQUMsQUFkRCxDQUEwQyxxQkFBVyxHQWNwRDtJQWRZLG9EQUFvQjtJQWdCakM7UUFBMEIsd0JBQWlCO1FBQ3ZDLGNBQ1csSUFBWSxFQUNaLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLFNBQWlDLEVBQ2pDLFNBQWlELEVBQ2pELE1BQW9CLEVBQ3BCLHFCQUEwRCxFQUMxRCxXQUFtQjtZQVQ5QixZQVdJLGtCQUFNLEVBQUUsRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLFNBQ3ZCO1lBWFUsVUFBSSxHQUFKLElBQUksQ0FBUTtZQUNaLFFBQUUsR0FBRixFQUFFLENBQVE7WUFDVixTQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsVUFBSSxHQUFKLElBQUksQ0FBUTtZQUNaLGVBQVMsR0FBVCxTQUFTLENBQXdCO1lBQ2pDLGVBQVMsR0FBVCxTQUFTLENBQXdDO1lBQ2pELFlBQU0sR0FBTixNQUFNLENBQWM7WUFDcEIsMkJBQXFCLEdBQXJCLHFCQUFxQixDQUFxQztZQUMxRCxpQkFBVyxHQUFYLFdBQVcsQ0FBUTs7UUFHOUIsQ0FBQztRQUNMLFdBQUM7SUFBRCxDQUFDLEFBZEQsQ0FBMEIscUJBQVcsR0FjcEM7SUFkWSxvQkFBSTtJQWdCakI7UUFBZ0MsOEJBQXVCO1FBQ25ELG9CQUNXLElBQVksRUFDWixFQUFVLEVBQ1YsR0FBVyxFQUNYLElBQVksRUFDWixLQUFhO1lBTHhCLFlBT0ksa0JBQU0sRUFBRSxFQUFFLEdBQUcsRUFBRSxJQUFJLENBQUMsU0FDdEI7WUFQUyxVQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osUUFBRSxHQUFGLEVBQUUsQ0FBUTtZQUNWLFNBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxVQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osV0FBSyxHQUFMLEtBQUssQ0FBUTs7UUFHdkIsQ0FBQztRQUNOLGlCQUFDO0lBQUQsQ0FBQyxBQVZELENBQWdDLHFCQUFXLEdBVTFDO0lBVlksZ0NBQVUifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZm1scnQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJmbWxydC50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQUdBLDBCQUFrQyxTQUFRLHFCQUFpQztRQUN2RSxZQUNXLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLFlBQXVDLEVBQ3ZDLG9CQUF1RCxFQUN2RCxJQUF1QixFQUN2QixTQUFpRCxFQUNqRCw0QkFBaUUsRUFDakUsTUFBb0I7WUFFM0IsS0FBSyxDQUFDLEVBQUUsRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLENBQUM7WUFWZCxPQUFFLEdBQUYsRUFBRSxDQUFRO1lBQ1YsUUFBRyxHQUFILEdBQUcsQ0FBUTtZQUNYLFNBQUksR0FBSixJQUFJLENBQVE7WUFDWixpQkFBWSxHQUFaLFlBQVksQ0FBMkI7WUFDdkMseUJBQW9CLEdBQXBCLG9CQUFvQixDQUFtQztZQUN2RCxTQUFJLEdBQUosSUFBSSxDQUFtQjtZQUN2QixjQUFTLEdBQVQsU0FBUyxDQUF3QztZQUNqRCxpQ0FBNEIsR0FBNUIsNEJBQTRCLENBQXFDO1lBQ2pFLFdBQU0sR0FBTixNQUFNLENBQWM7UUFHL0IsQ0FBQztLQUNKO0lBZEQsb0RBY0M7SUFFRCwwQkFBa0MsU0FBUSxxQkFBaUM7UUFDdkUsWUFDVyxJQUFZLEVBQ1osRUFBVSxFQUNWLEdBQVcsRUFDWCxJQUFZLEVBQ1osWUFBdUMsRUFDdkMsSUFBdUIsRUFDdkIsTUFBb0IsRUFDcEIscUJBQTBELEVBQzFELFdBQW1CO1lBRTFCLEtBQUssQ0FBQyxFQUFFLEVBQUUsR0FBRyxFQUFFLElBQUksQ0FBQyxDQUFBO1lBVmIsU0FBSSxHQUFKLElBQUksQ0FBUTtZQUNaLE9BQUUsR0FBRixFQUFFLENBQVE7WUFDVixRQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsU0FBSSxHQUFKLElBQUksQ0FBUTtZQUNaLGlCQUFZLEdBQVosWUFBWSxDQUEyQjtZQUN2QyxTQUFJLEdBQUosSUFBSSxDQUFtQjtZQUN2QixXQUFNLEdBQU4sTUFBTSxDQUFjO1lBQ3BCLDBCQUFxQixHQUFyQixxQkFBcUIsQ0FBcUM7WUFDMUQsZ0JBQVcsR0FBWCxXQUFXLENBQVE7UUFHOUIsQ0FBQztLQUNKO0lBZEQsb0RBY0M7SUFFRCxVQUFrQixTQUFRLHFCQUFpQjtRQUN2QyxZQUNXLElBQVksRUFDWixFQUFVLEVBQ1YsR0FBVyxFQUNYLElBQVksRUFDWixTQUFpQyxFQUNqQyxTQUFpRCxFQUNqRCxNQUFvQixFQUNwQixxQkFBMEQsRUFDMUQsV0FBbUI7WUFFMUIsS0FBSyxDQUFDLEVBQUUsRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLENBQUE7WUFWYixTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osT0FBRSxHQUFGLEVBQUUsQ0FBUTtZQUNWLFFBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osY0FBUyxHQUFULFNBQVMsQ0FBd0I7WUFDakMsY0FBUyxHQUFULFNBQVMsQ0FBd0M7WUFDakQsV0FBTSxHQUFOLE1BQU0sQ0FBYztZQUNwQiwwQkFBcUIsR0FBckIscUJBQXFCLENBQXFDO1lBQzFELGdCQUFXLEdBQVgsV0FBVyxDQUFRO1FBRzlCLENBQUM7S0FDSjtJQWRELG9CQWNDO0lBRUQsZ0JBQXdCLFNBQVEscUJBQXVCO1FBQ25ELFlBQ1csSUFBWSxFQUNaLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWSxFQUNaLEtBQWE7WUFFcEIsS0FBSyxDQUFDLEVBQUUsRUFBRSxHQUFHLEVBQUUsSUFBSSxDQUFDLENBQUM7WUFOZCxTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osT0FBRSxHQUFGLEVBQUUsQ0FBUTtZQUNWLFFBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxTQUFJLEdBQUosSUFBSSxDQUFRO1lBQ1osVUFBSyxHQUFMLEtBQUssQ0FBUTtRQUd2QixDQUFDO0tBQ0w7SUFWRCxnQ0FVQyJ9

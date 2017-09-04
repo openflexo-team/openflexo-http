@@ -1,57 +1,90 @@
 define(["require", "exports", "../ui/Table"], function (require, exports, Table_1) {
     "use strict";
-    var BoundTable = (function () {
-        function BoundTable(api, elements, columns, header, selectable) {
-            if (header === void 0) { header = true; }
-            if (selectable === void 0) { selectable = false; }
+    class BoundTable {
+        constructor(api, elements, columns, header = true, selectable = false) {
             this.api = api;
             this.elements = elements;
             this.columns = columns;
             this.header = header;
             this.selectable = selectable;
+            this.lines = [];
             this.create();
         }
-        BoundTable.prototype.create = function () {
-            var _this = this;
+        create() {
             this.table = new Table_1.Table(this.selectable);
             if (this.header) {
-                var header = new Table_1.TableLine();
-                for (var _i = 0, _a = this.columns; _i < _a.length; _i++) {
-                    var column = _a[_i];
-                    var cell = new Table_1.TableCell(column.name);
+                let header = new Table_1.TableLine();
+                this.columns.forEach(column => {
+                    let cell = new Table_1.TableCell(column.name);
                     header.addCell(cell);
-                }
+                });
                 this.table.head.addLine(header);
             }
-            this.api.evaluate(this.elements).then(function (elements) { return _this.updateList(elements); });
-            this.api.addChangeListener(this.elements, function (elements) { return _this.updateList(elements); });
+            this.api.evaluate(this.elements).then(elements => this.updateList(elements));
+            this.api.addChangeListener(this.elements, event => this.updateList(event.value));
             this.container = this.table.container;
-        };
-        BoundTable.prototype.updateList = function (elements) {
-            var body = this.table.body;
-            body.removeLines();
-            for (var _i = 0, elements_1 = elements; _i < elements_1.length; _i++) {
-                var element = elements_1[_i];
-                var line = new Table_1.TableLine();
-                for (var _a = 0, _b = this.columns; _a < _b.length; _a++) {
-                    var column = _b[_a];
-                    var component = column.component(this.api, element);
-                    var cell = new Table_1.TableCell(component);
-                    line.addCell(cell);
+        }
+        refresh() {
+            this.api.evaluate(this.elements).then(elements => this.updateList(elements));
+        }
+        updateList(elements) {
+            let body = this.table.body;
+            let lineCount = 0;
+            let elementCount = 0;
+            // checks elements with current lines
+            while (lineCount < this.lines.length && elementCount < elements.length) {
+                let line = this.lines[lineCount];
+                let element = elements[elementCount];
+                if (line.url !== element.url) {
+                    // line if different from current element
+                    // removes the line current line
+                    this.removeLine(lineCount);
                 }
-                body.addLine(line);
+                else {
+                    // line is the same checks next
+                    lineCount += 1;
+                    elementCount += 1;
+                }
             }
-        };
-        return BoundTable;
-    }());
+            // removes the rest of the lines if any
+            while (lineCount < this.lines.length) {
+                this.removeLine(lineCount);
+            }
+            // adds the rest of elements if any
+            while (elementCount < elements.length) {
+                this.addLine(elements[elementCount]);
+                elementCount += 1;
+            }
+        }
+        addLine(element) {
+            let line = new Table_1.TableLine();
+            this.columns.forEach(column => {
+                let component = column.component(this.api, element);
+                let cell = new Table_1.TableCell(component);
+                line.addCell(cell);
+            });
+            this.lines.push(new BoundTableLine(element.url, line));
+            this.table.body.addLine(line);
+        }
+        removeLine(index) {
+            let line = this.lines[index];
+            this.lines.splice(index, 1);
+            this.table.body.removeLine(line.line);
+        }
+    }
     exports.BoundTable = BoundTable;
-    var BoundColumn = (function () {
-        function BoundColumn(name, component) {
+    class BoundColumn {
+        constructor(name, component) {
             this.name = name;
             this.component = component;
         }
-        return BoundColumn;
-    }());
+    }
     exports.BoundColumn = BoundColumn;
+    class BoundTableLine {
+        constructor(url, line) {
+            this.url = url;
+            this.line = line;
+        }
+    }
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRUYWJsZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkJvdW5kVGFibGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7SUFXQTtRQU1JLG9CQUNZLEdBQVEsRUFDUixRQUEwQixFQUMxQixPQUFzQixFQUN0QixNQUFzQixFQUN0QixVQUEyQjtZQUQzQix1QkFBQSxFQUFBLGFBQXNCO1lBQ3RCLDJCQUFBLEVBQUEsa0JBQTJCO1lBSjNCLFFBQUcsR0FBSCxHQUFHLENBQUs7WUFDUixhQUFRLEdBQVIsUUFBUSxDQUFrQjtZQUMxQixZQUFPLEdBQVAsT0FBTyxDQUFlO1lBQ3RCLFdBQU0sR0FBTixNQUFNLENBQWdCO1lBQ3RCLGVBQVUsR0FBVixVQUFVLENBQWlCO1lBRW5DLElBQUksQ0FBQyxNQUFNLEVBQUUsQ0FBQztRQUNsQixDQUFDO1FBRUQsMkJBQU0sR0FBTjtZQUFBLGlCQWdCQztZQWZHLElBQUksQ0FBQyxLQUFLLEdBQUcsSUFBSSxhQUFLLENBQUMsSUFBSSxDQUFDLFVBQVUsQ0FBQyxDQUFDO1lBRXhDLEVBQUUsQ0FBQyxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQyxDQUFDO2dCQUNkLElBQUksTUFBTSxHQUFHLElBQUksaUJBQVMsRUFBRSxDQUFDO2dCQUM3QixHQUFHLENBQUMsQ0FBZSxVQUFZLEVBQVosS0FBQSxJQUFJLENBQUMsT0FBTyxFQUFaLGNBQVksRUFBWixJQUFZO29CQUExQixJQUFJLE1BQU0sU0FBQTtvQkFDWCxJQUFJLElBQUksR0FBRyxJQUFJLGlCQUFTLENBQUMsTUFBTSxDQUFDLElBQUksQ0FBQyxDQUFDO29CQUN0QyxNQUFNLENBQUMsT0FBTyxDQUFDLElBQUksQ0FBQyxDQUFDO2lCQUN4QjtnQkFDRCxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQyxPQUFPLENBQUMsTUFBTSxDQUFDLENBQUM7WUFDcEMsQ0FBQztZQUVELElBQUksQ0FBQyxHQUFHLENBQUMsUUFBUSxDQUFxQixJQUFJLENBQUMsUUFBUSxDQUFDLENBQUMsSUFBSSxDQUFDLFVBQUEsUUFBUSxJQUFJLE9BQUEsS0FBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLENBQUMsRUFBekIsQ0FBeUIsQ0FBQyxDQUFDO1lBQ2pHLElBQUksQ0FBQyxHQUFHLENBQUMsaUJBQWlCLENBQUMsSUFBSSxDQUFDLFFBQVEsRUFBRSxVQUFBLFFBQVEsSUFBSSxPQUFBLEtBQUksQ0FBQyxVQUFVLENBQUMsUUFBUSxDQUFDLEVBQXpCLENBQXlCLENBQUMsQ0FBQztZQUVqRixJQUFJLENBQUMsU0FBUyxHQUFHLElBQUksQ0FBQyxLQUFLLENBQUMsU0FBUyxDQUFDO1FBQzFDLENBQUM7UUFFTywrQkFBVSxHQUFsQixVQUFtQixRQUE0QjtZQUMzQyxJQUFJLElBQUksR0FBRyxJQUFJLENBQUMsS0FBSyxDQUFDLElBQUksQ0FBQztZQUMzQixJQUFJLENBQUMsV0FBVyxFQUFFLENBQUM7WUFFbkIsR0FBRyxDQUFDLENBQWdCLFVBQVEsRUFBUixxQkFBUSxFQUFSLHNCQUFRLEVBQVIsSUFBUTtnQkFBdkIsSUFBSSxPQUFPLGlCQUFBO2dCQUNaLElBQUksSUFBSSxHQUFHLElBQUksaUJBQVMsRUFBRSxDQUFDO2dCQUMzQixHQUFHLENBQUMsQ0FBZSxVQUFZLEVBQVosS0FBQSxJQUFJLENBQUMsT0FBTyxFQUFaLGNBQVksRUFBWixJQUFZO29CQUExQixJQUFJLE1BQU0sU0FBQTtvQkFDWCxJQUFJLFNBQVMsR0FBRyxNQUFNLENBQUMsU0FBUyxDQUFDLElBQUksQ0FBQyxHQUFHLEVBQUUsT0FBTyxDQUFDLENBQUM7b0JBQ3BELElBQUksSUFBSSxHQUFHLElBQUksaUJBQVMsQ0FBQyxTQUFTLENBQUMsQ0FBQztvQkFDcEMsSUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsQ0FBQztpQkFDdEI7Z0JBQ0QsSUFBSSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsQ0FBQzthQUN0QjtRQUNMLENBQUM7UUFDTCxpQkFBQztJQUFELENBQUMsQUFoREQsSUFnREM7SUFoRFksZ0NBQVU7SUFtRHZCO1FBRUkscUJBQ1csSUFBWSxFQUNaLFNBQThFO1lBRDlFLFNBQUksR0FBSixJQUFJLENBQVE7WUFDWixjQUFTLEdBQVQsU0FBUyxDQUFxRTtRQUNyRixDQUFDO1FBRVQsa0JBQUM7SUFBRCxDQUFDLEFBUEQsSUFPQztJQVBZLGtDQUFXIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRUYWJsZS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkJvdW5kVGFibGUudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7SUFRQTtRQVFJLFlBQ1ksR0FBUSxFQUNSLFFBQThDLEVBQzlDLE9BQXNCLEVBQ3RCLFNBQWtCLElBQUksRUFDdEIsYUFBc0IsS0FBSztZQUozQixRQUFHLEdBQUgsR0FBRyxDQUFLO1lBQ1IsYUFBUSxHQUFSLFFBQVEsQ0FBc0M7WUFDOUMsWUFBTyxHQUFQLE9BQU8sQ0FBZTtZQUN0QixXQUFNLEdBQU4sTUFBTSxDQUFnQjtZQUN0QixlQUFVLEdBQVYsVUFBVSxDQUFpQjtZQVR2QyxVQUFLLEdBQXFCLEVBQUUsQ0FBQztZQVd6QixJQUFJLENBQUMsTUFBTSxFQUFFLENBQUM7UUFDbEIsQ0FBQztRQUVELE1BQU07WUFDRixJQUFJLENBQUMsS0FBSyxHQUFHLElBQUksYUFBSyxDQUFDLElBQUksQ0FBQyxVQUFVLENBQUMsQ0FBQztZQUV4QyxFQUFFLENBQUMsQ0FBQyxJQUFJLENBQUMsTUFBTSxDQUFDLENBQUMsQ0FBQztnQkFDZCxJQUFJLE1BQU0sR0FBRyxJQUFJLGlCQUFTLEVBQUUsQ0FBQztnQkFDN0IsSUFBSSxDQUFDLE9BQU8sQ0FBQyxPQUFPLENBQUUsTUFBTTtvQkFDeEIsSUFBSSxJQUFJLEdBQUcsSUFBSSxpQkFBUyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUMsQ0FBQztvQkFDdEMsTUFBTSxDQUFDLE9BQU8sQ0FBQyxJQUFJLENBQUMsQ0FBQztnQkFDekIsQ0FBQyxDQUFDLENBQUM7Z0JBQ0gsSUFBSSxDQUFDLEtBQUssQ0FBQyxJQUFJLENBQUMsT0FBTyxDQUFDLE1BQU0sQ0FBQyxDQUFDO1lBQ3BDLENBQUM7WUFFRCxJQUFJLENBQUMsR0FBRyxDQUFDLFFBQVEsQ0FBcUIsSUFBSSxDQUFDLFFBQVEsQ0FBQyxDQUFDLElBQUksQ0FBQyxRQUFRLElBQUksSUFBSSxDQUFDLFVBQVUsQ0FBQyxRQUFRLENB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

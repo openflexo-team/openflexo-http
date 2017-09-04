@@ -1,46 +1,59 @@
-define(["require", "exports", "../ui/Button"], function (require, exports, Button_1) {
+define(["require", "exports", "../api/Api", "../ui/Button"], function (require, exports, Api_1, Button_1) {
     "use strict";
-    var BoundButton = (function () {
-        function BoundButton(api, action, enabled, label, type, colored, accent, rippleEffect) {
-            if (type === void 0) { type = "raised"; }
-            if (colored === void 0) { colored = false; }
-            if (accent === void 0) { accent = false; }
-            if (rippleEffect === void 0) { rippleEffect = false; }
+    class BoundButton {
+        constructor(api, label, action, runtime = null, enabled = null, type = "raised", colored = false, accent = false, rippleEffect = false) {
             this.api = api;
+            this.label = label;
             this.action = action;
             this.enabled = enabled;
-            this.label = label;
             this.type = type;
             this.colored = colored;
             this.accent = accent;
             this.rippleEffect = rippleEffect;
+            this.enabledRuntimeBinding = null;
+            this.enabledChangeListener = (event) => this.listenFromServer(event);
             this.create();
+            this.updateRuntime(runtime);
         }
-        BoundButton.prototype.create = function () {
-            var _this = this;
+        create() {
             this.button = new Button_1.Button(this.label, this.type, this.colored, this.accent, this.rippleEffect);
             this.container = this.button.container;
-            this.container.onclick = function (e) { return _this.sendActionToServer(e); };
-            if (this.enabled != null) {
-                this.api.evaluate(this.enabled).then(function (value) {
-                    _this.button.setEnable(value === "true");
-                });
-                this.api.addChangeListener(this.enabled, function (e) { return _this.listenFromServer(e); });
-            }
-        };
-        BoundButton.prototype.listenFromServer = function (event) {
+            this.container.onclick = (e) => this.sendActionToServer(e);
+        }
+        listenFromServer(event) {
             this.button.setEnable(event.value === "true");
-        };
-        BoundButton.prototype.sendActionToServer = function (e) {
-            var _this = this;
-            this.api.evaluate(this.action).then(function (value) {
-                _this.container.classList.remove("mdl-button--colored");
-            })["catch"](function (error) {
-                _this.container.classList.add("mdl-button--colored");
-            });
-        };
-        return BoundButton;
-    }());
+        }
+        sendActionToServer(e) {
+            if (this.actionRuntimeBinding !== null) {
+                this.api.evaluate(this.actionRuntimeBinding).then(value => {
+                    this.container.classList.remove("mdl-button--colored");
+                }).catch(error => {
+                    this.container.classList.add("mdl-button--colored");
+                });
+            }
+        }
+        updateRuntime(runtime) {
+            if (this.enabledRuntimeBinding !== null) {
+                this.api.removeChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
+            }
+            this.enabledRuntimeBinding = null;
+            if (runtime !== null) {
+                if (this.enabled !== null) {
+                    this.enabled.contextUrl = runtime;
+                    this.enabledRuntimeBinding = new Api_1.RuntimeBindingId(this.enabled, runtime);
+                    this.api.evaluate(this.enabledRuntimeBinding).then(value => {
+                        this.button.setEnable(value === "true");
+                    });
+                    this.api.addChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
+                }
+                this.action.contextUrl = runtime;
+                this.actionRuntimeBinding = new Api_1.RuntimeBindingId(this.action, runtime);
+            }
+            else {
+                this.button.setEnable(true);
+            }
+        }
+    }
     exports.BoundButton = BoundButton;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRCdXR0b24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJCb3VuZEJ1dHRvbi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQU9BO1FBTUkscUJBQ1ksR0FBUSxFQUNSLE1BQXdCLEVBQ3hCLE9BQThCLEVBQzlCLEtBQWlDLEVBQ2pDLElBQWlELEVBQ2pELE9BQXdCLEVBQ3hCLE1BQXVCLEVBQ3ZCLFlBQTZCO1lBSDdCLHFCQUFBLEVBQUEsZUFBaUQ7WUFDakQsd0JBQUEsRUFBQSxlQUF3QjtZQUN4Qix1QkFBQSxFQUFBLGNBQXVCO1lBQ3ZCLDZCQUFBLEVBQUEsb0JBQTZCO1lBUDdCLFFBQUcsR0FBSCxHQUFHLENBQUs7WUFDUixXQUFNLEdBQU4sTUFBTSxDQUFrQjtZQUN4QixZQUFPLEdBQVAsT0FBTyxDQUF1QjtZQUM5QixVQUFLLEdBQUwsS0FBSyxDQUE0QjtZQUNqQyxTQUFJLEdBQUosSUFBSSxDQUE2QztZQUNqRCxZQUFPLEdBQVAsT0FBTyxDQUFpQjtZQUN4QixXQUFNLEdBQU4sTUFBTSxDQUFpQjtZQUN2QixpQkFBWSxHQUFaLFlBQVksQ0FBaUI7WUFFckMsSUFBSSxDQUFDLE1BQU0sRUFBRSxDQUFDO1FBQ2xCLENBQUM7UUFFRCw0QkFBTSxHQUFOO1lBQUEsaUJBYUM7WUFaRyxJQUFJLENBQUMsTUFBTSxHQUFHLElBQUksZUFBTSxDQUFDLElBQUksQ0FBQyxLQUFLLEVBQUUsSUFBSSxDQUFDLElBQUksRUFBRSxJQUFJLENBQUMsT0FBTyxFQUFFLElBQUksQ0FBQyxNQUFNLEVBQUUsSUFBSSxDQUFDLFlBQVksQ0FBQyxDQUFDO1lBQzlGLElBQUksQ0FBQyxTQUFTLEdBQUcsSUFBSSxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQUM7WUFFdkMsSUFBSSxDQUFDLFNBQVMsQ0FBQyxPQUFPLEdBQUcsVUFBQyxDQUFDLElBQUssT0FBQSxLQUFJLENBQUMsa0JBQWtCLENBQUMsQ0FBQyxDQUFDLEVBQTFCLENBQTBCLENBQUM7WUFFM0QsRUFBRSxDQUFDLENBQUMsSUFBSSxDQUFDLE9BQU8sSUFBSSxJQUFJLENBQUMsQ0FBQyxDQUFDO2dCQUN2QixJQUFJLENBQUMsR0FBRyxDQUFDLFFBQVEsQ0FBUyxJQUFJLENBQUMsT0FBTyxDQUFDLENBQUMsSUFBSSxDQUFFLFVBQUEsS0FBSztvQkFDL0MsS0FBSSxDQUFDLE1BQU0sQ0FBQyxTQUFTLENBQUMsS0FBSyxLQUFLLE1BQU0sQ0FBQyxDQUFBO2dCQUMzQyxDQUFDLENBQUMsQ0FBQztnQkFFSCxJQUFJLENBQUMsR0FBRyxDQUFDLGlCQUFpQixDQUFDLElBQUksQ0FBQyxPQUFPLEVBQUUsVUFBQyxDQUFDLElBQUssT0FBQSxLQUFJLENBQUMsZ0JBQWdCLENBQUMsQ0FBQyxDQUFDLEVBQXhCLENBQXdCLENBQUMsQ0FBQztZQUM5RSxDQUFDO1FBQ0wsQ0FBQztRQUVELHNDQUFnQixHQUFoQixVQUFpQixLQUFrQjtZQUMvQixJQUFJLENBQUMsTUFBTSxDQUFDLFNBQVMsQ0FBQyxLQUFLLENBQUMsS0FBSyxLQUFLLE1BQU0sQ0FBQyxDQUFBO1FBQ2pELENBQUM7UUFFRCx3Q0FBa0IsR0FBbEIsVUFBbUIsQ0FBTTtZQUF6QixpQkFNQztZQUxHLElBQUksQ0FBQyxHQUFHLENBQUMsUUFBUSxDQUFDLElBQUksQ0FBQyxNQUFNLENBQUMsQ0FBQyxJQUFJLENBQUMsVUFBQSxLQUFLO2dCQUNyQyxLQUFJLENBQUMsU0FBUyxDQUFDLFNBQVMsQ0FBQyxNQUFNLENBQUMscUJBQXFCLENBQUMsQ0FBQztZQUMzRCxDQUFDLENBQUMsQ0FBQyxPQUFLLENBQUEsQ0FBQyxVQUFBLEtBQUs7Z0JBQ1YsS0FBSSxDQUFDLFNBQVMsQ0FBQyxTQUFTLENBQUMsR0FBRyxDQUFDLHFCQUFxQixDQUFDLENBQUM7WUFDeEQsQ0FBQyxDQUFDLENBQUM7UUFDUCxDQUFDO1FBRUwsa0JBQUM7SUFBRCxDQUFDLEFBOUNELElBOENDO0lBOUNZLGtDQUFXIn0=
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRCdXR0b24uanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJCb3VuZEJ1dHRvbi50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQU9BO1FBV0ksWUFDWSxHQUFRLEVBQ1IsS0FBaUMsRUFDbEMsTUFBeUIsRUFDaEMsVUFBdUIsSUFBSSxFQUNuQixVQUFrQyxJQUFJLEVBQ3RDLE9BQXlDLFFBQVEsRUFDakQsVUFBbUIsS0FBSyxFQUN4QixTQUFrQixLQUFLLEVBQ3ZCLGVBQXdCLEtBQUs7WUFSN0IsUUFBRyxHQUFILEdBQUcsQ0FBSztZQUNSLFVBQUssR0FBTCxLQUFLLENBQTRCO1lBQ2xDLFdBQU0sR0FBTixNQUFNLENBQW1CO1lBRXhCLFlBQU8sR0FBUCxPQUFPLENBQStCO1lBQ3RDLFNBQUksR0FBSixJQUFJLENBQTZDO1lBQ2pELFlBQU8sR0FBUCxPQUFPLENBQWlCO1lBQ3hCLFdBQU0sR0FBTixNQUFNLENBQWlCO1lBQ3ZCLGlCQUFZLEdBQVosWUFBWSxDQUFpQjtZQWRqQywwQkFBcUIsR0FBa0MsSUFBSSxDQUFBO1lBQzNELDBCQUFxQixHQUFHLENBQUMsS0FBSyxLQUFLLElBQUksQ0FBQyxnQkFBZ0IsQ0FBQyxLQUFLLENBQUMsQ0FBQztZQWVwRSxJQUFJLENBQUMsTUFBTSxFQUFFLENBQUM7WUFDZCxJQUFJLENBQUMsYUFBYSxDQUFDLE9BQU8sQ0FBQyxDQUFDO1FBQ2hDLENBQUM7UUFFRCxNQUFNO1lBQ0YsSUFBSSxDQUFDLE1BQU0sR0FBRyxJQUFJLGVBQU0sQ0FBQyxJQUFJLENBQUMsS0FBSyxFQUFFLElBQUksQ0FBQyxJQUFJLEVBQUUsSUFBSSxDQUFDLE9BQU8sRUFBRSxJQUFJLENBQUMsTUFBTSxFQUFFLElBQUksQ0FBQyxZQUFZLENBQUMsQ0FBQztZQUM5RixJQUFJLENBQUMsU0FBUyxHQUFHLElBQUksQ0FBQyxNQUFNLENBQUMsU0FBUyxDQUFDO1lBQ3ZDLElBQUksQ0FBQyxTQUFTLENBQUMsT0FBTyxHQUFHLENBQUMs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

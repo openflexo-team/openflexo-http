@@ -52,9 +52,9 @@ function expand(event: MouseEvent) {
                         div.removeChild(div.firstChild);
                     }
                     
-                    for (let child of children) {
+                    children.forEach(child => {
                         div.appendChild(createItemFromSource(child));
-                    }
+                    });
                 });
             }
 
@@ -157,12 +157,12 @@ function createErrorItem():HTMLDivElement {
 
 let resourceCenters = api.resourceCenters();
 resourceCenters.then(resourceCenters => {
-    let div = document.querySelector("#rcs");
+    const div = document.querySelector("#rcs");
     if (div) {
-        for (let rc of resourceCenters) {
+        resourceCenters.forEach(rc => {
             div.appendChild(document.createElement("hr"));
             div.appendChild(createTitle(rc));
             div.appendChild(createRoot(rc))
-        }
+        });
     }
 });

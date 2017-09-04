@@ -33,11 +33,11 @@ export class Application implements AppContext {
     private createAdaptersTab(): Tab {
         const grid = new Grid();
         this.api.technologyAdapters().then(tas => {
-            for (let ta of tas) {
+            tas.forEach(ta => {
                 console.log("TA " +  ta.name);
                 const taUI = new Card(ta.name, ta.name + " description");
                 grid.addCell(new GridCell(taUI, 4));
-            }
+            });
         });
         return new Tab("adapters", "Technology Adapters", grid);
     }
@@ -45,11 +45,11 @@ export class Application implements AppContext {
      private createCentersTab(): Tab {
         const grid = new Grid();
         this.api.resourceCenters().then(rcs => {
-            for (let rc of rcs) {
+            rcs.forEach(rc => {
                 console.log("RC " +  rc.name);
                 const taUI = new Card(rc.name, rc.name + " description");
                 grid.addCell(new GridCell(taUI, 4));
-            }
+            });
         });
         return new Tab("centers", "Resource Centers", grid);
     }
@@ -57,11 +57,11 @@ export class Application implements AppContext {
     private createResourcesTab(): Tab {
         const grid = new Grid();
         this.api.resources().then(resources => {
-            for (let resource of resources) {
+            resources.forEach(resource => {
                 console.log("RC " +  resource.name);
                 const taUI = new Card(resource.name, resource.name + " description");
                 grid.addCell(new GridCell(taUI, 4));
-            }
+            });
         });
         return new Tab("resources", "Resources", grid);
     }
