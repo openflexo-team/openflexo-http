@@ -9,15 +9,22 @@ import { Tree, TreeItem } from "../ui/Tree"
 /** Common interface for BoundTree and BoundTreeItem that holds children */
 interface Item {
 
+    readonly boundTree: BoundTree;
+
+    readonly parent: BoundTree|BoundTreeItem;
+
+    readonly support: Tree|TreeItem;
+
     children: BoundTreeItem[];
 
-    addItem(value: Description<any>);
+    addItem(value: Description<any>, sourceBinding: RuntimeBindingId<any>);
 
     removeItem(index: number);
 
     findItemForObject(url: string): BoundTreeItem|null;
 }
 
+/** Tree handled with a series of bindings throught BoundTreeElements */
 export class BoundTree implements Component, Item {
 
     tree : Tree;
@@ -28,12 +35,20 @@ export class BoundTree implements Component, Item {
 
     onselect: ((selection: ReadonlySet<BoundTreeItem>)=>void)|null;
     
+    readonly boundTree = this;
+
+    readonly parent = this;
+
     constructor(
         public api: Api, 
         private root: RuntimeBindingId<any>,
         private elements: BoundTreeElement[]
      ) {
         this.create();
+    }
+
+    get support(): Tree|TreeItem {
+        return this.tree;
     }
 
     create(): void {
@@ -79,16 +94,13 @@ export class BoundTree implements Component, Item {
 
     private updateRoot(root: Description<any>) {
         let rootElement = this.elementForValue(root);
-        if (rootElement !== null && rootElement.children !== null) {
-            let childrenRtBindingId = new RuntimeBindingId(rootElement.children(root), root.url); 
-            let result = this.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
-            result.then((values => { updateValues(this, values); }))
-            this.api.addChangeListener(childrenRtBindingId, (event) => updateValues(this,event.value));
+        if (rootElement !== null) {
+            rootElement.children.forEach(child => childrenForObject(this, child, root));
         }
     }
 
-    addItem(value: Description<any>) {
-        let boundItem = createBoundItem(this, value);
+    addItem(value: Description<any>, sourceBinding: RuntimeBindingId<any>) {
+        let boundItem = createBoundItem(this, value, sourceBinding);
         if (boundItem != null) {
             this.children.push(boundItem);
             this.tree.addChild(boundItem.item);
@@ -111,52 +123,51 @@ export class BoundTree implements Component, Item {
     }
 }
 
-export class BoundTreeElement {   
+export class BoundTreeElement {  
+    
+    public children:((element:any) => BindingId<Description<any>[]>)[];
+
     constructor(
         public name: string,
         public select: (element: any) => boolean,
         public component: (api: Api, element: any) => Component|PhrasingCategory,
-        public children: ((element:any) => BindingId<Description<any>[]>)|null = null
-    ) { }
+        ...children: ((element:any) => BindingId<Description<any>[]>)[]
+    ) {
+        this.children = children;
+     }
 }
 
 class BoundTreeItem implements Item {
     
     children: BoundTreeItem[] = [];
     
+    readonly boundTree = this.parent instanceof BoundTree ? this.parent : this.parent.boundTree;
+   
     constructor(
-        public boundTree: BoundTree,
+        public readonly parent: BoundTree|BoundTreeItem,
         public object: Description<any>,
+        public sourceBinding: RuntimeBindingId<any>,
         public element: BoundTreeElement,
-        public item: TreeItem,
-        private root: boolean = false
+        public item: TreeItem
     ) {
         item.onexpand = (item) => {
             if (item.data instanceof BoundTreeItem) {
-                let boundItem = item.data;
-                if (element.children != null) {
-                    let childrenRtBindingId = new RuntimeBindingId(element.children(boundItem.object), object.url);
-                
-                    let result = this.boundTree.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
-                    result.then((childrenValues => {
-                        updateValues(this, childrenValues);
-                    }))
-
-                    this.boundTree.api.addChangeListener(childrenRtBindingId, (event) => {
-                        updateValues(this, event.value);
-                    })
-                }
+                element.children.forEach(child => childrenForObject(this, child, object));
             }
         }
      }
+     
+     get support(): Tree|TreeItem {
+        return this.item;
+    }
 
      private clear() {
         this.children.slice(0, this.children.length);
         this.item.clear();
      }
 
-    addItem(value: Description<any>) {
-        let boundItem = createBoundItem(this.boundTree, value);
+    addItem(value: Description<any>, sourceBinding: RuntimeBindingId<any>) {
+        let boundItem = createBoundItem(this, value, sourceBinding);
         if (boundItem != null) {
             this.children.push(boundItem);
             this.item.addChild(boundItem.item);
@@ -167,9 +178,6 @@ class BoundTreeItem implements Item {
         let item = this.children[index];
         this.children.splice(index, 1);
         this.item.removeChild(item.item);
-        if (this.root) {
-            this.boundTree.tree.removeChild(item.item);
-        }
     }
 
     findItemForObject(url: string): BoundTreeItem|null {
@@ -184,7 +192,7 @@ class BoundTreeItem implements Item {
 }
 
 /** Updates item children with given values. */
-function updateValues(container: Item, values: Description<any>[]) {
+function updateValues(container: Item, values: Description<any>[], sourceBinding: RuntimeBindingId<any>) {
     let lineCount = 0;
     let valueCount = 0;
 
@@ -193,38 +201,64 @@ function updateValues(container: Item, values: Description<any>[]) {
         let boundItem = container.children[lineCount];
         let value = values[valueCount];
 
-        if (boundItem.object !== value) {
-            // line if different from current element
-            // removes the line current line
-            container.removeItem(lineCount);
-        } else {
-            // line is the same checks next
+        if (!boundItem.sourceBinding.equals(sourceBinding)) {
+            // item source isn't the current binding, ignore it
             lineCount += 1;
-            valueCount += 1;
-        } 
+        } else {
+            // item source is the given binding
+            if (boundItem.object !== value) {
+                // line if different from current element
+                // removes the line current line
+                container.removeItem(lineCount);
+            } else {
+                // line is the same checks next
+                lineCount += 1;
+                valueCount += 1;
+            } 
+        }
     }
 
     // removes the rest of the lines if any
     while (lineCount < container.children.length) {
-        container.removeItem(lineCount);
+        let boundItem = container.children[lineCount];
+        if (boundItem.sourceBinding.equals(sourceBinding)) {
+            container.removeItem(lineCount);
+        } else {
+            lineCount += 1
+        }
     }
 
     // adds the rest of values if any
     while (valueCount < values.length) {
-        container.addItem(values[valueCount]);
+        container.addItem(values[valueCount], sourceBinding);
         valueCount += 1;
     }
 }
 
 /** Creates a BoundItem for a given value */
-function createBoundItem(tree: BoundTree, value: Description<any>): BoundTreeItem|null {
+function createBoundItem(parent: Item, value: Description<any>, sourceBinding: RuntimeBindingId<any>): BoundTreeItem|null {
+    let tree = parent.boundTree;
     let itemElement = tree.elementForValue(value);
     if (itemElement != null) {
         let component = itemElement.component(tree.api, value);
-        let item = new TreeItem(tree.tree, component, itemElement.children === null);
-        let boundItem = new BoundTreeItem(tree, value, itemElement, item);
+        let item = new TreeItem(parent.support, component, itemElement.children.length === 0);
+        let boundItem = new BoundTreeItem(tree, value, sourceBinding, itemElement, item);
         item.data = boundItem;
         return boundItem;
     }
     return null;
 }
+
+/** Evaluates children binding */
+function childrenForObject(item: Item, childrenBinding: (element:any) => BindingId<Description<any>>, object: Description<any>) {
+    let childrenRtBindingId = new RuntimeBindingId(childrenBinding(object), object.url);
+    
+    let result = item.boundTree.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
+    result.then((childrenValues => {
+        updateValues(item, childrenValues, childrenRtBindingId);
+    }))
+
+    item.boundTree.api.addChangeListener(childrenRtBindingId, (event) => {
+        updateValues(item, event.value, childrenRtBindingId);
+    })
+ }

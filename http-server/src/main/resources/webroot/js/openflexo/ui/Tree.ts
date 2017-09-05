@@ -88,29 +88,42 @@ export class Tree implements Component, Selectable<TreeItem> {
 
 export class TreeItem implements Component {
 
+    /** Widget primary container */
     container: HTMLDivElement;
 
+    /** MDL list primary content  */
     private primaryContent: HTMLSpanElement;
+    /** Item content. It's the selectable part of the item */
     private itemContent: HTMLSpanElement;
+    /** The children list element */
     private childrenContainer: HTMLUListElement;
+    /** The status icon in front of the content show if the item is open/close/leaf */
     private statusIcon: HTMLElement;
 
+    /** List of children items */
     children: TreeItem[] = [];
     
+    /** Item status */
     private expanded: boolean = false;
 
+    /** Call back when expand is queried */
     onexpand: ((TreeItem)=>void)|null = null;
+    /** Call back when fold is queried */
     onfold: ((TreeItem)=>void)|null = null;
     
     /** Internal data for advanced tree usage, not for user to use */
     data: any = null;
 
     constructor(
-        private tree: Tree,
+        private parent: Tree|TreeItem,
         private contents : Component|PhrasingCategory,
-        private noChildren: boolean = false
+        private leaf: boolean = false
     ) {
         this.create();
+    }
+
+    get tree(): Tree {
+        return this.parent instanceof Tree ? this.parent : this.parent.tree;
     }
 
     addChild(child: TreeItem) {
@@ -137,7 +150,7 @@ export class TreeItem implements Component {
     
     create() {
         this.container = createDiv();
-        
+     
         let li = document.createElement("li");     
         li.classList.add("mdl-list__item");
         li.classList.add("of-tree__item");
@@ -149,11 +162,11 @@ export class TreeItem implements Component {
         this.statusIcon = document.createElement("i");
         this.statusIcon.classList.add("material-icons");
         this.statusIcon.classList.add("mdl-list__item-icon");
-        this.statusIcon.innerText = this.noChildren ? emptyIcon : foldedIcon;
+        this.statusIcon.innerText = this.leaf ? emptyIcon : foldedIcon;
         this.primaryContent.appendChild(this.statusIcon);
     
         this.statusIcon.onclick = (event) => {
-            if (!this.noChildren) {
+            if (!this.leaf) {
                 if (this.expanded) this.fold(); else this.expand();
             }
         }
@@ -163,15 +176,33 @@ export class TreeItem implements Component {
         this.itemContent.appendChild(toHTMLElement(this.contents));
         this.primaryContent.appendChild(this.itemContent);
 
+        this.itemContent.tabIndex = 1;
         this.itemContent.onclick = (event) => {
             this.tree.select(this);
+        }
+
+        this.itemContent.onkeyup = (event) => {
+            switch (event.code) {
+                case "ArrowUp":
+                    this.goToPrevious();
+                    break;                    
+                case "ArrowDown":
+                    this.goToNext();
+                    break;                    
+                case "ArrowLeft":
+                    this.goToParent();
+                    break;                    
+                case "ArrowRight":
+                    this.goToChild();
+                    break;                    
+            }
         }
 
         this.container.appendChild(li);
         
         this.childrenContainer = createUl();
         this.childrenContainer.classList.add(hiddenClass);
-        this.container.appendChild(this.childrenContainer);
+        this.container.appendChild(this.childrenContainer);  
 
         mdlUpgradeElement(this.container);
     }
@@ -210,6 +241,37 @@ export class TreeItem implements Component {
         }
         if (!selected && contains) {
             classList.remove(selectedClass);
+        }
+    }
+
+    goToPrevious() {
+        console.log("previous")
+    }
+
+    goToNext() {
+        console.log("next")
+    }
+
+    goToParent() {
+        // selects parent if it's an item, folds if it's the tree
+        if (this.parent instanceof TreeItem) {
+            this.tree.select(this.parent);
+        } else {
+            this.fold();
+        }
+    }
+
+    goToChild() {
+        // if there is no children, stop here
+        if (this.leaf) return;
+
+        // expands if not or select the first child
+        if (this.expanded) {
+            if (this.children.length > 0) {
+                this.tree.select(this.children[0]);
+            }
+        } else {
+            this.expand();
         }
     }
 }
