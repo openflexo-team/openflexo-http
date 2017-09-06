@@ -233,11 +233,33 @@ export class TreeItem implements Component {
         }
     }
 
+    get firstChild(): TreeItem|null {
+        return this.children.length > 0 ? this.children[0] : null;
+    }
+
+    get lastChild(): TreeItem|null {
+        let children = this.children;
+        return children.length > 0 ? children[children.length-1] : null;
+    }
+
+    get previousSibling(): TreeItem|null {
+        let children = this.parent.children;
+        let index = children.indexOf(this);
+        return index > 0 ? children[index-1] : null;
+    }
+
+    get nextSibling(): TreeItem|null {
+        let children = this.parent.children;
+        let index = children.indexOf(this);
+        return index < children.length - 1 ? children[index+1] : null;
+    }
+
     setSelectionStatus(selected: boolean) {
         let classList = this.itemContent.classList;
         let contains = classList.contains(selectedClass);
         if (selected && !contains) {
             classList.add(selectedClass);
+            this.itemContent.focus()
         }
         if (!selected && contains) {
             classList.remove(selectedClass);
@@ -245,19 +267,41 @@ export class TreeItem implements Component {
     }
 
     goToPrevious() {
-        console.log("previous")
+        let previous = this.previousSibling;
+        if (previous !== null) {
+            if (previous.expanded && previous.lastChild !== null) {
+                this.tree.select(previous.lastChild);
+            } else {
+                this.tree.select(previous);
+            }
+        } else {
+            if (this.parent instanceof TreeItem) {
+                // selects parent
+                this.tree.select(this.parent);
+            }
+        }
     }
 
     goToNext() {
-        console.log("next")
+        if (this.expanded && this.firstChild !== null) {
+            // if expanded and has a first child, selects it
+            this.tree.select(this.firstChild);
+        } else {
+            if (this.nextSibling != null) {
+                // if there is a next sibling, selects it
+                this.tree.select(this.nextSibling);
+            } else if (this.parent instanceof TreeItem && this.parent.nextSibling !== null) {
+                // if there is a parent's next sibling selects it
+                this.tree.select(this.parent.nextSibling);
+            }
+        }
     }
 
     goToParent() {
-        // selects parent if it's an item, folds if it's the tree
-        if (this.parent instanceof TreeItem) {
-            this.tree.select(this.parent);
-        } else {
+        if (this.expanded) {
             this.fold();
+        } else if (this.parent instanceof TreeItem) {
+            this.tree.select(this.parent); 
         }
     }
 
