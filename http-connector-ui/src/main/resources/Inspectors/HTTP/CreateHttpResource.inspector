@@ -37,7 +37,7 @@
 				name="CreationSchemeDropDown" format="object.signature"
 				icon="controller.iconForObject(object)" localize="false"
 				list="data.availableCreationSchemes" showIcon="true"
-				iteratorClassName="org.openflexo.http.connector.fml.HttpVirtualModelInitializer"
+				iteratorClassName="org.openflexo.http.connector.fml.HttpInitializer"
 				autoSelectFirstRow="false">
 			</DropDown>
 			<Label label="parameters" index="18"

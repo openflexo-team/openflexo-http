@@ -58,12 +58,12 @@ import org.openflexo.model.annotations.XMLElement;
  *
  */
 @ModelEntity
-@ImplementationClass(HttpInitializer.HttpVirtualModelInitializerImpl.class)
+@ImplementationClass(HttpInitializer.HttpInitializerImpl.class)
 @XMLElement
 @FML("HttpInitializer")
 public interface HttpInitializer extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
 
-	public static abstract class HttpVirtualModelInitializerImpl extends AbstractActionSchemeImpl implements HttpInitializer {
+	public static abstract class HttpInitializerImpl extends AbstractActionSchemeImpl implements HttpInitializer {
 
 		@Override
 		public HttpTechnologyAdapter getSpecificTechnologyAdapter() {
