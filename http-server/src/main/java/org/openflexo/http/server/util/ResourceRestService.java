@@ -44,7 +44,6 @@ import java.util.Collection;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonError;
 import org.openflexo.http.server.json.JsonSerializer;
-import org.openflexo.model.exceptions.ModelDefinitionException;
 
 /**
  * Creates REST entry point to serve resources associated with data.
@@ -53,17 +52,17 @@ public abstract class ResourceRestService<D, R> {
 
 	public static final String DETAILED_PARAM = "detailed";
 
-	private final String prefix;
+	protected final String prefix;
 
-	private final Class<R> resourceClass;
+	protected final Class<R> resourceClass;
 
-	private final JsonSerializer serializer;
+	protected final JsonSerializer serializer;
 
 	public ResourceRestService(
 		String prefix,
 		Class<R> resourceClass,
 		JsonSerializer serializer
-	) throws ModelDefinitionException {
+	) {
 		this.prefix = prefix;
 		this.resourceClass = resourceClass;
 		this.serializer = serializer;

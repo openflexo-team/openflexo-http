@@ -2,6 +2,7 @@ package org.openflexo.http.server.fml;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.openflexo.foundation.fml.AbstractVirtualModel;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.ViewPoint;
 import org.openflexo.foundation.fml.ViewPointLibrary;
@@ -12,6 +13,7 @@ import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
+import org.openflexo.model.ModelContextLibrary;
 
 /**
  * Route complements for FML technology adapter
@@ -46,7 +48,8 @@ public class FMLRouteComplement implements TechnologyAdapterRouteComplement {
 			"/virtualmodel",
 			this::getViewResources,
 			viewPointLibrary::getVirtualModelResource,
-			VirtualModelResource.class, taService
+			VirtualModelResource.class, taService,
+			ModelContextLibrary.getModelContext(AbstractVirtualModel.class)
 		);
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, virtualModelConverter);
 	}

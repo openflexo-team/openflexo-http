@@ -48,7 +48,11 @@ import org.openflexo.model.ModelProperty;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.model.exceptions.ModelDefinitionException;
 
+/**
+ * TypescriptModelFromPamela generates a TypeScript description for a Pamela model.
+ */
 public class TypescriptModelFromPamela {
 
 	private final ModelContext context;
@@ -57,17 +61,21 @@ public class TypescriptModelFromPamela {
 		this.context = context;
 	}
 
-	public String generateTypeScript() throws Throwable {
+	public String generateTypeScript() {
 		StringBuilder result = new StringBuilder();
 		Iterator<ModelEntity> entities = context.getEntities();
 		while (entities.hasNext()) {
-			result.append(generateTypeScriptInterface(entities.next()));
-			result.append("\n\n");
+			try {
+				result.append(generateTypeScriptInterface(entities.next()));
+				result.append("\n\n");
+			} catch (ModelDefinitionException e) {
+				// ouch, too bad no model no typescript ...
+			}
 		}
 		return result.toString();
 	}
 
-	public String generateTypeScriptInterface(ModelEntity<?> entity) throws Throwable {
+	private String generateTypeScriptInterface(ModelEntity<?> entity) throws ModelDefinitionException {
 		StringBuilder tsInterface = new StringBuilder();
 		tsInterface.append("export interface ");
 		tsInterface.append(entity.getXMLTag());
@@ -108,7 +116,7 @@ public class TypescriptModelFromPamela {
 		return tsInterface.toString();
 	}
 
-	private String getTsTypeName(ModelProperty<?> property) throws Throwable {
+	private String getTsTypeName(ModelProperty<?> property) throws ModelDefinitionException {
 		String result = "any";
 		Class<?> type = property.getType();
 		if (isStringType(property)) {
