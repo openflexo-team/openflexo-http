@@ -39,10 +39,14 @@ import java.util.ArrayList;
 import java.util.List;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceRepository;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
+import org.openflexo.gina.model.FIBComponent;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.http.server.util.PamelaResourceRestService;
+import org.openflexo.model.ModelContextLibrary;
 import org.openflexo.technologyadapter.gina.GINATechnologyAdapter;
 import org.openflexo.technologyadapter.gina.rm.GINAFIBComponentResource;
 
@@ -57,17 +61,24 @@ public class GinaRouteComplement implements TechnologyAdapterRouteComplement {
 
 	@Override
 	public void initialize(HttpService service, TechnologyAdapterRouteService technologyAdapterRouteService) throws Exception {
-		this.technologyAdapter = service.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(getTechnologyAdapterClass());
+		TechnologyAdapterService technologyAdapterService = service.getServiceManager().getTechnologyAdapterService();
+		this.technologyAdapter = technologyAdapterService.getTechnologyAdapter(getTechnologyAdapterClass());
+
+		JsonSerializer serializer = technologyAdapterRouteService.getSerializer();
+		ApplicationFIBRestService applicationFIBRestService = new ApplicationFIBRestService("/application", serializer, technologyAdapterService);
+		technologyAdapterRouteService.registerPamelaResourceRestService(technologyAdapter, applicationFIBRestService);
 
 		PamelaResourceRestService fibService = new PamelaResourceRestService<>(
 			"/fib", this::getResources, this::getGinaResource,
-			GINAFIBComponentResource.class, technologyAdapterRouteService
+			GINAFIBComponentResource.class, technologyAdapterRouteService,
+			ModelContextLibrary.getModelContext(FIBComponent.class)
 		);
 		technologyAdapterRouteService.registerPamelaResourceRestService(technologyAdapter, fibService);
 	}
 
 	private List<GINAFIBComponentResource> getResources() {
 		ArrayList<GINAFIBComponentResource> result = new ArrayList<>();
+
 		for (ResourceRepository<?, Object> repository : technologyAdapter.getAllRepositories()) {
 			for (FlexoResource<?> resource : repository.getAllResources()) {
 				if (resource instanceof GINAFIBComponentResource) {
