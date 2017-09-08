@@ -35,14 +35,17 @@
 
 package org.openflexo.http.server.util;
 
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
+import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.model.ModelContext;
 import org.openflexo.model.factory.EmbeddingType;
 
 /**
@@ -54,6 +57,10 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private final Function<String, R> finder;
 
+	private final ModelContext modelContext;
+
+	private String typescript = null;
+
 	private Consumer<D> postLoader = null;
 
 	public PamelaResourceRestService(
@@ -62,10 +69,31 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 		Function<String, R> finder,
 		Class<R> resourceClass,
 		TechnologyAdapterRouteService service
-	) throws ModelDefinitionException {
+	) {
+		this(prefix, supplier, finder, resourceClass, service, null);
+	}
+
+	public PamelaResourceRestService(
+		String prefix,
+		Supplier<Collection<R>> supplier,
+		Function<String, R> finder,
+		Class<R> resourceClass,
+		TechnologyAdapterRouteService service,
+		ModelContext modelContext
+	) {
 		super(prefix, resourceClass, service.getSerializer());
 		this.supplier = supplier;
 		this.finder = finder;
+		this.modelContext = modelContext;
+	}
+
+	@Override
+	public void addRoutes(Router router) {
+		if (modelContext != null) {
+			typescript = new TypescriptModelFromPamela(modelContext).generateTypeScript();
+			router.get(prefix + "/model.ts").produces(RouteService.JSON).handler(this::serveTypeScript);
+		}
+		super.addRoutes(router);
 	}
 
 	public void setPostLoader(Consumer<D> postLoader) {
@@ -103,5 +131,9 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	protected Object findObject(R resource, String id) {
 		long entityId = Long.parseLong(id);
 		return resource.getFlexoObject(entityId, "FLX");
+	}
+
+	private void serveTypeScript(RoutingContext context) {
+		context.response().end(typescript);
 	}
 }
