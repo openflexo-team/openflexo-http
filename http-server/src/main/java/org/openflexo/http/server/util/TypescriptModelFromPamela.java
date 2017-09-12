@@ -35,11 +35,13 @@
 
 package org.openflexo.http.server.util;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
+
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
@@ -79,7 +81,8 @@ public class TypescriptModelFromPamela {
 		StringBuilder tsInterface = new StringBuilder();
 		tsInterface.append("export interface ");
 		tsInterface.append(entity.getXMLTag());
-		List<ModelEntity<Object>> superEntities = entity.getDirectSuperEntities();
+		List<?> directSuperEntities = entity.getDirectSuperEntities();
+		List<ModelEntity<?>> superEntities = (List<ModelEntity<?>>) directSuperEntities;
 		if (superEntities != null && !superEntities.isEmpty()) {
 			tsInterface.append(" extends ");
 			int length = tsInterface.length();
@@ -151,12 +154,7 @@ public class TypescriptModelFromPamela {
 
 	private boolean isStringType(ModelProperty<?> property) {
 		Class<?> type = property.getType();
-		return	type == DataBinding.class ||
-				type == Class.class ||
-				type == Color.class ||
-				type == Font.class ||
-				type == File.class ||
-				property.isStringConvertable() ||
-				type == String.class;
+		return type == DataBinding.class || type == Class.class || type == Color.class || type == Font.class || type == File.class
+				|| property.isStringConvertable() || type == String.class;
 	}
 }
