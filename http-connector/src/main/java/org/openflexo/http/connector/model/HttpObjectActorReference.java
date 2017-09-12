@@ -113,7 +113,7 @@ public interface HttpObjectActorReference<T extends HttpFlexoConceptInstance<?>>
 		}
 
 		@Override
-		public T getModellingElement() {
+		public T getModellingElement(boolean forceLoading) {
 			// TODO: instantiate cache when retrieving fails and return null value
 			// Otherwise, this will continuously loop
 			if (modellingElement == null) {
