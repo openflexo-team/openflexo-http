@@ -75,11 +75,11 @@ public class TypescriptModelFromPamela {
 		return result.toString();
 	}
 
-	private String generateTypeScriptInterface(ModelEntity<?> entity) throws ModelDefinitionException {
+	private String generateTypeScriptInterface(ModelEntity<Object> entity) throws ModelDefinitionException {
 		StringBuilder tsInterface = new StringBuilder();
 		tsInterface.append("export interface ");
 		tsInterface.append(entity.getXMLTag());
-		List<ModelEntity<?>> superEntities = (List<ModelEntity<?>>) entity.getDirectSuperEntities();
+		List<ModelEntity<Object>> superEntities = entity.getDirectSuperEntities();
 		if (superEntities != null && !superEntities.isEmpty()) {
 			tsInterface.append(" extends ");
 			int length = tsInterface.length();
