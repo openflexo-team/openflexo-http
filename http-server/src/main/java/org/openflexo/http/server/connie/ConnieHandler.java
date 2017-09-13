@@ -78,7 +78,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private DataBinding getOrCreateBinding(final BindingId id) {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
-			Bindable model = findObject(id.contextUrl, Bindable.class);
+			Bindable model = getOrCreateBindable(id);
 			DataBinding binding = new DataBinding(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
 			binding.decode();
 			return binding;
@@ -109,13 +109,27 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			FlexoResource<?> resource = serviceManager.getResourceManager().getResource(resourceUri);
 			ResourceUtils.safeGetResourceOrNull(resource);
 			if (resource != null) {
-				FlexoObject object = resource.findObject(objectUrl, "FLX", null);
+				FlexoObject object = resource.findObject(objectUrl, null, null);
 				if (type.isInstance(object)) {
 					return type.cast(object);
 				}
 			}
 		}
 		return null;
+	}
+
+	private Bindable getOrCreateBindable(BindingId id) {
+		Bindable bindable = findObject(id.contextUrl, Bindable.class);
+
+		if (id.extensions != null && id.extensions.size() > 0) {
+			Map<String, Object> objects = new HashMap<>();
+			for (Map.Entry<String, String> entry : id.extensions.entrySet()) {
+				objects.put(entry.getKey(), findObject(entry.getValue(), Object.class));
+			}
+			bindable = new ExtendedBindable(bindable, objects);
+		}
+
+		return bindable;
 	}
 
 	@Override
@@ -137,12 +151,30 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 		private final Map<RuntimeBindingId, BindingValueChangeListener> listenedBindings = new HashMap<>();
 
+		private final Map<RuntimeBindingId, BindingEvaluationContext> contexts = new WeakHashMap<>();
+
 		public ClientConnection(ServerWebSocket socket) {
 			this.socket = socket;
 
 			socket.frameHandler(this::handleFrame);
 			socket.exceptionHandler(this::exceptionHandler);
 			socket.endHandler(this::endHandler);
+		}
+
+		private BindingEvaluationContext getOrCreateContext(final RuntimeBindingId id) {
+			return contexts.computeIfAbsent(id, (bId) -> {
+				BindingEvaluationContext context = findObject(id.runtimeUrl, BindingEvaluationContext.class);
+
+				if (id.extensions != null && id.extensions.size() > 0) {
+					Map<String, Object> objects = new HashMap<>();
+					for (Map.Entry<String, String> entry : id.extensions.entrySet()) {
+						objects.put(entry.getKey(), findObject(entry.getValue(), Object.class));
+					}
+					context = new ExtendedBindingEvaluationContext(context, objects);
+				}
+
+				return context;
+			});
 		}
 
 		private void handleFrame(WebSocketFrame frame) {
@@ -170,7 +202,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
-				BindingEvaluationContext context = findObject(runtimeBinding.runtimeUrl, BindingEvaluationContext.class);
+				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
 				if (context != null) {
 					try {
 						Object value = binding.getBindingValue(context);
@@ -200,7 +232,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
-				BindingEvaluationContext context = findObject(runtimeBinding.runtimeUrl, BindingEvaluationContext.class);
+				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
 				if (context != null) {
 					BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
 					if (listener == null) {

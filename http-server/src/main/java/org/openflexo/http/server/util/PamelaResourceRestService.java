@@ -130,7 +130,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	@Override
 	protected Object findObject(R resource, String id) {
 		long entityId = Long.parseLong(id);
-		return resource.getFlexoObject(entityId, "FLX");
+		return resource.getFlexoObject(entityId, null);
 	}
 
 	private void serveTypeScript(RoutingContext context) {

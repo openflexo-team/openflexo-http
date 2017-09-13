@@ -35,59 +35,51 @@
 
 package org.openflexo.http.server.connie;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
 import java.util.Map;
+import org.openflexo.connie.Bindable;
+import org.openflexo.connie.BindingFactory;
+import org.openflexo.connie.BindingModel;
+import org.openflexo.connie.BindingVariable;
+import org.openflexo.connie.DataBinding;
+import org.openflexo.connie.DefaultBindable;
+import org.openflexo.connie.java.JavaBindingFactory;
 
-/**
- * Id class for a {@link org.openflexo.connie.DataBinding} with a given runtime context
- */
-public class RuntimeBindingId {
+public class ExtendedBindable extends DefaultBindable {
 
-	public final BindingId binding;
+	private final Bindable parentBindable;
 
-	public final String runtimeUrl;
+	private final BindingModel model;
 
-	public final Map<String, String> extensions = new HashMap<>();
-
-	public RuntimeBindingId(
-			@JsonProperty("binding") BindingId binding,
-			@JsonProperty("runtimeUrl") String runtimeUrl,
-			@JsonProperty("extensions") Map<String, String> extensions
-	) {
-		this.binding = binding;
-		this.runtimeUrl = runtimeUrl;
-		if (extensions != null) {
-			this.extensions.putAll(extensions);
+	public ExtendedBindable(Bindable parentBindable, Map<String, Object> objects) {
+		this.parentBindable = parentBindable;
+		this.model = new BindingModel(parentBindable != null ? parentBindable.getBindingModel() : null);
+		for (String variableName : objects.keySet()) {
+			Object value = objects.get(variableName);
+			model.addToBindingVariables(new BindingVariable(variableName, getBindingFactory().getTypeForObject(value)));
 		}
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		RuntimeBindingId that = (RuntimeBindingId) o;
-
-		if (binding != null ? !binding.equals(that.binding) : that.binding != null)
-			return false;
-		if (!runtimeUrl.equals(that.runtimeUrl))
-			return false;
-		return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
+	public void notifiedBindingChanged(DataBinding<?> dataBinding) {
+		if (parentBindable != null) {
+			parentBindable.notifiedBindingChanged(dataBinding);
+		}
 	}
 
 	@Override
-	public int hashCode() {
-		int result = binding != null ? binding.hashCode() : 0;
-		result = 31 * result + runtimeUrl.hashCode();
-		result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
-		return result;
+	public void notifiedBindingDecoded(DataBinding<?> dataBinding) {
+		if (parentBindable != null) {
+			parentBindable.notifiedBindingDecoded(dataBinding);
+		}
 	}
 
 	@Override
-	public String toString() {
-		return "RuntimeBindingId{" + "binding=" + binding + ", runtimeUrl='" + runtimeUrl + '\'' + '}';
+	public BindingModel getBindingModel() {
+		return model;
+	}
+
+	@Override
+	public BindingFactory getBindingFactory() {
+		return new JavaBindingFactory();
 	}
 }

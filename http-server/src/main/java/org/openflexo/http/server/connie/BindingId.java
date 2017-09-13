@@ -36,6 +36,8 @@
 package org.openflexo.http.server.connie;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Id class for a {@link org.openflexo.connie.DataBinding}
@@ -46,12 +48,18 @@ public class BindingId {
 
 	public final String contextUrl;
 
+	public final Map<String, String> extensions = new HashMap<>();
+
 	public BindingId(
 			@JsonProperty("expression") String expression,
-			@JsonProperty("contextUrl") String contextUrl
+			@JsonProperty("contextUrl") String contextUrl,
+			@JsonProperty("extensions") Map<String, String> extensions
 	) {
 		this.expression = expression;
 		this.contextUrl = contextUrl;
+		if (extensions != null) {
+			this.extensions.putAll(extensions);
+		}
 	}
 
 	@Override
@@ -65,13 +73,16 @@ public class BindingId {
 
 		if (!expression.equals(bindingId.expression))
 			return false;
-		return contextUrl.equals(bindingId.contextUrl);
+		if (contextUrl != null ? !contextUrl.equals(bindingId.contextUrl) : bindingId.contextUrl != null)
+			return false;
+		return extensions.equals(bindingId.extensions);
 	}
 
 	@Override
 	public int hashCode() {
 		int result = expression.hashCode();
-		result = 31 * result + contextUrl.hashCode();
+		result = 31 * result + (contextUrl != null ? contextUrl.hashCode() : 0);
+		result = 31 * result + extensions.hashCode();
 		return result;
 	}
 

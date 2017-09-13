@@ -35,59 +35,25 @@
 
 package org.openflexo.http.server.connie;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.HashMap;
 import java.util.Map;
+import org.openflexo.connie.BindingEvaluationContext;
+import org.openflexo.connie.BindingVariable;
 
-/**
- * Id class for a {@link org.openflexo.connie.DataBinding} with a given runtime context
- */
-public class RuntimeBindingId {
+public class ExtendedBindingEvaluationContext implements BindingEvaluationContext {
 
-	public final BindingId binding;
+	private final BindingEvaluationContext parentContext;
+	private final Map<String, Object> objects;
 
-	public final String runtimeUrl;
+	public ExtendedBindingEvaluationContext(BindingEvaluationContext parentContext, Map<String, Object> objects) {
+		this.parentContext = parentContext;
+		this.objects = objects;
+	}
 
-	public final Map<String, String> extensions = new HashMap<>();
-
-	public RuntimeBindingId(
-			@JsonProperty("binding") BindingId binding,
-			@JsonProperty("runtimeUrl") String runtimeUrl,
-			@JsonProperty("extensions") Map<String, String> extensions
-	) {
-		this.binding = binding;
-		this.runtimeUrl = runtimeUrl;
-		if (extensions != null) {
-			this.extensions.putAll(extensions);
+	@Override
+	public Object getValue(BindingVariable variable) {
+		if (objects.containsKey(variable.getVariableName())) {
+			return objects.get(variable.getVariableName());
 		}
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		RuntimeBindingId that = (RuntimeBindingId) o;
-
-		if (binding != null ? !binding.equals(that.binding) : that.binding != null)
-			return false;
-		if (!runtimeUrl.equals(that.runtimeUrl))
-			return false;
-		return extensions != null ? extensions.equals(that.extensions) : that.extensions == null;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = binding != null ? binding.hashCode() : 0;
-		result = 31 * result + runtimeUrl.hashCode();
-		result = 31 * result + (extensions != null ? extensions.hashCode() : 0);
-		return result;
-	}
-
-	@Override
-	public String toString() {
-		return "RuntimeBindingId{" + "binding=" + binding + ", runtimeUrl='" + runtimeUrl + '\'' + '}';
+		return parentContext != null ? parentContext.getValue(variable) : null;
 	}
 }
