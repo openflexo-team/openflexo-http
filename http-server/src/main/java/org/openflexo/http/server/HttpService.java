@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoService;
 import org.openflexo.foundation.FlexoServiceImpl;
 import org.openflexo.foundation.FlexoServiceManager;
@@ -50,6 +51,8 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	@Override
 	public void initialize() {
+		DataBinding.setDefaultCachingStrategy(DataBinding.CachingStrategy.NO_CACHING);
+
 		// initializes technology adapter standalone and for each resource center.
 		FlexoServiceManager serviceManager = getServiceManager();
 		List<TechnologyAdapter> technologyAdapters = serviceManager.getTechnologyAdapterService().getTechnologyAdapters();
