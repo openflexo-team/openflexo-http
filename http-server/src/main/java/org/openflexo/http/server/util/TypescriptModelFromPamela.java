@@ -35,13 +35,11 @@
 
 package org.openflexo.http.server.util;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.awt.*;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
-
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
@@ -65,6 +63,9 @@ public class TypescriptModelFromPamela {
 
 	public String generateTypeScript() {
 		StringBuilder result = new StringBuilder();
+
+		result.append("import { Description } from \"./general\";\n\n");
+
 		Iterator<ModelEntity> entities = context.getEntities();
 		while (entities.hasNext()) {
 			try {
@@ -82,15 +83,18 @@ public class TypescriptModelFromPamela {
 		tsInterface.append("export interface ");
 		tsInterface.append(entity.getXMLTag());
 		List<?> directSuperEntities = entity.getDirectSuperEntities();
+		tsInterface.append(" extends ");
 		List<ModelEntity<?>> superEntities = (List<ModelEntity<?>>) directSuperEntities;
 		if (superEntities != null && !superEntities.isEmpty()) {
-			tsInterface.append(" extends ");
-			int length = tsInterface.length();
+			StringJoiner joiner = new StringJoiner(", ");
 			for (ModelEntity<?> superEntity : superEntities) {
-				if (tsInterface.length() > length)
-					tsInterface.append(", ");
-				tsInterface.append(superEntity.getXMLTag());
+				joiner.add(superEntity.getXMLTag());
 			}
+			tsInterface.append(joiner.toString());
+		} else {
+			tsInterface.append("Description<");
+			tsInterface.append(entity.getXMLTag());
+			tsInterface.append(">");
 		}
 		tsInterface.append(" {\n");
 
