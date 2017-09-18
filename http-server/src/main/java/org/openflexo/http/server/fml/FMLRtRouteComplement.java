@@ -46,6 +46,7 @@ import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
+import org.openflexo.model.ModelContextLibrary;
 
 /**
  * Route complements for FML@RT technology adapter
@@ -67,7 +68,8 @@ public class FMLRtRouteComplement implements TechnologyAdapterRouteComplement {
 		// Adds pamela rest service for virtual model instance resources
 		PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> viewConverter = new PamelaResourceRestService<>(
 				"/instance", this::getVirtualModelInstanceResources, this::getVirtualModelInstanceResource,
-				FMLRTVirtualModelInstanceResource.class, taService);
+				FMLRTVirtualModelInstanceResource.class, taService,
+				ModelContextLibrary.getModelContext(FMLRTVirtualModelInstance.class));
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, viewConverter);
 
 	}
