@@ -38,7 +38,6 @@ package org.openflexo.http.server.util;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import java.util.Collection;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.openflexo.foundation.resource.PamelaResource;
@@ -60,8 +59,6 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	private final ModelContext modelContext;
 
 	private String typescript = null;
-
-	private Consumer<D> postLoader = null;
 
 	public PamelaResourceRestService(
 		String prefix,
@@ -91,13 +88,9 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	public void addRoutes(Router router) {
 		if (modelContext != null) {
 			typescript = new TypescriptModelFromPamela(modelContext).generateTypeScript();
-			router.get(prefix + "/model.ts").produces(RouteService.JSON).handler(this::serveTypeScript);
+			router.get(prefix + "/model.d.ts").produces(RouteService.JSON).handler(this::serveTypeScript);
 		}
 		super.addRoutes(router);
-	}
-
-	public void setPostLoader(Consumer<D> postLoader) {
-		this.postLoader = postLoader;
 	}
 
 	@Override
@@ -115,9 +108,6 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	protected D loadResource(R resource) throws Exception {
 		if (!resource.isLoaded()) {
 			resource.loadResourceData(null);
-			if (postLoader != null) {
-				postLoader.accept(resource.getLoadedResourceData());
-			}
 		}
 		return resource.getLoadedResourceData();
 	}
