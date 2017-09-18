@@ -60,8 +60,8 @@ export class BoundButton implements Component {
             if (this.enabled !== null) {
                 this.enabled.contextUrl = runtime; 
                 this.enabledRuntimeBinding = new RuntimeBindingId(this.enabled, runtime);
-                this.api.evaluate<string>(this.enabledRuntimeBinding).then( value => {
-                    this.button.setEnable(value === "true")
+                this.api.evaluate<boolean>(this.enabledRuntimeBinding).then( value => {
+                    this.button.setEnable(value)
                 } );
                 this.api.addChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
             }
