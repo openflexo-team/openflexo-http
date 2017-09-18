@@ -1,9 +1,8 @@
-export interface ResourceData {
-}
+import { Description } from "./general";
 
 export interface AbstractAddFlexoConceptInstance extends FMLRTAction {
-	readonly container: string;
 	readonly creationSchemeURI: string;
+	readonly container: string;
 	readonly parameters: Array<AddFlexoConceptInstanceParameter>;
 }
 
@@ -15,6 +14,9 @@ export interface ExecuteBehaviourParameter extends FlexoBehaviourObject {
 
 export interface VirtualModelInstanceObject extends FlexoObject {
 	readonly virtualModelInstance: VirtualModelInstance;
+}
+
+export interface ResourceData extends Description<ResourceData> {
 }
 
 export interface WhileAction extends ControlStructureAction, FMLControlGraphOwner {
@@ -57,8 +59,8 @@ export interface SelectFlexoConceptInstance extends FetchRequest {
 }
 
 export interface GetSetProperty extends GetProperty {
-	readonly valueVariableName: string;
 	readonly setControlGraph: FMLControlGraph;
+	readonly valueVariableName: string;
 }
 
 export interface Inspector extends FlexoConceptObject {
@@ -122,22 +124,6 @@ export interface FlexoConceptInstance extends FlexoObject, VirtualModelInstanceO
 	readonly owningVirtualModelInstance: VirtualModelInstance;
 }
 
-export interface FlexoConcept extends FlexoConceptObject, VirtualModelObject {
-	readonly owner: VirtualModel;
-	readonly childFlexoConcepts: Array<FlexoConcept>;
-	readonly keyProperties: Array<FlexoProperty>;
-	readonly parentFlexoConcepts: Array<FlexoConcept>;
-	readonly Inspector: Inspector;
-	readonly isAbstract: boolean;
-	readonly containerFlexoConcept: FlexoConcept;
-	readonly embeddedFlexoConcepts: Array<FlexoConcept>;
-	readonly flexoProperties: Array<FlexoProperty>;
-	readonly flexoBehaviours: Array<FlexoBehaviour>;
-	readonly parentFlexoConceptsList: string;
-	readonly name: string;
-	readonly flexoConceptConstraints: Array<Constraint>;
-}
-
 export interface CreateFlexoConceptInstanceParameter extends FlexoBehaviourObject {
 	readonly action: MatchFlexoConceptInstance;
 	readonly paramName: string;
@@ -163,8 +149,8 @@ export interface AbstractAssignationAction extends AssignableAction, FMLControlG
 }
 
 export interface MatchFlexoConceptInstance extends FMLRTAction {
-	readonly container: string;
 	readonly creationSchemeURI: string;
+	readonly container: string;
 	readonly matchingCriterias: Array<MatchingCriteria>;
 	readonly matchingSet: string;
 	readonly parameters: Array<CreateFlexoConceptInstanceParameter>;
@@ -197,9 +183,6 @@ export interface GenericBehaviourParameter extends FlexoBehaviourObject {
 	readonly list: string;
 }
 
-export interface FMLRTVirtualModelInstance extends VirtualModelInstance {
-}
-
 export interface InspectorEntry extends FlexoConceptObject {
 	readonly container: string;
 	readonly readOnly: boolean;
@@ -215,21 +198,12 @@ export interface InspectorEntry extends FlexoConceptObject {
 export interface FlexoBehaviourObject extends FlexoConceptObject {
 }
 
-export interface FlexoEventInstance extends FlexoConceptInstance {
-	readonly sourceVirtualModelInstance: VirtualModelInstance;
-	readonly flexoConcept: FlexoEvent;
-}
-
 export interface Condition extends FlexoConceptObject {
 	readonly condition: string;
 	readonly action: FetchRequest;
 }
 
 export interface AbstractCreationScheme extends FlexoBehaviour {
-}
-
-export interface ModelObjectActorReference extends ActorReference {
-	readonly objectReference: string;
 }
 
 export interface DeclarationAction extends AbstractAssignationAction {
@@ -247,6 +221,10 @@ export interface CreationScheme extends AbstractCreationScheme {
 }
 
 export interface ModelSlotObject extends VirtualModelObject {
+}
+
+export interface PrimitiveActorReference extends ActorReference {
+	readonly valueAsString: string;
 }
 
 export interface LogAction extends EditionAction {
@@ -274,9 +252,6 @@ export interface FMLControlGraph extends FlexoConceptObject {
 	readonly ownerContext: string;
 }
 
-export interface VirtualModelObject extends FlexoConceptObject {
-}
-
 export interface TypeAwareModelSlot extends ModelSlot {
 	readonly metaModelURI: string;
 }
@@ -292,6 +267,9 @@ export interface FreeModelSlotInstance extends ModelSlotInstance {
 export interface RemoveFromListAction extends AssignableAction {
 	readonly list: string;
 	readonly value: string;
+}
+
+export interface FlexoConceptObject extends FMLObject {
 }
 
 export interface EmptyControlGraph extends FMLControlGraph {
@@ -328,11 +306,11 @@ export interface Sequence extends FMLControlGraph, FMLControlGraphOwner {
 export interface VirtualModel extends FlexoConcept, VirtualModelObject, ResourceData {
 	readonly localizedDictionary: FMLLocalizedDictionary;
 	readonly flexoConcepts: Array<FlexoConcept>;
-	readonly modelVersion: string;
 	readonly containerVirtualModel: VirtualModel;
+	readonly modelVersion: string;
+	readonly useDeclarations: Array<UseModelSlotDeclaration>;
 	readonly uri: string;
 	readonly version: string;
-	readonly useDeclarations: Array<UseModelSlotDeclaration>;
 }
 
 export interface AssignableAction extends EditionAction {
@@ -356,18 +334,31 @@ export interface AbstractActionScheme extends FlexoBehaviour {
 	readonly conditional: string;
 }
 
+export interface FlexoConcept extends FlexoConceptObject, VirtualModelObject {
+	readonly owner: VirtualModel;
+	readonly childFlexoConcepts: Array<FlexoConcept>;
+	readonly keyProperties: Array<FlexoProperty>;
+	readonly parentFlexoConcepts: Array<FlexoConcept>;
+	readonly Inspector: Inspector;
+	readonly isAbstract: boolean;
+	readonly containerFlexoConcept: FlexoConcept;
+	readonly embeddedFlexoConcepts: Array<FlexoConcept>;
+	readonly flexoProperties: Array<FlexoProperty>;
+	readonly flexoBehaviours: Array<FlexoBehaviour>;
+	readonly parentFlexoConceptsList: string;
+	readonly name: string;
+	readonly flexoConceptConstraints: Array<Constraint>;
+}
+
+export interface VirtualModelObject extends FlexoConceptObject {
+}
+
 export interface ExpressionProperty extends FlexoProperty {
 	readonly expression: string;
 }
 
-export interface PrimitiveActorReference extends ActorReference {
-	readonly valueAsString: string;
-}
-
-export interface FMLObject extends FlexoObject {
-	readonly author: string;
-	readonly name: string;
-	readonly description: string;
+export interface ModelObjectActorReference extends ActorReference {
+	readonly objectReference: string;
 }
 
 export interface Localized extends FMLObject {
@@ -384,6 +375,11 @@ export interface IncrementalIterationAction extends AbstractIterationAction {
 	readonly exclusiveEndValue: string;
 	readonly increment: string;
 	readonly startValue: string;
+}
+
+export interface FlexoEventInstance extends FlexoConceptInstance {
+	readonly sourceVirtualModelInstance: VirtualModelInstance;
+	readonly flexoConcept: FlexoEvent;
 }
 
 export interface ExpressionAction extends AssignableAction {
@@ -424,6 +420,12 @@ export interface FlexoConceptBehaviouralFacet extends FlexoConceptObject {
 export interface ControlStructureAction extends EditionAction, FMLControlGraph {
 }
 
+export interface FMLObject extends FlexoObject {
+	readonly author: string;
+	readonly name: string;
+	readonly description: string;
+}
+
 export interface InnerConceptsFacet extends FlexoConceptObject {
 }
 
@@ -434,13 +436,16 @@ export interface NavigationScheme extends AbstractActionScheme {
 	readonly targetObject: string;
 }
 
-export interface FlexoObject {
+export interface FlexoObject extends Description<FlexoObject> {
 	readonly userID: string;
 	readonly flexoID: number;
 }
 
 export interface DeleteAction extends EditionAction, AssignableAction {
 	readonly object: string;
+}
+
+export interface FMLRTVirtualModelInstance extends VirtualModelInstance {
 }
 
 export interface VirtualModelInstance extends FlexoConceptInstance, ResourceData {
@@ -463,8 +468,8 @@ export interface AbstractIterationAction extends ControlStructureAction, FMLCont
 }
 
 export interface FlexoRole extends FlexoProperty {
-	readonly container: string;
 	readonly modelSlot: ModelSlot;
+	readonly container: string;
 	readonly isRequired: boolean;
 	readonly cloningStrategy: "Clone" | "Reference" | "Ignore" | "Factory";
 	readonly defaultValue: string;
@@ -485,9 +490,6 @@ export interface Constraint extends FlexoConceptObject {
 
 export interface FMLRTModelSlot extends ModelSlot {
 	readonly virtualModelURI: string;
-}
-
-export interface FlexoConceptObject extends FMLObject {
 }
 
 export interface FlexoConceptStructuralFacet extends FlexoConceptObject {
