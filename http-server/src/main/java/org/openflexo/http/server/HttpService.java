@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		this.port = options.port;
 		this.host = options.host;
 		serverOptions = new HttpServerOptions();
+		serverOptions.setCompressionSupported(true);
 	}
 
 	@Override
@@ -106,6 +108,9 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		for (RouteService routeService : initializedServices) {
 			routeService.addRoutes(vertx, router);
 		}
+
+		LoggerHandler logHandler = LoggerHandler.create();
+		router.get().handler(logHandler);
 
 		// adds static content
 		StaticHandler staticHandler = StaticHandler.create();
