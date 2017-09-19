@@ -43,6 +43,8 @@ import org.openflexo.connie.BindingVariable;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.DefaultBindable;
 import org.openflexo.connie.java.JavaBindingFactory;
+import org.openflexo.foundation.fml.FMLObject;
+import org.openflexo.foundation.fml.binding.FMLBindingFactory;
 
 public class ExtendedBindable extends DefaultBindable {
 
@@ -50,8 +52,14 @@ public class ExtendedBindable extends DefaultBindable {
 
 	private final BindingModel model;
 
+	private final BindingFactory factory;
+
 	public ExtendedBindable(Bindable parentBindable, Map<String, Object> objects) {
 		this.parentBindable = parentBindable;
+		this.factory = parentBindable instanceof FMLObject ?
+				new FMLBindingFactory(((FMLObject) parentBindable).getDeclaringVirtualModel()) :
+				new JavaBindingFactory();
+
 		this.model = new BindingModel(parentBindable != null ? parentBindable.getBindingModel() : null);
 		for (String variableName : objects.keySet()) {
 			Object value = objects.get(variableName);
@@ -80,6 +88,6 @@ public class ExtendedBindable extends DefaultBindable {
 
 	@Override
 	public BindingFactory getBindingFactory() {
-		return new JavaBindingFactory();
+		return factory;
 	}
 }
