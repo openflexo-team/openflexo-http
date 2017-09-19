@@ -181,7 +181,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 		if (getFMLModelFactory() != null) {
 			XmlRpcParameter parameter = getFMLModelFactory().newInstance(XmlRpcParameter.class);
 			parameter.setName("param");
-			parameter.setValue(new DataBinding(getOwner(), String.class, BindingDefinitionType.GET));
+			parameter.setValue(new DataBinding<>(getOwner(), String.class, BindingDefinitionType.GET));
 			addToParameters(parameter);
 			return parameter;
 		}
