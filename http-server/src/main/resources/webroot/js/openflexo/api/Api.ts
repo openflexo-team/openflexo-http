@@ -9,25 +9,55 @@ export function createRuntimeBinding(expression: string, context: string, runtim
     return new RuntimeBindingId(createBinding(expression, context), runtime);
 }
 
+function mapToJson(map: Map<string, string>) {
+    let obj = Object.create(null);
+    map.forEach((value, key) => {
+        obj[key] = value;
+    })
+    return JSON.stringify(obj);
+}
+
 export class BindingId<T>  {
     constructor(
         public expression: string,
-        public contextUrl: string
+        public contextUrl: string, 
+        public extensions: Map<string, string> = new Map<string, string>()
     ) { }
 
     public equals(other: BindingId<T>) {
         return this.expression === other.expression && this.contextUrl === other.contextUrl;
+    }
+
+    public toJSON(): string {
+        return `
+            {
+                "expression": ${JSON.stringify(this.expression)},
+                "contextUrl": ${JSON.stringify(this.contextUrl)},
+                "extensions": ${mapToJson(this.extensions)}
+            } 
+        `;
     }
 }
 
 export class RuntimeBindingId<T> {
     constructor(
         public binding: BindingId<T>,
-        public runtimeUrl: string 
+        public runtimeUrl: string, 
+        public extensions: Map<string, string> = new Map<string, string>() 
     ) { }
 
     public equals(other: RuntimeBindingId<T>) {
         return this.binding.equals(other.binding) && this.runtimeUrl === other.runtimeUrl;
+    }
+
+    public toJSON(): string {
+        return `
+            {
+                "binding": ${this.binding.toJSON()},
+                "runtimeUrl": ${JSON.stringify(this.runtimeUrl)},
+                "extensions": ${mapToJson(this.extensions)}
+            } 
+        `;
     }
 }
 
@@ -39,6 +69,10 @@ export class Message {
         public id: number,
         public type: string
     ) { }
+
+    public toJSON():string {
+      return "";  
+    };
 }
 
 /**
@@ -53,6 +87,17 @@ export class EvaluationRequest extends Message {
     ) {
         super(id, "EvaluationRequest");
      }
+
+     public toJSON(): string {
+        return `
+            {
+                "type": ${JSON.stringify(this.type)}, 
+                "id": ${JSON.stringify(this.id)},
+                "runtimeBinding": ${this.runtimeBinding.toJSON()},
+                "detailed": ${JSON.stringify(this.detailed)}
+            } 
+        `;
+    }
 }
 
 /**
@@ -60,14 +105,25 @@ export class EvaluationRequest extends Message {
  */
 export class ListeningRequest extends Message {
     
-        constructor(
-            public id: number,
-            public runtimeBinding: RuntimeBindingId<any>,
-            public detailed: boolean
-        ) {
-            super(id, "ListeningRequest");
-         }
-    }
+    constructor(
+        public id: number,
+        public runtimeBinding: RuntimeBindingId<any>,
+        public detailed: boolean
+    ) {
+        super(id, "ListeningRequest");
+        }
+
+    public toJSON(): string {
+        return `
+            {
+                "type": ${JSON.stringify(this.type)}, 
+                "id": ${JSON.stringify(this.id)},
+                "runtimeBinding": ${this.runtimeBinding.toJSON()},
+                "detailed": ${JSON.stringify(this.detailed)}
+            } 
+        `;
+    }        
+}
     
 /**
  * Class used to send assignation request.
@@ -83,6 +139,19 @@ export class AssignationRequest extends Message {
     ) {
         super(id, "AssignationRequest");
      }
+
+    public toJSON(): string {
+        return `
+            {
+                "type": ${JSON.stringify(this.type)}, 
+                "id": ${JSON.stringify(this.id)},
+                "left": ${this.left.toJSON()},
+                "right": ${this.right !== null ? this.right.toJSON() : null},
+                "value": ${JSON.stringify(this.value)},
+                "detailed": ${JSON.stringify(this.detailed)}
+            } 
+        `;
+    }
 }
 
 /**
@@ -313,7 +382,7 @@ export class Api {
      * @param mesage message to send
      */
     private readySendMessage(message: Message) {
-        let json = JSON.stringify(message); 
+        let json = message.toJSON(); 
         if (this.connie != null) {
             this.connie.send(json);
         }
@@ -370,7 +439,7 @@ export class Api {
         if (right instanceof RuntimeBindingId) {
             request = new AssignationRequest(id, left, right, null, detailed);
         } else {
-            request = new AssignationRequest(id, left, null, right, detailed);
+            request = new AssignationRequest(id, left, null, <string>right, detailed);
         }
         
         return this.sendMessage(request);
