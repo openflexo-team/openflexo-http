@@ -346,9 +346,16 @@ export class Api {
      */
     private initializeConnieEvaluator(): WebSocket {
         if (this.connie == null) {
-            var wsHost = this.host.length > 0 ?
-                this.host.replace(new RegExp("https?\\://"), "ws://"):
-                wsHost = "ws://" + document.location.host;
+            let wsHost;
+            if (this.host.length > 0) {
+                wsHost = this.host.search("https\\://") == 0 ?
+                    this.host.replace(new RegExp("https\\://"), "wss://") + "/websocket" :
+                    this.host.replace(new RegExp("http\\://"), "ws://") + "/websocket" 
+            } else {
+                wsHost = document.location.protocol === "https" ?
+                    "wss://" + document.location.host + "/websocket" : 
+                    "ws://" + document.location.host + "/websocket"; 
+            }
             
             this.connie = new WebSocket(wsHost);
             this.connie.onopen = (e:MessageEvent) => this.onEvaluationOpen(e);
