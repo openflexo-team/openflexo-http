@@ -5,6 +5,7 @@ import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
+import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import java.util.ArrayList;
@@ -109,8 +110,8 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 			routeService.addRoutes(vertx, router);
 		}
 
-		LoggerHandler logHandler = LoggerHandler.create();
-		router.get().handler(logHandler);
+		router.get().handler(LoggerHandler.create());
+		router.get().handler(CorsHandler.create(".*"));
 
 		// adds static content
 		StaticHandler staticHandler = StaticHandler.create();
