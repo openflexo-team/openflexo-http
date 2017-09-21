@@ -352,7 +352,7 @@ export class Api {
                     this.host.replace(new RegExp("https\\://"), "wss://") + "/websocket" :
                     this.host.replace(new RegExp("http\\://"), "ws://") + "/websocket" 
             } else {
-                wsHost = document.location.protocol === "https" ?
+                wsHost = document.location.protocol === "https:" ?
                     "wss://" + document.location.host + "/websocket" : 
                     "ws://" + document.location.host + "/websocket"; 
             }
