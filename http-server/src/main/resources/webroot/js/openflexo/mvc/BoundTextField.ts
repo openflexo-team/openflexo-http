@@ -68,6 +68,9 @@ export class BoundTextField implements Component {
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
             this.api.evaluate<string>(this.runtimeBinding).then( value => this.updateValue(value));
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
+            this.setEnable(true);
+        } else {
+            this.setEnable(false);
         }
     }
 

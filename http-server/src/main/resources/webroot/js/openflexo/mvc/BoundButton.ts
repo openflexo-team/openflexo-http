@@ -37,8 +37,12 @@ export class BoundButton implements Component {
         this.container.onclick = (e) => this.sendActionToServer(e);
     }    
 
+    setEnable(enable: boolean) {
+        this.button.setEnable(enable);
+    }
+
     private listenFromServer(event: ChangeEvent) {
-        this.button.setEnable(event.value === "true")
+        this.setEnable(event.value === "true")
     }
 
     private sendActionToServer(e: any) {
@@ -64,12 +68,14 @@ export class BoundButton implements Component {
                     this.button.setEnable(value)
                 } );
                 this.api.addChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
+            } else {
+                this.setEnable(true);
             }
 
             this.action.contextUrl = runtime; 
             this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime,extensions);
         } else {
-            this.button.setEnable(true);
+            this.setEnable(false);
         }
     }
 }
