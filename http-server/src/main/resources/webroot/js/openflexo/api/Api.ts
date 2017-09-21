@@ -9,6 +9,10 @@ export function createRuntimeBinding(expression: string, context: string, runtim
     return new RuntimeBindingId(createBinding(expression, context), runtime);
 }
 
+export function createRuntimeBindingExt(expression: string, context: string, runtime:string = context, extensions: Map<string, string>) {
+    return new RuntimeBindingId(createBinding(expression, context), runtime,extensions);
+}
+
 function mapToJson(map: Map<string, string>) {
     let obj = Object.create(null);
     map.forEach((value, key) => {
