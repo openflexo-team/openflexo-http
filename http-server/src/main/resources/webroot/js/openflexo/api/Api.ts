@@ -9,10 +9,6 @@ export function createRuntimeBinding(expression: string, context: string, runtim
     return new RuntimeBindingId(createBinding(expression, context), runtime);
 }
 
-export function createRuntimeBindingExt(expression: string, context: string, runtime:string = context, extensions: Map<string, string>) {
-    return new RuntimeBindingId(createBinding(expression, context), runtime,extensions);
-}
-
 function mapToJson(map: Map<string, string>) {
     let obj = Object.create(null);
     map.forEach((value, key) => {
@@ -350,9 +346,16 @@ export class Api {
      */
     private initializeConnieEvaluator(): WebSocket {
         if (this.connie == null) {
-            var wsHost = this.host.length > 0 ?
-                this.host.replace(new RegExp("https?\\://"), "ws://"):
-                wsHost = "ws://" + document.location.host;
+            let wsHost;
+            if (this.host.length > 0) {
+                wsHost = this.host.search("https\\://") == 0 ?
+                    this.host.replace(new RegExp("https\\://"), "wss://") + "/websocket" :
+                    this.host.replace(new RegExp("http\\://"), "ws://") + "/websocket" 
+            } else {
+                wsHost = document.location.protocol === "https" ?
+                    "wss://" + document.location.host + "/websocket" : 
+                    "ws://" + document.location.host + "/websocket"; 
+            }
             
             this.connie = new WebSocket(wsHost);
             this.connie.onopen = (e:MessageEvent) => this.onEvaluationOpen(e);

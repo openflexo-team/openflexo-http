@@ -45,6 +45,7 @@ import org.openflexo.connie.DefaultBindable;
 import org.openflexo.connie.java.JavaBindingFactory;
 import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.fml.binding.FMLBindingFactory;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 
 public class ExtendedBindable extends DefaultBindable {
 
@@ -56,15 +57,23 @@ public class ExtendedBindable extends DefaultBindable {
 
 	public ExtendedBindable(Bindable parentBindable, Map<String, Object> objects) {
 		this.parentBindable = parentBindable;
-		this.factory = parentBindable instanceof FMLObject ?
-				new FMLBindingFactory(((FMLObject) parentBindable).getDeclaringVirtualModel()) :
-				new JavaBindingFactory();
+		this.factory = createFactory(parentBindable);
 
 		this.model = new BindingModel(parentBindable != null ? parentBindable.getBindingModel() : null);
 		for (String variableName : objects.keySet()) {
 			Object value = objects.get(variableName);
 			model.addToBindingVariables(new BindingVariable(variableName, getBindingFactory().getTypeForObject(value)));
 		}
+	}
+
+	private BindingFactory createFactory(Bindable parentBindable) {
+		if (parentBindable instanceof FMLObject) {
+			return new FMLBindingFactory(((FMLObject) parentBindable).getDeclaringVirtualModel());
+		}
+		if (parentBindable instanceof FlexoConceptInstance) {
+			return new FMLBindingFactory(((FlexoConceptInstance) parentBindable).getFlexoConcept().getDeclaringVirtualModel());
+		}
+		return new JavaBindingFactory();
 	}
 
 	@Override
