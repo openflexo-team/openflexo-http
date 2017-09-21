@@ -28,3 +28,7 @@
     padding: 3px;
     */
 }
+
+.of-tree__item > .mdl-list__item-primary-content > .material-icons, .mdl-list__item-icon {
+    margin-right: 0px;
+}
