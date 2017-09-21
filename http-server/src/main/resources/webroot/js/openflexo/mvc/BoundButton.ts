@@ -51,7 +51,7 @@ export class BoundButton implements Component {
         }
     }
 
-    updateRuntime(runtime: string|null):void {
+    updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>() ):void {
         if (this.enabledRuntimeBinding !== null) {
             this.api.removeChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
         }
@@ -59,7 +59,7 @@ export class BoundButton implements Component {
         if (runtime !== null) {
             if (this.enabled !== null) {
                 this.enabled.contextUrl = runtime; 
-                this.enabledRuntimeBinding = new RuntimeBindingId(this.enabled, runtime);
+                this.enabledRuntimeBinding = new RuntimeBindingId(this.enabled, runtime,extensions);
                 this.api.evaluate<boolean>(this.enabledRuntimeBinding).then( value => {
                     this.button.setEnable(value)
                 } );
@@ -67,7 +67,7 @@ export class BoundButton implements Component {
             }
 
             this.action.contextUrl = runtime; 
-            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime);
+            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime,extensions);
         } else {
             this.button.setEnable(true);
         }
