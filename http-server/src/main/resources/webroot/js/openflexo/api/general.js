@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Description {
         constructor(id, url, type) {
             this.id = id;
@@ -12,4 +13,4 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.Description = Description;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2VuZXJhbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImdlbmVyYWwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7SUFFQTtRQUNJLFlBQ1csRUFBVSxFQUNWLEdBQVcsRUFDWCxJQUFZO1lBRlosT0FBRSxHQUFGLEVBQUUsQ0FBUTtZQUNWLFFBQUcsR0FBSCxHQUFHLENBQVE7WUFDWCxTQUFJLEdBQUosSUFBSSxDQUFRO1FBR3ZCLENBQUM7UUFFTSxRQUFRLENBQUksR0FBUTtZQUN2QixNQUFNLENBQUMsR0FBRyxDQUFDLElBQUksQ0FBSSxJQUFJLENBQUMsR0FBRyxDQUFDLENBQUM7UUFDakMsQ0FBQztLQUVKO0lBYkQsa0NBYUMifQ==
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2VuZXJhbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbImdlbmVyYWwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0lBRUE7UUFDSSxZQUNXLEVBQVUsRUFDVixHQUFXLEVBQ1gsSUFBWTtZQUZaLE9BQUUsR0FBRixFQUFFLENBQVE7WUFDVixRQUFHLEdBQUgsR0FBRyxDQUFRO1lBQ1gsU0FBSSxHQUFKLElBQUksQ0FBUTtRQUd2QixDQUFDO1FBRU0sUUFBUSxDQUFJLEdBQVE7WUFDdkIsTUFBTSxDQUFDLEdBQUcsQ0FBQyxJQUFJLENBQUksSUFBSSxDQUFDLEdBQUcsQ0FBQyxDQUFDO1FBQ2pDLENBQUM7S0FFSjtJQWJELGtDQWFDIn0=
