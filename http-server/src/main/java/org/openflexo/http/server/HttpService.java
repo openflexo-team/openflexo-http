@@ -113,6 +113,14 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		router.get().handler(LoggerHandler.create());
 		router.get().handler(CorsHandler.create(".*"));
 
+		// adds server.log content with no caching
+		StaticHandler logsFileHandler = StaticHandler.create("logs");
+		logsFileHandler.setIndexPage("server.log");
+		logsFileHandler.setAlwaysAsyncFS(true);
+		logsFileHandler.setCacheEntryTimeout(1);
+		logsFileHandler.setCachingEnabled(false);
+		router.get("/logs").handler(logsFileHandler);
+
 		// adds static content
 		StaticHandler staticHandler = StaticHandler.create();
 		router.get("/*").handler(staticHandler);
