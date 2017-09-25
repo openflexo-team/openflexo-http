@@ -39,6 +39,8 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 
 	private TechnologyAdapterRouteService technologyAdapterRestService = null;
 
+	private long lastHeapPrint = -1l;
+
 	public static class Options {
 		public int port = 8080;
 
@@ -50,6 +52,17 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		this.host = options.host;
 		serverOptions = new HttpServerOptions();
 		serverOptions.setCompressionSupported(true);
+	}
+
+	private void printHeapHandler(RoutingContext context) {
+		long nanoTime = System.nanoTime();
+		if ((nanoTime - lastHeapPrint) > (20 * 1_000_000_000l)) {
+			lastHeapPrint = nanoTime;
+			long totalMemory = Runtime.getRuntime().totalMemory();
+			logger.info("[HEAP] Total used memory: " + totalMemory + " bytes (" + (totalMemory/1024/1024) + " mb)");
+		}
+
+		context.next();
 	}
 
 	@Override
@@ -111,6 +124,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		}
 
 		router.get().handler(LoggerHandler.create());
+		router.get().handler(this::printHeapHandler);
 		router.get().handler(CorsHandler.create(".*"));
 
 		// adds server.log content with no caching
@@ -133,9 +147,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		server.listen(port, host);
 	}
 
-	private void failed(RoutingContext context) {
 
-	}
 
 	public TechnologyAdapterRouteService getTechnologyAdapterRestService() {
 		return technologyAdapterRestService;
