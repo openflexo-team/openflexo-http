@@ -508,7 +508,7 @@ Example results for `/ta/gina/fib` ([server](https://server.openflexo.org/ta/gin
 
 - Get on **`/ta/gina/fib/{fib_id}`** retrieves information for one model with given id ([server](https://server.openflexo.org/resource/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI)).
 
-- Get on **`/ta/gina/fib/{fib_id}/object`** retrieves all objects from model ([server](https://server.openflexo.org/ta/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object))
+- Get on **`/ta/gina/fib/{fib_id}/object`** retrieves all objects from model ([server](https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object))
 
 - Get on **`/ta/gina/fib/{fib_id}/object/1`** retrieves object id `1` objects from model ([server](https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object/1))
 
