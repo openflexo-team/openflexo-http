@@ -29,9 +29,9 @@ export class Tree implements Component, Selectable<TreeItem> {
     container: HTMLUListElement;
 
     children: TreeItem[] = [];
-    
+
     private selectedItems: Set<TreeItem> = new Set();
-    
+
     onselect: ((selection: ReadonlySet<TreeItem>)=>void)|null;
 
     constructor() {
@@ -43,9 +43,9 @@ export class Tree implements Component, Selectable<TreeItem> {
         this.container = document.createElement("ul");
         this.container.classList.add("of-tree");
         this.container.classList.add("mdl-list");
-  
+
         mdlUpgradeElement(this.container);
-    }    
+    }
 
     addChild(child: TreeItem) {
         this.children.push(child);
@@ -102,7 +102,7 @@ export class TreeItem implements Component {
 
     /** List of children items */
     children: TreeItem[] = [];
-    
+
     /** Item status */
     private expanded: boolean = false;
 
@@ -110,7 +110,7 @@ export class TreeItem implements Component {
     onexpand: ((TreeItem)=>void)|null = null;
     /** Call back when fold is queried */
     onfold: ((TreeItem)=>void)|null = null;
-    
+
     /** Internal data for advanced tree usage, not for user to use */
     data: any = null;
 
@@ -147,30 +147,30 @@ export class TreeItem implements Component {
             this.removeChild(item);
         });
     }
-    
+
     create() {
         this.container = createDiv();
-     
-        let li = document.createElement("li");     
+
+        let li = document.createElement("li");
         li.classList.add("mdl-list__item");
         li.classList.add("of-tree__item");
-        
+
         this.primaryContent = document.createElement("span");
         this.primaryContent.classList.add("mdl-list__item-primary-content");
         li.appendChild(this.primaryContent);
-    
+
         this.statusIcon = document.createElement("i");
         this.statusIcon.classList.add("material-icons");
         this.statusIcon.classList.add("mdl-list__item-icon");
         this.statusIcon.innerText = this.leaf ? emptyIcon : foldedIcon;
         this.primaryContent.appendChild(this.statusIcon);
-    
+
         this.statusIcon.onclick = (event) => {
             if (!this.leaf) {
                 if (this.expanded) this.fold(); else this.expand();
             }
         }
-        
+
         this.itemContent = document.createElement("span");
         this.itemContent.classList.add("of-tree__content");
         this.itemContent.appendChild(toHTMLElement(this.contents));
@@ -185,24 +185,24 @@ export class TreeItem implements Component {
             switch (event.code) {
                 case "ArrowUp":
                     this.goToPrevious();
-                    break;                    
+                    break;
                 case "ArrowDown":
                     this.goToNext();
-                    break;                    
+                    break;
                 case "ArrowLeft":
                     this.goToParent();
-                    break;                    
+                    break;
                 case "ArrowRight":
                     this.goToChild();
-                    break;                    
+                    break;
             }
         }
 
         this.container.appendChild(li);
-        
+
         this.childrenContainer = createUl();
         this.childrenContainer.classList.add(hiddenClass);
-        this.container.appendChild(this.childrenContainer);  
+        this.container.appendChild(this.childrenContainer);
 
         mdlUpgradeElement(this.container);
     }
@@ -283,25 +283,34 @@ export class TreeItem implements Component {
     }
 
     goToNext() {
-        if (this.expanded && this.firstChild !== null) {
-            // if expanded and has a first child, selects it
-            this.tree.select(this.firstChild);
-        } else {
-            if (this.nextSibling != null) {
-                // if there is a next sibling, selects it
-                this.tree.select(this.nextSibling);
-            } else if (this.parent instanceof TreeItem && this.parent.nextSibling !== null) {
-                // if there is a parent's next sibling selects it
-                this.tree.select(this.parent.nextSibling);
-            }
+      if (this.expanded) {
+        if (this.firstChild !== null) {
+          // if expanded and has a first child, selects it
+          this.tree.select(this.firstChild);
         }
+      } else {
+        if (this.nextSibling != null) {
+          // if there is a next sibling, selects it
+          this.tree.select(this.nextSibling);
+        } else {
+          var current:TreeItem = this;
+          while (current.parent instanceof TreeItem) {
+            // if there is a parent's next sibling selects it
+            if (current.parent.nextSibling !== null) {
+              this.tree.select(current.parent.nextSibling);
+              break;
+            }
+            current = current.parent;
+          }
+        }
+      }
     }
 
     goToParent() {
         if (this.expanded) {
             this.fold();
         } else if (this.parent instanceof TreeItem) {
-            this.tree.select(this.parent); 
+            this.tree.select(this.parent);
         }
     }
 
