@@ -44,7 +44,6 @@ import org.openflexo.gina.model.FIBComponent;
 import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
-import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.http.server.util.PamelaResourceRestService;
 import org.openflexo.model.ModelContextLibrary;
 import org.openflexo.technologyadapter.gina.GINATechnologyAdapter;
@@ -64,9 +63,11 @@ public class GinaRouteComplement implements TechnologyAdapterRouteComplement {
 		TechnologyAdapterService technologyAdapterService = service.getServiceManager().getTechnologyAdapterService();
 		this.technologyAdapter = technologyAdapterService.getTechnologyAdapter(getTechnologyAdapterClass());
 
+		/* TODO Not used yet since fibs and inspectors are in adapter UIs
 		JsonSerializer serializer = technologyAdapterRouteService.getSerializer();
 		ApplicationFIBRestService applicationFIBRestService = new ApplicationFIBRestService("/application", serializer, technologyAdapterService);
 		technologyAdapterRouteService.registerPamelaResourceRestService(technologyAdapter, applicationFIBRestService);
+		*/
 
 		PamelaResourceRestService fibService = new PamelaResourceRestService<>(
 			"/fib", this::getResources, this::getGinaResource,
