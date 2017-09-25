@@ -26,17 +26,19 @@ For instance, a `FlexoConceptInstance` refers to it `FlexoConcept` using a refer
 
 ```json
 "flexoConcept" : {
-    "name" : "Hub",
-    "id" : "6",
-    "type" : "FlexoConcept",
-    "url" : "/ta/fml/virtualmodel/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50L0luc3RhbGxhdGlvbg/object/6"
+   "name" : "Directory",
+   "id" : "11",
+   "url" : "/ta/fml/model/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW8uZm1s/object/11",
+   "type" : "FlexoConcept"
 }
 ```
-
 
 ## Resource Centers
 
 The registered resource centers are presented with the prefix: `/rc`.
+
+**Note**: The TypeScript definition file for the resource centers is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
 
 ### Get
 
@@ -44,6 +46,13 @@ The registered resource centers are presented with the prefix: `/rc`.
 
 ```json
 [{
+   "name" : "demo",
+   "type" : "ResourceCenter",
+   "uri" : "http://www.openflexo.org/projects/2017/9/Untitled_1505918219989",
+   "id" : "aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5",
+   "url" : "/rc/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5",
+   "resourceUrl" : "/rc/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5/resource"
+ }, {
   "name" : "http://openflexo.org/docx-test",
   "type" : "ResourceCenter",
   "uri" : "http://openflexo.org/docx-test",
@@ -140,12 +149,19 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestR
 ## Resources 
 
 The resources in all resource centers are presented with the prefix `/resource`.
+One resource can be accessed using it's URI encoded in Base64 to avoid forbidden characters in URLs. 
 
-### Description
+Here is an example:
 
-A resource description indicates if the resource is loaded or not with the `loaded` property. 
+- uri: `http://openflexo.org/docx-test/TestResourceCenter/TestLibraryViewPoint2.fml/LibraryVirtualModel.fml`
+- id: `aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s`
+      
+A resource is described with several properties:
+- `loaded` thats indicate if the resource has been loaded. 
+- A resource description indicates if the resource is loaded or not with the `loaded` property. 
 
-If the resource as a `PamelaResourceRestService` associated a `objectUrl` property contains the URL to list it's content. If the resource is loaded the `modelUrl` property gives the URL to the model object behind the resource (the root object).
+**Note**: The TypeScript definition file for the resources is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
 
 ### Get
 
@@ -155,42 +171,25 @@ Example results for `/resource`:
 
 ```json
 [ {
-  "name" : "Eurofins",
-  "type" : "Resource",
-  "uri" : "http://openflexo.org/CarboSource/Analyses/Eurofins",
-  "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM",
-  "modified" : false,
-  "loaded" : true,
-  "resourceCenterId" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
-  "resourceCenterUrl" : "/rc/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
-  "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM",
-  "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/contents",
-  "technologyAdapterId" : "fml",
-  "technologyAdapterUrl" : "/ta/fml",
-  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/object/3",
-  "objectsUrl" : "/ta/fml/viewpoint/aHR0cDovL29wZW5mbGV4by5vcmcvQ2FyYm9Tb3VyY2UvQW5hbHlzZXMvRXVyb2ZpbnM/object"
-}, {
-  "name" : "Modelisation",
-  "type" : "Resource",
-  "uri" : "http://www.cyane.eu/carbosource/Modelisation.viewpoint",
-  "id" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50",
-  "modified" : false,
-  "loaded" : true,
-  "resourceCenterId" : "aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
-  "resourceCenterUrl" : "/rc/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZQ",
-  "url" : "/resource/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50",
-  "contentUrl" : "/resource/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/contents",
-  "technologyAdapterId" : "fml",
-  "technologyAdapterUrl" : "/ta/fml",
-  "modelUrl" : "/ta/fml/viewpoint/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/object/2",
-  "objectsUrl" : "/ta/fml/viewpoint/aHR0cDovL3d3dy5jeWFuZS5ldS9jYXJib3NvdXJjZS9Nb2RlbGlzYXRpb24udmlld3BvaW50/object"
-}]
+    "name" : "LibraryVirtualModel",
+    "type" : "Resource",
+    "uri" : "http://openflexo.org/docx-test/TestResourceCenter/TestLibraryViewPoint2.fml/LibraryVirtualModel.fml",
+    "id" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s",
+    "modified" : false,
+    "loaded" : false,
+    "resourceCenterId" : "aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+    "resourceCenterUrl" : "/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0",
+    "url" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s",
+    "contentUrl" : "/resource/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s/contents",
+    "technologyAdapterId" : "fml",
+    "technologyAdapterUrl" : "/ta/fml",
+    "objectsUrl" : "/ta/fml/model/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s/object"
+} ]
 ```
 
 - Get on **`/resource/{resource_id}`** retrieves information for one resource with given id.
 
 - Get on **`/resource/{resource_id}/contents`** retrieves raw content for the resource with given id.
-
 
 ### Post
 
@@ -199,6 +198,9 @@ Example results for `/resource`:
 ## Technology adapters
 
 All found technology adapters are presented with the prefix: `/ta`.
+
+**Note**: The TypeScript definition file for the technology adapter description is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
 
 ### Get
 
@@ -214,8 +216,7 @@ Example results for `/ta`:
   "activated" : true,
   "url" : "/ta/fml",
   "complemented" : true,
-  "VirtualModelResourceUrl" : "/ta/fml/virtualmodel",
-  "ViewPointResourceUrl" : "/ta/fml/viewpoint"
+  "virtualModelResourceUrl" : "/ta/fml/model"
 }, {
   "name" : "FML@runtime technology adapter",
   "type" : "TechnologyAdapter",
@@ -223,8 +224,7 @@ Example results for `/ta`:
   "activated" : true,
   "url" : "/ta/fmlrt",
   "complemented" : true,
-  "ViewResourceUrl" : "/ta/fmlrt/view",
-  "VirtualModelInstanceResourceUrl" : "/ta/fmlrt/vmi"
+  "fmlrtVirtualModelInstanceResourceUrl" : "/ta/fmlrt/instance"
 }, {
   "name" : "DocX Technology Adapter",
   "type" : "TechnologyAdapter",
@@ -232,7 +232,21 @@ Example results for `/ta`:
   "activated" : true,
   "url" : "/ta/docx",
   "complemented" : false
-}]
+}, {
+  "name" : "Excel technology adapter",
+  "type" : "TechnologyAdapter",
+  "id" : "xls",
+  "activated" : true,
+  "url" : "/ta/xls",
+  "complemented" : false
+}, {
+  "name" : "GINA Technology Adapter",
+  "type" : "TechnologyAdapter",
+  "id" : "gina",
+  "activated" : true,
+  "url" : "/ta/gina",
+  "complemented" : false
+} ]
 ```
 
 - Get on **`/ta/{id}`** retrieves information for the technology adapter of given id
@@ -240,11 +254,26 @@ Example results for `/ta`:
 ### Complements
 
 When a technology adapters provides specific objects by implementing a `TechnologyAdapterRouteComplement` it sets the `complemented` field to true.
-It may also provide new routes for new objects. The next sections are technology adapter complements.
+It may also provide new routes for new objects. The next sections are technology adapter complements. 
+
+Resources that are complemented by a technology adapter will contains two more attributes:
+- `objectsUrl` that contains the url for the list of all objects contained in the resource. 
+- `modelUrl` that presents the root object of the resource. It's present only if the resource is loaded.
+
+If the resource isn't `loaded`, an access to one of it's objects or to the list of all the objects will automatically load it.
+Thus if there is no technology adapter complement for a given resource, it will never be loaded. 
 
 See how to complement a technology adapter [here](ComplementTA.md).
 
 ## FML
+
+
+The FML complement adds the route `/ta/fml/model` to list all virtual models found in the resource centers.
+
+**Note**: The TypeScript definition file for the FML is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts).
+
+### Get
 
 **TODO**
 
@@ -252,9 +281,15 @@ See how to complement a technology adapter [here](ComplementTA.md).
 
 **TODO**
 
+**Note**: The TypeScript definition file for the FML@Runtime is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts).
+
 ## Gina
 
-Gina isn't implemented yet.
+**TODO**
+
+**Note**: The TypeScript definition file for the Fib Components is 
+[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fib.d.ts).
 
 ## Diana
 
