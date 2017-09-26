@@ -297,7 +297,7 @@ The [demo](https://github.com/openflexo-team/openflexo-demo) repository contains
 [15]:	https://getmdl.io/components/index.html#textfields-section
 [16]:	https://getmdl.io/components/index.html#textfields-section
 [17]:	http://vertx.io/docs/vertx-web/java/#_serving_static_resources
-[18]:	TechnologyAdatperRoutes.md
+[18]:	TechnologyAdapterRoutes.md
 [19]:	ComplementJson.md
 [20]:	ApplicationRoutes.md
 [21]:	https://docs.gradle.org/current/userguide/application_plugin.html
