@@ -38,7 +38,7 @@ For instance, a `FlexoConceptInstance` refers to it `FlexoConcept` using a refer
 The registered resource centers are presented with the prefix: `/rc`.
 
 **Note**: The TypeScript definition file for the resource centers is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
+[here][1].
 
 ### Get
 
@@ -146,7 +146,7 @@ Example results for `/rc/aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0/resource/TestR
 } ]
 ```
 
-## Resources 
+## Resources
 
 The resources in all resource centers are presented with the prefix `/resource`.
 One resource can be accessed using it's URI encoded in Base64 to avoid forbidden characters in URLs. 
@@ -155,7 +155,6 @@ Here is an example:
 
 - uri: `http://openflexo.org/docx-test/TestResourceCenter/TestLibraryViewPoint2.fml/LibraryVirtualModel.fml`
 - id: `aHR0cDovL29wZW5mbGV4by5vcmcvZG9jeC10ZXN0L1Rlc3RSZXNvdXJjZUNlbnRlci9UZXN0TGlicmFyeVZpZXdQb2ludDIuZm1sL0xpYnJhcnlWaXJ0dWFsTW9kZWwuZm1s`
-      
 A resource is described with several properties:
 - `loaded` indicates if the resource has been loaded. 
 - `modified` tells if the resource has been changed in memory (it must be loaded).
@@ -163,7 +162,7 @@ A resource is described with several properties:
 
 
 **Note**: The TypeScript definition file for the resources is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
+[here][2].
 
 ### Get
 
@@ -202,7 +201,7 @@ Example results for `/resource`:
 All found technology adapters are presented with the prefix: `/ta`.
 
 **Note**: The TypeScript definition file for the technology adapter description is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts).
+[here][3].
 
 ### Get
 
@@ -251,7 +250,7 @@ Example results for `/ta`:
 } ]
 ```
 
-- Get on **`/ta/{id}`** retrieves information for the technology adapter of given id
+- Get on **`/ta/{id}`** retrieves information for the technology adapter of given id.
 
 ### Complements
 
@@ -265,20 +264,20 @@ Resources that are complemented by a technology adapter will contains two more a
 If the resource isn't `loaded`, an access to one of it's objects or to the list of all the objects will automatically load it.
 Thus if there is no technology adapter complement for a given resource, it will never be loaded. 
 
-See how to complement a technology adapter [here](ComplementTA.md).
+See how to complement a technology adapter [here][4].
 
 ## FML
 
 The FML complement adds the route `/ta/fml/model` to list all virtual models found in the resource centers.
 
 **Note**: The TypeScript definition file for the FML is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts).
+[here][5].
 
 ### Get
 
 - Get on **`/ta/fml/model`** lists of all virtual models in all resource centers.
 
-Example results for `/ta/fml/model` ([server](https://server.openflexo.org/ta/fml/model)):
+Example results for `/ta/fml/model` ([server][6]):
 
 ```json
 [ {
@@ -313,9 +312,9 @@ Example results for `/ta/fml/model` ([server](https://server.openflexo.org/ta/fm
 } ]
 ```
 
-- Get on **`/ta/fml/model/{model_id}`** retrieves information for one model with given id ([server](https://server.openflexo.org/ta/fml/model/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW8uZm1s)).
+- Get on **`/ta/fml/model/{model_id}`** retrieves information for one model with given id ([server][7]).
 
-- Get on **`/ta/fml/model/{model_id}/object`** retrieves all objects from model ([server](https://server.openflexo.org/ta/fml/model/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW8uZm1s/object))
+- Get on **`/ta/fml/model/{model_id}/object`** retrieves all objects from model ([server][8])
 
 ```json
 [ {
@@ -399,13 +398,13 @@ Example results for `/ta/fml/model` ([server](https://server.openflexo.org/ta/fm
 The FML@Runtime complement adds the route `/ta/fmlrt/instance` to list all virtual model instances found in the resource centers.
 
 **Note**: The TypeScript definition file for the FML@Runtime is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts).
+[here][9].
 
 ### Get
 
 - Get on **`/ta/fmlrt/instance`** lists of all virtual models in all resource centers.
 
-Example results for `/ta/fmlrt/instance` ([server](https://server.openflexo.org/ta/fmlrt/instance)):
+Example results for `/ta/fmlrt/instance` ([server][10]):
 
 ```json
 [ {
@@ -426,9 +425,9 @@ Example results for `/ta/fmlrt/instance` ([server](https://server.openflexo.org/
 } ]
 ```
 
-- Get on **`/ta/fmlrt/instance/{instance_id}`** retrieves information for one model with given id ([server](https://server.openflexo.org/resource/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L2RlbW8uZm1sLnJ0)).
+- Get on **`/ta/fmlrt/instance/{instance_id}`** retrieves information for one model with given id ([server][11]).
 
-- Get on **`/ta/fmlrt/instance/{instance_id}/object`** retrieves all objects from model ([server](https://server.openflexo.org/ta/fmlrt/instance/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L2RlbW8uZm1sLnJ0/object))
+- Get on **`/ta/fmlrt/instance/{instance_id}/object`** retrieves all objects from model ([server][12])
 
 ```json
 [ {
@@ -481,11 +480,11 @@ Example results for `/ta/fmlrt/instance` ([server](https://server.openflexo.org/
 The Gina complement adds the route `/ta/gina/fib` to list all fib components found in the resource centers.
 
 **Note**: The TypeScript definition file for the Fib Components is 
-[here](https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fib.d.ts).
+[here][13].
 
 - Get on **`/ta/gina/fib`** lists of all virtual models in all resource centers.
 
-Example results for `/ta/gina/fib` ([server](https://server.openflexo.org/ta/gina/fib)):
+Example results for `/ta/gina/fib` ([server][14]):
 
 ```json
 [ {
@@ -506,11 +505,11 @@ Example results for `/ta/gina/fib` ([server](https://server.openflexo.org/ta/gin
 } ]
 ```
 
-- Get on **`/ta/gina/fib/{fib_id}`** retrieves information for one model with given id ([server](https://server.openflexo.org/resource/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI)).
+- Get on **`/ta/gina/fib/{fib_id}`** retrieves information for one model with given id ([server][15]).
 
-- Get on **`/ta/gina/fib/{fib_id}/object`** retrieves all objects from model ([server](https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object))
+- Get on **`/ta/gina/fib/{fib_id}/object`** retrieves all objects from model ([server][16])
 
-- Get on **`/ta/gina/fib/{fib_id}/object/1`** retrieves object id `1` objects from model ([server](https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object/1))
+- Get on **`/ta/gina/fib/{fib_id}/object/1`** retrieves object id `1` objects from model ([server][17])
 
 ```json
 {
@@ -631,3 +630,20 @@ Example results for `/ta/gina/fib` ([server](https://server.openflexo.org/ta/gin
 Diana complement isn't implemented yet.
 
 
+[1]:	https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts
+[2]:	https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts
+[3]:	https://github.com/openflexo-team/openflexo-http/blob/1.8.1/http-server/src/main/resources/webroot/js/openflexo/api/resource.ts
+[4]:	ComplementTA.md
+[5]:	https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts
+[6]:	https://server.openflexo.org/ta/fml/model
+[7]:	https://server.openflexo.org/ta/fml/model/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW8uZm1s
+[8]:	https://server.openflexo.org/ta/fml/model/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW8uZm1s/object
+[9]:	https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fml.d.ts
+[10]:	https://server.openflexo.org/ta/fmlrt/instance
+[11]:	https://server.openflexo.org/resource/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L2RlbW8uZm1sLnJ0
+[12]:	https://server.openflexo.org/ta/fmlrt/instance/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L2RlbW8uZm1sLnJ0/object
+[13]:	https://github.com/openflexo-team/openflexo-http/blob/1.9.0/http-server/src/main/resources/webroot/js/openflexo/api/fib.d.ts
+[14]:	https://server.openflexo.org/ta/gina/fib
+[15]:	https://server.openflexo.org/resource/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI
+[16]:	https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object
+[17]:	https://server.openflexo.org/ta/gina/fib/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvOS9VbnRpdGxlZF8xNTA1OTE4MjE5OTg5L0RlbW9VSS5maWI/object/1

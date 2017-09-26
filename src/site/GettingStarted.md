@@ -4,6 +4,8 @@ OpenFlexo federation server provides HTTP/REST and WebSocket access to federated
 
 **Important**: To run and build an OpenFlexo application a Java 8 virtual machine is required.
 
+A example server repository is available [here][1].
+
 ## Build the server
 
 The OpenFlexo server as all OpenFlexo components doesn't do much own it's own, it's with connectors and resources that it reaches its full potential. The first thing to do it to package the server with the needed connectors and resource centers.
@@ -17,7 +19,8 @@ group 'org.openflexo.test'
 version '1.0-SNAPSHOT'
 
 buildscript {
-    ext.openflexo_version = '1.8.1-SNAPSHOT'
+    ext.openflexo_version = '1.9.0-SNAPSHOT'
+    ext.destination = "/home/openflexoserver"
 }
 
 apply plugin: 'java'
@@ -25,7 +28,6 @@ apply plugin: 'java'
 sourceCompatibility = 1.8
 
 repositories {
-    mavenCentral()
     maven { url "https://maven.openflexo.org/artifactory/openflexo-deps/" }
 }
 
@@ -37,9 +39,8 @@ dependencies {
     compile "org.openflexo:docxconnector:${openflexo_version}"
     compile "org.openflexo:excelconnector:${openflexo_version}"
     compile "org.openflexo:pdfconnector:${openflexo_version}"
-    compile "org.openflexo:jdbcconnector:${openflexo_version}"
-    compile "org.openflexo:flexodiagram:${openflexo_version}"
-    compile "org.openflexo:ginaconnector:${openflexo_version}"
+
+    compile "org.openflexo:gina-http:${openflexo_version}"
  
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
@@ -62,7 +63,7 @@ Usage: server [options]
 
 ## Access the server
 
-Once the server runs, it provides the REST and WebSocket API described [here][1] but it also provides a set of static examples HTML files and JavaScript libraries to help the use of the API.
+Once the server runs, it provides the REST and WebSocket API described [here][2] but it also provides a set of static examples HTML files and JavaScript libraries to help the use of the API.
  
 ### HTML example pages
 
@@ -72,21 +73,21 @@ The `index.html` provides a simple page showing the technology adapters, resourc
 
 The `Context` field can receive urls for objects in the federation server to show its contents. The contents is navigable click on hyperlinks allowing the exploration of the content.
 
-The `Right` field supports the evaluation of [Connie][2] expressions (named bindings). A such expression must have a context to evaluated upon, it’s uses the `Context` field as its context. When the `detailed` checkbox is checked the result will contains more details.
+The `Right` field supports the evaluation of [Connie][3] expressions (named bindings). A such expression must have a context to evaluated upon, it’s uses the `Context` field as its context. When the `detailed` checkbox is checked the result will contains more details.
 
-The expandable `Left` field supports [Connie][3] expressions as `Right` field does. These expressions must be settable allowing to assign its value to the `Right` field. 
+The expandable `Left` field supports [Connie][4] expressions as `Right` field does. These expressions must be settable allowing to assign its value to the `Right` field. 
 
 The save icon will send a post request on the given `Context`. In case of resource urls it saves the resource.
 
 ### Javascript libraries
 
-OpenFlexo client side is developed using [TypeScript][4], both TypeScript and Javascript files are provided. 
+OpenFlexo client side is developed using [TypeScript][5], both TypeScript and Javascript files are provided. 
 
 The following typescript examples need to have the OpenFlexo typescript files on hand to compile without errors.
 
 **Api**
 
-The folder `/js/openflexo/api` contains utility classes and interfaces to help the use of the federation server [API][5]. An instance of the `Api` class in `/js/openflexo/api/Api.ts` provides call to REST objects and Connie expressions on a given server. While it’s not required to use this library to access the federation server, it’s recommended to simplify the use of Connie expressions.
+The folder `/js/openflexo/api` contains utility classes and interfaces to help the use of the federation server [API][6]. An instance of the `Api` class in `/js/openflexo/api/Api.ts` provides call to REST objects and Connie expressions on a given server. While it’s not required to use this library to access the federation server, it’s recommended to simplify the use of Connie expressions.
 
 - Here is an example to retrieve information for a REST object:
 
@@ -106,13 +107,13 @@ promise.then(resource => {
 - Here is an example to evaluate a binding:
 
 ```typescript
-import { Api, runtimeBinding } from "./openflexo/api/Api";
+import { Api, createRuntimeBinding } from "./openflexo/api/Api";
 
 const api = new Api();
 const vmi = "/ta/fmlrt/vmi/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvNC9zb3VyY2VfMTQ5MjE4MjI3NTEwNC9UeUFyTWVuZXpSZXRELnZpZXcvaW5zdGFsbGF0aW9uLnZteG1s/object/3";
 // constructs the binding
-const binding = runtimeBinding("name", vmi, vmi);
-const promise = api.evaluate(binding, false);
+const binding = createRuntimeBinding("name", vmi);
+const promise = api.evaluate(binding);
 promise.then(value => {
     console.log("Name = " + value);
 }).catch((error) => {
@@ -128,13 +129,13 @@ api.addChangeListener(binding, (event) => {
 - Here is an example to assign a binding:
 
 ```typescript
-import { Api, runtimeBinding } from "./openflexo/api/Api";
+import { Api, createRuntimeBinding } from "./openflexo/api/Api";
 
 const api = new Api();
 const vmi = "/ta/fmlrt/vmi/aHR0cDovL3d3dy5vcGVuZmxleG8ub3JnL3Byb2plY3RzLzIwMTcvNC9zb3VyY2VfMTQ5MjE4MjI3NTEwNC9UeUFyTWVuZXpSZXRELnZpZXcvaW5zdGFsbGF0aW9uLnZteG1s/object/3";
 // constructs the binding
-const binding = runtimeBinding("name", vmi, vmi);
-const newValue = runtimeBinding('"newName"', vmi, vmi);
+const binding = createRuntimeBinding("name", vmi);
+const newValue = createRuntimeBinding('"newName"', vmi);
 const promise = api.assign(binding, newValue, false);
 promise.then(value => {
     console.log("Name = " + value);
@@ -145,17 +146,17 @@ promise.then(value => {
 
 **UI**
 
-The folder `/js/openflexo/ui` contains a set of UI classes based on [MDL][6]. It allows to construct:
+The folder `/js/openflexo/ui` contains a set of UI classes based on [MDL][7]. It allows to construct:
 
-- [Buttons][7]
-- [Cards][8]
- - [Grids][9]
-- [Tabs][10]
-- [Icons][11]
-- [List][12]
+- [Buttons][8]
+- [Cards][9]
+- [Grids][10]
+- [Tabs][11]
+- [Icons][12]
 - [List][13]
-- [Tables][14]
-- [TextFields][15]
+- [List][14]
+- [Tables][15]
+- [TextFields][16]
 
 - Here is an example for a button:
 
@@ -195,33 +196,47 @@ Here is the current list of bound controllers:
 - Here is an exemple for a table, label, button and textfield:
 
 ```typescript
-let binding = runtimeBinding("virtualModelInstance.allDevices()", resource.modelUrl, resource.modelUrl);
-let columns = [
-    new BoundColumn(
-        "Type", 
-        (api, element: any) => element.flexoConcept.name
-    ),
-    new BoundColumn(
-        "Nom",  
-        (api, element) => new BoundTextField(api, runtimeBinding("name", element.url), "Nom", false)
-    ),
-    new BoundColumn(
-        "URI", 
-        (api, element) => new BoundTextField(api, runtimeBinding("uri", element.url), "URI", true)
-    ),
-    new BoundColumn(
-        "Status", 
-        (api, element) => new BoundLabel(api, runtimeBinding("status", element.url))
-    ),
-    new BoundColumn(
-        "Delete", (api, element) => 
-            new BoundButton(api, 
-                runtimeBinding("virtualModelInstance.delete(flexoConceptInstance)", element.url), 
-                null, new Icon("delete"), "icon"
+import { Resource } from "./openflexo/api/resource";
+
+import { Api, createBinding, createRuntimeBinding } from "./openflexo/api/Api";
+
+import { BoundTable, BoundColumn } from "./openflexo/mvc/BoundTable";
+import { BoundTextField } from "./openflexo/mvc/BoundTextField";
+import { BoundButton } from "./openflexo/mvc/BoundButton";
+import { BoundLabel } from "./openflexo/mvc/BoundLabel";
+
+import { Icon } from "./openflexo/ui/Icon";
+
+function r(resource: Resource) {
+  let binding = createRuntimeBinding("virtualModelInstance.allDevices()", resource.modelUrl, resource.modelUrl);
+  let columns = [
+      new BoundColumn(
+          "Type",
+          (api, element: any) => element.flexoConcept.name
+      ),
+      new BoundColumn(
+          "Nom",
+          (api, element) => new BoundTextField(api, createBinding("name", element.url), "Nom", null, false)
+      ),
+      new BoundColumn(
+          "URI",
+          (api, element) => new BoundTextField(api, createBinding("uri", element.url), "URI", null, true)
+      ),
+      new BoundColumn(
+          "Status",
+          (api, element) => new BoundLabel(api, createBinding("status", element.url))
+      ),
+      new BoundColumn(
+          "Delete", (api, element) =>
+            new BoundButton(api,
+              new Icon("delete"),
+              createBinding("virtualModelInstance.delete(flexoConceptInstance)", element.url),
+              null, null, "icon"
             )
-    )
-];
-const table = new BoundTable(this.api, binding, columns);
+      )
+  ];
+  const table = new BoundTable(this.api, binding, columns);
+}
 ```
 
 ## Customize the server
@@ -234,7 +249,7 @@ The OpenFlexo server packaging contains a set of static resources (as seen in pr
 To embedded your own content there are two solutions: 
 - adds a `webroot` folder in the directory where you run the server or
 - adds a `webroot` folder in the sources you add to the server.
-In the latter, the resources will be added to the jar simplify the deployment of the server (See [Vertx][16] documentation for more information on this matter).
+In the latter, the resources will be added to the jar simplify the deployment of the server (See [Vertx][17] documentation for more information on this matter).
 
 Alls the files in our `webroot` folder will be served with a higher priority than the existing one in the federation server (allowing to replace existing one like `index.html`).
 
@@ -242,19 +257,14 @@ Alls the files in our `webroot` folder will be served with a higher priority tha
 
 **TODO**
 
-**Technology Adapter**
-
-[TechnologyAdatperRoutes][17]
-
-[ComplementJson][18]
-
-**Application routes**
- 
-[ApplicationRoutes][19]
+- [TechnologyAdatperRoutes][18]
+- [ComplementJson][19] 
+- [ApplicationRoutes][20]
 
 ## Deploy the server
 
-There are many ways to deploy the server. An easy one is to use the gradle `application` plugin. Add the following to grade build file in the `build` section (See [gradle][20] documentation on the plugin):
+There are many ways to deploy the server. An easy one is to use the gradle `application` plugin. 
+Add the following to grade build file in the `build` section (See [gradle][21] documentation on the plugin):
 
 ```gradle
 apply plugin: 'application'
@@ -268,25 +278,28 @@ distributions {
 
 This will allow you to run the server and construct a distribution for deployment.
 
-[1]:	API.md
-[2]:	https://connie.openflexo.org/
+The [demo](https://github.com/openflexo-team/openflexo-demo) repository contains a complete example to deploy the server using gradle.
+
+[1]:	https://github.com/openflexo-team/openflexo-demo
+[2]:	API.md
 [3]:	https://connie.openflexo.org/
-[4]:	https://www.typescriptlang.org
-[5]:	API.md
-[6]:	https://getmdl.io "Material Design Lite"
-[7]:	https://getmdl.io/components/index.html#buttons-section
-[8]:	https://getmdl.io/components/index.html#cards-section
-[9]:	https://getmdl.io/components/index.html#layout-section/grid
-[10]:	https://getmdl.io/components/index.html#layout-section/tabs
-[11]:	http://google.github.io/material-design-icons/
-[12]:	https://getmdl.io/components/index.html#lists-section
-[13]:	https://getmdl.io/components/index.html#tables-section
-[14]:	https://getmdl.io/components/index.html#textfields-section
+[4]:	https://connie.openflexo.org/
+[5]:	https://www.typescriptlang.org
+[6]:	API.md
+[7]:	https://getmdl.io "Material Design Lite"
+[8]:	https://getmdl.io/components/index.html#buttons-section
+[9]:	https://getmdl.io/components/index.html#cards-section
+[10]:	https://getmdl.io/components/index.html#layout-section/grid
+[11]:	https://getmdl.io/components/index.html#layout-section/tabs
+[12]:	http://google.github.io/material-design-icons/
+[13]:	https://getmdl.io/components/index.html#lists-section
+[14]:	https://getmdl.io/components/index.html#tables-section
 [15]:	https://getmdl.io/components/index.html#textfields-section
-[16]:	http://vertx.io/docs/vertx-web/java/#_serving_static_resources
-[17]:	TechnologyAdatperRoutes.md
-[18]:	ComplementJson.md
-[19]:	ApplicationRoutes.md
-[20]:	https://docs.gradle.org/current/userguide/application_plugin.html
+[16]:	https://getmdl.io/components/index.html#textfields-section
+[17]:	http://vertx.io/docs/vertx-web/java/#_serving_static_resources
+[18]:	TechnologyAdatperRoutes.md
+[19]:	ComplementJson.md
+[20]:	ApplicationRoutes.md
+[21]:	https://docs.gradle.org/current/userguide/application_plugin.html
 
 [image-1]:	ServerTestApplication.png "Test Application"
