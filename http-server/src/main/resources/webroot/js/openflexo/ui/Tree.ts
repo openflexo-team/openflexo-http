@@ -269,16 +269,18 @@ export class TreeItem implements Component {
     goToPrevious() {
         let previous = this.previousSibling;
         if (previous !== null) {
-            if (previous.expanded && previous.lastChild !== null) {
-                this.tree.select(previous.lastChild);
-            } else {
-                this.tree.select(previous);
-            }
+          // finds the last expanded child possible
+          let current = previous;
+          while (current.expanded && current.lastChild !== null) {
+            current = current.lastChild;
+          }
+          this.tree.select(current);
         } else {
-            if (this.parent instanceof TreeItem) {
-                // selects parent
-                this.tree.select(this.parent);
-            }
+          // selects parent if there is no previous sibling
+          if (this.parent instanceof TreeItem) {
+              // selects parent
+              this.tree.select(this.parent);
+          }
         }
     }
 
