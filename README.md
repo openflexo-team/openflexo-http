@@ -5,20 +5,25 @@ This project adds to OpenFlexo HTTP capabilities. It includes:
 - an HTTP server which is able to serve:
 	- all resources and specific API for each technology adapter and
 	- FML models as dynamic APIs.
-- an HTTP technology adapater to connect to HTTP services via ReST or XMLRPC APIs,
+- an HTTP technology adapter to connect to HTTP services via ReST or XML-RPC APIs,
  
 ## HTTP Server
 
-The HTTP server is a service that starts an HTTP server (based on [Vert.x](http://vertx.io)) with 2 distincts capabilities:
+The HTTP server is a service that starts an HTTP server (based on [Vert.x](http://vertx.io)) with 2 distinct capabilities:
 
  - serving all accessible resources and technology adapter specific models: the federation server.
  - serving API described using FML model acting as contracts: the chameleon server.
   
 ### Federation server
  
-This part of the OpenFlexo HTTP server is defined by the OpenFlexo community and provides a ReST API to access to resources and technology adapter specific models. The API is described [here](src/site/API.md).
+This part of the OpenFlexo HTTP server is defined by the OpenFlexo community and provides a ReST API to access to resources and technology adapter specific models. 
 
-Go [here](src/site/GettingStarted.md) to get started with the server and it's capabilities.
+**Documentation**:
+
+- [Getting Started](src/site/GettingStarted.md) to get started with the server and it's capabilities.
+- [API Description](src/site/API.md) describes the server REST API.
+- [Complement Technology Adapter](src/site/TechnologyAdapterRoutes.md) presents the server extension capabilities.
+- [Demo Server](https://server.openflexo.org)
 
 **TODO**:
  
@@ -26,7 +31,7 @@ Go [here](src/site/GettingStarted.md) to get started with the server and it's ca
  - [x] Connie service using WebSockets
  - [ ] Technology adapters: 
    - [x] FML and FML@RT
-   - [ ] Gina
+   - [x] Gina
    - [ ] Diana
    - [ ] ...
  
@@ -41,7 +46,8 @@ Not started yet.
 
 ## HTTP Technology Adapter
 
-The HTTP technology adapter provides the capability to connect a distant HTTP API and access it throught `VirtualModel` and `FlexoConcept` instances. An HTTP model slot is configured with a `VirtualModel` acting as a contract where abstract properties, HTTP properties and HTTP behaviours are resolve using HTTP connections.
+The HTTP technology adapter provides the capability to connect a distant HTTP API and access it throught `VirtualModel` and `FlexoConcept` instances. 
+An HTTP model slot is configured with a `VirtualModel` acting as a contract where abstract properties, HTTP properties and HTTP behaviours are resolve using HTTP connections.
 
 **TODO**:
 
