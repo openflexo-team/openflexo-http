@@ -40,6 +40,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.stream.Collectors;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
@@ -98,6 +99,17 @@ public class TypescriptModelFromPamela {
 		}
 		tsInterface.append(" {\n");
 
+		// adds kind attribute
+		tsInterface.append("\treadonly kind: ");
+		List<ModelEntity> descendants = entity.getAllDescendants(context);
+		if (!entity.isAbstract()) descendants.add(entity);
+		String kinds = descendants.stream()
+				.map((e) -> '"' + e.getXMLTag() + '"')
+				.collect(Collectors.joining("|"));
+
+		tsInterface.append(kinds);
+		tsInterface.append(";\n");
+
 		for (ModelProperty<?> property : entity.getDeclaredProperties()) {
 			XMLAttribute xmlAttribute = property.getXMLAttribute();
 			XMLElement xmlElement = property.getXMLElement();
@@ -147,7 +159,11 @@ public class TypescriptModelFromPamela {
 			if (entity != null) {
 				result = entity.getXMLTag();
 			}
+			if (property.getEmbedded() == null) {
+				result = "Description<" + result + ">";
+			}
 		}
+
 
 		if (property.getCardinality() == Getter.Cardinality.LIST) {
 			result = "Array<" + result + ">";
