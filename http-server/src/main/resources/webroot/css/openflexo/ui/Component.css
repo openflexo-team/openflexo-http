@@ -1,5 +1,18 @@
 // class used for visibility attribute
-.of-hidden {
+ul.of-hidden {
+  display: none;
+}
+
+div.of-hidden {
+  display: none;
+}
+
+
+span.of-hidden {
+  display: none;
+}
+
+li.of-hidden {
   display: none;
 }
 
