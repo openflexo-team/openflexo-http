@@ -2,17 +2,18 @@ import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./u
 
 import { Component } from "./Component";
 
-import { PhrasingCategory, FlowCategory, toElement } from "./category"
+import { PhrasingCategory, FlowCategory } from "./category"
 
-export class List implements Component {
+export class List extends Component {
 
     container: HTMLUListElement;
 
     private items: ListItem[] = [];
 
     constructor() {
-        addCssIfNotAlreadyPresent("/css/openflexo/ui/List.css");
-        this.create();
+      super();
+      addCssIfNotAlreadyPresent("/css/openflexo/ui/List.css");
+      this.create();
     }
 
     addItem(item: ListItem) {
@@ -31,16 +32,19 @@ export class List implements Component {
         }
     }
 
-    private create(): void {
+    protected create(): void {
         this.container = document.createElement("ul");
         this.container.classList.add("of-list");
         this.container.classList.add("mdl-list");
-  
         mdlUpgradeElement(this.container);
-    }    
+    }
+
+    setEnable(enable: boolean) {
+      this.items.forEach(item => item.setEnable(enable));
+    }
 }
 
-export class ListItem implements Component {
+export class ListItem extends Component {
 
     container: HTMLLIElement;
 
@@ -50,11 +54,12 @@ export class ListItem implements Component {
         private icon: string|null = null,
         private action: Component|PhrasingCategory|null = null
     ) {
+        super();
         this.create();
     }
 
-    create() {
-        this.container = document.createElement("li");     
+    protected create() {
+        this.container = document.createElement("li");
         this.container.classList.add("mdl-list__item");
         if (this.body != null) {
             this.container.classList.add("mdl-list__item--three-line");
@@ -87,7 +92,18 @@ export class ListItem implements Component {
             action.appendChild(toHTMLElement(this.action));
             primaryContent.appendChild(action);
         }
-
         mdlUpgradeElement(this.container);
+    }
+
+    setEnable(enable: boolean) {
+      if (this.contents instanceof Component) {
+        this.contents.setEnable(enable);
+      }
+      if (this.body instanceof Component) {
+        this.body.setEnable(enable);
+      }
+      if (this.action instanceof Component) {
+        this.action.setEnable(enable);
+      }
     }
 }

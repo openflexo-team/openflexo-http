@@ -1,10 +1,8 @@
 import { Component } from "./Component";
-import { mdlUpgradeElement, toHTMLElement, clearElement} from "./utils";
+import { mdlUpgradeElement, toHTMLElement, clearElement, setEnable} from "./utils";
 import { PhrasingCategory } from "./category";
 
-// mdlUpgradeElement(this.container);
-
-export class Table implements Component {
+export class Table extends Component {
 
     container: HTMLTableElement;
 
@@ -14,10 +12,11 @@ export class Table implements Component {
     constructor(
         private selectable: boolean = false
      ) {
+        super();
         this.create();
     }
 
-    create(): void {
+    protected create(): void {
         this.container = document.createElement("table");
         this.container.classList.add("mdl-data-table");
         this.container.classList.add("mdl-js-data-table");
@@ -27,13 +26,16 @@ export class Table implements Component {
 
         this.container.appendChild(this.head.container);
         this.container.appendChild(this.body.container);
-
         mdlUpgradeElement(this.container);
-    }    
+    }
 
+    setEnable(enable: boolean) {
+      this.head.setEnable(enable);
+      this.body.setEnable(enable);
+    }
 }
 
-class TableSection implements Component {
+class TableSection extends Component {
 
     container: HTMLTableSectionElement;
 
@@ -42,6 +44,7 @@ class TableSection implements Component {
     constructor(
         private head:boolean = false
     ) {
+        super();
         this.create();
     }
 
@@ -69,20 +72,24 @@ class TableSection implements Component {
         clearElement(this.container);
     }
 
-    create() {
+    protected create() {
         this.container = document.createElement(this.head ? "thead" : "tbody");
     }
 
+    setEnable(enable: boolean) {
+      this.lines.forEach(line => line.setEnable(enable));
+    }
 }
 
-export class TableLine implements Component {
-    
+export class TableLine extends Component {
+
     container: HTMLTableRowElement;
 
     private cells: TableCell[] = [];
 
-    constructor( ) {
-        this.create();
+    constructor() {
+      super();
+      this.create();
     }
 
     addCell(cell: TableCell) {
@@ -101,27 +108,35 @@ export class TableLine implements Component {
         }
     }
 
-    create() {
+    protected create() {
         this.container = document.createElement("tr");
     }
 
+    setEnable(enable: boolean) {
+      this.cells.forEach(cell => cell.setEnable(enable));
+    }
 }
 
-export class TableCell implements Component {
+export class TableCell extends Component {
 
     container: HTMLTableDataCellElement;
 
     constructor(
-        private contents : Component|PhrasingCategory,
+        private contents : PhrasingCategory,
         private numeric: boolean = true
     ) {
+        super();
         this.create();
     }
 
-    create() {
+    protected create() {
         this.container = document.createElement("td");
         if (!this.numeric) this.container.classList.add("mdl-data-table__cell--non-numeric");
         this.container.appendChild(toHTMLElement(this.contents));
+        mdlUpgradeElement(this.container);
     }
-    
+
+    setEnable(enable: boolean) {
+      setEnable(this.contents, enable);
+    }
 }

@@ -1,37 +1,47 @@
 import { Component } from "./Component";
-import { mdlUpgradeElement, toHTMLElement } from "./utils";
+import { FlowCategory } from "./category"
+import { mdlUpgradeElement, toHTMLElement, setEnable } from "./utils";
 
-export class Flow implements Component {
+export class Flow extends Component {
 
     container: HTMLDivElement|HTMLSpanElement;
 
-    private children: Component[] = [];
+    private children: FlowCategory[] = [];
+    private elements: Node[] = [];
 
     constructor(
-        ...children: Component[]
+        ...children: FlowCategory[]
     ) {
+        super();
         this.create();
         children.forEach(child => this.addChild(child));
     }
 
-    addChild(child: Component) {
+    addChild(child: FlowCategory) {
         this.children.push(child);
-        this.container.appendChild(child.container);
+        let element = toHTMLElement(child);
+        this.elements.push(element);
+        this.container.appendChild(element);
     }
 
-    removeChild(child: Component) {
+    removeChild(child: FlowCategory) {
         let index = this.children.indexOf(child);
         if (index >= 0) {
             // removes from array
             this.children.splice(index, 1);
 
+            let element = this.elements[index];
+            this.elements.splice(index, 1);
             // removes from dom
-            this.container.removeChild(child.container);
+            this.container.removeChild(element);
         }
     }
 
-    create(): void {
+    protected create(): void {
         this.container = document.createElement("span");
-        mdlUpgradeElement(this.container);
-    }    
+    }
+
+    setEnable(enable: boolean) {
+      this.children.forEach(child => setEnable(child, enable));
+    }
 }

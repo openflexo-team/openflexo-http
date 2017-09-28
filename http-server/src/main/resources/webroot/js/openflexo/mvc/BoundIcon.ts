@@ -4,7 +4,9 @@ import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
 import { Icon } from "../ui/Icon"
 
-export class BoundIcon implements Component {
+import { BoundComponent } from "./BoundComponent"
+
+export class BoundIcon extends BoundComponent {
 
     icon: Icon;
 
@@ -15,11 +17,12 @@ export class BoundIcon implements Component {
     private readonly changelistener = event => this.container.innerText = event.value;
 
     constructor(
-        private api: Api, 
+        private api: Api,
         private binding:BindingId<string>,
         runtime: string|null = null,
         public defaultIcon: string = "warning"
      ) {
+        super();
         this.create();
         this.updateRuntime(runtime);
     }
@@ -27,7 +30,7 @@ export class BoundIcon implements Component {
     create(): void {
         this.icon = new Icon(this.defaultIcon);
         this.container = this.icon.container;
-    }    
+    }
 
     updateRuntime(runtime: string|null):void {
         if (this.runtimeBinding !== null) {
@@ -39,5 +42,9 @@ export class BoundIcon implements Component {
             this.api.evaluate<string>(this.runtimeBinding).then( value => this.container.innerText = value );
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
         }
+    }
+
+    setEnable(enable: boolean) {
+      this.icon.setEnable(enable);
     }
 }

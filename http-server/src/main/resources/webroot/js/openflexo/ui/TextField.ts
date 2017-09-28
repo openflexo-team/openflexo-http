@@ -1,19 +1,16 @@
 import { Component } from "./Component";
-import { mdlDowngradeElement, mdlUpgradeElement, toHTMLElement } from "./utils";
+import { mdlDowngradeElement, mdlUpgradeElement, toHTMLElement, setEnable } from "./utils";
 import { PhrasingCategory } from "./category";
 
-export class TextField implements Component {
-
-    // TODO adds pattern for validation
+export class TextField extends Component {
 
 /*
-
+// TODO adds pattern for validation
 <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
     <input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="sample4">
     <label class="mdl-textfield__label" for="sample4">Number...</label>
     <span class="mdl-textfield__error">Input is not a number!</span>
   </div>
-
 */
     container: HTMLDivElement;
 
@@ -26,10 +23,11 @@ export class TextField implements Component {
         private readonly floatingLabel: boolean = false,
         private readonly invalid: boolean = false,
      ) {
+        super();
         this.create();
     }
 
-    create(): void {
+    protected create(): void {
         this.container = document.createElement("div");
         this.container.classList.add("mdl-textfield");
         this.container.classList.add("mdl-js-textfield");
@@ -57,11 +55,11 @@ export class TextField implements Component {
             label.appendChild(toHTMLElement(this.label));
             this.container.appendChild(label);
         }
-
         mdlUpgradeElement(this.container);
-    }    
+    }
 
     setEnable(enable: boolean) {
-        this.input.disabled = !enable;
+      setEnable(this.label, enable);
+      this.input.disabled = !enable;
     }
 }

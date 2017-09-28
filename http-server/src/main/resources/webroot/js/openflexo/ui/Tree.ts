@@ -1,9 +1,9 @@
-import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement } from "./utils";
+import { addCssIfNotAlreadyPresent, mdlUpgradeElement, toHTMLElement, setEnable } from "./utils";
 
 import { Component, Selectable } from "./Component";
 import { Icon } from "./Icon";
 
-import { PhrasingCategory, FlowCategory, toElement } from "./category"
+import { PhrasingCategory, FlowCategory } from "./category"
 
 const hiddenClass = "of-tree__hidden";
 const selectedClass = "of-tree__selected";
@@ -24,7 +24,7 @@ function createUl(): HTMLUListElement {
     return ul
 }
 
-export class Tree implements Component, Selectable<TreeItem> {
+export class Tree extends Component implements Selectable<TreeItem> {
 
     container: HTMLUListElement;
 
@@ -35,15 +35,15 @@ export class Tree implements Component, Selectable<TreeItem> {
     onselect: ((selection: ReadonlySet<TreeItem>)=>void)|null;
 
     constructor() {
-        addCssIfNotAlreadyPresent("/css/openflexo/ui/Tree.css");
-        this.create();
+      super();
+      addCssIfNotAlreadyPresent("/css/openflexo/ui/Tree.css");
+      this.create();
     }
 
-    private create(): void {
+    protected create(): void {
         this.container = document.createElement("ul");
         this.container.classList.add("of-tree");
         this.container.classList.add("mdl-list");
-
         mdlUpgradeElement(this.container);
     }
 
@@ -84,9 +84,13 @@ export class Tree implements Component, Selectable<TreeItem> {
     selection(): ReadonlySet<TreeItem> {
         return this.selectedItems;
     }
+
+    setEnable(enable: boolean) {
+      this.children.forEach(child => child.setEnable(enable));
+    }
 }
 
-export class TreeItem implements Component {
+export class TreeItem extends Component {
 
     /** Widget primary container */
     container: HTMLDivElement;
@@ -106,6 +110,9 @@ export class TreeItem implements Component {
     /** Item status */
     private expanded: boolean = false;
 
+    /** Enable status */
+    private enable: boolean = true;
+
     /** Call back when expand is queried */
     onexpand: ((TreeItem)=>void)|null = null;
     /** Call back when fold is queried */
@@ -119,6 +126,7 @@ export class TreeItem implements Component {
         private contents : Component|PhrasingCategory,
         private leaf: boolean = false
     ) {
+        super();
         this.create();
     }
 
@@ -148,7 +156,7 @@ export class TreeItem implements Component {
         });
     }
 
-    create() {
+    protected create() {
         this.container = createDiv();
 
         let li = document.createElement("li");
@@ -182,6 +190,8 @@ export class TreeItem implements Component {
         }
 
         this.itemContent.onkeyup = (event) => {
+            if (!this.enable) return;
+
             switch (event.code) {
                 case "ArrowUp":
                     this.goToPrevious();
@@ -203,11 +213,12 @@ export class TreeItem implements Component {
         this.childrenContainer = createUl();
         this.childrenContainer.classList.add(hiddenClass);
         this.container.appendChild(this.childrenContainer);
-
         mdlUpgradeElement(this.container);
     }
 
     expand() {
+        if (!this.enable) return;
+
         if (!this.expanded) {
             // expands
             if (this.onexpand !== null) {
@@ -221,6 +232,8 @@ export class TreeItem implements Component {
     }
 
     fold() {
+        if (!this.enable) return;
+
         if (this.expand) {
             // folds
             if (this.onfold !== null) {
@@ -328,5 +341,15 @@ export class TreeItem implements Component {
         } else {
             this.expand();
         }
+    }
+
+    setEnable(enable: boolean) {
+      this.enable = enable;
+      if (this.enable) {
+        this.container.classList.remove("of-disabled");
+      } else {
+        this.container.classList.add("of-disabled");
+      }
+      setEnable(this.contents, enable);
     }
 }

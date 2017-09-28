@@ -1,5 +1,5 @@
 import { Api, RuntimeBindingId, BindingId, ChangeEvent, createRuntimeBinding } from "../api/Api"
-import { Component } from "../ui/Component"
+import { BoundComponent } from "./BoundComponent"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
 
@@ -7,7 +7,7 @@ import { TextField } from "../ui/TextField"
 
 var idSeed = 0;
 
-export class BoundTextField implements Component {
+export class BoundTextField extends BoundComponent {
 
     textField : TextField;
 
@@ -16,9 +16,9 @@ export class BoundTextField implements Component {
     private runtimeBinding: RuntimeBindingId<string>|null = null;
 
     private readonly changelistener = (event) => this.updateValue(event.value);
-    
+
     constructor(
-        private readonly api: Api, 
+        private readonly api: Api,
         private binding: BindingId<string>,
         private readonly label: PhrasingCategory|null = null,
         private runtime: string|null = null,
@@ -26,6 +26,7 @@ export class BoundTextField implements Component {
         private readonly invalid: boolean = false,
         private readonly id: string|null = null
      ) {
+        super();
         this.create();
         this.updateRuntime(runtime);
     }
@@ -33,7 +34,7 @@ export class BoundTextField implements Component {
     create(): void {
         let actualId = this.id !== null ? this.id : "boundTextField"+idSeed++;
         this.textField = new TextField(
-            actualId, this.binding.expression, this.label, 
+            actualId, this.binding.expression, this.label,
             this.floatingLabel, this.invalid
         );
 
@@ -41,8 +42,8 @@ export class BoundTextField implements Component {
         input.onchange = (e) => this.sendToServer(e);
         input.onblur = (e) => this.sendToServer(e);
 
-        this.container = this.textField.container;        
-    }    
+        this.container = this.textField.container;
+    }
 
     private sendToServer(e: any) {
         if (this.runtimeBinding !== null) {
@@ -64,7 +65,7 @@ export class BoundTextField implements Component {
         }
         this.runtimeBinding = null;
         if (runtime !== null) {
-            this.binding.contextUrl = runtime; 
+            this.binding.contextUrl = runtime;
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
             this.api.evaluate<string>(this.runtimeBinding).then( value => this.updateValue(value));
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);

@@ -1,33 +1,35 @@
 import { Description } from "../api/general"
 import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
+import { BoundComponent } from "./BoundComponent"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
 
 import { Table, TableLine, TableCell } from "../ui/Table"
 
-export class BoundTable implements Component {
+export class BoundTable extends Component {
 
     table : Table;
 
     lines: BoundTableLine[] = [];
-    
+
     container: HTMLTableElement;
 
     constructor(
-        private api: Api, 
+        private api: Api,
         private elements: RuntimeBindingId<Description<any>[]>,
         private columns: BoundColumn[],
         private header: boolean = true,
         private selectable: boolean = false
      ) {
+        super();
         this.create();
     }
 
     create(): void {
         this.table = new Table(this.selectable);
 
-        if (this.header) {        
+        if (this.header) {
             let header = new TableLine();
             this.columns.forEach( column => {
                 let cell = new TableCell(column.name);
@@ -40,8 +42,8 @@ export class BoundTable implements Component {
         this.api.addChangeListener(this.elements, event => this.updateList(event.value));
 
         this.container = this.table.container;
-    }    
-    
+    }
+
     refresh() {
         this.api.evaluate<Description<any>[]>(this.elements).then(elements => this.updateList(elements));
     }
@@ -65,9 +67,9 @@ export class BoundTable implements Component {
                 // line is the same checks next
                 lineCount += 1;
                 elementCount += 1;
-            } 
+            }
         }
-    
+
         // removes the rest of the lines if any
         while (lineCount < this.lines.length) {
             this.removeLine(lineCount);
@@ -98,13 +100,16 @@ export class BoundTable implements Component {
         this.table.body.removeLine(line.line);
     }
 
+    setEnable(enable: boolean) {
+      this.table.setEnable(false);
+    }
 }
 
 
-export class BoundColumn {   
+export class BoundColumn {
     constructor(
         public name: string,
-        public component: (api: Api, element: Description<any>) => Component|PhrasingCategory 
+        public component: (api: Api, element: Description<any>) => Component|PhrasingCategory
     ) { }
 }
 

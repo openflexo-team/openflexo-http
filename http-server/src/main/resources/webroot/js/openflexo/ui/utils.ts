@@ -48,14 +48,21 @@ export function forEachNode(list: NodeList, callback:(i:number, n: HTMLElement)=
     }
 }
 
-export function toHTMLElement(source: Component|FlowCategory|string|null): Node {
-    if (source == null) {
-        return document.createElement("span");
-    } else if (typeof source === "string") {
+export function toHTMLElement(source: FlowCategory): Node {
+    if (typeof source === "string") {
         return document.createTextNode(source);
+    } else if (typeof source === "number") {
+        return document.createTextNode(source.toString());
     } else if ((<Component> source).container) {
        return (<Component> source).container;
     } else {
         return <Node> source;
     }
+}
+
+export function setEnable(source: FlowCategory|null, enable: boolean) {
+  if (source === null) return;
+  if (source instanceof Component) {
+    source.setEnable(enable);
+  }
 }

@@ -1,9 +1,10 @@
 import { Component } from "./Component";
-import { mdlDowngradeElement, mdlUpgradeElement, forEachNode } from "./utils";
+import { mdlDowngradeElement, mdlUpgradeElement, forEachNode, setEnable } from "./utils";
+import { FlowCategory } from "./category";
 
 const activeClassName = "is-active";
 
-export class Tabs implements Component {
+export class Tabs extends Component {
 
     container: HTMLDivElement;
 
@@ -14,6 +15,7 @@ export class Tabs implements Component {
     constructor(
         private readonly rippleEffect = false
     ) {
+        super();
         this.create();
     }
 
@@ -40,25 +42,28 @@ export class Tabs implements Component {
         tab.header.classList.add(activeClassName)
     }
 
-    create(): void {
+    protected create(): void {
         this.container = document.createElement("div");
         this.container.classList.add("mdl-tabs");
         this.container.classList.add("mdl-js-tabs");
-        
-        
+
+
         if (this.rippleEffect) {
             this.container.classList.add("mdl-js-ripple-effect");
         }
 
         this.tabsHeader = document.createElement("div");
         this.tabsHeader.classList.add("mdl-tabs__tab-bar");
-        this.container.appendChild(this.tabsHeader);    
-
+        this.container.appendChild(this.tabsHeader);
         mdlUpgradeElement(this.container);
-    }    
+    }
+
+    setEnable(enable: boolean) {
+      this.tabs.forEach(tab => tab.setEnable(enable));
+    }
 }
 
-export class Tab implements Component {
+export class Tab extends Component {
 
     container: HTMLDivElement;
 
@@ -67,12 +72,13 @@ export class Tab implements Component {
     constructor(
         public id: string,
         public title: string,
-        private contents : Component|HTMLElement
+        private contents : FlowCategory
     ) {
+        super();
         this.create();
     }
 
-    create() {
+    protected create() {
         this.container = document.createElement("div");
         this.container.id = this.id;
         this.container.classList.add("mdl-tabs__panel");
@@ -89,7 +95,10 @@ export class Tab implements Component {
         this.header.href = "#" + this.id;
         this.header.innerText = this.title;
 
-        mdlUpgradeElement(this.container);
         mdlUpgradeElement(this.header);
+    }
+
+    setEnable(enable: boolean) {
+      setEnable(this.contents, enable);
     }
 }

@@ -1,0 +1,9 @@
+// class used for visibility attribute
+.of-hidden {
+  display: none;
+}
+
+// class used for enable attribute (only specific widget as Tree, List, ...)
+.of-disabled {
+  background-color: red;
+}
