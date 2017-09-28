@@ -12,4 +12,8 @@ export abstract class BoundComponent  extends Component {
   protected enableChangeListener = (event) => this.setEnable(event.value === "true");
 
   public abstract setEnable(enable: boolean);
+
+  updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>() ):void {
+    // TODO
+  }
 }

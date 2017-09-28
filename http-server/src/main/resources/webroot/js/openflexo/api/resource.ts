@@ -8,8 +8,8 @@ export class ResourceCenter extends Description<ResourceCenter> {
         public type: string,
         public uri: string,
         public resourceUrl: string
-    ) {  
-        super(id, url, type);    
+    ) {
+        super(name, id, url, type);
     }
 }
 
@@ -24,10 +24,10 @@ export class ContainedByResourceCenter extends Description<ContainedByResourceCe
         public resourceUrl: string,
         public resourceCenterId: string,
         public resourceCenterUrl: string
-    ) {  
-        super(id, url, type);    
+    ) {
+        super(name, id, url, type);
     }
-    
+
 }
 
 export class Resource extends ContainedByResourceCenter {
@@ -44,7 +44,7 @@ export class Resource extends ContainedByResourceCenter {
         public technologyAdapterId: string,
         public technologyAdapterUrl: string,
         public modelUrl: string
-    ) { 
+    ) {
         super(name, id, url, type, uri, url, resourceCenterId, resourceCenterUrl);
      }
 }
@@ -68,8 +68,8 @@ export class TechnologyAdapter extends Description<TechnologyAdapter> {
         public id: string,
         public url: string,
         public type: string
-    ) { 
-        super(id, url, type);
+    ) {
+        super(name, id, url, type);
      }
 
 }
