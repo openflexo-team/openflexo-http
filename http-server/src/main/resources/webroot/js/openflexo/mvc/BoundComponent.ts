@@ -5,15 +5,42 @@ export abstract class BoundComponent  extends Component {
 
   readonly container : HTMLSpanElement | HTMLDivElement;
 
-  protected visibleRuntimeBinding: RuntimeBindingId<string>|null = null
-  protected visibleChangeListener = (event) => this.setVisible(event.value === "true")
+  public visible: BindingId<boolean>|null = null;
+  public enable: BindingId<boolean>|null = null;
 
-  protected enableRuntimeBinding: RuntimeBindingId<string>|null = null
-  protected enableChangeListener = (event) => this.setEnable(event.value === "true");
+  private visibleRuntimeBinding: RuntimeBindingId<boolean>|null = null
+  private readonly visibleChangeListener = (event) => this.setVisible(event.value)
+
+  private enableRuntimeBinding: RuntimeBindingId<boolean>|null = null
+  private readonly enableChangeListener = (event) => this.setEnable(event.value);
+
+  constructor(public readonly api: Api) {
+    super();
+  }
 
   public abstract setEnable(enable: boolean);
 
-  updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>() ):void {
-    // TODO
+  updateRuntime(
+    runtime: string|null,extensions = new Map<string, string>()
+  ) {
+    if (this.enableRuntimeBinding !== null) {
+        this.api.removeChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
+    }
+    this.enableRuntimeBinding = null;
+    if (runtime !== null) {
+        if (this.enable !== null) {
+            this.enable.contextUrl = runtime;
+            this.enableRuntimeBinding = new RuntimeBindingId(this.enable, runtime,extensions);
+            this.api.evaluate<boolean>(this.enableRuntimeBinding).then( value => {
+                this.setEnable(value)
+            } );
+            this.api.addChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
+        } else {
+            this.setEnable(true);
+        }
+
+    } else {
+        this.setEnable(false);
+    }
   }
 }

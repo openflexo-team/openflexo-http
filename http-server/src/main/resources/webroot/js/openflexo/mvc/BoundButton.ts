@@ -18,7 +18,7 @@ export class BoundButton extends BoundComponent {
     private actionRuntimeBinding: RuntimeBindingId<string>|null;
 
     constructor(
-        private api: Api,
+        api: Api,
         private label: Component|PhrasingCategory,
         public action: BindingId<string>,
         runtime: string|null = null,
@@ -28,7 +28,7 @@ export class BoundButton extends BoundComponent {
         private accent: boolean = false,
         private rippleEffect: boolean = false
      ) {
-      super();
+      super(api);
       this.create();
       this.updateRuntime(runtime);
     }
@@ -58,26 +58,11 @@ export class BoundButton extends BoundComponent {
     }
 
     updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>() ):void {
-        if (this.enabledRuntimeBinding !== null) {
-            this.api.removeChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
-        }
-        this.enabledRuntimeBinding = null;
-        if (runtime !== null) {
-            if (this.enabled !== null) {
-                this.enabled.contextUrl = runtime;
-                this.enabledRuntimeBinding = new RuntimeBindingId(this.enabled, runtime,extensions);
-                this.api.evaluate<boolean>(this.enabledRuntimeBinding).then( value => {
-                    this.button.setEnable(value)
-                } );
-                this.api.addChangeListener(this.enabledRuntimeBinding, this.enabledChangeListener);
-            } else {
-                this.setEnable(true);
-            }
+        super.updateRuntime(runtime, extensions);
 
+        if (runtime !== null) {
             this.action.contextUrl = runtime;
             this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime,extensions);
-        } else {
-            this.setEnable(false);
         }
     }
 }

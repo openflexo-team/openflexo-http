@@ -7,7 +7,7 @@ import { mdlUpgradeElement } from "../ui/utils"
 
 import { Table, TableLine, TableCell } from "../ui/Table"
 
-export class BoundTable extends Component {
+export class BoundTable extends BoundComponent {
 
     table : Table;
 
@@ -16,13 +16,13 @@ export class BoundTable extends Component {
     container: HTMLTableElement;
 
     constructor(
-        private api: Api,
+        api: Api,
         private elements: RuntimeBindingId<Description<any>[]>,
         private columns: BoundColumn[],
         private header: boolean = true,
         private selectable: boolean = false
      ) {
-        super();
+        super(api);
         this.create();
     }
 

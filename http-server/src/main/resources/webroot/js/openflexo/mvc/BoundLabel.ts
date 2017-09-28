@@ -13,11 +13,11 @@ export class BoundLabel extends BoundComponent {
     private readonly changelistener = event => this.container.innerText = event.value;
 
     constructor(
-        private api: Api,
+        api: Api,
         private binding:BindingId<string>,
         runtime: string|null = null
      ) {
-        super();
+        super(api);
         this.create();
         this.updateRuntime(runtime);
     }

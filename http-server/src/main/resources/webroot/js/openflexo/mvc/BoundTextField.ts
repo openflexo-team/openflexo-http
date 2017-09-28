@@ -18,7 +18,7 @@ export class BoundTextField extends BoundComponent {
     private readonly changelistener = (event) => this.updateValue(event.value);
 
     constructor(
-        private readonly api: Api,
+        api: Api,
         private binding: BindingId<string>,
         private readonly label: PhrasingCategory|null = null,
         private runtime: string|null = null,
@@ -26,7 +26,7 @@ export class BoundTextField extends BoundComponent {
         private readonly invalid: boolean = false,
         private readonly id: string|null = null
      ) {
-        super();
+        super(api);
         this.create();
         this.updateRuntime(runtime);
     }

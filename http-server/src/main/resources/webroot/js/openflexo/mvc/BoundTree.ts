@@ -41,11 +41,11 @@ export class BoundTree extends BoundComponent implements Item {
     readonly parent = this;
 
     constructor(
-        public api: Api,
+        api: Api,
         private root: RuntimeBindingId<any>,
         private elements: BoundTreeElement[]
      ) {
-        super();
+        super(api);
         this.create();
     }
 
