@@ -39,8 +39,10 @@ import java.awt.*;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
@@ -57,6 +59,7 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
  */
 public class TypescriptModelFromPamela {
 
+	private final Set<String> ignoredNames = Stream.of("name").collect(Collectors.toSet());
 	private final ModelContext context;
 
 	public TypescriptModelFromPamela(ModelContext context) {
@@ -85,6 +88,9 @@ public class TypescriptModelFromPamela {
 		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
+	private final boolean ignoreProperty(String propertyName, ModelProperty<?> property) {
+		return ignoredNames.contains(propertyName) && propertyName != null && !property.ignoreType();
+	}
 	private String generateTypeScriptInterface(ModelEntity<Object> entity) throws ModelDefinitionException {
 		StringBuilder tsInterface = new StringBuilder();
 		tsInterface.append("export interface ");
@@ -106,15 +112,15 @@ public class TypescriptModelFromPamela {
 		tsInterface.append(" {\n");
 
 		// adds kind attribute
-		tsInterface.append("\treadonly kind: ");
 		List<ModelEntity> descendants = entity.getAllDescendants(context);
 		if (!entity.isAbstract()) descendants.add(entity);
-		String kinds = descendants.stream()
-				.map((e) -> '"' + e.getXMLTag() + '"')
-				.collect(Collectors.joining("|"));
+		if (descendants.size() > 0) {
+			tsInterface.append("\treadonly kind: ");
+			String kinds = descendants.stream().map((e) -> '"' + e.getXMLTag() + '"').collect(Collectors.joining("|"));
 
-		tsInterface.append(kinds);
-		tsInterface.append(";\n");
+			tsInterface.append(kinds);
+			tsInterface.append(";\n");
+		}
 
 		for (ModelProperty<?> property : entity.getDeclaredProperties()) {
 			XMLAttribute xmlAttribute = property.getXMLAttribute();
@@ -128,7 +134,7 @@ public class TypescriptModelFromPamela {
 				propertyName = xmlElement.xmlTag();
 			}
 
-			if (propertyName != null && !property.ignoreType()) {
+			if (!ignoreProperty(propertyName, property)) {
 				tsInterface.append("\treadonly ");
 				tsInterface.append(propertyName);
 				tsInterface.append(": ");
