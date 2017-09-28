@@ -46,6 +46,7 @@ import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
+import org.openflexo.model.annotations.CloningStrategy;
 import org.openflexo.model.annotations.Getter;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
@@ -77,6 +78,11 @@ public class TypescriptModelFromPamela {
 			}
 		}
 		return result.toString();
+	}
+
+	private final boolean isReference(ModelProperty<?> property) {
+		if (property.getCloningStrategy() == CloningStrategy.StrategyType.IGNORE) return true;
+		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
 	private String generateTypeScriptInterface(ModelEntity<Object> entity) throws ModelDefinitionException {
@@ -159,7 +165,7 @@ public class TypescriptModelFromPamela {
 			if (entity != null) {
 				result = entity.getXMLTag();
 			}
-			if (property.getEmbedded() == null) {
+			if (isReference(property)) {
 				result = "Description<" + result + ">";
 			}
 		}

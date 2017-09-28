@@ -89,6 +89,7 @@ import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.model.ModelEntity;
 import org.openflexo.model.ModelProperty;
 import org.openflexo.model.StringEncoder;
+import org.openflexo.model.annotations.CloningStrategy;
 import org.openflexo.model.annotations.XMLAttribute;
 import org.openflexo.model.annotations.XMLElement;
 import org.openflexo.model.exceptions.InvalidDataException;
@@ -229,7 +230,7 @@ public class JsonSerializer {
 			// Used for debugging purposes
 			//result.put("__debug_object__", object.toString());
 		}
-		result.put("type", getType(object));
+		result.put("kind", getType(object));
 		return id != null;
 	}
 
@@ -242,6 +243,11 @@ public class JsonSerializer {
 		} else {
 			return object.getClass().getSimpleName();
 		}
+	}
+
+	private final boolean isReference(ModelProperty<?> property) {
+		if (property.getCloningStrategy() == CloningStrategy.StrategyType.IGNORE) return true;
+		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
 	public void describeObject(Object object, JsonObject result, boolean detailed) {
@@ -264,6 +270,7 @@ public class JsonSerializer {
 					Iterator<ModelProperty<? super Object>> iterator = modelEntity.getProperties();
 					while (iterator.hasNext()) {
 						ModelProperty property = iterator.next();
+
 						XMLAttribute xmlAttribute = property.getXMLAttribute();
 						XMLElement xmlElement = property.getXMLElement();
 
@@ -284,7 +291,7 @@ public class JsonSerializer {
 
 						if (propertyName != null && !result.containsKey(propertyName)) {
 
-							boolean reference = property.getEmbedded() == null;
+							boolean reference = isReference(property);
 							switch (property.getCardinality()) {
 								case SINGLE: {
 									transformed = toJson(propertyValue, reference, detailed);
