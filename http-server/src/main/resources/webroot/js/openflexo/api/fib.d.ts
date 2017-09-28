@@ -1,5 +1,11 @@
 import { Description } from "./general";
 
+export interface GINAFIBComponent extends Description<GINAFIBComponent> {
+	readonly kind: "GINAFIBComponent";
+	readonly name: string;
+	readonly component: FIBComponent;
+}
+
 export interface FIBReferencedComponent extends FIBWidget {
 	readonly kind: "FIBReferencedComponent";
 	readonly dynamicComponentFile: string;
