@@ -291,7 +291,6 @@ export class Api {
 
                             if (response.error !== null) {
                                 // rejects the promise if there is an error
-                                this.log("error", response.error, message);
                                 pending.rejected(response.error);
                             } else {
                                 // fullfilled the promise when it's ok
@@ -456,7 +455,7 @@ export class Api {
     public addChangeListener(binding: RuntimeBindingId<any>, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
         let promise = this.sendMessage(this.createListeningMessage(binding));
-        promise.then(value => listener(value));
+        promise.then(value => listener(value)).catch(error => this.log("info", error));
     }
 
     /**
