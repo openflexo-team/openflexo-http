@@ -58,6 +58,10 @@ export class TextField extends Component {
         mdlUpgradeElement(this.container);
     }
 
+    isEnable(): boolean {
+      return !this.input.disabled;
+    }
+
     setEnable(enable: boolean) {
       setEnable(this.label, enable);
       this.input.disabled = !enable;

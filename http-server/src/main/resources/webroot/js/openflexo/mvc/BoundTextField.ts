@@ -69,6 +69,10 @@ export class BoundTextField extends BoundComponent {
       );
     }
 
+    isEnable(): boolean {
+      return this.textField.isEnable();
+    }
+
     setEnable(enable: boolean) {
         this.textField.setEnable(enable);
     }

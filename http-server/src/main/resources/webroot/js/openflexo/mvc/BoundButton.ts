@@ -55,7 +55,7 @@ export class BoundButton extends BoundComponent {
 
         if (runtime !== null) {
             this.action.contextUrl = runtime;
-            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime,extensions);
+            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime, extensions);
         }
     }
 }
