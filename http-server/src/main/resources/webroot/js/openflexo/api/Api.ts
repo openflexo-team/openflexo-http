@@ -366,21 +366,21 @@ export class Api {
     }
 
     public sendMessage<T>(message: Message):Promise<T> {
-        if (this.connie != null) {
-            // act depending on the WebSocket status
-            if (this.connie.readyState == 1) {
-                // sends the binding now
-                this.readySendMessage(message);
-            } else {
-                // sends when the socket is ready
-                this.messageQueue.push(message);
-            }
-        }
+      // connects the WebSocket if not already done
+      let connie = this.initializeConnieEvaluator();
+      // act depending on the WebSocket status
+      if (connie.readyState == 1) {
+          // sends the binding now
+          this.readySendMessage(message);
+      } else {
+          // sends when the socket is ready
+          this.messageQueue.push(message);
+      }
 
-        // prepares the promise's callback for the result
-        return new Promise<T>((fullfilled, rejected) => {
-            this.pendingEvaluationQueue.set(message.id , new PendingEvaluation(fullfilled, rejected, message));
-        });
+      // prepares the promise's callback for the result
+      return new Promise<T>((fullfilled, rejected) => {
+          this.pendingEvaluationQueue.set(message.id , new PendingEvaluation(fullfilled, rejected, message));
+      });
     }
 
 
@@ -416,9 +416,6 @@ export class Api {
      * @return a Promise for evaluated binding.
      */
     public evaluate<T>(runtimeBinding: RuntimeBindingId<T>, detailed = false): Promise<T> {
-        // connects the WebSocket if not already done
-        this.initializeConnieEvaluator();
-
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
         let request = new EvaluationRequest(id, runtimeBinding, detailed);
@@ -438,9 +435,6 @@ export class Api {
      * @return a Promise for evaluated binding
      */
     public assign<T>(left: RuntimeBindingId<T>, right: RuntimeBindingId<T>|string, detailed: boolean = false): Promise<T> {
-        // connects the WebSocket if not already done
-        let connie = this.initializeConnieEvaluator();
-
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
         let request;
@@ -461,7 +455,8 @@ export class Api {
      */
     public addChangeListener(binding: RuntimeBindingId<any>, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
-        this.sendMessage(this.createListeningMessage(binding));
+        let promise = this.sendMessage(this.createListeningMessage(binding));
+        promise.then(value => listener(value));
     }
 
     /**
