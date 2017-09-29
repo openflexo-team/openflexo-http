@@ -66,7 +66,7 @@ export class BoundTree extends BoundComponent implements Item {
             }
         };
         this.api.evaluate<Description<any>>(this.root).then(rootValue => this.updateRoot(rootValue));
-        this.api.addChangeListener(this.root, event => this.updateRoot(event.value));
+        this.api.addChangeListener(this.root, value => this.updateRoot(value));
 
         this.container = this.tree.container;
     }
@@ -264,7 +264,7 @@ function childrenForObject(item: Item, childrenBinding: (element:any) => Binding
         updateValues(item, childrenValues, childrenRtBindingId);
     }))
 
-    item.boundTree.api.addChangeListener(childrenRtBindingId, (event) => {
-        updateValues(item, event.value, childrenRtBindingId);
+    item.boundTree.api.addChangeListener(childrenRtBindingId, (value) => {
+        updateValues(item, value, childrenRtBindingId);
     })
  }

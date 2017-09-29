@@ -15,7 +15,7 @@ export class BoundTextField extends BoundComponent {
 
     private runtimeBinding: RuntimeBindingId<string>|null = null;
 
-    private readonly changelistener = (event) => this.updateValue(event.value);
+    private readonly changelistener = (value) => this.updateValue(value);
 
     constructor(
         api: Api,
@@ -67,7 +67,7 @@ export class BoundTextField extends BoundComponent {
         if (runtime !== null) {
             this.binding.contextUrl = runtime;
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-            this.api.evaluate<string>(this.runtimeBinding).then( value => this.updateValue(value));
+            this.api.evaluate<string>(this.runtimeBinding).then(this.changelistener);
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
             this.setEnable(true);
         } else {

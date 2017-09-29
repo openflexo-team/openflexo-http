@@ -14,7 +14,7 @@ export class BoundIcon extends BoundComponent {
 
     private runtimeBinding: RuntimeBindingId<string>|null = null;
 
-    private readonly changelistener = event => this.container.innerText = event.value;
+    private readonly changelistener = value => this.container.innerText =value;
 
     constructor(
         api: Api,
@@ -39,7 +39,7 @@ export class BoundIcon extends BoundComponent {
         this.runtimeBinding = null;
         if (runtime !== null) {
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-            this.api.evaluate<string>(this.runtimeBinding).then( value => this.container.innerText = value );
+            this.api.evaluate<string>(this.runtimeBinding).then(this.changelistener);
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
         }
     }

@@ -9,10 +9,10 @@ export abstract class BoundComponent  extends Component {
   public enable: BindingId<boolean>|null = null;
 
   private visibleRuntimeBinding: RuntimeBindingId<boolean>|null = null
-  private readonly visibleChangeListener = (event) => this.setVisible(event.value)
+  private readonly visibleChangeListener = (value) => this.setVisible(value)
 
   private enableRuntimeBinding: RuntimeBindingId<boolean>|null = null
-  private readonly enableChangeListener = (event) => this.setEnable(event.value);
+  private readonly enableChangeListener = (value) => this.setEnable(value);
 
   constructor(public readonly api: Api) {
     super();
@@ -31,9 +31,7 @@ export abstract class BoundComponent  extends Component {
         if (this.enable !== null) {
             this.enable.contextUrl = runtime;
             this.enableRuntimeBinding = new RuntimeBindingId(this.enable, runtime,extensions);
-            this.api.evaluate<boolean>(this.enableRuntimeBinding).then( value => {
-                this.setEnable(value)
-            } );
+            //this.api.evaluate<boolean>(this.enableRuntimeBinding).then(this.enableChangeListener);
             this.api.addChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
         } else {
             this.setEnable(true);
