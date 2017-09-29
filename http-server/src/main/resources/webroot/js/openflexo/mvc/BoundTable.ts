@@ -29,6 +29,7 @@ export class BoundTable extends BoundComponent {
      ) {
         super(api);
         this.create();
+        this.updateRuntime(runtime);
     }
 
     protected create(): void {
