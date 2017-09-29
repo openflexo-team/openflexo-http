@@ -1,19 +1,6 @@
 // class used for visibility attribute
-ul.of-hidden {
-  display: none;
-}
-
-div.of-hidden {
-  display: none;
-}
-
-
-span.of-hidden {
-  display: none;
-}
-
-li.of-hidden {
-  display: none;
+.of-hidden {
+  display: none !important;
 }
 
 // class used for enable attribute (only specific widget as Tree, List, ...)
