@@ -31,7 +31,6 @@ export abstract class BoundComponent  extends Component {
         if (this.enable !== null) {
             this.enable.contextUrl = runtime;
             this.enableRuntimeBinding = new RuntimeBindingId(this.enable, runtime,extensions);
-            //this.api.evaluate<boolean>(this.enableRuntimeBinding).then(this.enableChangeListener);
             this.api.addChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
         } else {
             this.setEnable(true);

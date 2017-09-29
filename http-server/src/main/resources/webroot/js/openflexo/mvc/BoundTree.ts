@@ -65,7 +65,6 @@ export class BoundTree extends BoundComponent implements Item {
                 onselect(transformedSelection);
             }
         };
-        this.api.evaluate<Description<any>>(this.root).then(rootValue => this.updateRoot(rootValue));
         this.api.addChangeListener(this.root, value => this.updateRoot(value));
 
         this.container = this.tree.container;

@@ -39,7 +39,6 @@ export class BoundIcon extends BoundComponent {
         this.runtimeBinding = null;
         if (runtime !== null) {
             this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-            this.api.evaluate<string>(this.runtimeBinding).then(this.changelistener);
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
         }
     }

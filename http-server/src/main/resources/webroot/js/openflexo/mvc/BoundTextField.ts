@@ -60,19 +60,17 @@ export class BoundTextField extends BoundComponent {
     }
 
     updateRuntime(runtime: string|null):void {
-        if (this.runtimeBinding !== null) {
-            this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
-        }
-        this.runtimeBinding = null;
-        if (runtime !== null) {
-            this.binding.contextUrl = runtime;
-            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-            this.api.evaluate<string>(this.runtimeBinding).then(this.changelistener);
-            this.api.addChangeListener(this.runtimeBinding, this.changelistener);
-            this.setEnable(true);
-        } else {
-            this.setEnable(false);
-        }
+      super.updateRuntime(runtime);
+      if (this.runtimeBinding !== null) {
+          this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
+      }
+
+      this.runtimeBinding = null;
+      if (runtime !== null) {
+          this.binding.contextUrl = runtime;
+          this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
+          this.api.addChangeListener(this.runtimeBinding, this.changelistener);
+      }
     }
 
     setEnable(enable: boolean) {
