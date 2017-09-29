@@ -77,8 +77,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javassist.util.proxy.ProxyObject;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
@@ -102,6 +104,11 @@ import org.openflexo.model.factory.ProxyMethodHandler;
  * The JSON result only contains the object destined to a REST service.
  */
 public class JsonSerializer {
+
+	/** Cloning strategies that actually clone objects */
+	private final Set<CloningStrategy.StrategyType> cloningStrategies = Stream.of(
+			CloningStrategy.StrategyType.CLONE, CloningStrategy.StrategyType.CUSTOM_CLONE
+		).collect(Collectors.toSet());
 
 	private final TechnologyAdapterRouteService service;
 
@@ -246,7 +253,7 @@ public class JsonSerializer {
 	}
 
 	private final boolean isReference(ModelProperty<?> property) {
-		if (property.getCloningStrategy() == CloningStrategy.StrategyType.IGNORE) return true;
+		if (!cloningStrategies.contains(property.getCloningStrategy())) return true;
 		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
