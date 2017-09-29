@@ -1,5 +1,6 @@
-import { Component } from "../ui/Component"
-import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api"
+import { Component } from "../ui/Component";
+import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api";
+import { updateBindingRuntime } from "./utils";
 
 export abstract class BoundComponent  extends Component {
 
@@ -21,23 +22,23 @@ export abstract class BoundComponent  extends Component {
   public abstract setEnable(enable: boolean);
 
   updateRuntime(
-    runtime: string|null,extensions = new Map<string, string>()
+    runtime: string|null, extensions = new Map<string, string>()
   ) {
-    if (this.enableRuntimeBinding !== null) {
-        this.api.removeChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
-    }
-    this.enableRuntimeBinding = null;
-    if (runtime !== null) {
-        if (this.enable !== null) {
-            this.enable.contextUrl = runtime;
-            this.enableRuntimeBinding = new RuntimeBindingId(this.enable, runtime,extensions);
-            this.api.addChangeListener(this.enableRuntimeBinding, this.enableChangeListener);
-        } else {
-            this.setEnable(true);
-        }
-
+    if (this.enable != null) {
+      this.enableRuntimeBinding = updateBindingRuntime(
+          this.api, this.enable, this.enableRuntimeBinding,
+          this.enableChangeListener, runtime, extensions
+      );
     } else {
-        this.setEnable(false);
+      this.setEnable(runtime !== null);
     }
+
+    if (this.visible != null) {
+      this.visibleRuntimeBinding = updateBindingRuntime(
+          this.api, this.visible, this.visibleRuntimeBinding,
+          this.visibleChangeListener, runtime, extensions
+      );
+    }
+
   }
 }

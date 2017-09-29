@@ -1,9 +1,10 @@
-import { Api, RuntimeBindingId, BindingId, ChangeEvent, createRuntimeBinding } from "../api/Api"
-import { BoundComponent } from "./BoundComponent"
-import { PhrasingCategory } from "../ui/category"
-import { mdlUpgradeElement } from "../ui/utils"
+import { Api, RuntimeBindingId, BindingId, ChangeEvent, createRuntimeBinding } from "../api/Api";
+import { BoundComponent } from "./BoundComponent";
+import { PhrasingCategory } from "../ui/category";
+import { mdlUpgradeElement } from "../ui/utils";
 
-import { TextField } from "../ui/TextField"
+import { TextField } from "../ui/TextField";
+import { updateBindingRuntime } from "./utils";
 
 var idSeed = 0;
 
@@ -59,18 +60,13 @@ export class BoundTextField extends BoundComponent {
         this.textField.input.value = value;
     }
 
-    updateRuntime(runtime: string|null):void {
-      super.updateRuntime(runtime);
-      if (this.runtimeBinding !== null) {
-          this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
-      }
+    updateRuntime(runtime: string|null, extensions = new Map<string, string>()):void {
+      super.updateRuntime(runtime, extensions);
 
-      this.runtimeBinding = null;
-      if (runtime !== null) {
-          this.binding.contextUrl = runtime;
-          this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-          this.api.addChangeListener(this.runtimeBinding, this.changelistener);
-      }
+      this.runtimeBinding = updateBindingRuntime(
+        this.api, this.binding, this.runtimeBinding,
+        this.changelistener, runtime, extensions
+      );
     }
 
     setEnable(enable: boolean) {
