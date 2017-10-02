@@ -50,7 +50,9 @@ export function forEachNode(list: NodeList, callback:(i:number, n: HTMLElement)=
 
 export function toHTMLElement(source: FlowCategory): Node {
     if (typeof source === "string") {
-        return document.createTextNode(source);
+      let node = document.createElement("span");
+      node.innerHTML = source;
+      return node;
     } else if (typeof source === "number") {
         return document.createTextNode(source.toString());
     } else if ((<Component> source).container) {

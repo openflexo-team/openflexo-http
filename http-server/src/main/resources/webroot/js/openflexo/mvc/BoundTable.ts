@@ -1,10 +1,10 @@
 import { Description } from "../api/general"
-import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
+import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
 import { BoundComponent } from "./BoundComponent"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
-
+import { updateBindingRuntime } from "./utils"
 import { Table, TableLine, TableCell } from "../ui/Table"
 
 export class BoundTable extends BoundComponent {
@@ -15,18 +15,24 @@ export class BoundTable extends BoundComponent {
 
     container: HTMLTableElement;
 
+    private elementsRuntimeBinding: RuntimeBindingId<Description<any>[]>|null = null;
+
+    private readonly elementsChangelistener = (elements) => this.updateList(elements);
+
     constructor(
         api: Api,
-        private elements: RuntimeBindingId<Description<any>[]>,
+        private elements: BindingId<Description<any>[]>,
         private columns: BoundColumn[],
+        runtime: string| null = null,
         private header: boolean = true,
         private selectable: boolean = false
      ) {
         super(api);
         this.create();
+        this.updateRuntime(runtime);
     }
 
-    create(): void {
+    protected create(): void {
         this.table = new Table(this.selectable);
 
         if (this.header) {
@@ -37,14 +43,17 @@ export class BoundTable extends BoundComponent {
             });
             this.table.head.addLine(header);
         }
-
-        this.api.addChangeListener(this.elements, values => this.updateList(values));
-
         this.container = this.table.container;
     }
 
-    refresh() {
-        this.api.evaluate<Description<any>[]>(this.elements).then(elements => this.updateList(elements));
+    updateRuntime(
+      runtime: string|null, extensions = new Map<string, string>()
+    ) {
+      super.updateRuntime(runtime, extensions);
+      this.elementsRuntimeBinding = updateBindingRuntime(
+        this.api, this.elements, this.elementsRuntimeBinding, this.elementsChangelistener,
+        runtime, extensions
+      );
     }
 
     private updateList(elements: Description<any>[]) {
