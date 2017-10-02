@@ -234,6 +234,16 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			if (binding.isValid()) {
 				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
 				if (context != null) {
+
+					try {
+						Object value = binding.getBindingValue(context);
+						response.result = toJson(value, request.detailed);;
+					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
+						System.out.println(error);
+						socket.write(Response.error(request.id, error).toBuffer());
+					}
+
 					BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
 					if (listener == null) {
 						listener = new BindingValueChangeListener<Object>(binding, context) {

@@ -2,7 +2,7 @@ import { Component } from "./Component";
 import { mdlDowngradeElement, mdlUpgradeElement, toHTMLElement, setEnable } from "./utils";
 import { PhrasingCategory } from "./category";
 
-export class TextField extends Component {
+export class TextArea extends Component {
 
 /*
 // TODO adds pattern for validation
@@ -14,7 +14,7 @@ export class TextField extends Component {
 */
     container: HTMLDivElement;
 
-    input: HTMLInputElement;
+    input: HTMLTextAreaElement;
 
     constructor(
         private readonly id: string,
@@ -22,6 +22,8 @@ export class TextField extends Component {
         private label: PhrasingCategory|null = null,
         private readonly floatingLabel: boolean = false,
         private readonly invalid: boolean = false,
+        private readonly rows : number | null,
+        private readonly max_rows : number | null = null,
      ) {
         super();
         this.create();
@@ -38,10 +40,18 @@ export class TextField extends Component {
             this.container.classList.add("is-invalid");
         }
 
-        this.input = document.createElement("input");
+        this.input = document.createElement("textarea");
         this.input.classList.add("mdl-textfield__input");
-        this.input.type = "text";
         this.input.id = this.id;
+
+        if(this.rows){
+            this.input.rows = this.rows;
+        }
+
+        if(this.max_rows){
+            this.input.cols = this.max_rows;
+        }
+
         this.container.appendChild(this.input);
 
         if (this.value != null) {

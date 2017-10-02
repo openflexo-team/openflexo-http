@@ -12,9 +12,6 @@ export class BoundButton extends BoundComponent {
 
     container: HTMLButtonElement;
 
-    private enabledRuntimeBinding: RuntimeBindingId<string>|null = null
-    private enabledChangeListener = (event) => this.listenFromServer(event);
-
     private actionRuntimeBinding: RuntimeBindingId<string>|null;
 
     constructor(
@@ -43,10 +40,6 @@ export class BoundButton extends BoundComponent {
         this.button.setEnable(enable);
     }
 
-    private listenFromServer(event: ChangeEvent) {
-        this.setEnable(event.value === "true")
-    }
-
     private sendActionToServer(e: any) {
         if (this.actionRuntimeBinding !== null) {
             this.api.evaluate(this.actionRuntimeBinding).then(value => {
@@ -62,7 +55,7 @@ export class BoundButton extends BoundComponent {
 
         if (runtime !== null) {
             this.action.contextUrl = runtime;
-            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime,extensions);
+            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime, extensions);
         }
     }
 }

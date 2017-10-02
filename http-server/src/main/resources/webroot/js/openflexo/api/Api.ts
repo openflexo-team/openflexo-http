@@ -20,7 +20,7 @@ function mapToJson(map: Map<string, string>) {
 export class BindingId<T>  {
     constructor(
         public expression: string,
-        public contextUrl: string, 
+        public contextUrl: string,
         public extensions: Map<string, string> = new Map<string, string>()
     ) { }
 
@@ -34,7 +34,7 @@ export class BindingId<T>  {
                 "expression": ${JSON.stringify(this.expression)},
                 "contextUrl": ${JSON.stringify(this.contextUrl)},
                 "extensions": ${mapToJson(this.extensions)}
-            } 
+            }
         `;
     }
 }
@@ -42,8 +42,8 @@ export class BindingId<T>  {
 export class RuntimeBindingId<T> {
     constructor(
         public binding: BindingId<T>,
-        public runtimeUrl: string, 
-        public extensions: Map<string, string> = new Map<string, string>() 
+        public runtimeUrl: string,
+        public extensions: Map<string, string> = new Map<string, string>()
     ) { }
 
     public equals(other: RuntimeBindingId<T>) {
@@ -56,7 +56,7 @@ export class RuntimeBindingId<T> {
                 "binding": ${this.binding.toJSON()},
                 "runtimeUrl": ${JSON.stringify(this.runtimeUrl)},
                 "extensions": ${mapToJson(this.extensions)}
-            } 
+            }
         `;
     }
 }
@@ -71,7 +71,7 @@ export class Message {
     ) { }
 
     public toJSON():string {
-      return "";  
+      return "";
     };
 }
 
@@ -91,11 +91,11 @@ export class EvaluationRequest extends Message {
      public toJSON(): string {
         return `
             {
-                "type": ${JSON.stringify(this.type)}, 
+                "type": ${JSON.stringify(this.type)},
                 "id": ${JSON.stringify(this.id)},
                 "runtimeBinding": ${this.runtimeBinding.toJSON()},
                 "detailed": ${JSON.stringify(this.detailed)}
-            } 
+            }
         `;
     }
 }
@@ -104,7 +104,7 @@ export class EvaluationRequest extends Message {
  * Class used to send listening request.
  */
 export class ListeningRequest extends Message {
-    
+
     constructor(
         public id: number,
         public runtimeBinding: RuntimeBindingId<any>,
@@ -116,15 +116,15 @@ export class ListeningRequest extends Message {
     public toJSON(): string {
         return `
             {
-                "type": ${JSON.stringify(this.type)}, 
+                "type": ${JSON.stringify(this.type)},
                 "id": ${JSON.stringify(this.id)},
                 "runtimeBinding": ${this.runtimeBinding.toJSON()},
                 "detailed": ${JSON.stringify(this.detailed)}
-            } 
+            }
         `;
-    }        
+    }
 }
-    
+
 /**
  * Class used to send assignation request.
  */
@@ -143,13 +143,13 @@ export class AssignationRequest extends Message {
     public toJSON(): string {
         return `
             {
-                "type": ${JSON.stringify(this.type)}, 
+                "type": ${JSON.stringify(this.type)},
                 "id": ${JSON.stringify(this.id)},
                 "left": ${this.left.toJSON()},
                 "right": ${this.right !== null ? this.right.toJSON() : null},
                 "value": ${JSON.stringify(this.value)},
                 "detailed": ${JSON.stringify(this.detailed)}
-            } 
+            }
         `;
     }
 }
@@ -163,7 +163,7 @@ export class Response extends Message {
         public id: number,
         public result: string,
         public error: string
-    ) { 
+    ) {
         super(id, "Response");
     }
 }
@@ -191,7 +191,7 @@ class PendingEvaluation<T> {
     ) { }
 }
 
-export type ChangeListener = (ChangeEvent)=>void;
+export type ChangeListener = (any)=>void;
 
 export type LogLevel = "error"|"warning"|"info";
 
@@ -205,15 +205,15 @@ export class Log {
         public source: Message|null
     ) {
     }
-} 
+}
 
 export type LogListener = (Log)=>void;
 
 /**
  * The Api class proposes methods to access an OpenFlexo server.
- * 
+ *
  * It allows:
- * 
+ *
  * - to receive type object from the REST API.
  * - evaluate binding using a WebSocket connection.
  */
@@ -241,7 +241,7 @@ export class Api {
     constructor(
         private host: string = ""
     ) {
-        
+
     }
 
     public call<T>(path: string, method: string = "get"): Promise<T> {
@@ -256,8 +256,8 @@ export class Api {
                         fullfilled(<T>json);
                         return;
                     }
-                    rejected(request.statusText); 
-                } 
+                    rejected(request.statusText);
+                }
             }
             request.onerror = rejected;
             request.send();
@@ -267,11 +267,11 @@ export class Api {
 
     /**
      * Listens to WebSocket messages. Messages can be:
-     * 
+     *
      * - result of EvaluationRequest
      * - <b>Not Supported yet</b> change notifications
-     * 
-     * @param event 
+     *
+     * @param event
      */
     private onEvaluationMessage(event: MessageEvent) {
         // event contains a blob that needs reading
@@ -288,10 +288,9 @@ export class Api {
                         if (pending) {
                             // found it, now it removes it
                             this.pendingEvaluationQueue.delete(response.id);
-                        
+
                             if (response.error !== null) {
                                 // rejects the promise if there is an error
-                                this.log("error", response.error, message);
                                 pending.rejected(response.error);
                             } else {
                                 // fullfilled the promise when it's ok
@@ -305,23 +304,23 @@ export class Api {
                         let event = <ChangeEvent>message;
                         this.bindingListeners.forEach( (entry) => {
                             if (entry[0].equals(event.runtimeBinding)) {
-                                entry[1](event);
+                                entry[1](event.value);
                             }
                         });
                     }
                 }
             }
         }
-        reader.readAsText(event.data); 
+        reader.readAsText(event.data);
     }
 
     /**
      * Listens to Webocket open
-     * @param event 
+     * @param event
      */
     public onEvaluationOpen(event: MessageEvent) {
         this.log("info", "Openned " + event.data, null);
-        
+
         // evaluates pending request
         this.messageQueue.forEach(message => {
             this.readySendMessage(message);
@@ -338,7 +337,7 @@ export class Api {
         // registers listening messages when the connection resumes
         this.bindingListeners.forEach(e => {
             this.sendMessage(this.createListeningMessage(e[0]));
-        })   
+        })
     }
 
     /**
@@ -350,13 +349,13 @@ export class Api {
             if (this.host.length > 0) {
                 wsHost = this.host.search("https\\://") == 0 ?
                     this.host.replace(new RegExp("https\\://"), "wss://") + "/websocket" :
-                    this.host.replace(new RegExp("http\\://"), "ws://") + "/websocket" 
+                    this.host.replace(new RegExp("http\\://"), "ws://") + "/websocket"
             } else {
                 wsHost = document.location.protocol === "https:" ?
-                    "wss://" + document.location.host + "/websocket" : 
-                    "ws://" + document.location.host + "/websocket"; 
+                    "wss://" + document.location.host + "/websocket" :
+                    "ws://" + document.location.host + "/websocket";
             }
-            
+
             this.connie = new WebSocket(wsHost);
             this.connie.onopen = (e:MessageEvent) => this.onEvaluationOpen(e);
             this.connie.onmessage = (e:MessageEvent) => this.onEvaluationMessage(e);
@@ -366,30 +365,30 @@ export class Api {
     }
 
     public sendMessage<T>(message: Message):Promise<T> {
-        if (this.connie != null) {
-            // act depending on the WebSocket status
-            if (this.connie.readyState == 1) {
-                // sends the binding now
-                this.readySendMessage(message);
-            } else {
-                // sends when the socket is ready
-                this.messageQueue.push(message);
-            }
-        }
+      // connects the WebSocket if not already done
+      let connie = this.initializeConnieEvaluator();
+      // act depending on the WebSocket status
+      if (connie.readyState == 1) {
+          // sends the binding now
+          this.readySendMessage(message);
+      } else {
+          // sends when the socket is ready
+          this.messageQueue.push(message);
+      }
 
-        // prepares the promise's callback for the result
-        return new Promise<T>((fullfilled, rejected) => {
-            this.pendingEvaluationQueue.set(message.id , new PendingEvaluation(fullfilled, rejected, message));
-        });
+      // prepares the promise's callback for the result
+      return new Promise<T>((fullfilled, rejected) => {
+          this.pendingEvaluationQueue.set(message.id , new PendingEvaluation(fullfilled, rejected, message));
+      });
     }
-    
+
 
     /**
      * Internal send evaluation request
      * @param mesage message to send
      */
     private readySendMessage(message: Message) {
-        let json = message.toJSON(); 
+        let json = message.toJSON();
         if (this.connie != null) {
             this.connie.send(json);
         }
@@ -401,45 +400,40 @@ export class Api {
     }
 
     /**
-     * Evaluates a binding for a given model on a given runtime. The binding is 
+     * Evaluates a binding for a given model on a given runtime. The binding is
      * sent to the server using a WebSocket to be evaluated. While the socket is
      * open, each time the value of the sent binding (with its context) is changed
      * an event is sent from the server. To listen to the changes, add listener
      * using {@link addChangeListener}.
-     * 
+     *
      * <b>Not Supported Yet</b>
-     * A cache mechanism allows to store a binding result on the client in 
+     * A cache mechanism allows to store a binding result on the client in
      * cooperation with the server's own cache.
-     * 
+     *
      * @param runtimeBinding binding  to evaluate.
-     * @return a Promise for evaluated binding
+     * @param detalied if true presents detailed results.
+     * @return a Promise for evaluated binding.
      */
-    public evaluate<T>(runtimeBinding: RuntimeBindingId<T>, detailed: boolean = false): Promise<T> {
-        // connects the WebSocket if not already done
-        this.initializeConnieEvaluator();
-        
+    public evaluate<T>(runtimeBinding: RuntimeBindingId<T>, detailed = false): Promise<T> {
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
         let request = new EvaluationRequest(id, runtimeBinding, detailed);
-        
+
         return this.sendMessage(request);
     }
 
 
     /**
      * Assigns the given binding to value for a given model on a given runtime.
-     * The binding is sent to the server using a WebSocket to be evaluated. 
+     * The binding is sent to the server using a WebSocket to be evaluated.
      *
-     * No change will be sent for any changes in the given bindings 
-     * 
+     * No change will be sent for any changes in the given bindings
+     *
      * @param left binding to assign.
      * @param right binding of the new value.
      * @return a Promise for evaluated binding
      */
     public assign<T>(left: RuntimeBindingId<T>, right: RuntimeBindingId<T>|string, detailed: boolean = false): Promise<T> {
-        // connects the WebSocket if not already done
-        let connie = this.initializeConnieEvaluator();
-
         // creates a request for evaluation
         let id = this.evaluationRequestSeed++;
         let request;
@@ -448,18 +442,20 @@ export class Api {
         } else {
             request = new AssignationRequest(id, left, null, <string>right, detailed);
         }
-        
+
         return this.sendMessage(request);
     }
 
     /**
-     * Adds a listener for binding changes
+     * Adds a listener for binding changes. It sends a value the first time it's
+     * received.
      * @param binding binding change to listen to
      * @param listener callback
      */
     public addChangeListener(binding: RuntimeBindingId<any>, listener : ChangeListener) {
         this.bindingListeners.add([binding, listener]);
-        this.sendMessage(this.createListeningMessage(binding));
+        let promise = this.sendMessage(this.createListeningMessage(binding));
+        promise.then(value => listener(value)).catch(error => this.log("info", error));
     }
 
     /**
@@ -501,9 +497,9 @@ export class Api {
 
     /**
      * Logs a message from the OpenFlexo System
-     * @param level 
-     * @param message 
-     * @param binding 
+     * @param level
+     * @param message
+     * @param binding
      */
     public log(level: LogLevel, message: string, source: Message|null = null) {
         let event = new Log(level, message, source);

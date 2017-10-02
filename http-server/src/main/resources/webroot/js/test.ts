@@ -38,7 +38,7 @@ function getDescriptionDiv(element: HTMLElement) {
         if (!current) { break; }
         dataUrl = current.getAttribute("data-url");
     }
-    return current;   
+    return current;
 }
 
 function createCount(source : any[]) {
@@ -50,7 +50,7 @@ function createCount(source : any[]) {
 function createDescriptionElement(iconName: string, source: Description<any>) {
     let description = <HTMLDivElement> document.createElement("div");
     description.setAttribute("data-url", source.url);
-    
+
     let icon = new Icon(iconName);
     description.appendChild(icon.container);
 
@@ -67,13 +67,13 @@ function createJsonElement(source: any): HTMLElement {
         var all = document.createElement("div");
         if (source["length"] != null) {
             for (let item of source) {
-                all.appendChild(createJsonElement(item));    
+                all.appendChild(createJsonElement(item));
             }
         } else {
             all.className = 'details';
             Object.keys(source).forEach(key => {
                 let element = document.createElement("div");
-                
+
                 let keySpan = document.createElement("b");
                 keySpan.innerText = `${key}: `;
                 element.appendChild(keySpan);
@@ -96,7 +96,7 @@ function createJsonElement(source: any): HTMLElement {
 
                 all.appendChild(element);
             });
-            
+
         }
         return all;
     } else {
@@ -104,10 +104,10 @@ function createJsonElement(source: any): HTMLElement {
         valueCode.innerText = source + " ";
        return valueCode;
     }
-    
+
 }
 
-function setContext(url: string) { 
+function setContext(url: string) {
     if (url.match(document.location.origin)) {
         url = url.substring(document.location.origin.length);
     }
@@ -127,14 +127,14 @@ function retreiveContext() {
 
     let json = api.call(contextInput.value);
     json.then(json => {
-        clearElement(result);       
+        clearElement(result);
         result.appendChild(createJsonElement(json));
         window.scrollTo(0, 0);
     },
     (event) => {
-        clearElement(result);     
+        clearElement(result);
         var error = document.createElement("div");
-        error.className = "details";  
+        error.className = "details";
         error.innerText = "Error : " + event.currentTarget.statusText;
         result.appendChild(error);
         window.scrollTo(0, 0);
@@ -146,14 +146,14 @@ function saveResource(resourceId: string) {
 
     var result = <HTMLDivElement>document.getElementById("result");
     clearElement(result);
-    
+
     let resource = api.save(resourceId);
     resource.then(json => {
-        clearElement(result);       
+        clearElement(result);
         result.appendChild(createJsonElement(json));
         window.scrollTo(0, 0);
     }).catch( event => {
-        clearElement(result);       
+        clearElement(result);
         result.appendChild(createJsonElement(event));
         window.scrollTo(0, 0);
     });
@@ -175,7 +175,7 @@ function evaluateBinding(left: string, right: string) {
     var contextInput = <HTMLInputElement>document.getElementById("context");
     var detailedCheckbox = <HTMLInputElement>document.getElementById("detailed");
     var resultDiv = <HTMLDivElement>document.getElementById("result");
-    
+
     clearElement(resultDiv);
 
     resultDiv.appendChild(spinner());
@@ -190,27 +190,24 @@ function evaluateBinding(left: string, right: string) {
     rightBinding = createRuntimeBinding(right, context, context);
     leftBinding = left !== null && left.length > 0  ? createRuntimeBinding(left, context, context) : null;
 
-    let result = 
+    let result =
         leftBinding != null ?
         api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
         api.evaluate(rightBinding, detailedCheckbox.value == "true");
-        
-    api.addChangeListener(rightBinding, (event:ChangeEvent) => {
+
+    api.addChangeListener(rightBinding, (value) => {
         var contextInput = <HTMLInputElement>document.getElementById("context");
         let context = contextInput.value;
-        
+
         var rightInput = <HTMLInputElement>document.getElementById("right");
         let rightValue = rightInput.value;
-
-        console.log("Update value from event:");
-        console.log(event);
 
         var result = <HTMLDivElement>document.getElementById("result");
         clearElement(result);
         var div = document.createElement("div");
-        div.className = "details";  
-        div.innerText = JSON.stringify(event.value);
-        result.appendChild(div);   
+        div.className = "details";
+        div.innerText = JSON.stringify(value);
+        result.appendChild(div);
     });
 
     result.then(value => {
@@ -218,9 +215,9 @@ function evaluateBinding(left: string, right: string) {
         resultDiv.appendChild(createJsonElement(value));
 
     }).catch((error) => {
-        clearElement(resultDiv);     
+        clearElement(resultDiv);
         var div = document.createElement("div");
-        div.className = "details";  
+        div.className = "details";
         div.innerText = "Error : " + error;
         resultDiv.appendChild(div);
     });
@@ -255,7 +252,7 @@ if (dataDiv != null) {
         let tab = new Tab("tas", "Technology Adapters", grid);
         tabs.addTab(tab);
         tabs.selectTab(tab);
-        
+
     });
 
     api.resourceCenters().then(centers => {
@@ -281,7 +278,7 @@ if (dataDiv != null) {
             );
             grid.addCell(new GridCell(card, 6));
         });
-         
+
         let tab = new Tab("res", "Resources", grid);
         tabs.addTab(tab);
     });

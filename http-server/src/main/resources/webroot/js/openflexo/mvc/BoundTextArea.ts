@@ -3,14 +3,14 @@ import { BoundComponent } from "./BoundComponent";
 import { PhrasingCategory } from "../ui/category";
 import { mdlUpgradeElement } from "../ui/utils";
 
-import { TextField } from "../ui/TextField";
+import { TextArea } from "../ui/TextArea";
 import { updateBindingRuntime } from "./utils";
 
 var idSeed = 0;
 
-export class BoundTextField extends BoundComponent {
+export class BoundTextArea extends BoundComponent {
 
-    textField : TextField;
+    textArea : TextArea;
 
     container: HTMLDivElement;
 
@@ -25,7 +25,8 @@ export class BoundTextField extends BoundComponent {
         private runtime: string|null = null,
         private readonly floatingLabel: boolean = false,
         private readonly invalid: boolean = false,
-        private readonly id: string|null = null
+        private readonly id: string|null = null,
+        private readonly rows : number | null
      ) {
         super(api);
         this.create();
@@ -34,21 +35,21 @@ export class BoundTextField extends BoundComponent {
 
     create(): void {
         let actualId = this.id !== null ? this.id : "boundTextField"+idSeed++;
-        this.textField = new TextField(
+        this.textArea = new TextArea(
             actualId, this.binding.expression, this.label,
-            this.floatingLabel, this.invalid
+            this.floatingLabel, this.invalid, this.rows
         );
 
-        let input = this.textField.input;
+        let input = this.textArea.input;
         input.onchange = (e) => this.sendToServer(e);
         input.onblur = (e) => this.sendToServer(e);
 
-        this.container = this.textField.container;
+        this.container = this.textArea.container;
     }
 
     private sendToServer(e: any) {
         if (this.runtimeBinding !== null) {
-            this.api.assign(this.runtimeBinding, this.textField.input.value, false).then(value => {
+            this.api.assign(this.runtimeBinding, this.textArea.input.value, false).then(value => {
                 this.container.classList.remove("is-invalid");
             }).catch(error => {
                 this.container.classList.add("is-invalid");
@@ -57,7 +58,7 @@ export class BoundTextField extends BoundComponent {
     }
 
     private updateValue(value: any) {
-        this.textField.input.value = value;
+        this.textArea.input.value = value;
     }
 
     updateRuntime(runtime: string|null, extensions = new Map<string, string>()):void {
@@ -70,10 +71,10 @@ export class BoundTextField extends BoundComponent {
     }
 
     isEnable(): boolean {
-      return this.textField.isEnable();
+      return this.textArea.isEnable();
     }
 
     setEnable(enable: boolean) {
-        this.textField.setEnable(enable);
+        this.textArea.setEnable(enable);
     }
 }

@@ -3,6 +3,7 @@ import { BoundComponent } from "./BoundComponent"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
+import { updateBindingRuntime } from "./utils";
 
 export class BoundLabel extends BoundComponent {
 
@@ -10,7 +11,7 @@ export class BoundLabel extends BoundComponent {
 
     private runtimeBinding: RuntimeBindingId<string>|null = null;
 
-    private readonly changelistener = event => this.container.innerText = event.value;
+    private readonly changelistener = value => this.container.innerText = value;
 
     constructor(
         api: Api,
@@ -26,16 +27,22 @@ export class BoundLabel extends BoundComponent {
         this.container = document.createElement("span");
     }
 
-    updateRuntime(runtime: string|null):void {
-        if (this.runtimeBinding !== null) {
+    updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>()):void {
+        super.updateRuntime(runtime, extensions);
+
+        /*if (this.runtimeBinding !== null) {
             this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
         }
         this.runtimeBinding = null;
         if (runtime !== null) {
-            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime);
-            this.api.evaluate<string>(this.runtimeBinding).then( value => this.container.innerText = value );
+            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime, extensions);
             this.api.addChangeListener(this.runtimeBinding, this.changelistener);
-        }
+        }*/
+
+        this.runtimeBinding = updateBindingRuntime(
+        this.api, this.binding, this.runtimeBinding, this.changelistener,
+        runtime, extensions
+      )
     }
 
     setEnable(enable: boolean) {
