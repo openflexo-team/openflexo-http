@@ -42,9 +42,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openflexo.connie.DataBinding;
-import org.openflexo.connie.binding.BindingPathElement;
 import org.openflexo.connie.binding.Function;
 import org.openflexo.connie.binding.FunctionPathElement;
+import org.openflexo.connie.binding.IBindingPathElement;
 import org.openflexo.connie.binding.SimplePathElement;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.TechnologySpecificType;
@@ -65,7 +65,7 @@ public final class HttpBindingFactory extends TechnologyAdapterBindingFactory {
 	}
 
 	@Override
-	public SimplePathElement makeSimplePathElement(BindingPathElement parent, String propertyName) {
+	public SimplePathElement makeSimplePathElement(IBindingPathElement parent, String propertyName) {
 		// We want to avoid code duplication, so iterate on all accessible simple path element and choose the right one
 		for (SimplePathElement e : getAccessibleSimplePathElements(parent)) {
 			if (e.getLabel().equals(propertyName)) {
@@ -76,12 +76,12 @@ public final class HttpBindingFactory extends TechnologyAdapterBindingFactory {
 	}
 
 	@Override
-	public FunctionPathElement makeFunctionPathElement(BindingPathElement father, Function function, List<DataBinding<?>> args) {
+	public FunctionPathElement makeFunctionPathElement(IBindingPathElement father, Function function, List<DataBinding<?>> args) {
 		return super.makeFunctionPathElement(father, function, args);
 	}
 
 	@Override
-	protected SimplePathElement makeSimplePathElement(Object object, BindingPathElement parent) {
+	protected SimplePathElement makeSimplePathElement(Object object, IBindingPathElement parent) {
 		return null;
 	}
 
@@ -91,7 +91,7 @@ public final class HttpBindingFactory extends TechnologyAdapterBindingFactory {
 	}
 
 	@Override
-	public List<? extends SimplePathElement> getAccessibleSimplePathElements(BindingPathElement parent) {
+	public List<? extends SimplePathElement> getAccessibleSimplePathElements(IBindingPathElement parent) {
 		List<? extends SimplePathElement> elements = super.getAccessibleSimplePathElements(parent);
 		if (parent.getType() instanceof AccessPointType) {
 			// System.out.println("Hop, on a bien " + parent.getType());
@@ -103,7 +103,7 @@ public final class HttpBindingFactory extends TechnologyAdapterBindingFactory {
 	}
 
 	@Override
-	public List<? extends FunctionPathElement> getAccessibleFunctionPathElements(BindingPathElement parent) {
+	public List<? extends FunctionPathElement> getAccessibleFunctionPathElements(IBindingPathElement parent) {
 		return super.getAccessibleFunctionPathElements(parent);
 	}
 
