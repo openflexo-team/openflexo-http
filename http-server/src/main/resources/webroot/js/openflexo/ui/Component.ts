@@ -2,7 +2,7 @@ import { addCssIfNotAlreadyPresent, mdlUpgradeElement } from "./utils";
 
 export abstract class Component {
 
-    readonly container : HTMLSpanElement | HTMLDivElement;
+    readonly container : HTMLElement;
 
     constructor(
     ) {

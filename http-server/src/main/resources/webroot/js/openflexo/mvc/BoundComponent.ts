@@ -4,7 +4,7 @@ import { updateBindingRuntime } from "./utils";
 
 export abstract class BoundComponent  extends Component {
 
-  readonly container : HTMLSpanElement | HTMLDivElement;
+  readonly container : HTMLElement;
 
   public visible: BindingId<boolean>|null = null;
   public enable: BindingId<boolean>|null = null;
