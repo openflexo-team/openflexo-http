@@ -188,55 +188,75 @@ It also listens to the changes from the server and update the value on the clien
 
 Here is the current list of bound controllers:
 
-- `BoundButton`
-- `BoundLabel`
-- `BoundTable`
-- `BoundTextField`
+- `BoundButton`,
+- `BoundLabel`,
+- `BoundTable`,
+- `BoundTextField`,
+- `BoundTextArea`,
+- `BoundTree`, ...
 
 - Here is an exemple for a table, label, button and textfield:
 
 ```typescript
 import { Resource } from "./openflexo/api/resource";
 
-import { Api, createBinding, createRuntimeBinding } from "./openflexo/api/Api";
+import { Api, createRuntimeBinding } from "./openflexo/api/Api";
 
 import { BoundTable, BoundColumn } from "./openflexo/mvc/BoundTable";
 import { BoundTextField } from "./openflexo/mvc/BoundTextField";
 import { BoundButton } from "./openflexo/mvc/BoundButton";
 import { BoundLabel } from "./openflexo/mvc/BoundLabel";
+import { BoundIcon } from "./openflexo/mvc/BoundIcon";
 
-import { Icon } from "./openflexo/ui/Icon";
+import { Icon } from "./openflexo/ui/Icon"
+import { Flow } from "./openflexo/ui/Flow"
 
-function r(resource: Resource) {
-  let binding = createRuntimeBinding("virtualModelInstance.allDevices()", resource.modelUrl, resource.modelUrl);
+function r(resource: Resource): BoundTable {
   let columns = [
-      new BoundColumn(
-          "Type",
-          (api, element: any) => element.flexoConcept.name
-      ),
-      new BoundColumn(
-          "Nom",
-          (api, element) => new BoundTextField(api, createBinding("name", element.url), "Nom", null, false)
-      ),
-      new BoundColumn(
-          "URI",
-          (api, element) => new BoundTextField(api, createBinding("uri", element.url), "URI", null, true)
-      ),
-      new BoundColumn(
-          "Status",
-          (api, element) => new BoundLabel(api, createBinding("status", element.url))
-      ),
-      new BoundColumn(
-          "Delete", (api, element) =>
-            new BoundButton(api,
-              new Icon("delete"),
-              createBinding("virtualModelInstance.delete(flexoConceptInstance)", element.url),
-              null, null, "icon"
-            )
-      )
-  ];
-  const table = new BoundTable(this.api, binding, columns);
+          new BoundColumn(
+              "Type",
+              (api, element: any) => element.flexoConcept.name
+          ),
+          new BoundColumn(
+              "Info",
+              (api, element) => {
+                let icon = new BoundIcon(api, "icon");
+                icon.visible ="this.flexoConcept.name = 'File'";
+                icon.updateRuntime(element.url);
+
+                let count = new BoundLabel(api, "this.getChildren().size()");
+                count.visible = "this.flexoConcept.name = 'Directory'";
+                count.updateRuntime(element.url);
+
+                return new Flow(icon, count);
+              }
+          ),
+          new BoundColumn(
+              "Icon",
+              (api, element) => {
+                let result = new BoundTextField(api, "icon");
+                result.visible = "this.flexoConcept.name = 'File'";
+                result.updateRuntime(element.url);
+                return result;
+              }
+          ),
+          new BoundColumn(
+              "Name",
+              (api, element) => new BoundTextField(api, "name", "Name", element.url, false)
+          ),
+          new BoundColumn(
+              "Delete",
+              (api, element) => new BoundButton(api, new Icon("delete"),
+                "parent.deleteElement(this)",
+                  element.url, null,   "icon")
+          )
+
+      ];
+      const table = new BoundTable(this.context.api, "this.allElements()", columns);
+      table.updateRuntime(this.context.modelUrl);
+      return table;
 }
+
 ```
 
 ## Customize the server
