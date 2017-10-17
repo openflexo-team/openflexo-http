@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, BindingId, ChangeEvent, createRuntimeBinding } from "../api/Api";
+import { Api, RuntimeBindingId, ChangeEvent, createRuntimeBinding } from "../api/Api";
 import { BoundComponent } from "./BoundComponent";
 import { PhrasingCategory } from "../ui/category";
 import { mdlUpgradeElement } from "../ui/utils";
@@ -20,7 +20,7 @@ export class BoundTextArea extends BoundComponent {
 
     constructor(
         api: Api,
-        private binding: BindingId<string>,
+        private binding: string,
         private readonly label: PhrasingCategory|null = null,
         private runtime: string|null = null,
         private readonly floatingLabel: boolean = false,
@@ -36,7 +36,7 @@ export class BoundTextArea extends BoundComponent {
     create(): void {
         let actualId = this.id !== null ? this.id : "boundTextField"+idSeed++;
         this.textArea = new TextArea(
-            actualId, this.binding.expression, this.label,
+            actualId, this.binding, this.label,
             this.floatingLabel, this.invalid, this.rows
         );
 
