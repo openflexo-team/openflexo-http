@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, BindingId, ChangeEvent } from "../api/Api"
+import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { BoundComponent } from "./BoundComponent"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
@@ -15,7 +15,7 @@ export class BoundLabel extends BoundComponent {
 
     constructor(
         api: Api,
-        private binding:BindingId<string>,
+        private binding:string,
         runtime: string|null = null
      ) {
         super(api);
@@ -29,15 +29,6 @@ export class BoundLabel extends BoundComponent {
 
     updateRuntime(runtime: string|null,extensions: Map<string, string> = new Map<string, string>()):void {
         super.updateRuntime(runtime, extensions);
-
-        /*if (this.runtimeBinding !== null) {
-            this.api.removeChangeListener(this.runtimeBinding, this.changelistener);
-        }
-        this.runtimeBinding = null;
-        if (runtime !== null) {
-            this.runtimeBinding = new RuntimeBindingId(this.binding, runtime, extensions);
-            this.api.addChangeListener(this.runtimeBinding, this.changelistener);
-        }*/
 
         this.runtimeBinding = updateBindingRuntime(
         this.api, this.binding, this.runtimeBinding, this.changelistener,

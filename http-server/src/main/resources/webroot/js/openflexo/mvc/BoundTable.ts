@@ -1,5 +1,5 @@
 import { Description } from "../api/general"
-import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api"
+import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
 import { BoundComponent } from "./BoundComponent"
 import { PhrasingCategory } from "../ui/category"
@@ -21,7 +21,7 @@ export class BoundTable extends BoundComponent {
 
     constructor(
         api: Api,
-        private elements: BindingId<Description<any>[]>,
+        private elements: string,
         private columns: BoundColumn[],
         runtime: string| null = null,
         private header: boolean = true,
