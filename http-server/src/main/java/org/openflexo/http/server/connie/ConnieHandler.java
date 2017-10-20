@@ -293,7 +293,6 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 									Object rightValue = valueBinding.getBindingValue(rightContext);
 									leftBinding.setBindingValue(rightValue, leftContext);
 									response.result = toJson(rightValue, request.detailed);
-
 								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 									 String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
 									socket.write(Response.error(request.id, error).toBuffer());
@@ -324,20 +323,19 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					else {
 						// uses string literal for new value
 						newValue = request.value;
+						// assigns the new value
+						try {
+							leftBinding.setBindingValue(newValue, leftContext);
+							response.result = toJson(newValue, request.detailed);
 
-					}
+						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+							String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
+							socket.write(Response.error(request.id, error).toBuffer());
+						} catch (NotSettableContextException e) {
+							String error = "Can't set expression '" + request.left.binding + "'";
+							socket.write(Response.error(request.id, error).toBuffer());
+						}
 
-					// assigns the new value
-					try {
-						leftBinding.setBindingValue(newValue, leftContext);
-						response.result = toJson(newValue, request.detailed);
-
-					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-						String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
-						socket.write(Response.error(request.id, error).toBuffer());
-					} catch (NotSettableContextException e) {
-						String error = "Can't set expression '" + request.left.binding + "'";
-						socket.write(Response.error(request.id, error).toBuffer());
 					}
 
 				} else {
