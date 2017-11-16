@@ -38,80 +38,97 @@
 
 package org.openflexo.http.connector.rm;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.openflexo.foundation.FlexoServiceManager;
-import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceRepository;
+import org.openflexo.foundation.resource.ResourceRepositoryImpl;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
+import org.openflexo.model.annotations.ImplementationClass;
+import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.model.factory.ModelFactory;
 
 /**
- * A repository storing {@link FMLRTVirtualModelInstanceResource} for a resource center
+ * A repository storing {@link HttpVirtualModelInstanceResource} for a resource center
  * 
  * @author sylvain
  * 
  */
-public class HttpVirtualModelInstanceRepository<I> extends
-		// ModelRepository<RestVirtualModelInstanceResource, HttpVirtualModelInstance, VirtualModel, HttpTechnologyAdapter,
-		// FMLTechnologyAdapter, I> {
-		// TechnologyAdapterResourceRepository<RestVirtualModelInstanceResource<S>, HttpTechnologyAdapter, HttpVirtualModelInstance, I> {
-		ResourceRepository<HttpVirtualModelInstanceResource<?>, I> {
-	public HttpVirtualModelInstanceRepository(HttpTechnologyAdapter adapter, FlexoResourceCenter<I> resourceCenter) {
-		// super(adapter, resourceCenter);
-		super(resourceCenter, resourceCenter.getBaseArtefact());
-		getRootFolder().setRepositoryContext(null);
-	}
+@ModelEntity
+@ImplementationClass(HttpVirtualModelInstanceRepository.HttpVirtualModelInstanceRepositoryImpl.class)
+public interface HttpVirtualModelInstanceRepository<I> extends ResourceRepository<HttpVirtualModelInstanceResource<?>, I> {
 
-	@Override
-	public FlexoServiceManager getServiceManager() {
-		if (getResourceCenter() != null) {
-			return getResourceCenter().getServiceManager();
+	public static <I> HttpVirtualModelInstanceRepository<I> instanciateNewRepository(HttpTechnologyAdapter adapter,
+			FlexoResourceCenter<I> resourceCenter) throws IOException {
+		ModelFactory factory;
+		try {
+			factory = new ModelFactory(HttpVirtualModelInstanceRepository.class);
+			HttpVirtualModelInstanceRepository<I> newRepository = factory.newInstance(HttpVirtualModelInstanceRepository.class);
+			newRepository.setResourceCenter(resourceCenter);
+			newRepository.setBaseArtefact(resourceCenter.getBaseArtefact());
+			newRepository.getRootFolder().setRepositoryContext(null);
+			return newRepository;
+		} catch (ModelDefinitionException e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
 
-	public List<HttpVirtualModelInstance<?>> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
-		List<HttpVirtualModelInstance<?>> views = new ArrayList<>();
-		for (HttpVirtualModelInstanceResource<?> vmiRes : getAllResources()) {
-			if (vmiRes.getVirtualModelResource() != null && vmiRes.getVirtualModelResource().getURI().equals(virtualModelURI)) {
-				views.add((HttpVirtualModelInstance) vmiRes.getVirtualModelInstance());
+	public static abstract class HttpVirtualModelInstanceRepositoryImpl<I>
+			extends ResourceRepositoryImpl<HttpVirtualModelInstanceResource<?>, I> {
+
+		@Override
+		public FlexoServiceManager getServiceManager() {
+			if (getResourceCenter() != null) {
+				return getResourceCenter().getServiceManager();
 			}
-		}
-		return views;
-	}
-
-	public boolean isValidForANewVirtualModelInstanceName(String value) {
-		if (value == null) {
-			return false;
-		}
-		return getRootFolder().isValidResourceName(value);
-	}
-
-	public HttpVirtualModelInstanceResource getVirtualModelInstanceResourceNamed(String value) {
-		if (value == null) {
 			return null;
 		}
-		return getRootFolder().getResourceWithName(value);
-	}
 
-	public HttpVirtualModelInstanceResource getVirtualModelInstance(String virtualModelInstanceURI) {
-		if (virtualModelInstanceURI == null) {
-			return null;
+		public List<HttpVirtualModelInstance<?>> getVirtualModelInstancesConformToVirtualModel(String virtualModelURI) {
+			List<HttpVirtualModelInstance<?>> views = new ArrayList<>();
+			for (HttpVirtualModelInstanceResource<?> vmiRes : getAllResources()) {
+				if (vmiRes.getVirtualModelResource() != null && vmiRes.getVirtualModelResource().getURI().equals(virtualModelURI)) {
+					views.add((HttpVirtualModelInstance) vmiRes.getVirtualModelInstance());
+				}
+			}
+			return views;
 		}
-		return getResource(virtualModelInstanceURI);
-	}
 
-	@Override
-	public final String getDefaultBaseURI() {
-		return getResourceCenter().getDefaultBaseURI() /*+ "/" + getTechnologyAdapter().getIdentifier()*/;
-	}
+		public boolean isValidForANewVirtualModelInstanceName(String value) {
+			if (value == null) {
+				return false;
+			}
+			return getRootFolder().isValidResourceName(value);
+		}
 
-	@Override
-	public String getDisplayableName() {
-		return getResourceCenter().getDisplayableName();
-	}
+		public HttpVirtualModelInstanceResource getVirtualModelInstanceResourceNamed(String value) {
+			if (value == null) {
+				return null;
+			}
+			return getRootFolder().getResourceWithName(value);
+		}
 
+		public HttpVirtualModelInstanceResource getVirtualModelInstance(String virtualModelInstanceURI) {
+			if (virtualModelInstanceURI == null) {
+				return null;
+			}
+			return getResource(virtualModelInstanceURI);
+		}
+
+		@Override
+		public final String getDefaultBaseURI() {
+			return getResourceCenter().getDefaultBaseURI() /*+ "/" + getTechnologyAdapter().getIdentifier()*/;
+		}
+
+		@Override
+		public String getDisplayableName() {
+			return getResourceCenter().getDisplayableName();
+		}
+	}
 }

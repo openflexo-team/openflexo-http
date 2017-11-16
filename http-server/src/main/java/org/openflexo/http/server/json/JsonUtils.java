@@ -74,8 +74,8 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.resource.ResourceRepository;
+import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
@@ -101,7 +101,7 @@ public class JsonUtils {
 		return centerDescription;
 	}
 
-	public static JsonObject getRepositoryDescription(ResourceRepository<?,?> repository) {
+	public static JsonObject getRepositoryDescription(ResourceRepository<?, ?> repository) {
 		String uri = repository.getDefaultBaseURI();
 		String id = IdUtils.encodeuri(uri);
 		JsonObject description = new JsonObject();
