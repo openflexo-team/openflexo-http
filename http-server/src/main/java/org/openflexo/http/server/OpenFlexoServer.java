@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.openflexo.foundation.DefaultFlexoServiceManager;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
@@ -65,7 +66,7 @@ public class OpenFlexoServer {
 
 		for (int i = 0; i < args.length; i++) {
 			String arg = args[i];
-			switch(arg) {
+			switch (arg) {
 				case "--help":
 					usage();
 					break;
@@ -73,39 +74,43 @@ public class OpenFlexoServer {
 					options.verbose = true;
 					break;
 				case "--port":
-					if (i+1 < args.length) {
+					if (i + 1 < args.length) {
 						try {
 							options.serverOptions.port = Integer.parseInt(args[++i]);
 						} catch (NumberFormatException e) {
 							System.err.println("Port must be an integer.");
 							System.exit(1);
 						}
-					} else {
-						System.err.println("Option "+ arg +" needs an argument.");
+					}
+					else {
+						System.err.println("Option " + arg + " needs an argument.");
 						System.exit(1);
 					}
 					break;
 				case "--host":
-					if (i+1 < args.length) {
+					if (i + 1 < args.length) {
 						options.serverOptions.host = args[++i];
-					} else {
-						System.err.println("Option "+ arg +" needs an argument.");
+					}
+					else {
+						System.err.println("Option " + arg + " needs an argument.");
 						System.exit(1);
 					}
 					break;
 				case "--center":
-					if (i+1 < args.length) {
+					if (i + 1 < args.length) {
 						options.centerPaths.add(args[++i]);
-					} else {
-						System.err.println("Option "+ arg +" needs an argument.");
+					}
+					else {
+						System.err.println("Option " + arg + " needs an argument.");
 						System.exit(1);
 					}
 					break;
 				case "--project":
-					if (i+1 < args.length) {
+					if (i + 1 < args.length) {
 						options.projectPaths.add(args[++i]);
-					} else {
-						System.err.println("Option "+ arg +" needs an argument.");
+					}
+					else {
+						System.err.println("Option " + arg + " needs an argument.");
 						System.exit(1);
 					}
 					break;
@@ -120,13 +125,14 @@ public class OpenFlexoServer {
 									options.verbose = true;
 									break;
 								default:
-									System.err.println("Unknown short option '"+ arg.charAt(j) +"'");
+									System.err.println("Unknown short option '" + arg.charAt(j) + "'");
 									System.exit(1);
 
 							}
 						}
-					} else {
-						System.err.println("Unknown long option '"+ arg +"'");
+					}
+					else {
+						System.err.println("Unknown long option '" + arg + "'");
 						System.exit(1);
 					}
 				}
@@ -147,10 +153,9 @@ public class OpenFlexoServer {
 
 		for (String path : options.centerPaths) {
 			FlexoResourceCenterService centerService = manager.getResourceCenterService();
-			DirectoryResourceCenter center = new DirectoryResourceCenter(new File(path), centerService);
+			DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(path), centerService);
 			centerService.addToResourceCenters(center);
 		}
-
 
 		for (String path : options.projectPaths) {
 			try {
