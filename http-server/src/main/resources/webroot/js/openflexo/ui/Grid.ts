@@ -1,12 +1,12 @@
 import { Component } from "./Component";
 import { mdlUpgradeElement, toHTMLElement, setEnable } from "./utils";
-import { FlowCategory } from "./category";
+import { PhrasingCategory } from "./category";
 
 export class Grid extends Component {
 
     container: HTMLDivElement;
 
-    private cells: GridCell[] = [];
+    private cells: AbstractGridCell[] = [];
 
     constructor(
         private readonly spacing = true
@@ -15,12 +15,16 @@ export class Grid extends Component {
         this.create();
     }
 
-    addCell(cell: GridCell) {
+    getCells():AbstractGridCell[]{
+        return this.cells;
+    }
+
+    addCell(cell: AbstractGridCell) {
         this.cells.push(cell);
         this.container.appendChild(cell.container);
     }
 
-    removeCell(cell: GridCell) {
+    removeCell(cell: AbstractGridCell) {
         let index = this.cells.indexOf(cell);
         if (index >= 0) {
             // removes from array
@@ -45,12 +49,16 @@ export class Grid extends Component {
     }
 }
 
-export class GridCell extends Component {
-
+export interface AbstractGridCell  {
     container: HTMLDivElement;
+    setEnable(enable: boolean) ;
+}
+
+export class GridCell extends Component implements AbstractGridCell {
+ container: HTMLDivElement;
 
     constructor(
-        private contents : FlowCategory,
+        private contents : PhrasingCategory  ,
         private size: number = 4
     ) {
         super();

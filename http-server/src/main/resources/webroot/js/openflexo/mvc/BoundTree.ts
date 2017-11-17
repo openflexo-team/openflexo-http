@@ -1,5 +1,5 @@
 import { Description } from "../api/general"
-import { Api, RuntimeBindingId, BindingId, ChangeEvent } from "../api/Api"
+import { Api, RuntimeBindingId, createRuntimeBinding, ChangeEvent } from "../api/Api"
 import { BoundComponent } from "./BoundComponent"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
@@ -42,11 +42,12 @@ export class BoundTree extends BoundComponent implements Item {
 
     constructor(
         api: Api,
-        private root: RuntimeBindingId<any>,
+        private runtime: string,
         private elements: BoundTreeElement[]
      ) {
         super(api);
         this.create();
+        this.updateRuntime(runtime);
     }
 
     get support(): Tree|TreeItem {
@@ -65,9 +66,15 @@ export class BoundTree extends BoundComponent implements Item {
                 onselect(transformedSelection);
             }
         };
-        this.api.addChangeListener(this.root, value => this.updateRoot(value));
 
         this.container = this.tree.container;
+    }
+
+    updateRuntime(
+      runtime: string|null, extensions = new Map<string, string>()
+    ) {
+      super.updateRuntime(runtime, extensions)
+      this.api.call<Description<any>>(this.runtime).then(value => this.updateRoot(value));
     }
 
     elementForValue(value: Description<any>):BoundTreeElement|null {
@@ -130,13 +137,13 @@ export class BoundTree extends BoundComponent implements Item {
 
 export class BoundTreeElement {
 
-    public children:((element:any) => BindingId<Description<any>[]>)[];
+    public children:((element:any) => string)[];
 
     constructor(
         public name: string,
         public select: (element: any) => boolean,
         public component: (api: Api, element: any) => Component|PhrasingCategory,
-        ...children: ((element:any) => BindingId<Description<any>[]>)[]
+        ...children: ((element:any) => string)[]
     ) {
         this.children = children;
      }
@@ -255,8 +262,8 @@ function createBoundItem(parent: Item, value: Description<any>, sourceBinding: R
 }
 
 /** Evaluates children binding */
-function childrenForObject(item: Item, childrenBinding: (element:any) => BindingId<Description<any>>, object: Description<any>) {
-    let childrenRtBindingId = new RuntimeBindingId(childrenBinding(object), object.url);
+function childrenForObject(item: Item, childrenBinding: (element:any) => string, object: Description<any>) {
+    let childrenRtBindingId = createRuntimeBinding(childrenBinding(object), object.url);
 
     let result = item.boundTree.api.evaluate<Description<any>[]>(childrenRtBindingId, false);
     result.then((childrenValues => {

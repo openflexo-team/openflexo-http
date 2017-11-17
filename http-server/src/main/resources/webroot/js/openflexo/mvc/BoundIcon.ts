@@ -1,4 +1,4 @@
-import { Api, RuntimeBindingId, BindingId, ChangeEvent } from "../api/Api"
+import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api"
 import { Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
 import { mdlUpgradeElement } from "../ui/utils"
@@ -19,7 +19,7 @@ export class BoundIcon extends BoundComponent {
 
     constructor(
         api: Api,
-        private binding:BindingId<string>,
+        private binding:string,
         runtime: string|null = null,
         public defaultIcon: string = "warning"
      ) {

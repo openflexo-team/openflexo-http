@@ -1,4 +1,4 @@
-import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api"
+import { Api, RuntimeBindingId, createExtendedRuntimeBinding, ChangeEvent } from "../api/Api"
 import { BoundComponent } from "./BoundComponent"
 import {Component } from "../ui/Component"
 import { PhrasingCategory } from "../ui/category"
@@ -17,9 +17,9 @@ export class BoundButton extends BoundComponent {
     constructor(
         api: Api,
         private label: Component|PhrasingCategory,
-        public action: BindingId<string>,
+        public action: string,
         runtime: string|null = null,
-        private enabled: BindingId<string>|null = null,
+        private enabled: string|null = null,
         private type: "raised"|"fab"|"mini-fab"|"icon" = "raised",
         private colored: boolean = false,
         private accent: boolean = false,
@@ -54,8 +54,7 @@ export class BoundButton extends BoundComponent {
         super.updateRuntime(runtime, extensions);
 
         if (runtime !== null) {
-            this.action.contextUrl = runtime;
-            this.actionRuntimeBinding = new RuntimeBindingId(this.action, runtime, extensions);
+            this.actionRuntimeBinding = createExtendedRuntimeBinding(this.action, runtime, extensions);
         }
     }
 }

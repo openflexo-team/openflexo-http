@@ -1,13 +1,13 @@
 import { Component } from "../ui/Component";
-import { Api, BindingId, RuntimeBindingId, ChangeEvent } from "../api/Api";
+import { Api, RuntimeBindingId, ChangeEvent } from "../api/Api";
 import { updateBindingRuntime } from "./utils";
 
 export abstract class BoundComponent  extends Component {
 
-  readonly container : HTMLSpanElement | HTMLDivElement;
+  readonly container : HTMLElement;
 
-  public visible: BindingId<boolean>|null = null;
-  public enable: BindingId<boolean>|null = null;
+  public visible: string|null = null;
+  public enable: string|null = null;
 
   private visibleRuntimeBinding: RuntimeBindingId<boolean>|null = null
   private readonly visibleChangeListener = (value) => this.setVisible(value)

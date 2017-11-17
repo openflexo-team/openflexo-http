@@ -1,12 +1,16 @@
 import { Description } from "./general"
 import { TechnologyAdapter, Resource, ResourceCenter } from "./resource"
 
-export function createBinding(expression: string, context: string) {
-    return new BindingId(expression, context);
+export function createBinding(expression: string, context: string, extensions: Map<string, string> = new Map<string, string>()) {
+    return new BindingId(expression, context, extensions);
 }
 
-export function createRuntimeBinding(expression: string, context: string, runtime:string = context) {
+export function createRuntimeBinding(expression: string, context: string, runtime: string = context) {
     return new RuntimeBindingId(createBinding(expression, context), runtime);
+}
+
+export function createExtendedRuntimeBinding(expression: string, context: string, extensions: Map<string, string> = new Map<string, string>()) {
+    return new RuntimeBindingId(createBinding(expression, context, extensions), context, extensions);
 }
 
 function mapToJson(map: Map<string, string>) {
@@ -335,9 +339,12 @@ export class Api {
         this.connie = null;
 
         // registers listening messages when the connection resumes
+        /* Commented, it creates huge memory footprint and problems when the server restarts
+            We need to find a solution for this.
         this.bindingListeners.forEach(e => {
             this.sendMessage(this.createListeningMessage(e[0]));
         })
+        */
     }
 
     /**

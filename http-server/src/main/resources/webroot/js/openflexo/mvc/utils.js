@@ -1,5 +1,6 @@
 define(["require", "exports", "../api/Api"], function (require, exports, Api_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     /**
      * Updates a binding runtime's by listening to the change of the given url.
      * It clears old listeners and creates a new RuntimeBindingId.
@@ -9,8 +10,7 @@ define(["require", "exports", "../api/Api"], function (require, exports, Api_1) 
             api.removeChangeListener(oldRuntimeBinding, changelistener);
         }
         if (runtime !== null && extensions !== null) {
-            binding.contextUrl = runtime;
-            let runtimeBinding = new Api_1.RuntimeBindingId(binding, runtime, extensions);
+            let runtimeBinding = Api_1.createExtendedRuntimeBinding(binding, runtime, extensions);
             api.addChangeListener(runtimeBinding, changelistener);
             return runtimeBinding;
         }
@@ -20,4 +20,4 @@ define(["require", "exports", "../api/Api"], function (require, exports, Api_1) 
     }
     exports.updateBindingRuntime = updateBindingRuntime;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXRpbHMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJ1dGlscy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOztJQUVBOzs7T0FHRztJQUNILDhCQUNFLEdBQVEsRUFBRSxPQUF1QixFQUNqQyxpQkFBNkMsRUFBRSxjQUE4QixFQUM3RSxPQUFvQixFQUFFLFVBQXFDO1FBRzNELEVBQUUsQ0FBQyxDQUFDLGlCQUFpQixLQUFLLElBQUksQ0FBQyxDQUFDLENBQUM7WUFDL0IsR0FBRyxDQUFDLG9CQUFvQixDQUFDLGlCQUFpQixFQUFFLGNBQWMsQ0FBQyxDQUFDO1FBQzlELENBQUM7UUFFRCxFQUFFLENBQUMsQ0FBQyxPQUFPLEtBQUssSUFBSSxJQUFJLFVBQVUsS0FBSyxJQUFJLENBQUMsQ0FBQyxDQUFDO1lBQzVDLE9BQU8sQ0FBQyxVQUFVLEdBQUcsT0FBTyxDQUFDO1lBQzdCLElBQUksY0FBYyxHQUFHLElBQUksc0JBQWdCLENBQUMsT0FBTyxFQUFFLE9BQU8sRUFBRSxVQUFVLENBQUMsQ0FBQztZQUN4RSxHQUFHLENBQUMsaUJBQWlCLENBQUMsY0FBYyxFQUFFLGNBQWMsQ0FBQyxDQUFDO1lBQ3RELE1BQU0sQ0FBQyxjQUFjLENBQUM7UUFDeEIsQ0FBQztRQUFDLElBQUksQ0FBQyxDQUFDO1lBQ04sTUFBTSxDQUFDLElBQUksQ0FBQztRQUNkLENBQUM7SUFDSCxDQUFDO0lBbEJELG9EQWtCQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoidXRpbHMuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJ1dGlscy50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7SUFFQTs7O09BR0c7SUFDSCw4QkFDRSxHQUFRLEVBQUUsT0FBZSxFQUN6QixpQkFBNkMsRUFBRSxjQUE4QixFQUM3RSxPQUFvQixFQUFFLFVBQXFDO1FBRzNELEVBQUUsQ0FBQyxDQUFDLGlCQUFpQixLQUFLLElBQUksQ0FBQyxDQUFDLENBQUM7WUFDL0IsR0FBRyxDQUFDLG9CQUFvQixDQUFDLGlCQUFpQixFQUFFLGNBQWMsQ0FBQyxDQUFDO1FBQzlELENBQUM7UUFFRCxFQUFFLENBQUMsQ0FBQyxPQUFPLEtBQUssSUFBSSxJQUFJLFVBQVUsS0FBSyxJQUFJLENBQUMsQ0FBQyxDQUFDO1lBQzVDLElBQUksY0FBYyxHQUFHLGtDQUE0QixDQUFDLE9BQU8sRUFBRSxPQUFPLEVBQUUsVUFBVSxDQUFDLENBQUM7WUFDaEYsR0FBRyxDQUFDLGlCQUFpQixDQUFDLGNBQWMsRUFBRSxjQUFjLENBQUMsQ0FBQztZQUN0RCxNQUFNLENBQUMsY0FBYyxDQUFDO1FBQ3hCLENBQUM7UUFBQyxJQUFJLENBQUMsQ0FBQztZQUNOLE1BQU0sQ0FBQyxJQUFJLENBQUM7UUFDZCxDQUFDO0lBQ0gsQ0FBQztJQWpCRCxvREFpQkMifQ==
