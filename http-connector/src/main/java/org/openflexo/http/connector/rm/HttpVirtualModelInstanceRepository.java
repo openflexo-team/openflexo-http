@@ -80,7 +80,7 @@ public interface HttpVirtualModelInstanceRepository<I> extends ResourceRepositor
 	}
 
 	public static abstract class HttpVirtualModelInstanceRepositoryImpl<I>
-			extends ResourceRepositoryImpl<HttpVirtualModelInstanceResource<?>, I> {
+			extends ResourceRepositoryImpl<HttpVirtualModelInstanceResource<?>, I> implements HttpVirtualModelInstanceRepository<I> {
 
 		@Override
 		public FlexoServiceManager getServiceManager() {
