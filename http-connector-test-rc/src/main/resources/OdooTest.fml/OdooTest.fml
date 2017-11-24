@@ -15,6 +15,7 @@ public class OdooTest {
 
   @CreationScheme  
   OdooTest:create(String url, String database, String user, String passwd) {  
+    log ((((("On cree la XmlRpcResource avec " + parameters.database) + " ") + parameters.user) + "/") + parameters.passwd)    
     odoo = null.CreateHttpXmlRpcResource();    
     ui = ui.ConfigureGINAFIBComponent();  
   }  

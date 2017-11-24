@@ -13,12 +13,15 @@ public class Odoo {
   @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
   public Integer uid;
   @GetSetProperty(value="partners", access=get)  
-  public List<FlexoConceptInstanceType<OdooObject>> getPartners {  
-    return this.SelectFlexoConceptInstance(type=OdooObject);  
+  public List<FlexoConceptInstanceType<ResPartner>> getPartners {  
+    log "Je cherche tous les res_partners"    
+    List<FlexoConceptInstanceType<ResPartner>> returned = this.SelectFlexoConceptInstance(type=ResPartner);    
+    log ("will return " + returned)    
+    return returned;  
   }
   @GetSetProperty(value="companies", access=get)  
-  public List<FlexoConceptInstanceType<OdooObject>> getCompanies {  
-    return this.SelectFlexoConceptInstance(type=OdooObject);  
+  public List<FlexoConceptInstanceType<ResCompany>> getCompanies {  
+    return this.SelectFlexoConceptInstance(type=ResCompany);  
   }
   @PrimitiveRole(cardinality=ZeroOne,readOnly=false)  
   public String database;
@@ -68,7 +71,7 @@ public class Odoo {
   }  
 
   @ActionScheme  
-  FlexoConceptInstanceType<NotFound:null> findInstance(String conceptName, String odooEntityName, Integer id) {  
+  FlexoConceptInstanceType<OdooObject> findInstance(String conceptName, String odooEntityName, Integer id) {  
     List<FlexoConceptInstanceType<OdooObject>> matchingList = this.SelectFlexoConceptInstance(type=OdooObject,where=where=(selected.id = parameters.id));    
     if (matchingList.size > 0) {    
       return matchingList.get(0);    
@@ -95,13 +98,16 @@ public class Odoo {
 
   @CreationScheme  
   Odoo:init(String database, String username, String password) {  
-    log ("Initializing Odoo VM with " + parameters.database)    
     database = parameters.database;    
     username = parameters.username;    
-    password = parameters.password;    
+    password = parameters.password;  
+  }  
+
+  @HttpInitializer  
+  Void initializer() {  
+    log (("Initializing Odoo VM with " + database) + " ")    
     version = this.retrieveVersion();    
-    log ("version=" + version)    
-    this.authenticate(parameters.username,parameters.password)  
+    this.authenticate(username,password)  
   }  
 
 
@@ -123,7 +129,7 @@ public class Odoo {
   }  
 
   @FlexoConcept  
-  public class ResPartner {  
+  public class ResPartner extends OdooObject  {  
   
     @AbstractProperty    
     abstract String name;  
@@ -154,7 +160,7 @@ public class Odoo {
     @AbstractProperty    
     abstract String mobile;  
     @GetSetProperty(value="company", access=get)    
-    public FlexoConceptInstanceType<NotFound:null> getCompany {    
+    public FlexoConceptInstanceType<OdooObject> getCompany {    
       return container.findInstance("ResCompany","res.company",company_id);    
     }  
     @AbstractProperty    
@@ -169,7 +175,7 @@ public class Odoo {
   }  
 
   @FlexoConcept  
-  public class ResCompany {  
+  public class ResCompany extends OdooObject  {  
   
     @AbstractProperty    
     abstract String name;  

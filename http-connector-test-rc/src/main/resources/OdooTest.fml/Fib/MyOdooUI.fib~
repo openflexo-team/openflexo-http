@@ -11,37 +11,37 @@
     </Panel>
     <Panel id="9" align="left" borderTop="10" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="twocols" borderRight="0" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=center)" name="FIBPanel2">
       <Label id="10" label="base_url" align="left" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label3" />
-      <TextField id="11" columns="7" data="data.toString" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField3" />
+      <TextField id="11" columns="7" data="data.odoo.url" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField3" />
       <Label id="12" label="user" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label4" />
-      <TextField id="13" columns="7" data="data.odoo" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField4" />
+      <TextField id="13" columns="7" data="data.odoo.user" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField4" />
       <Label id="14" label="password" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label5" />
-      <TextField id="15" columns="7" data="data.odoo" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField5" />
+      <TextField id="15" columns="7" data="data.odoo.password" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField5" />
       <Label id="16" label="uid" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label7" />
-      <TextField id="17" columns="7" readOnly="true" data="data.odoo" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField7" />
+      <TextField id="17" columns="7" readOnly="true" data="data.odoo.uid.toString" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="TextField7" />
     </Panel>
     <Panel id="18" align="left" borderTop="10" borderLeft="0" trackViewPortHeight="true" trackViewPortWidth="true" borderBottom="0" border="rounded3d" sizeAdjustment="OriginalSize" layout="twocols" borderRight="0" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=center)" name="FIBPanel3">
       <Label id="19" label="res_partners" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label8" />
-      <Table id="20" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#ResPartner&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.odoo" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table">
+      <Table id="20" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/Odoo.fml#ResPartner&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.odoo.partners" constraints="twocols(expandHorizontally=true;expandVertically=true;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table">
         <IconColumn id="21" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
-        <LabelColumn id="22" data="iterator" resizable="true" title="id" displayTitle="true" columnWidth="30" showIcon="false" name="label" />
-        <LabelColumn id="23" data="iterator" resizable="true" title="name" displayTitle="true" columnWidth="200" showIcon="false" name="name" />
-        <LabelColumn id="24" data="iterator" resizable="true" title="SIREN" displayTitle="true" columnWidth="100" showIcon="false" name="siren" />
-        <LabelColumn id="25" data="iterator" resizable="true" title="street" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
-        <LabelColumn id="26" data="iterator" resizable="true" title="street2" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
-        <LabelColumn id="27" data="iterator" resizable="true" title="phone" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="22" data="iterator.id" resizable="true" title="id" displayTitle="true" columnWidth="30" showIcon="false" name="id" />
+        <LabelColumn id="23" data="iterator.name" resizable="true" title="name" displayTitle="true" columnWidth="200" showIcon="false" name="name" />
+        <LabelColumn id="24" data="iterator.siren" resizable="true" title="SIREN" displayTitle="true" columnWidth="100" showIcon="false" name="siren" />
+        <LabelColumn id="25" data="iterator.street" resizable="true" title="street" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="26" data="iterator.street2" resizable="true" title="street2" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="27" data="iterator.phone" resizable="true" title="phone" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="28" data="((iterator.company_id.toString + &quot;-&quot;) + iterator.company)" resizable="true" title="company" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
       </Table>
-      <Button id="29" buttonType="Trigger" action="data.odoo.instance.retrieveResPartners()" label="search_partners" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Button" />
+      <Button id="29" buttonType="Trigger" action="data.odoo.retrieveResPartners()" label="search_partners" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Button" />
       <Label id="30" label="res_companies" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label9" />
-      <Table id="31" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/resources/API/Odoo.viewpoint/OdooModel#ResCompany&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.odoo" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table2">
+      <Table id="31" visibleRowCount="3" backgroundNonSelectionColor="255,255,255" iteratorClassName="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/Odoo.fml#ResCompany&gt;" backgroundSecondarySelectionColor="178,215,255" lookAndFeel="Classic" selectionMode="MultipleIntervalSelection" rowHeight="18" manageDynamicModel="true" data="data.odoo.companies" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Table2">
         <IconColumn id="32" data="controller.iconForObject(iterator)" resizable="false" title="icon" displayTitle="false" columnWidth="20" showIcon="false" name="icon" />
         <LabelColumn id="33" data="iterator" resizable="true" title="name" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="34" data="iterator" resizable="true" title="label" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="35" data="iterator" resizable="true" title="label" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
       </Table>
-      <Button id="36" buttonType="Trigger" action="data.odoo.instance.retrieveResCompanies()" label="search_companies" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Button2" />
+      <Button id="36" buttonType="Trigger" action="data.odoo.retrieveResCompanies()" label="search_companies" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Button2" />
     </Panel>
-    <FIBVariable id="37" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/OdooTest.fml&gt;" name="data" />
-    <LocalizedDictionary id="38" />
+    <LocalizedDictionary id="37" />
+    <FIBVariable id="38" type="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/OdooTest.fml&gt;" name="data" />
   </Panel>
 </GINAFIBComponent>

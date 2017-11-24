@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<VirtualModel id="0" modelVersion="1.0" uri="http://openflexo.org/http-test/OdooTest.fml" version="0.1" name="OdooTest" userID="FLX" flexoID="2">
-  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
-  <UseModelSlotDeclaration id="2" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
-  <Inspector id="3" inspectorTitle="MyOdoo" userID="FLX" flexoID="1" />
-  <XmlRpcModelSlot id="4" format="map" virtualModelURI="http://openflexo.org/http/API/Odoo.fml" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6" />
-  <FIBComponentModelSlot id="5" templateComponentURI="http://openflexo.org/http-test/OdooTest.fml/Fib/MyOdooUI.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="19">
-    <VariableAssignment id="6" variableType="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/OdooTest.fml&gt;" variable="data" value="this" userID="FLX" flexoID="18" />
+<VirtualModel id="FLX-2" modelVersion="1.0" uri="http://openflexo.org/http-test/OdooTest.fml" version="0.1" name="OdooTest" userID="FLX" flexoID="2">
+  <FMLLocalizedDictionary id="SYL-472" userID="SYL" flexoID="472" />
+  <UseModelSlotDeclaration id="0" modelSlotClass="org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot" userID="FLX" flexoID="-1" />
+  <UseModelSlotDeclaration id="1" modelSlotClass="org.openflexo.technologyadapter.gina.FIBComponentModelSlot" userID="FLX" flexoID="-1" />
+  <Inspector id="FLX-1" inspectorTitle="MyOdoo" userID="FLX" flexoID="1" />
+  <XmlRpcModelSlot id="FLX-6" format="map" virtualModelURI="http://openflexo.org/http/API/Odoo.fml" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="odoo" userID="FLX" flexoID="6" />
+  <FIBComponentModelSlot id="FLX-19" templateComponentURI="http://openflexo.org/http-test/OdooTest.fml/Fib/MyOdooUI.fib" isRequired="true" cloningStrategy="Reference" cardinality="ZeroOne" name="ui" userID="FLX" flexoID="19">
+    <VariableAssignment id="FLX-18" variableType="org.openflexo.foundation.fml.VirtualModelInstanceType&lt;http://openflexo.org/http-test/OdooTest.fml&gt;" variable="data" value="this" userID="FLX" flexoID="18" />
   </FIBComponentModelSlot>
-  <CreationScheme id="7" name="create" width="800" label="create" height="600" userID="FLX" flexoID="10">
-    <BehaviourControlGraph_Sequence id="8" ownerContext="controlGraph2" userID="FLX" flexoID="143">
-      <ControlGraph2_AssignationAction id="9" assign="ui" ownerContext="controlGraph2" userID="FLX" flexoID="21">
-        <AssignableAction_ConfigureGINAFIBComponent id="10" receiver="ui" userID="FLX" flexoID="20" />
-      </ControlGraph2_AssignationAction>
-      <ControlGraph1_AssignationAction id="11" assign="odoo" ownerContext="controlGraph1" userID="FLX" flexoID="142">
-        <AssignableAction_CreateHttpXmlRpcResource id="12" creationSchemeURI="http://openflexo.org/http/API/Odoo.fml.init" password="parameters.passwd" user="parameters.user" url="parameters.url" resourceCenter="this.resourceCenter" relativePath="" resourceName="this.name" receiver="null" userID="FLX" flexoID="141">
-          <CreateParameter id="13" paramName="database" value="parameters.database" userID="FLX" flexoID="447" />
-          <CreateParameter id="14" paramName="username" value="parameters.user" userID="FLX" flexoID="467" />
-          <CreateParameter id="15" paramName="password" value="parameters.passwd" userID="FLX" flexoID="468" />
-        </AssignableAction_CreateHttpXmlRpcResource>
-      </ControlGraph1_AssignationAction>
+  <CreationScheme id="FLX-10" name="create" width="800" label="create" height="600" userID="FLX" flexoID="10">
+    <BehaviourControlGraph_Sequence id="SYL-478" ownerContext="controlGraph2" userID="SYL" flexoID="478">
+      <ControlGraph2_Sequence id="SYL-479" ownerContext="controlGraph2" userID="SYL" flexoID="479">
+        <ControlGraph2_AssignationAction id="FLX-21" assign="ui" ownerContext="controlGraph2" userID="FLX" flexoID="21">
+          <AssignableAction_ConfigureGINAFIBComponent id="FLX-20" receiver="ui" userID="FLX" flexoID="20" />
+        </ControlGraph2_AssignationAction>
+        <ControlGraph1_AssignationAction id="FLX-142" assign="odoo" ownerContext="controlGraph1" userID="FLX" flexoID="142">
+          <AssignableAction_CreateHttpXmlRpcResource id="FLX-141" creationSchemeURI="http://openflexo.org/http/API/Odoo.fml.init" password="parameters.passwd" user="parameters.user" url="parameters.url" resourceCenter="this.resourceCenter" relativePath="" resourceName="this.name" receiver="null" userID="FLX" flexoID="141">
+            <CreateParameter id="FLX-447" paramName="database" value="parameters.database" userID="FLX" flexoID="447" />
+            <CreateParameter id="FLX-467" paramName="username" value="parameters.user" userID="FLX" flexoID="467" />
+            <CreateParameter id="FLX-468" paramName="password" value="parameters.passwd" userID="FLX" flexoID="468" />
+          </AssignableAction_CreateHttpXmlRpcResource>
+        </ControlGraph1_AssignationAction>
+      </ControlGraph2_Sequence>
+      <ControlGraph1_LogAction id="SYL-477" logLevel="INFO" logString="(((((&quot;On cree la XmlRpcResource avec &quot; + parameters.database) + &quot; &quot;) + parameters.user) + &quot;/&quot;) + parameters.passwd)" ownerContext="controlGraph1" userID="SYL" flexoID="477" />
     </BehaviourControlGraph_Sequence>
-    <GenericBehaviourParameter id="16" widget="TEXT_FIELD" defaultValue="&quot;https://odoo.openflexo.org&quot;" name="url" type="java.lang.String" userID="FLX" flexoID="93" />
-    <GenericBehaviourParameter id="17" widget="TEXT_FIELD" defaultValue="&quot;dynalec_openflexo&quot;" name="database" type="java.lang.String" userID="FLX" flexoID="132" />
-    <GenericBehaviourParameter id="18" widget="TEXT_FIELD" defaultValue="&quot;admin@dynalec.fr&quot;" name="user" type="java.lang.String" userID="FLX" flexoID="94" />
-    <GenericBehaviourParameter id="19" widget="TEXT_FIELD" defaultValue="&quot;dynalec#2016&quot;" name="passwd" type="java.lang.String" userID="FLX" flexoID="95" />
+    <GenericBehaviourParameter id="FLX-93" widget="TEXT_FIELD" defaultValue="&quot;https://odoo.openflexo.org&quot;" name="url" type="java.lang.String" userID="FLX" flexoID="93" />
+    <GenericBehaviourParameter id="FLX-132" widget="TEXT_FIELD" defaultValue="&quot;openflexo_testing&quot;" name="database" type="java.lang.String" userID="FLX" flexoID="132" />
+    <GenericBehaviourParameter id="FLX-94" widget="TEXT_FIELD" defaultValue="&quot;test&quot;" name="user" type="java.lang.String" userID="FLX" flexoID="94" />
+    <GenericBehaviourParameter id="FLX-95" widget="TEXT_FIELD" defaultValue="&quot;test&quot;" name="passwd" type="java.lang.String" userID="FLX" flexoID="95" />
   </CreationScheme>
 </VirtualModel>
