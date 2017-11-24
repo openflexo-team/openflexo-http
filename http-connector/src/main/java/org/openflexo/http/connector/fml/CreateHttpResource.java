@@ -451,12 +451,13 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 					}
 					creationSchemeAction.doAction();
 
-					// newResource.getFactory().initializeModel(data, getCreationScheme(), getParameters(), evaluationContext);
+					if (data.getVirtualModel().getFlexoBehaviours(HttpInitializer.class).size() > 0) {
+						HttpInitializer initializer = data.getVirtualModel().getFlexoBehaviours(HttpInitializer.class).get(0);
+						HttpInitializerAction action = new HttpInitializerAction(initializer, data, null,
+								(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
+						action.doAction();
+					}
 
-					/*data.setModelSlot(httpModelSlot);
-					data.setOwnerInstance(evaluationContext.getVirtualModelInstance());
-					newResource.getFactory().initializeModel(data, httpModelSlot.getCreationScheme(), httpModelSlot.getParameters(),
-							evaluationContext);*/
 				}
 				else {
 					throw new InvalidArgumentException("AccessPoint creation must be affected to a HTTPModelSlot");

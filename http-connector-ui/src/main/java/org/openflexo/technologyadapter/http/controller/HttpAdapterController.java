@@ -57,6 +57,7 @@ package org.openflexo.technologyadapter.http.controller;
 
 import javax.swing.ImageIcon;
 
+import org.openflexo.fml.rt.controller.view.VirtualModelInstanceView;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
@@ -64,12 +65,14 @@ import org.openflexo.foundation.technologyadapter.TechnologyObject;
 import org.openflexo.gina.utils.InspectorGroup;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.CreateHttpResource;
+import org.openflexo.http.connector.fml.HttpInitializer;
 import org.openflexo.http.connector.fml.rest.JsonRequestBehaviour;
 import org.openflexo.http.connector.fml.rest.RestObjectRetriever;
 import org.openflexo.http.connector.fml.rest.RestObjectRole;
 import org.openflexo.http.connector.fml.xmlrpc.PerformXmlRpcRequest;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcRequestBehaviour;
 import org.openflexo.http.connector.model.AccessPoint;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.icon.FMLIconLibrary;
 import org.openflexo.icon.FMLRTIconLibrary;
 import org.openflexo.icon.IconFactory;
@@ -136,7 +139,9 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	@Override
 	public ModuleView<?> createModuleViewForObject(final TechnologyObject<HttpTechnologyAdapter> object, final FlexoController controller,
 			final FlexoPerspective perspective) {
-		// TODO Auto-generated method stub : update your moduleView code to have something represented
+		if (object instanceof HttpVirtualModelInstance) {
+			return new VirtualModelInstanceView((HttpVirtualModelInstance) object, controller, perspective);
+		}
 		if (object instanceof AccessPoint) {
 			return new AccessPointModuleView((AccessPoint) object, controller, perspective);
 		}
@@ -159,11 +164,17 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 
 	@Override
 	public boolean hasModuleViewForObject(TechnologyObject<HttpTechnologyAdapter> obj, FlexoController controller) {
+		if (obj instanceof HttpVirtualModelInstance) {
+			return true;
+		}
 		return obj instanceof AccessPoint;
 	}
 
 	@Override
 	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
+		if (HttpInitializer.class.isAssignableFrom(flexoBehaviourClass)) {
+			return IconFactory.getImageIcon(HttpIconLibrary.ACCESSPOINT_TECHNOLOGY_ICON, IconLibrary.SYNC);
+		}
 		if (RestObjectRetriever.class.isAssignableFrom(flexoBehaviourClass)) {
 			return IconFactory.getImageIcon(FMLIconLibrary.ACTION_SCHEME_ICON, HttpIconLibrary.HTTP_MARKER);
 		}

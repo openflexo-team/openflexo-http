@@ -119,7 +119,6 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 
 		@Override
 		public void initialize(FlexoServiceManager serviceManager, ContentSupportFactory<?, ?> supportFactory) {
-
 			this.supportFactory = supportFactory;
 		}
 

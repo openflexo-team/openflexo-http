@@ -40,6 +40,8 @@ package org.openflexo.http.connector.rm;
 
 import java.util.logging.Logger;
 
+import org.openflexo.foundation.FlexoEditor;
+import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
@@ -50,6 +52,9 @@ import org.openflexo.foundation.resource.FileIODelegate;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.FlexoModelResource;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.fml.HttpInitializer;
+import org.openflexo.http.connector.fml.HttpInitializerAction;
+import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
@@ -90,41 +95,17 @@ public interface HttpVirtualModelInstanceResource<VMI extends VirtualModelInstan
 			return null;
 		}
 
-		/*@Override
-		public List<RestVirtualModelInstanceResource> getVirtualModelInstanceResources() {
-			return getContents(RestVirtualModelInstanceResource.class);
-		}*/
-
-		/**
-		 * Return the list of all {@link VirtualModelInstanceResource} defined in this {@link ViewResource} conform to supplied
-		 * {@link VirtualModel}
-		 * 
-		 * @return
-		 */
-		/*@Override
-		public List<RestVirtualModelInstanceResource> getVirtualModelInstanceResources(VirtualModel virtualModel) {
-			List<RestVirtualModelInstanceResource> returned = new ArrayList<>();
-			for (RestVirtualModelInstanceResource vmiRes : getVirtualModelInstanceResources()) {
-				if (virtualModel.isAssignableFrom(vmiRes.getVirtualModelResource().getVirtualModel())) {
-					returned.add(vmiRes);
+		protected void performHttpInitializerWhenRequired(VMI returned) {
+			if (returned.getVirtualModel().getFlexoBehaviours(HttpInitializer.class).size() > 0) {
+				HttpInitializer initializer = returned.getVirtualModel().getFlexoBehaviours(HttpInitializer.class).get(0);
+				FlexoEditor editor = null;
+				if (getResourceCenter() instanceof FlexoProject) {
+					editor = getServiceManager().getProjectLoaderService().getEditorForProject((FlexoProject) getResourceCenter());
 				}
+				HttpInitializerAction action = new HttpInitializerAction(initializer, (HttpVirtualModelInstance) returned, null, editor);
+				action.doAction();
 			}
-			return returned;
-		}*/
-
-		/*@Override
-		public boolean delete(Object... context) {
-			// gets service manager before deleting otherwise the service manager is null
-			FlexoServiceManager serviceManager = getServiceManager();
-			Object serializationArtefact = getIODelegate().getSerializationArtefact();
-			if (super.delete(context)) {
-				if (serializationArtefact instanceof File) {
-					serviceManager.getResourceManager().addToFilesToDelete((File) serializationArtefact);
-				}
-				return true;
-			}
-			return false;
-		}*/
+		}
 
 		@Deprecated
 		@Override

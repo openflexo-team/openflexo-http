@@ -88,6 +88,7 @@ public interface RestVirtualModelInstanceResource extends HttpVirtualModelInstan
 				InvalidXMLException, InconsistentDataException, InvalidModelDefinitionException {
 			RestVirtualModelInstance returned = super.loadResourceData(progress);
 			returned.setSupportFactory(new JsonSupportFactory("url"));
+			performHttpInitializerWhenRequired(returned);
 			return returned;
 		}
 	}

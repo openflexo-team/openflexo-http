@@ -46,6 +46,7 @@ import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.xmlrpc.XmlRpcModelSlot;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
@@ -144,6 +145,14 @@ public interface XmlRpcVirtualModelInstance extends HttpVirtualModelInstance<Xml
 		@Override
 		public String toString() {
 			return "XmlRpcVirtualModelInstance[" + Integer.toHexString(hashCode()) + "]";
+		}
+
+		@Override
+		public HttpTechnologyAdapter getTechnologyAdapter() {
+			if (getServiceManager() != null) {
+				return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+			}
+			return null;
 		}
 	}
 }

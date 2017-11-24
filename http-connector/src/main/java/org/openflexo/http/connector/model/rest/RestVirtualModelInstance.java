@@ -53,6 +53,7 @@ import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.task.Progress;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.rest.RestModelSlot;
 import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
@@ -190,6 +191,14 @@ public interface RestVirtualModelInstance extends HttpVirtualModelInstance<RestV
 				instances.remove(restFCI.getIdentifier());
 			}
 			super.removeFromFlexoConceptInstances(fci);
+		}
+
+		@Override
+		public HttpTechnologyAdapter getTechnologyAdapter() {
+			if (getServiceManager() != null) {
+				return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class);
+			}
+			return null;
 		}
 
 	}

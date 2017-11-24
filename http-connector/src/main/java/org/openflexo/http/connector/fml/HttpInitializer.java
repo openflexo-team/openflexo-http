@@ -49,7 +49,7 @@ import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.XMLElement;
 
 /**
- * Behaviour beeing called when loading an existing {@link HttpVirtualModelInstance} (which has been serialized)<br>
+ * Behaviour beeing called when initializing a {@link HttpVirtualModelInstance} (which is created or reloaded)<br>
  * 
  * This is a hook to perform required computation on a {@link HttpVirtualModelInstance} at reload.<br>
  * Note that related {@link VirtualModel} should not define more than one {@link HttpInitializer}
