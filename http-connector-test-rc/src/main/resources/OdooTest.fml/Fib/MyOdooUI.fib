@@ -29,7 +29,7 @@
         <LabelColumn id="25" data="iterator.street" resizable="true" title="street" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="26" data="iterator.street2" resizable="true" title="street2" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
         <LabelColumn id="27" data="iterator.phone" resizable="true" title="phone" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
-        <LabelColumn id="28" data="((iterator.company_id.toString + &quot;-&quot;) + iterator.company)" resizable="true" title="company" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
+        <LabelColumn id="28" data="iterator.company" resizable="true" title="company" displayTitle="true" columnWidth="100" showIcon="false" name="label" />
       </Table>
       <Button id="29" buttonType="Trigger" action="data.odoo.retrieveResPartners()" label="search_partners" constraints="twocols(expandHorizontally=false;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=right)" name="Button" />
       <Label id="30" label="res_companies" align="left" constraints="twocols(expandHorizontally=true;expandVertically=false;insetsBottom=0;insetsLeft=0;insetsRight=0;insetsTop=0;location=left)" name="Label9" />

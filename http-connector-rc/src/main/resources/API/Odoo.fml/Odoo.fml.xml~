@@ -5,7 +5,7 @@
     <Localized id="SYL-525" lang="French" value="siren" key="siren" userID="SYL" flexoID="525" />
     <Localized id="SYL-526" lang="Dutch" value="siren" key="siren" userID="SYL" flexoID="526" />
   </FMLLocalizedDictionary>
-  <FlexoConcept id="FLX-16" isAbstract="true" parentFlexoConceptsList="http://openflexo.org/http/resources/API/Odoo.fml/OdooModel#OdooObject" name="Version" userID="FLX" flexoID="16">
+  <FlexoConcept id="FLX-16" isAbstract="true" parentFlexoConceptsList="http://openflexo.org/http/API/Odoo.fml#OdooObject" name="Version" userID="FLX" flexoID="16">
     <Inspector id="FLX-11" inspectorTitle="Version" userID="FLX" flexoID="11" />
     <AbstractProperty id="FLX-34" type="java.lang.Integer" name="protocol_version" userID="FLX" flexoID="34" />
     <AbstractProperty id="FLX-35" type="java.lang.String" name="server_serie" userID="FLX" flexoID="35" />
@@ -15,7 +15,7 @@
     </DeletionScheme>
   </FlexoConcept>
   <FlexoConcept id="FLX-151" isAbstract="true" parentFlexoConceptsList="http://openflexo.org/http/API/Odoo.fml#OdooObject" name="ResPartner" userID="FLX" flexoID="151">
-    <Inspector id="FLX-150" inspectorTitle="ResPartner" userID="FLX" flexoID="150">
+    <Inspector id="FLX-150" renderer="instance.name" inspectorTitle="ResPartner" userID="FLX" flexoID="150">
       <InspectorEntry id="SYL-498" widget="TEXT_FIELD" data="name" name="name" label="name" type="java.lang.String" userID="SYL" flexoID="498" />
       <InspectorEntry id="SYL-499" widget="TEXT_FIELD" data="siren" name="siren" label="siren" type="java.lang.String" userID="SYL" flexoID="499" />
     </Inspector>
@@ -42,7 +42,10 @@
     <AbstractProperty id="FLX-399" type="java.lang.Integer" name="company_id" description="Id of company&#xA;" userID="FLX" flexoID="399" />
   </FlexoConcept>
   <FlexoConcept id="FLX-161" isAbstract="true" name="OdooObject" userID="FLX" flexoID="161">
-    <Inspector id="FLX-160" inspectorTitle="OdooObject" userID="FLX" flexoID="160" />
+    <Key_AbstractProperty idref="FLX-404" />
+    <Inspector id="FLX-160" inspectorTitle="OdooObject" userID="FLX" flexoID="160">
+      <InspectorEntry id="SYL-569" readOnly="true" widget="INTEGER" data="id" name="id" label="id" type="java.lang.Integer" userID="SYL" flexoID="569" />
+    </Inspector>
     <AbstractProperty id="FLX-404" type="java.lang.Integer" name="id" description="The unique and unmutable id of object" userID="FLX" flexoID="404" />
   </FlexoConcept>
   <FlexoConcept id="FLX-273" isAbstract="true" parentFlexoConceptsList="http://openflexo.org/http/API/Odoo.fml#OdooObject" name="ResCompany" userID="FLX" flexoID="273">
@@ -195,9 +198,9 @@
                                       </ControlGraph2_ReturnStatement>
                                       <ControlGraph1_DeclarationAction id="FLX-348" variable="foundObject" ownerContext="controlGraph1" userID="FLX" flexoID="348">
                                         <AssignableAction_PerformXmlRpcRequest id="FLX-315" methodName="execute_kw" endPointName="xmlrpc/2/object" dynamicMappedFlexoConcept="flexoConcept" type="org.openflexo.foundation.fml.FlexoConceptInstanceType&lt;http://openflexo.org/http/API/Odoo.fml#OdooObject&gt;" mappedFlexoConceptURI="http://openflexo.org/http/API/Odoo.fml#OdooObject" receiver="this" ownerContext="controlGraph2" userID="FLX" flexoID="315">
-                                          <XmlRpcParameter id="13" name="db" value="&quot;dynalec_openflexo&quot;" userID="FLX" flexoID="-1" />
+                                          <XmlRpcParameter id="13" name="db" value="database" userID="FLX" flexoID="-1" />
                                           <XmlRpcParameter id="14" name="username" value="uid" userID="FLX" flexoID="-1" />
-                                          <XmlRpcParameter id="15" name="password" value="accessPoint.password" userID="FLX" flexoID="-1" />
+                                          <XmlRpcParameter id="15" name="password" value="password" userID="FLX" flexoID="-1" />
                                           <XmlRpcParameter id="16" name="entityname" value="parameters.odooEntityName" userID="FLX" flexoID="-1" />
                                           <XmlRpcParameter id="17" name="methodName" value="&quot;search_read&quot;" userID="FLX" flexoID="-1" />
                                           <XmlRpcParameter id="18" name="requestConditions" value="requestConditions" userID="FLX" flexoID="-1" />

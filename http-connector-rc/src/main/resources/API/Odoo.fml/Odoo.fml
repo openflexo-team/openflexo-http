@@ -112,7 +112,7 @@ public class Odoo {
 
 
   @FlexoConcept  
-  public class Version {  
+  public class Version extends OdooObject  {  
   
     @AbstractProperty    
     abstract Integer protocol_version;  
@@ -171,6 +171,7 @@ public class Odoo {
   public class OdooObject {  
   
     @AbstractProperty    
+    @Key    
     abstract Integer id;  
   }  
 
