@@ -85,7 +85,7 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 
 		@Override
 		public <T> T getFlexoPropertyValue(FlexoProperty<T> flexoProperty) {
-			if (getFlexoConcept().getDeclaredProperties().contains(flexoProperty) && flexoProperty instanceof AbstractProperty
+			if (getFlexoConcept().getAccessibleProperties().contains(flexoProperty) && flexoProperty instanceof AbstractProperty
 					&& getSupport() != null) {
 				// System.out.println("support = " + support);
 				return (T) getSupport().getValue(flexoProperty.getName(), flexoProperty.getType());
