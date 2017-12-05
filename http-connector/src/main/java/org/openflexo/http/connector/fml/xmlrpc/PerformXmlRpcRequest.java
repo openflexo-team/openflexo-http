@@ -59,7 +59,7 @@ import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
-import org.openflexo.foundation.fml.editionaction.TechnologySpecificAction;
+import org.openflexo.foundation.fml.editionaction.TechnologySpecificActionDefiningReceiver;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
@@ -93,7 +93,7 @@ import de.timroes.axmlrpc.XMLRPCException;
 @ImplementationClass(PerformXmlRpcRequest.PerformXmlRpcRequestImpl.class)
 @XMLElement
 @FML("PerformXmlRpcRequest")
-public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T> {
+public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefiningReceiver<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T> {
 
 	@PropertyIdentifier(type = String.class)
 	public static final String END_POINT_NAME_KEY = "endPointName";
@@ -195,7 +195,8 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificAction<XmlRpc
 	}
 
 	public static abstract class PerformXmlRpcRequestImpl<T>
-			extends TechnologySpecificActionImpl<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T> implements PerformXmlRpcRequest<T> {
+			extends TechnologySpecificActionDefiningReceiverImpl<XmlRpcModelSlot, VirtualModelInstance<?, ?>, T>
+			implements PerformXmlRpcRequest<T> {
 
 		private static final Logger logger = Logger.getLogger(PerformXmlRpcRequestImpl.class.getPackage().getName());
 
