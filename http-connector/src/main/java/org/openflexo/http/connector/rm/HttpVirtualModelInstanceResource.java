@@ -100,9 +100,13 @@ public interface HttpVirtualModelInstanceResource<VMI extends VirtualModelInstan
 				HttpInitializer initializer = returned.getVirtualModel().getFlexoBehaviours(HttpInitializer.class).get(0);
 				FlexoEditor editor = null;
 				if (getResourceCenter() instanceof FlexoProject) {
-					editor = getServiceManager().getProjectLoaderService().getEditorForProject((FlexoProject) getResourceCenter());
+					editor = getServiceManager().getProjectLoaderService().getEditorForProject((FlexoProject<?>) getResourceCenter());
 				}
-				HttpInitializerAction action = new HttpInitializerAction(initializer, (HttpVirtualModelInstance) returned, null, editor);
+				else if (getResourceCenter().getDelegatingProjectResource() != null) {
+					editor = getServiceManager().getProjectLoaderService()
+							.getEditorForProject(getResourceCenter().getDelegatingProjectResource().getFlexoProject());
+				}
+				HttpInitializerAction action = new HttpInitializerAction(initializer, (HttpVirtualModelInstance<?>) returned, null, editor);
 				action.doAction();
 			}
 		}
