@@ -39,8 +39,9 @@ public class OpenFlexoServer {
 	public static FlexoServiceManager createServiceManager(Options options) {
 		FlexoServiceManager manager = new DefaultFlexoServiceManager(null, options.devMode);
 		TechnologyAdapterService technologyAdapterService = manager.getTechnologyAdapterService();
-		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLTechnologyAdapter.class));
-		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLRTTechnologyAdapter.class));
+		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLTechnologyAdapter.class), true);
+		technologyAdapterService.activateTechnologyAdapter(technologyAdapterService.getTechnologyAdapter(FMLRTTechnologyAdapter.class),
+				true);
 		return manager;
 	}
 
