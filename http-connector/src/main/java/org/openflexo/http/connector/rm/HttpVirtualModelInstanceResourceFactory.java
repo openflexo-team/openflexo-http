@@ -310,8 +310,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		for (I child : resourceCenter.getContents(resourceCenter.getContainer(serializationArtefact))) {
 			if (isValidArtefact(child, resourceCenter)) {
 				try {
-					HttpVirtualModelInstanceResource<VMI> virtualModelInstanceResource = retrieveFMLRTVirtualModelInstanceResource(child,
-							resourceCenter, containerResource);
+					// Unused HttpVirtualModelInstanceResource<VMI> virtualModelInstanceResource =
+					retrieveFMLRTVirtualModelInstanceResource(child, resourceCenter, containerResource);
 				} catch (ModelDefinitionException e) {
 					e.printStackTrace();
 				} catch (IOException e) {

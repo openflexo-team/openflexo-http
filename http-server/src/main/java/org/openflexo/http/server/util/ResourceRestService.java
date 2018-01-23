@@ -35,15 +35,17 @@
 
 package org.openflexo.http.server.util;
 
+import java.util.Collection;
+
+import org.openflexo.http.server.RouteService;
+import org.openflexo.http.server.json.JsonError;
+import org.openflexo.http.server.json.JsonSerializer;
+
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import java.util.Collection;
-import org.openflexo.http.server.RouteService;
-import org.openflexo.http.server.json.JsonError;
-import org.openflexo.http.server.json.JsonSerializer;
 
 /**
  * Creates REST entry point to serve resources associated with data.
@@ -58,11 +60,7 @@ public abstract class ResourceRestService<D, R> {
 
 	protected final JsonSerializer serializer;
 
-	public ResourceRestService(
-		String prefix,
-		Class<R> resourceClass,
-		JsonSerializer serializer
-	) {
+	public ResourceRestService(String prefix, Class<R> resourceClass, JsonSerializer serializer) {
 		this.prefix = prefix;
 		this.resourceClass = resourceClass;
 		this.serializer = serializer;
@@ -103,20 +101,21 @@ public abstract class ResourceRestService<D, R> {
 			context.response().end(result.encodePrettily());
 
 		} catch (Exception e) {
-			error(context,e);
+			error(context, e);
 		}
 	}
 
 	/**
-	 * Retrieves and loads (if not already loaded) resource with given id
-	 * then returns the resource.
+	 * Retrieves and loads (if not already loaded) resource with given id then returns the resource.
 	 *
-	 * @param id resource id
+	 * @param id
+	 *            resource id
 	 * @return the loaded resource
-	 * @throws Exception if resource can't be loaded
+	 * @throws Exception
+	 *             if resource can't be loaded
 	 */
 	protected R getLoadedResource(String id) throws Exception {
-		String uri = IdUtils.decodeId(id);
+		// Unused String uri = IdUtils.decodeId(id);
 		R served = findResource(id);
 		if (served != null) {
 			// load data if needed
@@ -133,11 +132,12 @@ public abstract class ResourceRestService<D, R> {
 				boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 				JsonObject vpJson = (JsonObject) serializer.toJson(resource, detailed);
 				context.response().end(vpJson.encodePrettily());
-			} else {
+			}
+			else {
 				notFound(context);
 			}
 		} catch (Exception e) {
-			error(context,e);
+			error(context, e);
 		}
 	}
 
@@ -154,13 +154,14 @@ public abstract class ResourceRestService<D, R> {
 				}
 				context.response().end(result.encodePrettily());
 
-			} else {
+			}
+			else {
 				notFound(context);
 			}
 		} catch (NumberFormatException e) {
 			notFound(context);
 		} catch (Exception e) {
-			error(context,e);
+			error(context, e);
 		}
 	}
 
@@ -175,11 +176,13 @@ public abstract class ResourceRestService<D, R> {
 					boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
 					JsonObject vpJson = (JsonObject) serializer.toJson(object, detailed);
 					context.response().end(vpJson.encodePrettily());
-				} else {
+				}
+				else {
 					notFound(context);
 				}
 
-			} else {
+			}
+			else {
 				notFound(context);
 			}
 		} catch (NumberFormatException e) {

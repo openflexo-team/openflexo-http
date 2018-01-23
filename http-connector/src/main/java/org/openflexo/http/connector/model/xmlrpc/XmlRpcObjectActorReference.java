@@ -41,7 +41,6 @@ package org.openflexo.http.connector.model.xmlrpc;
 import java.util.logging.Logger;
 
 import org.openflexo.foundation.FlexoObject;
-import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.http.connector.model.HttpObjectActorReference;
@@ -76,7 +75,8 @@ public interface XmlRpcObjectActorReference extends HttpObjectActorReference<Xml
 			if (httpVMIResource instanceof XmlRpcVirtualModelInstanceResource) {
 				XmlRpcVirtualModelInstance xmlRpcVMI = ((XmlRpcVirtualModelInstanceResource) httpVMIResource).getVirtualModelInstance();
 				VirtualModel vm = httpVMIResource.getVirtualModel();
-				FlexoConcept concept = vm.getFlexoConcept(getFlexoConceptURI());
+				// Unused FlexoConcept concept =
+				vm.getFlexoConcept(getFlexoConceptURI());
 				// TODO
 				// return xmlRpcVMI.makeFlexoConceptInstance(getKey(), xmlRpcVMI, concept);
 				System.out.println("To be implemented !!!!! retrieveModellingElement() from " + xmlRpcVMI + " key=" + getKey());

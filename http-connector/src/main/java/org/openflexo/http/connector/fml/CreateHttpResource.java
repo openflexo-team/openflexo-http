@@ -441,7 +441,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 							(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
 					creationSchemeAction.initWithFlexoConceptInstance(data);
 					for (CreateHttpResourceParameter p : getParameters()) {
-						FlexoBehaviourParameter param = p.getParam();
+						// Unused FlexoBehaviourParameter param = p.getParam();
 						Object value = p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext);
 						// System.out.println("For parameter " + param + " value is " + value);
 						if (value != null) {
