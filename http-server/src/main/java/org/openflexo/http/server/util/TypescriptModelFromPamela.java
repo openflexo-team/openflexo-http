@@ -35,7 +35,8 @@
 
 package org.openflexo.http.server.util;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.model.ModelContext;
@@ -83,14 +85,16 @@ public class TypescriptModelFromPamela {
 		return result.toString();
 	}
 
-	private final boolean isReference(ModelProperty<?> property) {
-		if (property.getCloningStrategy() == CloningStrategy.StrategyType.IGNORE) return true;
+	private final static boolean isReference(ModelProperty<?> property) {
+		if (property.getCloningStrategy() == CloningStrategy.StrategyType.IGNORE)
+			return true;
 		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
 	private final boolean ignoreProperty(String propertyName, ModelProperty<?> property) {
 		return ignoredNames.contains(propertyName) && propertyName != null && !property.ignoreType();
 	}
+
 	private String generateTypeScriptInterface(ModelEntity<Object> entity) throws ModelDefinitionException {
 		StringBuilder tsInterface = new StringBuilder();
 		tsInterface.append("export interface ");
@@ -104,7 +108,8 @@ public class TypescriptModelFromPamela {
 				joiner.add(superEntity.getXMLTag());
 			}
 			tsInterface.append(joiner.toString());
-		} else {
+		}
+		else {
 			tsInterface.append("Description<");
 			tsInterface.append(entity.getXMLTag());
 			tsInterface.append(">");
@@ -113,7 +118,8 @@ public class TypescriptModelFromPamela {
 
 		// adds kind attribute
 		List<ModelEntity> descendants = entity.getAllDescendants(context);
-		if (!entity.isAbstract()) descendants.add(entity);
+		if (!entity.isAbstract())
+			descendants.add(entity);
 		if (descendants.size() > 0) {
 			tsInterface.append("\treadonly kind: ");
 			String kinds = descendants.stream().map((e) -> '"' + e.getXMLTag() + '"').collect(Collectors.joining("|"));
@@ -176,7 +182,6 @@ public class TypescriptModelFromPamela {
 			}
 		}
 
-
 		if (property.getCardinality() == Getter.Cardinality.LIST) {
 			result = "Array<" + result + ">";
 		}
@@ -184,7 +189,7 @@ public class TypescriptModelFromPamela {
 		return result;
 	}
 
-	private boolean isStringType(ModelProperty<?> property) {
+	private static boolean isStringType(ModelProperty<?> property) {
 		Class<?> type = property.getType();
 		return type == DataBinding.class || type == Class.class || type == Color.class || type == Font.class || type == File.class
 				|| property.isStringConvertable() || type == String.class;

@@ -229,7 +229,7 @@ public class JsonSupport implements ContentSupport<JsonResponse> {
 		source.set(name, value != null ? TextNode.valueOf(value.toString()) : NullNode.getInstance());
 	}
 
-	private <T> T convertNode(Type type, JsonNode node) {
+	private static <T> T convertNode(Type type, JsonNode node) {
 		// TODO work on conversion
 		Object value = node.textValue();
 		return TypeUtils.isAssignableTo(value, type) ? (T) value : null;

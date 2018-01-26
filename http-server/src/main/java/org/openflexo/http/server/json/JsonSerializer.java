@@ -70,8 +70,6 @@
 
 package org.openflexo.http.server.json;
 
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -81,7 +79,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javassist.util.proxy.ProxyObject;
+
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
 import org.openflexo.foundation.resource.FlexoResource;
@@ -99,16 +97,19 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
 import org.openflexo.model.factory.ProxyMethodHandler;
 
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import javassist.util.proxy.ProxyObject;
+
 /**
- * An instance of JsonSerializer transforms Pamela object to JSON object.
- * The JSON result only contains the object destined to a REST service.
+ * An instance of JsonSerializer transforms Pamela object to JSON object. The JSON result only contains the object destined to a REST
+ * service.
  */
 public class JsonSerializer {
 
 	/** Cloning strategies that actually clone objects */
-	private final Set<CloningStrategy.StrategyType> cloningStrategies = Stream.of(
-			CloningStrategy.StrategyType.CLONE, CloningStrategy.StrategyType.CUSTOM_CLONE
-		).collect(Collectors.toSet());
+	private final Set<CloningStrategy.StrategyType> cloningStrategies = Stream
+			.of(CloningStrategy.StrategyType.CLONE, CloningStrategy.StrategyType.CUSTOM_CLONE).collect(Collectors.toSet());
 
 	private final TechnologyAdapterRouteService service;
 
@@ -141,7 +142,8 @@ public class JsonSerializer {
 
 	private StringEncoder findEncoder(Class<?> clazz) {
 		for (StringEncoder encoder : encoders) {
-			if (encoder.isConvertable(clazz)) return encoder;
+			if (encoder.isConvertable(clazz))
+				return encoder;
 		}
 		return null;
 	}
@@ -177,13 +179,16 @@ public class JsonSerializer {
 		else if (object instanceof Collection) {
 			if (reference) {
 				return toReferenceArray((Collection) object);
-			} else {
+			}
+			else {
 				return toArray((Collection) object, detailed);
 			}
-		} else if (object instanceof FlexoResource) {
+		}
+		else if (object instanceof FlexoResource) {
 			return JsonUtils.getResourceDescription((FlexoResource) object, service);
 
-		} else {
+		}
+		else {
 			JsonObject result = new JsonObject();
 			identifyObject(object, result);
 			for (JsonComplement complement : complements) {
@@ -233,27 +238,31 @@ public class JsonSerializer {
 		if (id != null) {
 			result.put("id", id);
 			String url = IdUtils.getUrl(object, service);
-			if (url != null) { result.put("url", url); }
+			if (url != null) {
+				result.put("url", url);
+			}
 			// Used for debugging purposes
-			//result.put("__debug_object__", object.toString());
+			// result.put("__debug_object__", object.toString());
 		}
 		result.put("kind", getType(object));
 		return id != null;
 	}
 
-	private String getType(Object object) {
+	private static String getType(Object object) {
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
 			@SuppressWarnings({ "unchecked", "rawtype" })
 			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 			return modelEntity.getXMLTag();
-		} else {
+		}
+		else {
 			return object.getClass().getSimpleName();
 		}
 	}
 
 	private final boolean isReference(ModelProperty<?> property) {
-		if (!cloningStrategies.contains(property.getCloningStrategy())) return true;
+		if (!cloningStrategies.contains(property.getCloningStrategy()))
+			return true;
 		return property.getEmbedded() == null && property.getComplexEmbedded() != null && property.getXMLElement() == null;
 	}
 
@@ -269,8 +278,9 @@ public class JsonSerializer {
 		}
 
 		if (object instanceof ProxyObject) {
-			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject)object).getHandler();
-			@SuppressWarnings({ "unchecked", "rawtype" }) ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
+			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
+			@SuppressWarnings({ "unchecked", "rawtype" })
+			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 
 			try {
 				if (detailed) {
@@ -315,7 +325,7 @@ public class JsonSerializer {
 									break;
 								}
 								case MAP: {
-									//TODO
+									// TODO
 									break;
 								}
 								default:

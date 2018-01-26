@@ -35,7 +35,6 @@
 
 package org.openflexo.http.gina;
 
-import io.vertx.core.json.JsonObject;
 import org.openflexo.gina.model.FIBComponent;
 import org.openflexo.gina.model.FIBContainer;
 import org.openflexo.gina.model.FIBModelFactory;
@@ -45,6 +44,8 @@ import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
 import org.openflexo.technologyadapter.gina.model.GINAFIBComponent;
 
+import io.vertx.core.json.JsonObject;
+
 public class GinaJsonComplement implements JsonComplement {
 
 	@Override
@@ -52,7 +53,7 @@ public class GinaJsonComplement implements JsonComplement {
 		return new FIBModelFactory(null);
 	}
 
-	private void describeComponent(JsonSerializer serializer, FIBComponent component, JsonObject result, boolean detailed) {
+	private static void describeComponent(JsonSerializer serializer, FIBComponent component, JsonObject result, boolean detailed) {
 		result.put("name", component.getName());
 		result.put("variables", serializer.toArray(component.getVariables(), detailed));
 

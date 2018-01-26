@@ -196,7 +196,7 @@ public abstract class ResourceRestService<D, R> {
 		context.response().setStatusCode(404).close();
 	}
 
-	private void error(RoutingContext context, Throwable e) {
+	private static void error(RoutingContext context, Throwable e) {
 		HttpServerResponse response = context.response();
 		response.end(new JsonError(e).toString());
 	}

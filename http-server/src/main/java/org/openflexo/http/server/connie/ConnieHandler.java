@@ -35,16 +35,13 @@
 
 package org.openflexo.http.server.connie;
 
-import io.vertx.core.Handler;
-import io.vertx.core.http.ServerWebSocket;
-import io.vertx.core.http.WebSocketFrame;
-import io.vertx.core.json.DecodeException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
+
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
@@ -58,6 +55,11 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceUtils;
+
+import io.vertx.core.Handler;
+import io.vertx.core.http.ServerWebSocket;
+import io.vertx.core.http.WebSocketFrame;
+import io.vertx.core.json.DecodeException;
 
 /**
  * WebSocket service to evaluate Connie expressions
@@ -90,20 +92,24 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 	 *
 	 * <b>Work in progress</b> What to do this the prefix ?
 	 *
-	 * @param url object url
-	 * @param type expected type
-	 * @param <T> expected type
+	 * @param url
+	 *            object url
+	 * @param type
+	 *            expected type
+	 * @param <T>
+	 *            expected type
 	 * @return the corresponding object of given type, null other wise.
 	 */
 	private <T> T findObject(String url, Class<T> type) {
-		if (url == null) return null;
+		if (url == null)
+			return null;
 		String objectInfix = "/object/";
 		int indexOfInfix = url.indexOf(objectInfix);
 		if (indexOfInfix >= 0) {
 			String resourceId = url.substring(0, indexOfInfix);
 			int indexOfFirstSlash = resourceId.lastIndexOf('/');
-			resourceId = resourceId.substring(indexOfFirstSlash+1);
-			String objectUrl = url.substring(indexOfInfix+objectInfix.length());
+			resourceId = resourceId.substring(indexOfFirstSlash + 1);
+			String objectUrl = url.substring(indexOfInfix + objectInfix.length());
 
 			String resourceUri = IdUtils.decodeId(resourceId);
 			FlexoResource<?> resource = serviceManager.getResourceManager().getResource(resourceUri);
@@ -133,7 +139,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 	}
 
 	@Override
-	public void handle(ServerWebSocket socket){
+	public void handle(ServerWebSocket socket) {
 		register(new ClientConnection(socket));
 	}
 
@@ -230,21 +236,22 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		private void respondToListeningRequest(ListeningRequest request) {
 			Response response = new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
-			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
+			DataBinding<Object> binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
 				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
 				if (context != null) {
 
 					try {
 						Object value = binding.getBindingValue(context);
-						response.result = toJson(value, request.detailed);;
+						response.result = toJson(value, request.detailed);
+						;
 					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(Response.error(request.id, error).toBuffer());
 					}
 
-					BindingValueChangeListener listener = listenedBindings.get(runtimeBinding);
+					BindingValueChangeListener<?> listener = listenedBindings.get(runtimeBinding);
 					if (listener == null) {
 						listener = new BindingValueChangeListener<Object>(binding, context) {
 							@Override
@@ -294,7 +301,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 									leftBinding.setBindingValue(rightValue, leftContext);
 									response.result = toJson(rightValue, request.detailed);
 								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-									 String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
+									String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
+											+ request.right.binding.expression + ": " + e;
 									socket.write(Response.error(request.id, error).toBuffer());
 								} catch (NotSettableContextException e) {
 									String error = "Can't set expression '" + request.left.binding + "'";
@@ -329,7 +337,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 							response.result = toJson(newValue, request.detailed);
 
 						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
-							String error = "Can't evaluate  " + request.left.binding.expression + " and/or " + request.right.binding.expression + ": " + e;
+							String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
+									+ request.right.binding.expression + ": " + e;
 							socket.write(Response.error(request.id, error).toBuffer());
 						} catch (NotSettableContextException e) {
 							String error = "Can't set expression '" + request.left.binding + "'";
@@ -338,7 +347,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 					}
 
-				} else {
+				}
+				else {
 					StringBuilder message = new StringBuilder("Invalid runtime ");
 					message.append("'");
 					message.append(request.left.runtimeUrl);
@@ -347,8 +357,8 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					response.error = message.toString();
 				}
 
-
-			} else {
+			}
+			else {
 				StringBuilder message = new StringBuilder("Invalid binding ");
 				message.append("'");
 				message.append(request.left.binding.expression);
@@ -365,7 +375,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void endHandler(Void nothing) {
-			for (BindingValueChangeListener listener : listenedBindings.values()) {
+			for (BindingValueChangeListener<?> listener : listenedBindings.values()) {
 				listener.stopObserving();
 			}
 			listenedBindings.clear();

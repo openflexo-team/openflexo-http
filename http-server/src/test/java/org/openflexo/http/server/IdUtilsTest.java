@@ -17,7 +17,7 @@ public class IdUtilsTest {
 		checkUriEncoding("http://openflexo.org//VirtualModel/%%ùù$$");
 	}
 
-	private void checkUriEncoding(String uri) {
+	private static void checkUriEncoding(String uri) {
 		String encoded = IdUtils.encodeuri(uri);
 		Assert.assertNotNull(encoded);
 		Assert.assertEquals(uri, IdUtils.decodeId(encoded));
@@ -30,8 +30,7 @@ public class IdUtilsTest {
 		checkSanitized("Hello World for test !?!", "helloworldfortest!!");
 	}
 
-
-	private void checkSanitized(String id, String expected) {
+	private static void checkSanitized(String id, String expected) {
 		String sanitized = IdUtils.sanitiseId(id);
 		Assert.assertNotNull(sanitized);
 		Assert.assertEquals(sanitized, expected);

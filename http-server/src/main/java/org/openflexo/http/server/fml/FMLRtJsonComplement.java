@@ -108,8 +108,8 @@ package org.openflexo.http.server.fml;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.ActorReference;
-import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
 
@@ -130,7 +130,7 @@ public class FMLRtJsonComplement implements JsonComplement {
 	}
 	*/
 
-	private void describeFlexoConceptInstance(JsonSerializer serializer, FlexoConceptInstance instance, JsonObject result,
+	private static void describeFlexoConceptInstance(JsonSerializer serializer, FlexoConceptInstance instance, JsonObject result,
 			boolean detailed) {
 
 		FlexoConcept flexoConcept = instance.getFlexoConcept();

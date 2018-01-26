@@ -61,7 +61,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 
 	private static final Logger logger = FlexoLogger.getLogger(MapSupport.class.getPackage().toString());
 
-	private final HttpVirtualModelInstance owner;
+	private HttpVirtualModelInstance owner;
 
 	private Map<?, ?> map;
 
@@ -273,7 +273,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			System.out.println("search[" + i + "]=" + search[i]);
 		}
 
-		Map map = new HashMap();
+		Map<String, Integer> map = new HashMap<String, Integer>();
 		map.put("offset", 10);
 		map.put("limit", 5);
 		System.out.println("Calling execute_kw (search with pagination)");
@@ -288,9 +288,9 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 				Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))));
 
 		System.out.println("Calling search and read");
-		Map m2 = new HashMap();
+		Map<String, Integer> m2 = new HashMap<String, Integer>();
 		m2.put("limit", 5);
-		List ids = Arrays.asList((Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search",
+		List<Object> ids = Arrays.asList((Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search",
 				Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))), m2);
 		System.out.println(ids);
 
@@ -305,7 +305,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 
 		// System.out.println("returned=" + returned);*/
 
-		Map map2 = new HashMap();
+		Map<String, List<String>> map2 = new HashMap<String, List<String>>();
 		map2.put("attributes", Arrays.asList("string", "help", "type", "company_id"));
 		Object returned = object.call("execute_kw", db, uid, passwd, "res.partner", "fields_get", Collections.emptyList(), map2);
 
@@ -327,7 +327,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			    }}
 			));*/
 
-		Map map3 = new HashMap();
+		Map<String, Object> map3 = new HashMap<String, Object>();
 		map3.put("fields", Arrays.asList("name", "country_id", "comment", "siren", "company_id"));
 		map3.put("limit", 30);
 		// map3.put("offset", 20);
