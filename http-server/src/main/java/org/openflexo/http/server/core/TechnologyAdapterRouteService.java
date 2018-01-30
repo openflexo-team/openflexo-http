@@ -70,11 +70,6 @@
 
 package org.openflexo.http.server.core;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.core.json.JsonObject;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -86,6 +81,7 @@ import java.util.ServiceLoader;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
@@ -97,6 +93,12 @@ import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.toolbox.StringUtils;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 
 /**
  * Route service for TechnologyAdapters. It's completable with {@link TechnologyAdapterRouteComplement} for specific
@@ -118,13 +120,14 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement> complementMap = new LinkedHashMap<>();
 
 	/** Map of FlexoResource classes to the prefix for this type of resource */
-	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(Comparator.comparing(Class::getSimpleName));
+	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(
+			Comparator.comparing(Class::getSimpleName));
 
 	/** Map of registered {@link org.openflexo.http.server.util.PamelaResourceRestService}s for each technology adapters */
 	private final Map<TechnologyAdapter, List<ResourceRestService>> restServices = new HashMap<>();
 
 	@Override
-	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
+	public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
 		technologyAdapterService = serviceManager.getTechnologyAdapterService();
 
 		Map<TechnologyAdapter, String> ids = new HashMap<>();
@@ -188,8 +191,9 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 	}
 
-	public String getPrefix(FlexoResource resource) {
-		if (resource == null) return null;
+	public String getPrefix(FlexoResource<?> resource) {
+		if (resource == null)
+			return null;
 		for (Map.Entry<Class<? extends FlexoResource<?>>, String> entry : resourcePrefixes.entrySet()) {
 			if (entry.getKey().isAssignableFrom(resource.getClass())) {
 				return entry.getValue();

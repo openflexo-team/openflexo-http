@@ -273,7 +273,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			System.out.println("search[" + i + "]=" + search[i]);
 		}
 
-		Map<String, Integer> map = new HashMap<String, Integer>();
+		Map<String, Integer> map = new HashMap<>();
 		map.put("offset", 10);
 		map.put("limit", 5);
 		System.out.println("Calling execute_kw (search with pagination)");
@@ -288,7 +288,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 				Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))));
 
 		System.out.println("Calling search and read");
-		Map<String, Integer> m2 = new HashMap<String, Integer>();
+		Map<String, Integer> m2 = new HashMap<>();
 		m2.put("limit", 5);
 		List<Object> ids = Arrays.asList((Object[]) object.call("execute_kw", db, uid, passwd, "res.partner", "search",
 				Arrays.asList(Arrays.asList(Arrays.asList("is_company", "=", true), Arrays.asList("customer", "=", true)))), m2);
@@ -305,7 +305,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 
 		// System.out.println("returned=" + returned);*/
 
-		Map<String, List<String>> map2 = new HashMap<String, List<String>>();
+		Map<String, List<String>> map2 = new HashMap<>();
 		map2.put("attributes", Arrays.asList("string", "help", "type", "company_id"));
 		Object returned = object.call("execute_kw", db, uid, passwd, "res.partner", "fields_get", Collections.emptyList(), map2);
 
@@ -327,7 +327,7 @@ public class MapSupport implements ContentSupport<Map<?, ?>> {
 			    }}
 			));*/
 
-		Map<String, Object> map3 = new HashMap<String, Object>();
+		Map<String, Object> map3 = new HashMap<>();
 		map3.put("fields", Arrays.asList("name", "country_id", "comment", "siren", "company_id"));
 		map3.put("limit", 30);
 		// map3.put("offset", 20);

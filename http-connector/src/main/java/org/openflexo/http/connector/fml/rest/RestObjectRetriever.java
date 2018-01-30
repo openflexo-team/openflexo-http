@@ -92,7 +92,7 @@ public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpe
 		@Override
 		public DataBinding<String> getUrl() {
 			if (url == null) {
-				url = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				url = new DataBinding<>(this, String.class, DataBinding.BindingDefinitionType.GET);
 				url.setBindingName("url");
 				url.setMandatory(true);
 
@@ -103,7 +103,7 @@ public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpe
 		@Override
 		public void setUrl(DataBinding<String> url) {
 			if (url != null) {
-				this.url = new DataBinding<String>(url.toString(), this, String.class, DataBinding.BindingDefinitionType.GET);
+				this.url = new DataBinding<>(url.toString(), this, String.class, DataBinding.BindingDefinitionType.GET);
 				url.setBindingName("url");
 				url.setMandatory(true);
 			}

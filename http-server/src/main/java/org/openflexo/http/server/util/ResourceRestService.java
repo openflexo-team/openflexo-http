@@ -192,7 +192,7 @@ public abstract class ResourceRestService<D, R> {
 		}
 	}
 
-	private void notFound(RoutingContext context) {
+	private static void notFound(RoutingContext context) {
 		context.response().setStatusCode(404).close();
 	}
 

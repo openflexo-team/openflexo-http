@@ -473,7 +473,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		@Override
 		public DataBinding<String> getUrl() {
 			if (url == null) {
-				url = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				url = new DataBinding<>(this, String.class, DataBinding.BindingDefinitionType.GET);
 				url.setBindingName("url");
 			}
 			return url;
@@ -493,7 +493,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		@Override
 		public DataBinding<String> getUser() {
 			if (user == null) {
-				user = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				user = new DataBinding<>(this, String.class, DataBinding.BindingDefinitionType.GET);
 				user.setBindingName("user");
 			}
 			return user;
@@ -513,7 +513,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		@Override
 		public DataBinding<String> getPassword() {
 			if (password == null) {
-				password = new DataBinding<String>(this, String.class, DataBinding.BindingDefinitionType.GET);
+				password = new DataBinding<>(this, String.class, DataBinding.BindingDefinitionType.GET);
 				password.setBindingName("password");
 			}
 			return password;

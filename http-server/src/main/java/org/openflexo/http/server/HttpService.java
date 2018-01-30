@@ -1,5 +1,19 @@
 package org.openflexo.http.server;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.openflexo.connie.DataBinding;
+import org.openflexo.foundation.FlexoServiceImpl;
+import org.openflexo.foundation.FlexoServiceManager;
+import org.openflexo.foundation.resource.FlexoResourceCenter;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.http.server.connie.ConnieHandler;
+import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
@@ -8,24 +22,11 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.StaticHandler;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.openflexo.connie.DataBinding;
-import org.openflexo.foundation.FlexoService;
-import org.openflexo.foundation.FlexoServiceImpl;
-import org.openflexo.foundation.FlexoServiceManager;
-import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
-import org.openflexo.http.server.connie.ConnieHandler;
-import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 
 /**
  * HTTP Service for OpenFlexo
  */
-public class HttpService extends FlexoServiceImpl implements FlexoService {
+public class HttpService extends FlexoServiceImpl {
 
 	private static Logger logger = Logger.getLogger(HttpService.class.getPackage().getName());
 
@@ -59,7 +60,7 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		if ((nanoTime - lastHeapPrint) > (20 * 1_000_000_000l)) {
 			lastHeapPrint = nanoTime;
 			long totalMemory = Runtime.getRuntime().totalMemory();
-			logger.info("[HEAP] Total used memory: " + totalMemory + " bytes (" + (totalMemory/1024/1024) + " mb)");
+			logger.info("[HEAP] Total used memory: " + totalMemory + " bytes (" + (totalMemory / 1024 / 1024) + " mb)");
 		}
 
 		context.next();
@@ -147,8 +148,6 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 		server.listen(port, host);
 	}
 
-
-
 	public TechnologyAdapterRouteService getTechnologyAdapterRestService() {
 		return technologyAdapterRestService;
 	}
@@ -157,7 +156,5 @@ public class HttpService extends FlexoServiceImpl implements FlexoService {
 	public void stop() {
 		server.close();
 	}
-
-
 
 }

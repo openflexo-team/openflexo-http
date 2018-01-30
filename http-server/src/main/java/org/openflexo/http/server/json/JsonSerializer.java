@@ -178,14 +178,12 @@ public class JsonSerializer {
 		}
 		else if (object instanceof Collection) {
 			if (reference) {
-				return toReferenceArray((Collection) object);
+				return toReferenceArray((Collection<?>) object);
 			}
-			else {
-				return toArray((Collection) object, detailed);
-			}
+			return toArray((Collection<?>) object, detailed);
 		}
 		else if (object instanceof FlexoResource) {
-			return JsonUtils.getResourceDescription((FlexoResource) object, service);
+			return JsonUtils.getResourceDescription((FlexoResource<?>) object, service);
 
 		}
 		else {
@@ -251,13 +249,11 @@ public class JsonSerializer {
 	private static String getType(Object object) {
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
-			@SuppressWarnings({ "unchecked", "rawtype" })
+			@SuppressWarnings({ "unchecked" })
 			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 			return modelEntity.getXMLTag();
 		}
-		else {
-			return object.getClass().getSimpleName();
-		}
+		return object.getClass().getSimpleName();
 	}
 
 	private final boolean isReference(ModelProperty<?> property) {
@@ -270,7 +266,7 @@ public class JsonSerializer {
 
 		// adds resource link
 		if (object instanceof ResourceData) {
-			FlexoResource resource = ((ResourceData) object).getResource();
+			FlexoResource<?> resource = ((ResourceData<?>) object).getResource();
 			String resourceUrl = IdUtils.getUrl(resource, service);
 			if (resourceUrl != null) {
 				result.put("resourceUrl", resourceUrl);
@@ -279,7 +275,7 @@ public class JsonSerializer {
 
 		if (object instanceof ProxyObject) {
 			ProxyMethodHandler<?> handler = (ProxyMethodHandler<?>) ((ProxyObject) object).getHandler();
-			@SuppressWarnings({ "unchecked", "rawtype" })
+			@SuppressWarnings({ "unchecked" })
 			ModelEntity<Object> modelEntity = (ModelEntity<Object>) handler.getModelEntity();
 
 			try {
@@ -316,10 +312,10 @@ public class JsonSerializer {
 								}
 								case LIST: {
 									List<Object> collected = new ArrayList<>();
-									for (Object child : (List) propertyValue) {
+									for (Object child : (List<?>) propertyValue) {
 										collected.add(toJson(child, reference, detailed));
 									}
-									if (collected != null) {
+									if (!collected.isEmpty()) {
 										transformed = new JsonArray(collected);
 									}
 									break;
