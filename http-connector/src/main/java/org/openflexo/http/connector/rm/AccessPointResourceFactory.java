@@ -1,5 +1,6 @@
 package org.openflexo.http.connector.rm;
 
+import org.apache.commons.io.FilenameUtils;
 import org.openflexo.foundation.FlexoEditingContext;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.RepositoryFolder;
@@ -10,7 +11,6 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.AccessPointFactory;
 import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.toolbox.StringUtils;
 
 /**
  *
@@ -18,7 +18,7 @@ import org.openflexo.toolbox.StringUtils;
 public class AccessPointResourceFactory
 		extends TechnologySpecificPamelaResourceFactory<AccessPointResource, AccessPoint, HttpTechnologyAdapter, AccessPointFactory> {
 
-	public static final String URL_EXTENSION = ".url";
+	public static final String URL_EXTENSION = "url";
 
 	public AccessPointResourceFactory() throws ModelDefinitionException {
 		super(AccessPointResource.class);
@@ -39,7 +39,7 @@ public class AccessPointResourceFactory
 	@Override
 	public <I> boolean isValidArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
 		String name = resourceCenter.retrieveName(serializationArtefact);
-		return StringUtils.hasExtension(name, URL_EXTENSION);
+		return FilenameUtils.isExtension(name, URL_EXTENSION);
 	}
 
 	@Override
