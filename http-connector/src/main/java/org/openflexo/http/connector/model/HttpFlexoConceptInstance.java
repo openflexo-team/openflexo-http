@@ -125,17 +125,17 @@ public interface HttpFlexoConceptInstance<S extends ContentSupport<?>> extends F
 			}
 			if (identifier == null) {
 				if (getFlexoConcept() != null) {
-					if (getFlexoConcept().getKeyProperties().size() > 1) {
+					if (getFlexoConcept().getAccessibleKeyProperties().size() > 1) {
 						StringBuffer sb = new StringBuffer();
 						boolean isFirst = true;
-						for (FlexoProperty<?> keyP : getFlexoConcept().getKeyProperties()) {
+						for (FlexoProperty<?> keyP : getFlexoConcept().getAccessibleKeyProperties()) {
 							sb.append((isFirst ? "" : ",") + keyP.getName() + "=" + getFlexoPropertyValue(keyP));
 							isFirst = false;
 						}
 						identifier = sb.toString();
 					}
-					else if (getFlexoConcept().getKeyProperties().size() > 0) {
-						Object keyValue = getFlexoPropertyValue(getFlexoConcept().getKeyProperties().get(0));
+					else if (getFlexoConcept().getAccessibleKeyProperties().size() > 0) {
+						Object keyValue = getFlexoPropertyValue(getFlexoConcept().getAccessibleKeyProperties().get(0));
 						if (keyValue != null) {
 							identifier = keyValue.toString();
 						}
