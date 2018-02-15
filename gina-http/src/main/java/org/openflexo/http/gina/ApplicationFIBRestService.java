@@ -72,12 +72,12 @@ package org.openflexo.http.gina;
 
 import java.util.Collection;
 import java.util.Collections;
+
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.gina.ApplicationFIBLibrary;
 import org.openflexo.gina.model.FIBComponent;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.http.server.util.ResourceRestService;
-import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.rm.Resource;
 
 /**
@@ -85,11 +85,11 @@ import org.openflexo.rm.Resource;
  *
  * TODO Currently not in use since application fibs and inspectors are in UI parts of the adaptors
  */
-public class ApplicationFIBRestService extends ResourceRestService<FIBComponent,Resource> {
+public class ApplicationFIBRestService extends ResourceRestService<FIBComponent, Resource> {
 
 	private final ApplicationFIBLibrary library;
 
-	public ApplicationFIBRestService(String prefix, JsonSerializer serializer, TechnologyAdapterService service) throws ModelDefinitionException {
+	public ApplicationFIBRestService(String prefix, JsonSerializer serializer, TechnologyAdapterService service) {
 		super(prefix, Resource.class, serializer);
 		library = ApplicationFIBLibrary.ApplicationFIBLibraryImpl.instance(service);
 	}
