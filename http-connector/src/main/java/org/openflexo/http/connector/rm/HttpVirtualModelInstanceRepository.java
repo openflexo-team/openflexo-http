@@ -38,7 +38,6 @@
 
 package org.openflexo.http.connector.rm;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ import org.openflexo.model.factory.ModelFactory;
 public interface HttpVirtualModelInstanceRepository<I> extends ResourceRepository<HttpVirtualModelInstanceResource<?>, I> {
 
 	public static <I> HttpVirtualModelInstanceRepository<I> instanciateNewRepository(HttpTechnologyAdapter adapter,
-			FlexoResourceCenter<I> resourceCenter) throws IOException {
+			FlexoResourceCenter<I> resourceCenter) {
 		ModelFactory factory;
 		try {
 			factory = new ModelFactory(HttpVirtualModelInstanceRepository.class);
