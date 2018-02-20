@@ -70,20 +70,22 @@
 
 package org.openflexo.http.server.json;
 
-import io.vertx.core.json.JsonObject;
 import org.openflexo.model.exceptions.ModelDefinitionException;
 import org.openflexo.model.factory.ModelFactory;
+
+import io.vertx.core.json.JsonObject;
 
 /**
  * Complement JSON serializer
  */
 public interface JsonComplement {
-
+	// Beware to keep exception for children
 	default ModelFactory getFactory() throws ModelDefinitionException {
 		return null;
 	}
 
-	default void identifyObject(JsonSerializer serializer, Object object, JsonObject result) { }
+	default void identifyObject(JsonSerializer serializer, Object object, JsonObject result) {
+	}
 
 	void describeObject(JsonSerializer serializer, Object object, JsonObject result, boolean detailed);
 }

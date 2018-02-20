@@ -153,7 +153,7 @@ public class TypescriptModelFromPamela {
 		return tsInterface.toString();
 	}
 
-	private static String getTsTypeName(ModelProperty<?> property) throws ModelDefinitionException {
+	private static String getTsTypeName(ModelProperty<?> property) {
 		String result = "any";
 		Class<?> type = property.getType();
 		if (isStringType(property)) {

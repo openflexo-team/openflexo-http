@@ -1,6 +1,5 @@
 package org.openflexo.http.connector;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,12 +68,7 @@ public class HttpTechnologyAdapter extends TechnologyAdapter {
 	public <I> HttpVirtualModelInstanceRepository<I> getVirtualModelInstanceRepository(FlexoResourceCenter<I> resourceCenter) {
 		HttpVirtualModelInstanceRepository<I> returned = resourceCenter.retrieveRepository(HttpVirtualModelInstanceRepository.class, this);
 		if (returned == null) {
-			try {
-				returned = HttpVirtualModelInstanceRepository.instanciateNewRepository(this, resourceCenter);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			returned = HttpVirtualModelInstanceRepository.instanciateNewRepository(this, resourceCenter);
 			resourceCenter.registerRepository(returned, HttpVirtualModelInstanceRepository.class, this);
 		}
 		return returned;
