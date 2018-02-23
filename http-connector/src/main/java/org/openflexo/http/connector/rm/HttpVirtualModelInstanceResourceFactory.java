@@ -52,6 +52,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 
 	public static final FlexoVersion CURRENT_FML_RT_VERSION = new FlexoVersion("1.0");
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public HttpVirtualModelInstanceResourceFactory(Class<? extends HttpVirtualModelInstanceResource<VMI>> resourceClass)
 			throws ModelDefinitionException {
 		super((Class) resourceClass);

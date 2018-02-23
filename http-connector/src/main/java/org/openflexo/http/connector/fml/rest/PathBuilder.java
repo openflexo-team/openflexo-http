@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
@@ -60,33 +61,38 @@ import org.openflexo.model.factory.ModelFactory;
 /**
  * Allows to build an URL from a template and a series of binding
  */
-@ModelEntity @XMLElement
+@ModelEntity
+@XMLElement
 public interface PathBuilder {
 
 	String TEMPLATE_KEY = "template";
 	String PARAMETER_KEY = "parameter";
 	String OWNER = "owner";
 
-	@Getter(TEMPLATE_KEY) @XMLAttribute
+	@Getter(TEMPLATE_KEY)
+	@XMLAttribute
 	String getTemplate();
 
 	@Setter(TEMPLATE_KEY)
 	void setTemplate(String template);
 
 	@Getter(value = PARAMETER_KEY, cardinality = Cardinality.LIST, inverse = PathParameter.BUILDER_KEY)
-	@Embedded @XMLElement
+	@Embedded
+	@XMLElement
 	List<PathParameter> getParameters();
 
 	@Setter(PARAMETER_KEY)
 	void setParameters(List<PathParameter> parameters);
 
-	@Adder(PARAMETER_KEY) @PastingPoint
+	@Adder(PARAMETER_KEY)
+	@PastingPoint
 	void addToParameters(PathParameter aParameter);
 
 	@Remover(PARAMETER_KEY)
 	void removeFromParameters(PathParameter aParameter);
 
-	@Getter(OWNER) @XMLElement
+	@Getter(OWNER)
+	@XMLElement
 	FlexoConceptObject getOwner();
 
 	@Setter(OWNER)
@@ -95,8 +101,8 @@ public interface PathBuilder {
 	default void addNewParameter() {
 		try {
 			PathParameter parameter = new ModelFactory(PathBuilder.class).newInstance(PathParameter.class);
-			parameter.setName(new DataBinding("\"param1\"", getOwner(), String.class, BindingDefinitionType.GET));
-			parameter.setValue(new DataBinding("\"value1\"", getOwner(), String.class, BindingDefinitionType.GET));
+			parameter.setName(new DataBinding<>("\"param1\"", getOwner(), String.class, BindingDefinitionType.GET));
+			parameter.setValue(new DataBinding<>("\"value1\"", getOwner(), String.class, BindingDefinitionType.GET));
 			addToParameters(parameter);
 		} catch (ModelDefinitionException e) {
 			// todo
@@ -115,8 +121,8 @@ public interface PathBuilder {
 				url.append(template.substring(current, matcher.start()));
 
 				String expression = matcher.group(1);
-				DataBinding binding = new DataBinding(expression, bindable, String.class, BindingDefinitionType.GET);
-				Object value = binding.getBindingValue(context);
+				DataBinding<String> binding = new DataBinding<>(expression, bindable, String.class, BindingDefinitionType.GET);
+				String value = binding.getBindingValue(context);
 				url.append(Objects.toString(value, expression));
 
 				current = matcher.end();

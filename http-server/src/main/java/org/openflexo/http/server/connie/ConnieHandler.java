@@ -69,7 +69,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 	private final FlexoServiceManager serviceManager;
 	private final TechnologyAdapterRouteService taRouteService;
 
-	private final Map<BindingId, DataBinding> compiledBindings = new WeakHashMap<>();
+	private final Map<BindingId, DataBinding<Object>> compiledBindings = new WeakHashMap<>();
 
 	private final Set<ClientConnection> clients = new HashSet<>();
 
@@ -78,10 +78,10 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		this.taRouteService = taRouteService;
 	}
 
-	private DataBinding getOrCreateBinding(final BindingId id) {
+	private DataBinding<Object> getOrCreateBinding(final BindingId id) {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
 			Bindable model = getOrCreateBindable(id);
-			DataBinding binding = new DataBinding(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
+			DataBinding<Object> binding = new DataBinding<>(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
 			binding.decode();
 			return binding;
 		});
@@ -206,7 +206,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		private void respondToEvaluationRequest(EvaluationRequest request) {
 			Response response = new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
-			DataBinding binding = getOrCreateBinding(runtimeBinding.binding);
+			DataBinding<Object> binding = getOrCreateBinding(runtimeBinding.binding);
 			if (binding.isValid()) {
 				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
 				if (context != null) {
@@ -281,7 +281,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			Response response = new Response(request.id);
 
 			RuntimeBindingId left = request.left;
-			DataBinding leftBinding = getOrCreateBinding(left.binding);
+			DataBinding<Object> leftBinding = getOrCreateBinding(left.binding);
 
 			if (leftBinding.isValid()) {
 				BindingEvaluationContext leftContext = findObject(left.runtimeUrl, BindingEvaluationContext.class);
@@ -292,7 +292,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					RuntimeBindingId right = request.right;
 					if (right != null) {
 						// uses binding for new value
-						DataBinding valueBinding = getOrCreateBinding(right.binding);
+						DataBinding<?> valueBinding = getOrCreateBinding(right.binding);
 						if (valueBinding.isValid()) {
 							BindingEvaluationContext rightContext = findObject(right.runtimeUrl, BindingEvaluationContext.class);
 							if (rightContext != null) {
