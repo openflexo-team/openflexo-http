@@ -79,7 +79,10 @@ import io.vertx.core.json.JsonObject;
  * Complement JSON serializer
  */
 public interface JsonComplement {
-	// Beware to keep exception for children
+	/**
+	 * @throws ModelDefinitionException
+	 *             raised by children
+	 */
 	default ModelFactory getFactory() throws ModelDefinitionException {
 		return null;
 	}
