@@ -67,6 +67,11 @@ public class HttpService extends FlexoServiceImpl {
 	}
 
 	@Override
+	public String getServiceName() {
+		return "HttpService";
+	}
+
+	@Override
 	public void initialize() {
 		DataBinding.setDefaultCachingStrategy(DataBinding.CachingStrategy.NO_CACHING);
 
@@ -146,6 +151,8 @@ public class HttpService extends FlexoServiceImpl {
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
+
+		status = Status.Started;
 	}
 
 	public TechnologyAdapterRouteService getTechnologyAdapterRestService() {
