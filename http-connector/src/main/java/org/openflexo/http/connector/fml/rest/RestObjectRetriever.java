@@ -64,7 +64,7 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(RestObjectRetriever.RestObjectRetrieverImpl.class)
 @XMLElement
 @FML("RestObjectRetriever")
-public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
+public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpecificFlexoBehaviour<HttpTechnologyAdapter> {
 
 	@PropertyIdentifier(type = DataBinding.class)
 	public static final String URL_KEY = "url";

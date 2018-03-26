@@ -61,7 +61,7 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(HttpInitializer.HttpInitializerImpl.class)
 @XMLElement
 @FML("HttpInitializer")
-public interface HttpInitializer extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
+public interface HttpInitializer extends AbstractActionScheme, TechnologySpecificFlexoBehaviour<HttpTechnologyAdapter> {
 
 	public static abstract class HttpInitializerImpl extends AbstractActionSchemeImpl implements HttpInitializer {
 

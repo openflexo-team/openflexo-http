@@ -22,7 +22,7 @@ import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource
  */
 @DeclareModelSlots({ RestModelSlot.class, XmlRpcModelSlot.class })
 @DeclareResourceTypes({ XmlRpcVirtualModelInstanceResourceFactory.class, RestVirtualModelInstanceResourceFactory.class })
-public class HttpTechnologyAdapter extends TechnologyAdapter {
+public class HttpTechnologyAdapter extends TechnologyAdapter<HttpTechnologyAdapter> {
 
 	private HttpBindingFactory bindingFactory;
 
@@ -42,7 +42,8 @@ public class HttpTechnologyAdapter extends TechnologyAdapter {
 	}
 
 	@Override
-	public TechnologyContextManager<?> createTechnologyContextManager(FlexoResourceCenterService flexoResourceCenterService) {
+	public TechnologyContextManager<HttpTechnologyAdapter> createTechnologyContextManager(
+			FlexoResourceCenterService flexoResourceCenterService) {
 		return new HttpTechnologyContextManager(this, flexoResourceCenterService);
 	}
 
