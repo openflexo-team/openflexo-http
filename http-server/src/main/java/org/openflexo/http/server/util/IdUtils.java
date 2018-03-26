@@ -44,6 +44,7 @@ import java.util.Base64.Encoder;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.InnerResourceData;
 import org.openflexo.foundation.resource.FlexoResource;
@@ -61,7 +62,7 @@ public class IdUtils {
 
 	public static String getId(Object object) {
 		if (object instanceof FlexoResource) {
-			return IdUtils.encodeuri(((FlexoResource) object).getURI());
+			return IdUtils.encodeuri(((FlexoResource<?>) object).getURI());
 		}
 		if (object instanceof FlexoObject) {
 			long flexoID = ((FlexoObject) object).getFlexoID();
@@ -71,15 +72,17 @@ public class IdUtils {
 	}
 
 	public static String getUrl(Object object, TechnologyAdapterRouteService service) {
-		FlexoResource resource = null;
+		FlexoResource<?> resource = null;
 		long id = -1;
 
 		if (object instanceof FlexoResource) {
-			resource = (FlexoResource) object;
-		} else if (object instanceof ResourceData) {
-			resource = ((ResourceData) object).getResource();
-		} else if (object instanceof InnerResourceData) {
-			ResourceData resourceData = ((InnerResourceData) object).getResourceData();
+			resource = (FlexoResource<?>) object;
+		}
+		else if (object instanceof ResourceData) {
+			resource = ((ResourceData<?>) object).getResource();
+		}
+		else if (object instanceof InnerResourceData) {
+			ResourceData<?> resourceData = ((InnerResourceData<?>) object).getResourceData();
 			resource = resourceData != null ? resourceData.getResource() : null;
 		}
 
@@ -87,7 +90,8 @@ public class IdUtils {
 			id = ((FlexoObject) object).getFlexoID();
 		}
 
-		if (resource == null) return null;
+		if (resource == null)
+			return null;
 
 		if (id >= 0) {
 			String prefix = service.getPrefix(resource);
@@ -104,12 +108,11 @@ public class IdUtils {
 			}
 
 			return url.toString();
-		} else {
-			StringBuilder url = new StringBuilder();
-			url.append("/resource/");
-			url.append(IdUtils.encodeuri(resource.getURI()));
-			return url.toString();
 		}
+		StringBuilder url = new StringBuilder();
+		url.append("/resource/");
+		url.append(IdUtils.encodeuri(resource.getURI()));
+		return url.toString();
 	}
 
 	public static String encodeuri(String uri) {
@@ -129,27 +132,29 @@ public class IdUtils {
 		}
 	}
 
-
-	private static Set<Character> validCharacters = Stream.of(
-			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-			'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '$', '-', '_', '.', '+', '!', '*', '\'', '(', ')'
-		).collect(Collectors.toSet());
+	private static Set<Character> validCharacters = Stream
+			.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y',
+					'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W',
+					'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '$', '-', '_', '.', '+', '!', '*', '\'', '(', ')')
+			.collect(Collectors.toSet());
 
 	/**
-	 * Cleans given raw id to construct a sanitized id for REST apis.
-	 * Only Alphanumerics [0-9a-zA-Z] and special characters $-_.+!*'(), are allowed.
+	 * Cleans given raw id to construct a sanitized id for REST apis. Only Alphanumerics [0-9a-zA-Z] and special characters $-_.+!*'(), are
+	 * allowed.
 	 *
-	 * A raw id will always give the same sanitized id but it's not possible to reconstruct
-	 * the raw id from the sanitized one.
+	 * A raw id will always give the same sanitized id but it's not possible to reconstruct the raw id from the sanitized one.
 	 *
-	 * @param rawId id to clean, cant be null
+	 * @param rawId
+	 *            id to clean, cant be null
 	 * @return a sanitized id, never null,never empty
-	 * @throws NullPointerException if raw id is null
-	 * @throws IllegalArgumentException if clean id is empty.
+	 * @throws NullPointerException
+	 *             if raw id is null
+	 * @throws IllegalArgumentException
+	 *             if clean id is empty.
 	 */
 	public static String sanitiseId(String rawId) {
-		if (rawId == null) throw new NullPointerException();
+		if (rawId == null)
+			throw new NullPointerException();
 
 		StringBuilder id = new StringBuilder();
 		for (int i = 0; i < rawId.length(); i++) {
@@ -158,11 +163,12 @@ public class IdUtils {
 				id.append(Character.toLowerCase(current));
 			}
 		}
-		if (id.length() == 0) throw new IllegalArgumentException("Sanitized id is empty from '" + rawId +"'");
+		if (id.length() == 0)
+			throw new IllegalArgumentException("Sanitized id is empty from '" + rawId + "'");
 		return id.toString();
 	}
 
-	public static String getTechnologyAdapterId(TechnologyAdapter adapter) {
+	public static String getTechnologyAdapterId(TechnologyAdapter<?> adapter) {
 		return sanitiseId(adapter.getIdentifier());
 	}
 

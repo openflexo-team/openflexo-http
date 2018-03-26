@@ -83,7 +83,7 @@ public class HttpIconLibrary {
 	public static final IconMarker HTTP_MARKER = new IconMarker(
 			new ImageIconResource(ResourceLocator.locateResource("Icons/HTTPMarker.png")), 6, 0);
 
-	public static ImageIcon iconForObject(Class<? extends TechnologyObject> objectClass) {
+	public static ImageIcon iconForObject(Class<? extends TechnologyObject<?>> objectClass) {
 		return ACCESSPOINT_TECHNOLOGY_ICON;
 	}
 }
