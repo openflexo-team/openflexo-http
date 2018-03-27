@@ -44,7 +44,6 @@ import org.openflexo.model.annotations.ImplementationClass;
 import org.openflexo.model.annotations.ModelEntity;
 import org.openflexo.model.annotations.Setter;
 import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.toolbox.IProgress;
 
 @ModelEntity
 @XMLElement
@@ -83,7 +82,7 @@ public interface AccessPointResource
 		}
 
 		@Override
-		public AccessPoint loadResourceData(IProgress progress) throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
+		public AccessPoint loadResourceData() throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
 				InconsistentDataException, InvalidModelDefinitionException {
 			/*AccessPoint accessPoint = super.loadResourceData(progress);
 			if (accessPoint.getModelSlot() != null) {

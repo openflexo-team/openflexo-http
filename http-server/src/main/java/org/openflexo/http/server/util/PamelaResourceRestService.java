@@ -35,11 +35,10 @@
 
 package org.openflexo.http.server.util;
 
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import java.util.Collection;
 import java.util.function.Function;
 import java.util.function.Supplier;
+
 import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
@@ -47,10 +46,13 @@ import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.model.ModelContext;
 import org.openflexo.model.factory.EmbeddingType;
 
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
+
 /**
  * Creates REST entry point to serveRoot Pamela models of a given root type.
  */
-public class PamelaResourceRestService<D extends ResourceData<D>, R extends PamelaResource<D, ?>> extends ResourceRestService<D,R> {
+public class PamelaResourceRestService<D extends ResourceData<D>, R extends PamelaResource<D, ?>> extends ResourceRestService<D, R> {
 
 	private final Supplier<Collection<R>> supplier;
 
@@ -60,24 +62,13 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private String typescript = null;
 
-	public PamelaResourceRestService(
-		String prefix,
-		Supplier<Collection<R>> supplier,
-		Function<String, R> finder,
-		Class<R> resourceClass,
-		TechnologyAdapterRouteService service
-	) {
+	public PamelaResourceRestService(String prefix, Supplier<Collection<R>> supplier, Function<String, R> finder, Class<R> resourceClass,
+			TechnologyAdapterRouteService service) {
 		this(prefix, supplier, finder, resourceClass, service, null);
 	}
 
-	public PamelaResourceRestService(
-		String prefix,
-		Supplier<Collection<R>> supplier,
-		Function<String, R> finder,
-		Class<R> resourceClass,
-		TechnologyAdapterRouteService service,
-		ModelContext modelContext
-	) {
+	public PamelaResourceRestService(String prefix, Supplier<Collection<R>> supplier, Function<String, R> finder, Class<R> resourceClass,
+			TechnologyAdapterRouteService service, ModelContext modelContext) {
 		super(prefix, resourceClass, service.getSerializer());
 		this.supplier = supplier;
 		this.finder = finder;
@@ -107,7 +98,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	@Override
 	protected D loadResource(R resource) throws Exception {
 		if (!resource.isLoaded()) {
-			resource.loadResourceData(null);
+			resource.loadResourceData();
 		}
 		return resource.getLoadedResourceData();
 	}

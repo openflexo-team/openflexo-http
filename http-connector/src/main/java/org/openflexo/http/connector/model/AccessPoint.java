@@ -213,7 +213,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 				try {
 					AbstractVirtualModelInstanceResource<?, ?> vmiResource = (AbstractVirtualModelInstanceResource<?, ?>) getResource()
 							.getServiceManager().getResourceManager().getResource(ownerInstanceURI);
-					ownerInstance = vmiResource.getResourceData(null);
+					ownerInstance = vmiResource.getResourceData();
 				} catch (Exception e) {
 					logger.log(Level.SEVERE, "Can't find vmi'" + ownerInstanceURI + "'", e);
 				}

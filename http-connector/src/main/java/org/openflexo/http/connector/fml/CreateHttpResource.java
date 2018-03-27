@@ -390,7 +390,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 				HttpVirtualModelInstanceResource<VMI> newResource = createResource(
 						getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class),
 						getResourceFactoryClass(), rc, resourceName, resourceURI, getRelativePath(), getSuffix(), true);
-				VMI data = newResource.getResourceData(null);
+				VMI data = newResource.getResourceData();
 				data.setVirtualModel(getVirtualModel());
 
 				FlexoProperty<VMI> flexoProperty = getAssignedFlexoProperty();

@@ -1,10 +1,7 @@
 package org.openflexo.http.server.core;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonArray;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import java.util.List;
+
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
@@ -13,6 +10,11 @@ import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonArray;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 
 /**
  * Created by charlie on 11/02/2017.
@@ -24,7 +26,7 @@ public class ResourceCenterRouteService implements RouteService<FlexoServiceMana
 	private TechnologyAdapterRouteService technologyAdapterRestService;
 
 	@Override
-	public void initialize(HttpService service,FlexoServiceManager serviceManager) throws Exception {
+	public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
 		resourceCenterService = serviceManager.getResourceCenterService();
 		technologyAdapterRestService = service.getTechnologyAdapterRestService();
 	}
@@ -52,7 +54,8 @@ public class ResourceCenterRouteService implements RouteService<FlexoServiceMana
 		FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(uri);
 		if (resourceCenter != null) {
 			context.response().end(JsonUtils.getCenterDescription(resourceCenter).encodePrettily());
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}
@@ -64,11 +67,12 @@ public class ResourceCenterRouteService implements RouteService<FlexoServiceMana
 		FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(centerUri);
 		if (resourceCenter != null) {
 			JsonArray result = new JsonArray();
-			for (FlexoResource<?> resource : resourceCenter.getAllResources(null)) {
+			for (FlexoResource<?> resource : resourceCenter.getAllResources()) {
 				result.add(JsonUtils.getResourceDescription(resource, technologyAdapterRestService));
 			}
 			context.response().end(result.encodePrettily());
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}
@@ -88,7 +92,8 @@ public class ResourceCenterRouteService implements RouteService<FlexoServiceMana
 			Object current = resourceCenter.getBaseArtefact();
 			if (fragments.length > 0) {
 				for (String fragment : fragments) {
-					if (fragment.length() == 0) continue;
+					if (fragment.length() == 0)
+						continue;
 
 					List<Object> children = resourceCenter.getContents(current);
 					boolean found = false;
@@ -123,11 +128,13 @@ public class ResourceCenterRouteService implements RouteService<FlexoServiceMana
 					}
 				}
 				context.response().end(result.encodePrettily());
-			} else {
+			}
+			else {
 				notFound(context);
 			}
 
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}

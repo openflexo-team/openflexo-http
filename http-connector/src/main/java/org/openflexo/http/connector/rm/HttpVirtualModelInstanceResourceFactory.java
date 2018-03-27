@@ -92,7 +92,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
-			returned.save(null);
+			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext
@@ -136,7 +136,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
-			returned.save(null);
+			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext

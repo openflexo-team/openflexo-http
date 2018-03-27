@@ -1,14 +1,9 @@
 package org.openflexo.http.server.core;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.buffer.Buffer;
-import io.vertx.core.http.HttpServerResponse;
-import io.vertx.core.json.JsonArray;
-import io.vertx.ext.web.Router;
-import io.vertx.ext.web.RoutingContext;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceManager;
@@ -18,6 +13,13 @@ import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.rm.Resource;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.buffer.Buffer;
+import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
+import io.vertx.ext.web.Router;
+import io.vertx.ext.web.RoutingContext;
 
 /**
  * Created by charlie on 11/02/2017.
@@ -57,7 +59,8 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
 			context.response().end(JsonUtils.getResourceDescription(resource, technologyAdapterRestService).encodePrettily());
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}
@@ -69,13 +72,14 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
 			try {
-				resource.save(null);
+				resource.save();
 				context.response().end(JsonUtils.getResourceDescription(resource, technologyAdapterRestService).encodePrettily());
 			} catch (SaveResourceException e) {
 				error(context, e);
 			}
 
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}
@@ -86,7 +90,7 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 
 		FlexoResource<?> resource = resourceManager.getResource(uri);
 		if (resource != null) {
-			context.response().putHeader("Content-Disposition", "filename=\"" + resource.getName() +"\"");
+			context.response().putHeader("Content-Disposition", "filename=\"" + resource.getName() + "\"");
 			Resource artefactAsResource = resource.getIODelegate().getSerializationArtefactAsResource();
 			try (InputStream inputStream = new BufferedInputStream(artefactAsResource.openInputStream())) {
 				Buffer buffer = Buffer.buffer();
@@ -101,7 +105,8 @@ public class ResourceRouteService implements RouteService<FlexoServiceManager> {
 			} catch (IOException e) {
 				context.fail(e);
 			}
-		} else {
+		}
+		else {
 			notFound(context);
 		}
 	}
