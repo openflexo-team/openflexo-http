@@ -189,7 +189,6 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 	}
 
 	@DefineValidationRule
-	@SuppressWarnings({ "rawtypes" })
 	public static class JsonRequestBehaviourMustAddressAFlexoConceptType
 			extends ValidationRule<JsonRequestBehaviourMustAddressAFlexoConceptType, JsonRequestBehaviour> {
 		public JsonRequestBehaviourMustAddressAFlexoConceptType() {
