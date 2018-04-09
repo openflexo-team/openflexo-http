@@ -42,11 +42,6 @@ public class AccessPointResourceFactory
 		return FilenameUtils.isExtension(name, URL_EXTENSION);
 	}
 
-	@Override
-	public <I> I getConvertableArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
-		return null;
-	}
-
 	public <I> AccessPointResource makeAccessPointResource(String baseName, RepositoryFolder<AccessPointResource, I> folder)
 			throws SaveResourceException, ModelDefinitionException {
 

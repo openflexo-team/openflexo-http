@@ -353,11 +353,4 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		}
 		return returned;
 	}
-
-	@Override
-	public <I> I getConvertableArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
