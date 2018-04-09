@@ -142,10 +142,8 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 			try {
 				returned = creationScheme.getControlGraph().execute(virtualModelInstance);
 			} catch (ReturnException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (FlexoException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

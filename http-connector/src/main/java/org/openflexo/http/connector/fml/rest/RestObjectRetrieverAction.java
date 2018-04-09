@@ -118,13 +118,10 @@ public class RestObjectRetrieverAction
 			getFocusedObject().setSupport(retrievedSupport);
 
 		} catch (TypeMismatchException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (NullReferenceException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
