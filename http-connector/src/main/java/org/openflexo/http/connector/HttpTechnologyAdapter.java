@@ -37,7 +37,7 @@ public class HttpTechnologyAdapter extends TechnologyAdapter<HttpTechnologyAdapt
 	}
 
 	@Override
-	public String getLocalizationDirectory() {
+	protected String getLocalizationDirectory() {
 		return "FlexoLocalization/HTTPTechnologyAdapter";
 	}
 
