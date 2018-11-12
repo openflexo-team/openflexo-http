@@ -70,8 +70,8 @@
 
 package org.openflexo.http.server.json;
 
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.factory.ModelFactory;
 
 import io.vertx.core.json.JsonObject;
 

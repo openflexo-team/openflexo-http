@@ -39,9 +39,9 @@ import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.http.connector.fml.HttpRequestBehaviour;
 import org.openflexo.http.connector.model.xmlrpc.MapSupport;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * A behaviour that natively execute an XML/RPC request using FML parameters of that behaviour.<br>

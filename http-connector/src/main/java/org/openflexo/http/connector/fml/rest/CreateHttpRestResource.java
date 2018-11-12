@@ -40,9 +40,9 @@ import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.http.connector.fml.CreateHttpResource;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResourceFactory;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * {@link EditionAction} used to create an empty {@link RestVirtualModelInstance} resource

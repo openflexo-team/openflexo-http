@@ -76,7 +76,7 @@ import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
-import org.openflexo.model.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.ModelEntity;
 
 /**
  * Base implementation of a behaviour executing an HTTPRequest

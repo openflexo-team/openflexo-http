@@ -43,8 +43,8 @@ import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
-import org.openflexo.model.ModelContext;
-import org.openflexo.model.factory.EmbeddingType;
+import org.openflexo.pamela.ModelContext;
+import org.openflexo.pamela.factory.EmbeddingType;
 
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
