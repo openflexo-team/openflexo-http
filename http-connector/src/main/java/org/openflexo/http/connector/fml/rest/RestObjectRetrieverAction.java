@@ -51,10 +51,8 @@ import org.openflexo.foundation.action.InvalidParametersException;
 import org.openflexo.foundation.action.NotImplementedException;
 import org.openflexo.foundation.fml.rt.VirtualModelInstanceObject;
 import org.openflexo.foundation.fml.rt.action.AbstractActionSchemeAction;
-import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.rest.JsonSupport;
 import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
-import org.openflexo.localization.LocalizedDelegate;
 
 /**
  * Provides execution environment of a {@link RestObjectRetriever} on a given {@link RestFlexoConceptInstance} as a {@link FlexoAction}
@@ -96,13 +94,13 @@ public class RestObjectRetrieverAction
 		super(behaviour, focusedObject, globalSelection, ownerAction);
 	}
 
-	@Override
+	/*@Override
 	public LocalizedDelegate getLocales() {
 		if (getServiceManager() != null) {
 			return getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class).getLocales();
 		}
 		return super.getLocales();
-	}
+	}*/
 
 	@Override
 	protected void doAction(Object context) throws NotImplementedException, InvalidParametersException, FlexoException {
