@@ -25,7 +25,7 @@ public class AccessPointResourceFactory
 	}
 
 	@Override
-	public AccessPointFactory makeResourceDataFactory(AccessPointResource resource,
+	public AccessPointFactory makeModelFactory(AccessPointResource resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		FlexoEditingContext editingContext = technologyContextManager.getServiceManager().getEditingContext();
 		return new AccessPointFactory(resource, editingContext);

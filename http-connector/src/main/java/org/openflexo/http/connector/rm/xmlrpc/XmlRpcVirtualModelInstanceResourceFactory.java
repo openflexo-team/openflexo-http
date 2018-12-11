@@ -70,8 +70,7 @@ public class XmlRpcVirtualModelInstanceResourceFactory extends HttpVirtualModelI
 	 * Build and return model factory to use for resource data managing
 	 */
 	@Override
-	public HttpVirtualModelInstanceModelFactory makeResourceDataFactory(
-			HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> resource,
+	public HttpVirtualModelInstanceModelFactory makeModelFactory(HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		return new XmlRpcVirtualModelInstanceModelFactory((XmlRpcVirtualModelInstanceResource) resource,
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getEditingContext(),

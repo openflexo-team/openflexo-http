@@ -71,7 +71,7 @@ public class RestVirtualModelInstanceResourceFactory extends HttpVirtualModelIns
 	 * Build and return model factory to use for resource data managing
 	 */
 	@Override
-	public HttpVirtualModelInstanceModelFactory makeResourceDataFactory(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource,
+	public HttpVirtualModelInstanceModelFactory makeModelFactory(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		return new RestVirtualModelInstanceModelFactory((RestVirtualModelInstanceResource) resource,
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getEditingContext(),
