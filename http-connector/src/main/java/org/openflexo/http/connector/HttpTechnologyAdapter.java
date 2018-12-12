@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openflexo.foundation.fml.annotations.DeclareModelSlots;
-import org.openflexo.foundation.fml.annotations.DeclareResourceTypes;
+import org.openflexo.foundation.fml.annotations.DeclareResourceFactory;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
@@ -21,7 +21,7 @@ import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource
  * Created by charlie on 02/02/2017.
  */
 @DeclareModelSlots({ RestModelSlot.class, XmlRpcModelSlot.class })
-@DeclareResourceTypes({ XmlRpcVirtualModelInstanceResourceFactory.class, RestVirtualModelInstanceResourceFactory.class })
+@DeclareResourceFactory({ XmlRpcVirtualModelInstanceResourceFactory.class, RestVirtualModelInstanceResourceFactory.class })
 public class HttpTechnologyAdapter extends TechnologyAdapter<HttpTechnologyAdapter> {
 
 	private HttpBindingFactory bindingFactory;
