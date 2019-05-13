@@ -66,8 +66,10 @@ import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
 import org.openflexo.pamela.annotations.Adder;
 import org.openflexo.pamela.annotations.CloningStrategy;
+import org.openflexo.pamela.annotations.CloningStrategy.StrategyType;
 import org.openflexo.pamela.annotations.Embedded;
 import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.Getter.Cardinality;
 import org.openflexo.pamela.annotations.ImplementationClass;
 import org.openflexo.pamela.annotations.ModelEntity;
 import org.openflexo.pamela.annotations.PropertyIdentifier;
@@ -75,8 +77,6 @@ import org.openflexo.pamela.annotations.Remover;
 import org.openflexo.pamela.annotations.Setter;
 import org.openflexo.pamela.annotations.XMLAttribute;
 import org.openflexo.pamela.annotations.XMLElement;
-import org.openflexo.pamela.annotations.CloningStrategy.StrategyType;
-import org.openflexo.pamela.annotations.Getter.Cardinality;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 
 /**
@@ -389,7 +389,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 				HttpVirtualModelInstanceResource<VMI> newResource = createResource(
 						getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(HttpTechnologyAdapter.class),
-						getResourceFactoryClass(), rc, resourceName, resourceURI, getRelativePath(), getSuffix(), true);
+						getResourceFactoryClass(), evaluationContext, getSuffix(), true);
 				VMI data = newResource.getResourceData();
 				data.setVirtualModel(getVirtualModel());
 
