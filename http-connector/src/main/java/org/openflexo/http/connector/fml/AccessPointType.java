@@ -37,7 +37,6 @@ package org.openflexo.http.connector.fml;
 
 import java.lang.reflect.Type;
 
-import org.openflexo.connie.type.CustomTypeFactory;
 import org.openflexo.foundation.fml.TechnologySpecificType;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
@@ -111,7 +110,7 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 	}
 
 	@Override
-	public void resolve(CustomTypeFactory<?> factory) {
-		System.out.println("-------> Resolving " + instanceType + " with factory " + factory);
+	public void resolve() {
+		System.out.println("-------> Resolving " + instanceType);
 	}
 }
