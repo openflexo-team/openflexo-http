@@ -53,7 +53,7 @@ import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
-import org.openflexo.foundation.fml.rm.VirtualModelResource;
+import org.openflexo.foundation.fml.rm.CompilationUnitResource;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.action.CreationSchemeAction;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
@@ -107,9 +107,9 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 	@PropertyIdentifier(type = String.class)
 	String PASSWORD_KEY = "password";
 
-	public VirtualModelResource getVirtualModelResource();
+	public CompilationUnitResource getVirtualModelResource();
 
-	public void setVirtualModelResource(VirtualModelResource virtualModelResource);
+	public void setVirtualModelResource(CompilationUnitResource virtualModelResource);
 
 	public VirtualModel getVirtualModel();
 
@@ -176,7 +176,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		private DataBinding<String> password;
 
 		private VirtualModel virtualModel;
-		private VirtualModelResource virtualModelResource;
+		private CompilationUnitResource virtualModelResource;
 
 		private CreationScheme creationScheme;
 		private String _creationSchemeURI;
@@ -202,7 +202,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public VirtualModelResource getVirtualModelResource() {
+		public CompilationUnitResource getVirtualModelResource() {
 			if (virtualModelResource != null) {
 				return virtualModelResource;
 			}
@@ -213,12 +213,12 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public void setVirtualModelResource(VirtualModelResource virtualModelResource) {
+		public void setVirtualModelResource(CompilationUnitResource virtualModelResource) {
 			if ((virtualModelResource == null && getVirtualModelResource() != null)
 					|| (virtualModelResource != null && !virtualModelResource.equals(getVirtualModelResource()))) {
-				VirtualModelResource oldValue = getVirtualModelResource();
+				CompilationUnitResource oldValue = getVirtualModelResource();
 				this.virtualModelResource = virtualModelResource;
-				setVirtualModel(virtualModelResource.getVirtualModel());
+				setVirtualModel(virtualModelResource.getCompilationUnit());
 				getPropertyChangeSupport().firePropertyChange("virtualModelResource", oldValue, virtualModelResource);
 			}
 		}
@@ -232,7 +232,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 				return ((HttpModelSlot<VMI>) getAssignedFlexoProperty()).getAccessedVirtualModel();
 			}
 			if (virtualModelResource != null) {
-				return virtualModelResource.getVirtualModel();
+				return virtualModelResource.getCompilationUnit();
 			}
 			return virtualModel;
 		}

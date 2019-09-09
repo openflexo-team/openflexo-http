@@ -23,14 +23,9 @@ package org.openflexo.http.connector.rm;
 import java.util.logging.Logger;
 
 import org.openflexo.foundation.FlexoObject;
-import org.openflexo.foundation.IOFlexoException;
-import org.openflexo.foundation.InconsistentDataException;
-import org.openflexo.foundation.InvalidModelDefinitionException;
-import org.openflexo.foundation.InvalidXMLException;
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.resource.FlexoFileNotFoundException;
-import org.openflexo.foundation.resource.PamelaResource;
-import org.openflexo.foundation.resource.PamelaResourceImpl;
+import org.openflexo.foundation.resource.PamelaXMLSerializableResource;
+import org.openflexo.foundation.resource.PamelaXMLSerializableResourceImpl;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.HttpTechnologyContextManager;
@@ -48,8 +43,8 @@ import org.openflexo.pamela.annotations.XMLElement;
 @ModelEntity
 @XMLElement
 @ImplementationClass(AccessPointResourceImpl.class)
-public interface AccessPointResource
-		extends PamelaResource<AccessPoint, AccessPointFactory>, TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter> {
+public interface AccessPointResource extends PamelaXMLSerializableResource<AccessPoint, AccessPointFactory>,
+		TechnologyAdapterResource<AccessPoint, HttpTechnologyAdapter> {
 
 	String TECHNOLOGY_CONTEXT_MANAGER = "technologyContextManager";
 
@@ -64,7 +59,8 @@ public interface AccessPointResource
 	@Getter("model")
 	AccessPoint getModel();
 
-	abstract class AccessPointResourceImpl extends PamelaResourceImpl<AccessPoint, AccessPointFactory> implements AccessPointResource {
+	abstract class AccessPointResourceImpl extends PamelaXMLSerializableResourceImpl<AccessPoint, AccessPointFactory>
+			implements AccessPointResource {
 
 		private static final Logger logger = FlexoLogger.getLogger(AccessPointResourceImpl.class.getPackage().toString());
 
@@ -79,21 +75,6 @@ public interface AccessPointResource
 		@Override
 		public Class<AccessPoint> getResourceDataClass() {
 			return AccessPoint.class;
-		}
-
-		@Override
-		public AccessPoint loadResourceData() throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
-				InconsistentDataException, InvalidModelDefinitionException {
-			/*AccessPoint accessPoint = super.loadResourceData(progress);
-			if (accessPoint.getModelSlot() != null) {
-				getFactory().initializeModel(accessPoint, accessPoint.getModelSlot().getCreationScheme(),
-						accessPoint.getModelSlot().getParameters(), accessPoint.getOwnerInstance());
-			}
-			else {
-				getFactory().initializeModel(accessPoint, null, null, accessPoint.getOwnerInstance());
-			}
-			return accessPoint;*/
-			return null;
 		}
 
 		@Override
