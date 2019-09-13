@@ -42,15 +42,12 @@ import java.util.logging.Logger;
 
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResource;
 import org.openflexo.foundation.fml.rt.rm.AbstractVirtualModelInstanceResourceImpl;
 import org.openflexo.foundation.resource.FileIODelegate;
 import org.openflexo.foundation.resource.FlexoResource;
-import org.openflexo.foundation.technologyadapter.FlexoModelResource;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.fml.HttpInitializer;
 import org.openflexo.http.connector.fml.HttpInitializerAction;
@@ -72,8 +69,8 @@ import org.openflexo.rm.ResourceLocator;
 @ImplementationClass(HttpVirtualModelInstanceResource.HttpVirtualModelInstanceResourceImpl.class)
 @XMLElement
 public interface HttpVirtualModelInstanceResource<VMI extends VirtualModelInstance<VMI, HttpTechnologyAdapter>>
-		extends AbstractVirtualModelInstanceResource<VMI, HttpTechnologyAdapter>,
-		FlexoModelResource<VMI, VirtualModel, HttpTechnologyAdapter, FMLTechnologyAdapter> {
+		extends AbstractVirtualModelInstanceResource<VMI, HttpTechnologyAdapter>
+/*,	FlexoModelResource<VMI, VirtualModel, HttpTechnologyAdapter, FMLTechnologyAdapter>*/ {
 
 	/**
 	 * Default implementation for {@link HttpVirtualModelInstanceResource}
@@ -130,15 +127,15 @@ public interface HttpVirtualModelInstanceResource<VMI extends VirtualModelInstan
 			return "";
 		}
 
-		@Override
+		/*@Override
 		public VMI getModelData() {
 			return getVirtualModelInstance();
 		}
-
+		
 		@Override
 		public VMI getModel() {
 			return getVirtualModelInstance();
-		}
+		}*/
 
 		public abstract String getSuffix();
 

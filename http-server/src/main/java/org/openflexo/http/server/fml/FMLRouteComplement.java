@@ -1,5 +1,6 @@
 package org.openflexo.http.server.fml;
 
+import org.openflexo.foundation.fml.FMLCompilationUnit;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
@@ -28,14 +29,10 @@ public class FMLRouteComplement implements TechnologyAdapterRouteComplement {
 		VirtualModelLibrary virtualModelLibrary = technologyAdapter.getVirtualModelLibrary();
 		TechnologyAdapterRouteService taService = service.getTechnologyAdapterRestService();
 
-
 		// Adds pamela rest service for VirtualModels resources
-		PamelaResourceRestService<VirtualModel, CompilationUnitResource> viewPointConverter = new PamelaResourceRestService<>(
-				"/model",
-				virtualModelLibrary::getCompilationUnitResources,
-				virtualModelLibrary::getCompilationUnitResource,
-				CompilationUnitResource.class, taService,
-				ModelContextLibrary.getModelContext(VirtualModel.class));
+		PamelaResourceRestService<FMLCompilationUnit, CompilationUnitResource> viewPointConverter = new PamelaResourceRestService<>(
+				"/model", virtualModelLibrary::getCompilationUnitResources, virtualModelLibrary::getCompilationUnitResource,
+				CompilationUnitResource.class, taService, ModelContextLibrary.getModelContext(VirtualModel.class));
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, viewPointConverter);
 	}
 

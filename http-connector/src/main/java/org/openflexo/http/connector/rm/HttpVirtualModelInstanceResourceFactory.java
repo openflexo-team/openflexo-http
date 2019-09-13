@@ -63,8 +63,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	public abstract String getExpectedXMLFileSuffix();
 
 	/**
-	 * Build a new {@link RestVirtualModelInstanceResource} with supplied baseName and URI, conform to supplied {@link CompilationUnitResource}
-	 * and located in supplied folder
+	 * Build a new {@link RestVirtualModelInstanceResource} with supplied baseName and URI, conform to supplied
+	 * {@link CompilationUnitResource} and located in supplied folder
 	 * 
 	 * @param baseName
 	 * @param uri
@@ -91,7 +91,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
-			resourceData.setVirtualModel(virtualModelResource.getCompilationUnit());
+			resourceData.setVirtualModel(virtualModelResource.getCompilationUnit().getVirtualModel());
 			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
@@ -105,8 +105,8 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	}
 
 	/**
-	 * Build a new {@link RestVirtualModelInstanceResource} with supplied baseName and URI, conform to supplied {@link CompilationUnitResource}
-	 * and located in supplied container {@link AbstractVirtualModelInstanceResource}
+	 * Build a new {@link RestVirtualModelInstanceResource} with supplied baseName and URI, conform to supplied
+	 * {@link CompilationUnitResource} and located in supplied container {@link AbstractVirtualModelInstanceResource}
 	 * 
 	 * @param baseName
 	 * @param virtualModelResource
@@ -135,7 +135,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
-			resourceData.setVirtualModel(virtualModelResource.getCompilationUnit());
+			resourceData.setVirtualModel(virtualModelResource.getCompilationUnit().getVirtualModel());
 			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext

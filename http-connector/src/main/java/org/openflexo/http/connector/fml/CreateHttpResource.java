@@ -207,7 +207,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 				return virtualModelResource;
 			}
 			if (getVirtualModel() != null) {
-				return getVirtualModel().getVirtualModelResource();
+				return getVirtualModel().getCompilationUnitResource();
 			}
 			return virtualModelResource;
 		}
@@ -218,7 +218,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 					|| (virtualModelResource != null && !virtualModelResource.equals(getVirtualModelResource()))) {
 				CompilationUnitResource oldValue = getVirtualModelResource();
 				this.virtualModelResource = virtualModelResource;
-				setVirtualModel(virtualModelResource.getCompilationUnit());
+				setVirtualModel(virtualModelResource.getCompilationUnit().getVirtualModel());
 				getPropertyChangeSupport().firePropertyChange("virtualModelResource", oldValue, virtualModelResource);
 			}
 		}
@@ -232,7 +232,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 				return ((HttpModelSlot<VMI>) getAssignedFlexoProperty()).getAccessedVirtualModel();
 			}
 			if (virtualModelResource != null) {
-				return virtualModelResource.getCompilationUnit();
+				return virtualModelResource.getCompilationUnit().getVirtualModel();
 			}
 			return virtualModel;
 		}
@@ -242,7 +242,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 			if (this.virtualModel != aVirtualModel) {
 				VirtualModel oldValue = this.virtualModel;
 				this.virtualModel = aVirtualModel;
-				this.virtualModelResource = aVirtualModel.getVirtualModelResource();
+				this.virtualModelResource = aVirtualModel.getCompilationUnitResource();
 				if (getCreationScheme() != null && getCreationScheme().getFlexoConcept() != aVirtualModel) {
 					if (aVirtualModel.getCreationSchemes().size() > 0) {
 						setCreationScheme(aVirtualModel.getCreationSchemes().get(0));

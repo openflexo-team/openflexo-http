@@ -69,10 +69,11 @@ public class ExtendedBindable extends DefaultBindable {
 
 	private static BindingFactory createFactory(Bindable parentBindable) {
 		if (parentBindable instanceof FMLObject) {
-			return new FMLBindingFactory(((FMLObject) parentBindable).getDeclaringCompilationUnit());
+			return new FMLBindingFactory(((FMLObject) parentBindable).getDeclaringCompilationUnit().getVirtualModel());
 		}
 		if (parentBindable instanceof FlexoConceptInstance) {
-			return new FMLBindingFactory(((FlexoConceptInstance) parentBindable).getFlexoConcept().getDeclaringCompilationUnit());
+			return new FMLBindingFactory(
+					((FlexoConceptInstance) parentBindable).getFlexoConcept().getDeclaringCompilationUnit().getVirtualModel());
 		}
 		return new JavaBindingFactory();
 	}
