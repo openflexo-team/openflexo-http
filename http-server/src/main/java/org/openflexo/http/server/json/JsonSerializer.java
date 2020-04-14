@@ -320,10 +320,6 @@ public class JsonSerializer {
 									}
 									break;
 								}
-								case MAP: {
-									// TODO
-									break;
-								}
 								default:
 									break;
 							}
