@@ -88,7 +88,7 @@ public class HttpInitializerAction extends AbstractActionSchemeAction<HttpInitia
 
 	@Override
 	protected void doAction(Object context) throws FlexoException {
-		HttpInitializer applicableActionScheme = getApplicableActionScheme();
+		HttpInitializer applicableActionScheme = getApplicableFlexoBehaviour();
 		if (applicableActionScheme != null && applicableActionScheme.evaluateCondition(getFlexoConceptInstance())) {
 			executeControlGraph();
 		}

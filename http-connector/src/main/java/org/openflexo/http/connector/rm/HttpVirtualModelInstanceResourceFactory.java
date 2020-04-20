@@ -213,7 +213,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	}
 
 	@Override
-	protected <I> HttpVirtualModelInstanceResource<VMI> registerResource(HttpVirtualModelInstanceResource<VMI> resource,
+	public <I> HttpVirtualModelInstanceResource<VMI> registerResource(HttpVirtualModelInstanceResource<VMI> resource,
 			FlexoResourceCenter<I> resourceCenter) {
 		super.registerResource(resource, resourceCenter);
 
