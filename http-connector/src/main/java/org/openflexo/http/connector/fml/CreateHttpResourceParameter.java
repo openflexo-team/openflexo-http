@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.fml.FlexoBehaviour;
-import org.openflexo.foundation.fml.rt.editionaction.BehaviourParameter;
+import org.openflexo.foundation.fml.rt.editionaction.BehaviourCallArgument;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.pamela.annotations.DefineValidationRule;
 import org.openflexo.pamela.annotations.ImplementationClass;
@@ -59,9 +59,9 @@ import org.openflexo.pamela.validation.ValidationIssue;
 @ModelEntity
 @ImplementationClass(CreateHttpResourceParameter.CreateHttpResourceParameterImpl.class)
 @XMLElement(xmlTag = "CreateParameter")
-public interface CreateHttpResourceParameter extends BehaviourParameter<CreateHttpResource<?>> {
+public interface CreateHttpResourceParameter extends BehaviourCallArgument<CreateHttpResource<?>> {
 
-	public static abstract class CreateHttpResourceParameterImpl extends BehaviourParameterImpl<CreateHttpResource<?>>
+	public static abstract class CreateHttpResourceParameterImpl extends BehaviourCallArgumentImpl<CreateHttpResource<?>>
 			implements CreateHttpResourceParameter {
 
 		static final Logger logger = Logger.getLogger(CreateHttpResourceParameter.class.getPackage().getName());
