@@ -91,5 +91,12 @@ public interface AccessPointResource extends PamelaXMLSerializableResource<Acces
 				return null;
 			}
 		}
+
+		@Override
+		public FlexoObject findObject(String objectIdentifier, String userIdentifier) {
+
+			logger.warning("Don't know how to find object for AccessPoint ");
+			return null;
+		}
 	}
 }
