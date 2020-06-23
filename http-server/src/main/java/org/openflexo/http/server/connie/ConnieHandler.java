@@ -115,7 +115,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			FlexoResource<?> resource = serviceManager.getResourceManager().getResource(resourceUri);
 			ResourceUtils.safeGetResourceOrNull(resource);
 			if (resource != null) {
-				FlexoObject object = resource.findObject(objectUrl, null, null);
+				FlexoObject object = (FlexoObject) resource.findObject(objectUrl, null, null);
 				if (type.isInstance(object)) {
 					return type.cast(object);
 				}

@@ -34,10 +34,10 @@ import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.rest.RestObjectActorReference;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceModelFactory;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 
 /**
  * Rest model slot for HTTP technology adapter

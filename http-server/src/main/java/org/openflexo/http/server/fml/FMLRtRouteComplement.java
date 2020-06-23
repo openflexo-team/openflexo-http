@@ -46,7 +46,7 @@ import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
-import org.openflexo.model.ModelContextLibrary;
+import org.openflexo.pamela.ModelContextLibrary;
 
 /**
  * Route complements for FML@RT technology adapter

@@ -48,9 +48,9 @@ import org.openflexo.http.connector.model.HttpObjectActorReference;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
 import org.openflexo.logging.FlexoLogger;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * Implements {@link ActorReference} for {@link FlexoObject} as modelling elements.<br>

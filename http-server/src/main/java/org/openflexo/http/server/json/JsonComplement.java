@@ -70,8 +70,8 @@
 
 package org.openflexo.http.server.json;
 
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.factory.ModelFactory;
 
 import io.vertx.core.json.JsonObject;
 
@@ -79,7 +79,10 @@ import io.vertx.core.json.JsonObject;
  * Complement JSON serializer
  */
 public interface JsonComplement {
-	// Beware to keep exception for children
+	/**
+	 * @throws ModelDefinitionException
+	 *             raised by children
+	 */
 	default ModelFactory getFactory() throws ModelDefinitionException {
 		return null;
 	}

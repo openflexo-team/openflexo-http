@@ -75,7 +75,8 @@ public class HttpVirtualModelInitializerAction
 
 	@Override
 	protected void doAction(Object context) throws FlexoException {
-		if (getActionScheme() != null && getActionScheme().evaluateCondition(getFlexoConceptInstance())) {
+		HttpInitializer applicableActionScheme = getApplicableFlexoBehaviour();
+		if (applicableActionScheme != null && applicableActionScheme.evaluateCondition(getFlexoConceptInstance())) {
 			executeControlGraph();
 		}
 

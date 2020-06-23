@@ -47,14 +47,14 @@ import java.util.stream.Stream;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
-import org.openflexo.model.ModelContext;
-import org.openflexo.model.ModelEntity;
-import org.openflexo.model.ModelProperty;
-import org.openflexo.model.annotations.CloningStrategy;
-import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.ModelContext;
+import org.openflexo.pamela.ModelEntity;
+import org.openflexo.pamela.ModelProperty;
+import org.openflexo.pamela.annotations.CloningStrategy;
+import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.XMLAttribute;
+import org.openflexo.pamela.annotations.XMLElement;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 
 /**
  * TypescriptModelFromPamela generates a TypeScript description for a Pamela model.

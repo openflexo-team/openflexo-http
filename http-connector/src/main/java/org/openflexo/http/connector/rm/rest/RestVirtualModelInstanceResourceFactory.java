@@ -30,7 +30,7 @@ import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.toolbox.FlexoVersion;
 
 /**
@@ -71,7 +71,7 @@ public class RestVirtualModelInstanceResourceFactory extends HttpVirtualModelIns
 	 * Build and return model factory to use for resource data managing
 	 */
 	@Override
-	public HttpVirtualModelInstanceModelFactory makeResourceDataFactory(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource,
+	public HttpVirtualModelInstanceModelFactory makeModelFactory(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		return new RestVirtualModelInstanceModelFactory((RestVirtualModelInstanceResource) resource,
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getEditingContext(),

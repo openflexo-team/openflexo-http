@@ -45,13 +45,13 @@ import org.openflexo.foundation.fml.TechnologySpecificFlexoBehaviour;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.rest.RestFlexoConceptInstance;
-import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.PropertyIdentifier;
-import org.openflexo.model.annotations.Setter;
-import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.PropertyIdentifier;
+import org.openflexo.pamela.annotations.Setter;
+import org.openflexo.pamela.annotations.XMLAttribute;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * This behaviour is the specification of a REST request whose purpose it to obtain all informations stored by a
@@ -64,7 +64,7 @@ import org.openflexo.model.annotations.XMLElement;
 @ImplementationClass(RestObjectRetriever.RestObjectRetrieverImpl.class)
 @XMLElement
 @FML("RestObjectRetriever")
-public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpecificFlexoBehaviour {
+public interface RestObjectRetriever extends AbstractActionScheme, TechnologySpecificFlexoBehaviour<HttpTechnologyAdapter> {
 
 	@PropertyIdentifier(type = DataBinding.class)
 	public static final String URL_KEY = "url";

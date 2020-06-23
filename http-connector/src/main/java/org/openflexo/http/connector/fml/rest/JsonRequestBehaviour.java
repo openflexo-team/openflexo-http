@@ -51,18 +51,18 @@ import org.openflexo.http.connector.fml.HttpRequestBehaviourActionFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
-import org.openflexo.model.annotations.DefineValidationRule;
-import org.openflexo.model.annotations.Embedded;
-import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.Initialize;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.Setter;
-import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.model.validation.ValidationError;
-import org.openflexo.model.validation.ValidationIssue;
-import org.openflexo.model.validation.ValidationRule;
+import org.openflexo.pamela.annotations.DefineValidationRule;
+import org.openflexo.pamela.annotations.Embedded;
+import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.Initialize;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.Setter;
+import org.openflexo.pamela.annotations.XMLAttribute;
+import org.openflexo.pamela.annotations.XMLElement;
+import org.openflexo.pamela.validation.ValidationError;
+import org.openflexo.pamela.validation.ValidationIssue;
+import org.openflexo.pamela.validation.ValidationRule;
 
 /**
  * A behaviour that natively execute an REST request using FML parameters of that behaviour.<br>
@@ -189,7 +189,6 @@ public interface JsonRequestBehaviour extends HttpRequestBehaviour<RestVirtualMo
 	}
 
 	@DefineValidationRule
-	@SuppressWarnings({ "rawtypes" })
 	public static class JsonRequestBehaviourMustAddressAFlexoConceptType
 			extends ValidationRule<JsonRequestBehaviourMustAddressAFlexoConceptType, JsonRequestBehaviour> {
 		public JsonRequestBehaviourMustAddressAFlexoConceptType() {

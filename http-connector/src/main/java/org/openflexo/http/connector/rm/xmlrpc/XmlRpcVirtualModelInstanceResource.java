@@ -47,10 +47,9 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.http.connector.model.xmlrpc.MapSupportFactory;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
-import org.openflexo.toolbox.IProgress;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * This is the {@link FlexoResource} encoding a {@link XmlRpcVirtualModelInstance}
@@ -84,9 +83,9 @@ public interface XmlRpcVirtualModelInstanceResource extends HttpVirtualModelInst
 		}
 
 		@Override
-		public XmlRpcVirtualModelInstance loadResourceData(IProgress progress) throws FlexoFileNotFoundException, IOFlexoException,
-				InvalidXMLException, InconsistentDataException, InvalidModelDefinitionException {
-			XmlRpcVirtualModelInstance returned = super.loadResourceData(progress);
+		public XmlRpcVirtualModelInstance loadResourceData() throws FlexoFileNotFoundException, IOFlexoException, InvalidXMLException,
+				InconsistentDataException, InvalidModelDefinitionException {
+			XmlRpcVirtualModelInstance returned = super.loadResourceData();
 			returned.setSupportFactory(new MapSupportFactory());
 			performHttpInitializerWhenRequired(returned);
 			return returned;

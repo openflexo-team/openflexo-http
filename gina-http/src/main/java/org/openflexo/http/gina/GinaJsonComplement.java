@@ -40,8 +40,8 @@ import org.openflexo.gina.model.FIBContainer;
 import org.openflexo.gina.model.FIBModelFactory;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.factory.ModelFactory;
 import org.openflexo.technologyadapter.gina.model.GINAFIBComponent;
 
 import io.vertx.core.json.JsonObject;

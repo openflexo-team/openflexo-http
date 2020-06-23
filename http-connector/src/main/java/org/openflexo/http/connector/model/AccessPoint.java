@@ -18,12 +18,12 @@ import org.openflexo.http.connector.HttpModelSlot;
 import org.openflexo.http.connector.HttpModelSlot.Format;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint.AccessPointImpl;
-import org.openflexo.model.annotations.Getter;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.Setter;
-import org.openflexo.model.annotations.XMLAttribute;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.Setter;
+import org.openflexo.pamela.annotations.XMLAttribute;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * AccessPoint to an HTTP service
@@ -213,7 +213,7 @@ public interface AccessPoint extends TechnologyObject<HttpTechnologyAdapter>, Re
 				try {
 					AbstractVirtualModelInstanceResource<?, ?> vmiResource = (AbstractVirtualModelInstanceResource<?, ?>) getResource()
 							.getServiceManager().getResourceManager().getResource(ownerInstanceURI);
-					ownerInstance = vmiResource.getResourceData(null);
+					ownerInstance = vmiResource.getResourceData();
 				} catch (Exception e) {
 					logger.log(Level.SEVERE, "Can't find vmi'" + ownerInstanceURI + "'", e);
 				}

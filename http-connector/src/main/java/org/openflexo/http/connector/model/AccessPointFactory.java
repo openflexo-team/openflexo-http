@@ -48,10 +48,10 @@ import org.openflexo.http.connector.fml.CreateHttpResourceParameter;
 import org.openflexo.http.connector.fml.HttpInitializer;
 import org.openflexo.http.connector.fml.HttpVirtualModelInitializerAction;
 import org.openflexo.http.connector.rm.AccessPointResource;
-import org.openflexo.model.converter.RelativePathResourceConverter;
-import org.openflexo.model.exceptions.ModelDefinitionException;
-import org.openflexo.model.factory.EditingContext;
-import org.openflexo.model.factory.ModelFactory;
+import org.openflexo.pamela.converter.RelativePathResourceConverter;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.factory.EditingContext;
+import org.openflexo.pamela.factory.ModelFactory;
 
 /**
  * @author charlie
@@ -142,10 +142,8 @@ public class AccessPointFactory extends ModelFactory implements PamelaResourceMo
 			try {
 				returned = creationScheme.getControlGraph().execute(virtualModelInstance);
 			} catch (ReturnException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (FlexoException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

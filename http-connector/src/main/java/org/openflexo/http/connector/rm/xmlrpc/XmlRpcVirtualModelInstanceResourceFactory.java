@@ -30,7 +30,7 @@ import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.toolbox.FlexoVersion;
 
 /**
@@ -70,8 +70,7 @@ public class XmlRpcVirtualModelInstanceResourceFactory extends HttpVirtualModelI
 	 * Build and return model factory to use for resource data managing
 	 */
 	@Override
-	public HttpVirtualModelInstanceModelFactory makeResourceDataFactory(
-			HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> resource,
+	public HttpVirtualModelInstanceModelFactory makeModelFactory(HttpVirtualModelInstanceResource<XmlRpcVirtualModelInstance> resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		return new XmlRpcVirtualModelInstanceModelFactory((XmlRpcVirtualModelInstanceResource) resource,
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getEditingContext(),

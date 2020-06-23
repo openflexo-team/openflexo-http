@@ -78,14 +78,14 @@ public class HttpService extends FlexoServiceImpl {
 		// initializes technology adapter standalone and for each resource center.
 		FlexoServiceManager serviceManager = getServiceManager();
 		List<TechnologyAdapter> technologyAdapters = serviceManager.getTechnologyAdapterService().getTechnologyAdapters();
-		for (TechnologyAdapter ta : technologyAdapters) {
+		for (TechnologyAdapter<?> ta : technologyAdapters) {
 			logger.info("Activating " + ta.getName());
 			ta.activate();
 		}
 
 		// TODO Why do I need to do this ?
 		for (FlexoResourceCenter<?> resourceCenter : serviceManager.getResourceCenterService().getResourceCenters()) {
-			for (TechnologyAdapter technologyAdapter : technologyAdapters) {
+			for (TechnologyAdapter<?> technologyAdapter : technologyAdapters) {
 				logger.info("Activating ta " + technologyAdapter.getName() + " for rc " + resourceCenter.getName());
 				resourceCenter.activateTechnology(technologyAdapter);
 			}
@@ -97,7 +97,7 @@ public class HttpService extends FlexoServiceImpl {
 		ServiceLoader<RouteService> restServices = ServiceLoader.load(RouteService.class);
 
 		// searches for technology adapter service
-		for (RouteService routeService : restServices) {
+		for (RouteService<?> routeService : restServices) {
 			if (routeService instanceof TechnologyAdapterRouteService) {
 				technologyAdapterRestService = (TechnologyAdapterRouteService) routeService;
 			}
@@ -109,7 +109,7 @@ public class HttpService extends FlexoServiceImpl {
 
 		// initializes REST services
 		List<RouteService> initializedServices = new ArrayList<>();
-		for (RouteService routeService : restServices) {
+		for (RouteService<FlexoServiceManager> routeService : restServices) {
 			String name = routeService.getClass().getName();
 			try {
 				logger.log(Level.INFO, "Initializing REST service " + name);

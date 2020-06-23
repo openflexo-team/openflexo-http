@@ -114,24 +114,24 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 	private final JsonSerializer serializer = new JsonSerializer(this);
 
 	/** Map of prefix to corresponding {@link TechnologyAdapter} */
-	private final Map<String, TechnologyAdapter> technologyAdapterMap = new LinkedHashMap<>();
+	private final Map<String, TechnologyAdapter<?>> technologyAdapterMap = new LinkedHashMap<>();
 
 	/** Map of technology adapters to corresponding {@link TechnologyAdapterRouteComplement} */
-	private final Map<TechnologyAdapter, TechnologyAdapterRouteComplement> complementMap = new LinkedHashMap<>();
+	private final Map<TechnologyAdapter<?>, TechnologyAdapterRouteComplement> complementMap = new LinkedHashMap<>();
 
 	/** Map of FlexoResource classes to the prefix for this type of resource */
 	private final Map<Class<? extends FlexoResource<?>>, String> resourcePrefixes = new TreeMap<>(
 			Comparator.comparing(Class::getSimpleName));
 
 	/** Map of registered {@link org.openflexo.http.server.util.PamelaResourceRestService}s for each technology adapters */
-	private final Map<TechnologyAdapter, List<ResourceRestService>> restServices = new HashMap<>();
+	private final Map<TechnologyAdapter<?>, List<ResourceRestService>> restServices = new HashMap<>();
 
 	@Override
 	public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
 		technologyAdapterService = serviceManager.getTechnologyAdapterService();
 
-		Map<TechnologyAdapter, String> ids = new HashMap<>();
-		for (TechnologyAdapter technologyAdapter : technologyAdapterService.getTechnologyAdapters()) {
+		Map<TechnologyAdapter<?>, String> ids = new HashMap<>();
+		for (TechnologyAdapter<?> technologyAdapter : technologyAdapterService.getTechnologyAdapters()) {
 			String identifier = IdUtils.getTechnologyAdapterId(technologyAdapter);
 			technologyAdapterMap.put(identifier, technologyAdapter);
 			ids.put(technologyAdapter, identifier);
@@ -146,7 +146,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 			try {
 
 				Class<? extends TechnologyAdapter> technologyAdapterClass = complement.getTechnologyAdapterClass();
-				TechnologyAdapter technologyAdapter = technologyAdapterService.getTechnologyAdapter(technologyAdapterClass);
+				TechnologyAdapter<?> technologyAdapter = technologyAdapterService.getTechnologyAdapter(technologyAdapterClass);
 				if (technologyAdapter != null) {
 					logger.log(Level.INFO, "Initializing Technology Adapter complement " + name);
 					complement.initialize(service, this);
@@ -159,11 +159,11 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 	}
 
-	public void registerPamelaResourceRestService(TechnologyAdapter adapter, ResourceRestService service) {
+	public void registerPamelaResourceRestService(TechnologyAdapter<?> adapter, ResourceRestService<?, ?> service) {
 		restServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
 	}
 
-	public void complementTechnologyAdapter(TechnologyAdapter adapter, JsonObject result) {
+	public void complementTechnologyAdapter(TechnologyAdapter<?> adapter, JsonObject result) {
 		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
 		result.put("complemented", complement != null);
 		for (ResourceRestService service : restServices.getOrDefault(adapter, Collections.emptyList())) {
@@ -178,7 +178,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
 		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
 
-		for (Map.Entry<TechnologyAdapter, TechnologyAdapterRouteComplement> entry : complementMap.entrySet()) {
+		for (Map.Entry<TechnologyAdapter<?>, TechnologyAdapterRouteComplement> entry : complementMap.entrySet()) {
 			Router subRouter = Router.router(vertx);
 			String route = "/ta/" + IdUtils.getTechnologyAdapterId(entry.getKey());
 			router.mountSubRouter(route, subRouter);
@@ -204,8 +204,8 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 
 	private void serveTechnologyAdapterList(RoutingContext context) {
 		JsonArray result = new JsonArray();
-		for (Map.Entry<String, TechnologyAdapter> entry : technologyAdapterMap.entrySet()) {
-			TechnologyAdapter technologyAdapter = entry.getValue();
+		for (Map.Entry<String, TechnologyAdapter<?>> entry : technologyAdapterMap.entrySet()) {
+			TechnologyAdapter<?> technologyAdapter = entry.getValue();
 			result.add(JsonUtils.getTechnologyAdapterDescription(entry.getKey(), technologyAdapter, this));
 		}
 		context.response().end(result.encodePrettily());
@@ -213,7 +213,7 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 
 	private void serveTechnologyAdapter(RoutingContext context) {
 		String id = context.request().getParam(("taid"));
-		TechnologyAdapter technologyAdapter = technologyAdapterMap.get(id);
+		TechnologyAdapter<?> technologyAdapter = technologyAdapterMap.get(id);
 		if (technologyAdapter != null) {
 			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, this);
 			context.response().end(object.encodePrettily());

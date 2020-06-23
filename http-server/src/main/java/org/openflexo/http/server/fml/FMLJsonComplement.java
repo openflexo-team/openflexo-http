@@ -123,7 +123,7 @@ public class FMLJsonComplement implements JsonComplement {
 
 	private static void describeFlexoConcept(JsonSerializer serializer, FlexoConcept flexoConcept, JsonObject result, boolean detailed) {
 		result.put("description", serializer.toJson(flexoConcept.getDescription(), detailed));
-		result.put("virtualModel", serializer.toReference(flexoConcept.getVirtualModel()));
+		result.put("virtualModel", serializer.toReference(flexoConcept.getOwner()));
 		result.put("container", serializer.toReference(flexoConcept.getContainerFlexoConcept()));
 		result.put("childFlexoConcepts", serializer.toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 		result.put("parents", serializer.toReferenceArray(flexoConcept.getParentFlexoConcepts()));

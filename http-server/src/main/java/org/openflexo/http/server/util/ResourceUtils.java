@@ -36,6 +36,7 @@
 package org.openflexo.http.server.util;
 
 import java.io.FileNotFoundException;
+
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
@@ -51,8 +52,9 @@ public class ResourceUtils {
 	 */
 	public static ResourceData safeGetResourceOrNull(FlexoResource resource) {
 		try {
-			if (resource == null) return null;
-			return resource.getResourceData(null);
+			if (resource == null)
+				return null;
+			return resource.getResourceData();
 		} catch (ResourceLoadingCancelledException | FileNotFoundException | FlexoException e) {
 			return null;
 		}

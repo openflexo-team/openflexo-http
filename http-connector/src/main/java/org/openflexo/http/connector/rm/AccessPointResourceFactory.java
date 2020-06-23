@@ -10,7 +10,7 @@ import org.openflexo.foundation.technologyadapter.TechnologyContextManager;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.http.connector.model.AccessPointFactory;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 
 /**
  *
@@ -25,7 +25,7 @@ public class AccessPointResourceFactory
 	}
 
 	@Override
-	public AccessPointFactory makeResourceDataFactory(AccessPointResource resource,
+	public AccessPointFactory makeModelFactory(AccessPointResource resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
 		FlexoEditingContext editingContext = technologyContextManager.getServiceManager().getEditingContext();
 		return new AccessPointFactory(resource, editingContext);
@@ -40,11 +40,6 @@ public class AccessPointResourceFactory
 	public <I> boolean isValidArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
 		String name = resourceCenter.retrieveName(serializationArtefact);
 		return FilenameUtils.isExtension(name, URL_EXTENSION);
-	}
-
-	@Override
-	public <I> I getConvertableArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
-		return null;
 	}
 
 	public <I> AccessPointResource makeAccessPointResource(String baseName, RepositoryFolder<AccessPointResource, I> folder)

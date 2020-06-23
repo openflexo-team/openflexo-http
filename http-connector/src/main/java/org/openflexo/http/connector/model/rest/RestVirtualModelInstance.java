@@ -59,11 +59,11 @@ import org.openflexo.http.connector.model.ContentSupportFactory;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.model.rest.JsonSupport.JsonResponse;
 import org.openflexo.logging.FlexoLogger;
-import org.openflexo.model.annotations.ImplementationClass;
-import org.openflexo.model.annotations.Import;
-import org.openflexo.model.annotations.Imports;
-import org.openflexo.model.annotations.ModelEntity;
-import org.openflexo.model.annotations.XMLElement;
+import org.openflexo.pamela.annotations.ImplementationClass;
+import org.openflexo.pamela.annotations.Import;
+import org.openflexo.pamela.annotations.Imports;
+import org.openflexo.pamela.annotations.ModelEntity;
+import org.openflexo.pamela.annotations.XMLElement;
 
 /**
  * REST implementatation for HTTP-specific {@link VirtualModelInstance} reflecting distants objects accessible through a

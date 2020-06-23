@@ -34,7 +34,7 @@ import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
-import org.openflexo.model.exceptions.ModelDefinitionException;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.toolbox.FlexoVersion;
 import org.openflexo.toolbox.StringUtils;
 import org.openflexo.xml.XMLRootElementInfo;
@@ -92,7 +92,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
-			returned.save(null);
+			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext
@@ -136,7 +136,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		if (createEmptyContents) {
 			HttpVirtualModelInstance<VMI> resourceData = createEmptyContents(returned);
 			resourceData.setVirtualModel(virtualModelResource.getVirtualModel());
-			returned.save(null);
+			returned.save();
 			if (resourceData.getFMLRunTimeEngine() != null) {
 				// TODO: today FMLRTVirtualModelInstance is a RunTimeEvaluationContext
 				// TODO: design issue, we should separate FlexoConceptInstance from RunTimeEvaluationContext
@@ -213,7 +213,7 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 	}
 
 	@Override
-	protected <I> HttpVirtualModelInstanceResource<VMI> registerResource(HttpVirtualModelInstanceResource<VMI> resource,
+	public <I> HttpVirtualModelInstanceResource<VMI> registerResource(HttpVirtualModelInstanceResource<VMI> resource,
 			FlexoResourceCenter<I> resourceCenter) {
 		super.registerResource(resource, resourceCenter);
 
@@ -353,11 +353,4 @@ public abstract class HttpVirtualModelInstanceResourceFactory<VMI extends HttpVi
 		}
 		return returned;
 	}
-
-	@Override
-	public <I> I getConvertableArtefact(I serializationArtefact, FlexoResourceCenter<I> resourceCenter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
