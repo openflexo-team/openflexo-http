@@ -6,9 +6,16 @@
 
   HTTP server version of Openflexo Infrastructure
   
-  * {{{./http-server/index.html}HTTP server}}, HTTP server version of Openflexo Infrastructure
+  * {{{GettingStarted.html}Getting started}}
   
-  * {{{./http-connector/index.html}HTTP connector}}, which contains a TechnologyAdapter providing XMLRPC and REST API
+  * {{{API.html}API}}, API for HTTP server
   
-  * {{{./http-connector-ui/index.html}HTTP connector}}, which contains HTTP TechnologyAdapter, UI layer
+  * {{{ApplicationRoutes.html}Application Routes}}
+  
+  * {{{TechnologyAdapterRoutes.html}TechnologyAdapter Routes}}
+  
+  * {{{ComplementJson.html}Complement JSON}}
+
+  * {{{DeployWithDocker.html}Deploy with Docker}}, how to deploy using docker
+  
   
