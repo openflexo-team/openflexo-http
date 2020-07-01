@@ -29,6 +29,16 @@
       <item name="Home" 		href="index.html" />
       <item name="Javadoc"    	href="./apidocs/index.html" />
     </menu>
+
+    <menu name="Documentation">
+      <item name="Getting started" 	href="GettingStarted.html" />
+      <item name="API for HTTP server" 	href="API.html" />
+      <item name="Application Routes" 	href="ApplicationRoutes.html" />
+      <item name="TechnologyAdapter Routes" 	href="TechnologyAdapterRoutes.html" />
+      <item name="Complement JSON" 	href="ComplementJson.html" />
+      <item name="Deploy using Docker" 	href="DeployWithDocker.html" />
+    </menu>
+
     <menu ref="parent" />
     <menu ref="modules" />
     <menu ref="reports" />
