@@ -1,0 +1,17 @@
+ -----
+ Openflexo HTTP
+ -----
+ The Openflexo Team
+ -----
+
+  Contains stuff for Openflexo Server and HTTP technology adapter
+
+  Openflexo-HTTP project contains following components (defined here as modules):
+  
+  * {{{./http-server/index.html}HTTP server}}, HTTP server version of Openflexo Infrastructure
+  
+  * {{{./http-connector/index.html}HTTP connector}}, which contains a TechnologyAdapter providing XMLRPC and REST API
+  
+  * {{{./http-connector-ui/index.html}HTTP connector}}, which contains HTTP TechnologyAdapter, UI layer
+  
+  

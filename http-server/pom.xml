@@ -7,7 +7,7 @@
 		<version>2.0.0</version>
 	</parent>
 	<artifactId>http-server</artifactId>
-	<name>HTTP technology connector UI</name>
+	<name>HTTP server</name>
     <issueManagement>
         <system>JIRA</system>
         <url>https://bugs.openflexo.org/browse/HTTP/</url>
