@@ -1,11 +1,8 @@
 dependencies {
+    implementation project(':http-server')
+    implementation flexoFoundation()
 
-    compile project(':http-server')
-    compile flexoFoundation()
+    implementation ginaConnector()
 
-    compile ginaConnector()
-
-    testCompile testUtils()
-    testCompile flexoFoundationTest()
-    
+    testImplementation flexoFoundationTest()
 }

@@ -1,11 +1,8 @@
 dependencies {
+    implementation flexoFoundation()
 
-    compile flexoFoundation()
+    api 'io.vertx:vertx-core:3.3.3'
+    implementation 'io.vertx:vertx-web:3.3.3'
 
-    compile 'io.vertx:vertx-core:3.3.3'
-    compile 'io.vertx:vertx-web:3.3.3'
-
-    testCompile testUtils()
-    testCompile flexoFoundationTest()
-    
+    testImplementation flexoFoundationTest()
 }
