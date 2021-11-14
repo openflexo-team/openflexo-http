@@ -38,7 +38,6 @@
 
 package org.openflexo.http.connector.fml.xmlrpc;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -67,8 +66,10 @@ import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
 import org.openflexo.pamela.annotations.Adder;
 import org.openflexo.pamela.annotations.CloningStrategy;
+import org.openflexo.pamela.annotations.CloningStrategy.StrategyType;
 import org.openflexo.pamela.annotations.Embedded;
 import org.openflexo.pamela.annotations.Getter;
+import org.openflexo.pamela.annotations.Getter.Cardinality;
 import org.openflexo.pamela.annotations.ImplementationClass;
 import org.openflexo.pamela.annotations.ModelEntity;
 import org.openflexo.pamela.annotations.PastingPoint;
@@ -77,8 +78,6 @@ import org.openflexo.pamela.annotations.Remover;
 import org.openflexo.pamela.annotations.Setter;
 import org.openflexo.pamela.annotations.XMLAttribute;
 import org.openflexo.pamela.annotations.XMLElement;
-import org.openflexo.pamela.annotations.CloningStrategy.StrategyType;
-import org.openflexo.pamela.annotations.Getter.Cardinality;
 
 import de.timroes.axmlrpc.XMLRPCClient;
 import de.timroes.axmlrpc.XMLRPCException;
@@ -272,7 +271,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefinin
 			if (getDynamicMappedFlexoConcept().isValid()) {
 				try {
 					return getDynamicMappedFlexoConcept().getBindingValue(evaluationContext);
-				} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+				} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
 					e.printStackTrace();
 					return null;
 				}
@@ -391,7 +390,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefinin
 			} catch (NullReferenceException e) {
 				e.printStackTrace();
 				throw new FlexoException(e);
-			} catch (InvocationTargetException e) {
+			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 				throw new FlexoException(e);
 			}

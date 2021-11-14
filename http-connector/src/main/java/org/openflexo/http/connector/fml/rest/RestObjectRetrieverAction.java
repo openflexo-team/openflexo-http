@@ -38,7 +38,6 @@
 
 package org.openflexo.http.connector.fml.rest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Vector;
 import java.util.logging.Logger;
 
@@ -119,7 +118,7 @@ public class RestObjectRetrieverAction
 			e.printStackTrace();
 		} catch (NullReferenceException e) {
 			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (ReflectiveOperationException e) {
 			e.printStackTrace();
 		}
 

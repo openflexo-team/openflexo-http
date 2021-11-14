@@ -36,8 +36,11 @@
 package org.openflexo.http.server.connie;
 
 import java.util.Map;
+
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.BindingVariable;
+import org.openflexo.connie.expr.ExpressionEvaluator;
+import org.openflexo.foundation.fml.expr.FMLExpressionEvaluator;
 
 public class ExtendedBindingEvaluationContext implements BindingEvaluationContext {
 
@@ -55,5 +58,10 @@ public class ExtendedBindingEvaluationContext implements BindingEvaluationContex
 			return objects.get(variable.getVariableName());
 		}
 		return parentContext != null ? parentContext.getValue(variable) : null;
+	}
+
+	@Override
+	public ExpressionEvaluator getEvaluator() {
+		return new FMLExpressionEvaluator(this);
 	}
 }

@@ -35,7 +35,6 @@
 
 package org.openflexo.http.server.connie;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -82,7 +81,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
 			Bindable model = getOrCreateBindable(id);
 			DataBinding<Object> binding = new DataBinding<>(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
-			binding.decode();
+			// binding.decode();
 			return binding;
 		});
 	}
@@ -213,7 +212,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					try {
 						Object value = binding.getBindingValue(context);
 						response.result = toJson(value, request.detailed);
-					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+					} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(Response.error(request.id, error).toBuffer());
@@ -245,7 +244,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 						Object value = binding.getBindingValue(context);
 						response.result = toJson(value, request.detailed);
 						;
-					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(Response.error(request.id, error).toBuffer());
@@ -300,7 +299,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 									Object rightValue = valueBinding.getBindingValue(rightContext);
 									leftBinding.setBindingValue(rightValue, leftContext);
 									response.result = toJson(rightValue, request.detailed);
-								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+								} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
 									String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
 											+ request.right.binding.expression + ": " + e;
 									socket.write(Response.error(request.id, error).toBuffer());
@@ -336,7 +335,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 							leftBinding.setBindingValue(newValue, leftContext);
 							response.result = toJson(newValue, request.detailed);
 
-						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
+						} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
 							String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
 									+ request.right.binding.expression + ": " + e;
 							socket.write(Response.error(request.id, error).toBuffer());

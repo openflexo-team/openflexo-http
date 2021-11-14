@@ -38,7 +38,6 @@
 
 package org.openflexo.http.connector.fml.rest;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -168,7 +167,7 @@ public interface RestObjectRole extends FlexoConceptInstanceRole {
 				e.printStackTrace();
 			} catch (NullReferenceException e) {
 				e.printStackTrace();
-			} catch (InvocationTargetException e) {
+			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
 			}
 

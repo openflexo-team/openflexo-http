@@ -36,7 +36,6 @@
 package org.openflexo.http.connector.fml;
 
 import java.io.FileNotFoundException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -404,7 +403,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 						else if (httpModelSlot.getUrl().isValid()) {
 							url = httpModelSlot.getUrl().getBindingValue(evaluationContext);
 						}
-					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
 						e.printStackTrace();
 					}
 					String user = null;
@@ -415,7 +414,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 						else if (httpModelSlot.getUser().isValid()) {
 							user = httpModelSlot.getUser().getBindingValue(evaluationContext);
 						}
-					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
 						e.printStackTrace();
 					}
 					String password = null;
@@ -426,7 +425,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 						else if (httpModelSlot.getPassword().isValid()) {
 							password = httpModelSlot.getPassword().getBindingValue(evaluationContext);
 						}
-					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+					} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
 						e.printStackTrace();
 					}
 
