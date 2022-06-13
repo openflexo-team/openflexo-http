@@ -231,6 +231,7 @@ public class JsonSerializer {
 
 		if (object instanceof FMLObject) {
 			result.put("name", ((FMLObject) object).getName());
+			result.put("uri", ((FMLObject) object).getURI());
 		}
 
 		if (id != null) {
