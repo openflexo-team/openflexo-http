@@ -36,11 +36,23 @@
 package org.openflexo.http.server.util;
 
 import java.util.Collection;
-
+import java.util.List;
+import org.openflexo.foundation.FlexoEditor;
+import org.openflexo.foundation.fml.ActionScheme;
+import org.openflexo.foundation.fml.CreationScheme;
+import org.openflexo.foundation.fml.FlexoBehaviour;
+import org.openflexo.foundation.fml.FlexoBehaviourParameter;
+import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rm.VirtualModelResourceImpl;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
+import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResourceImpl;
+import org.openflexo.http.server.OpenFlexoServer;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonError;
 import org.openflexo.http.server.json.JsonSerializer;
-
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -89,8 +101,134 @@ public abstract class ResourceRestService<D, R> {
 		router.get(prefix + "/:id").produces(RouteService.JSON).handler(this::serveRoot);
 		router.get(prefix + "/:id/object").produces(RouteService.JSON).handler(this::serveEntityList);
 		router.get(prefix + "/:id/object/:eid").produces(RouteService.JSON).handler(this::serveEntity);
+		router.post(prefix + "/:id/createInstance").produces(RouteService.JSON).handler(this::createInstance);
+		router.post(prefix + "/:id/executeBehaviour").produces(RouteService.JSON).handler(this::executeBehaviour);
 	}
 
+	private void executeBehaviour(RoutingContext context) {
+		try {
+			// Getting the context
+			String id = context.request().getParam(("id"));
+			String behaviourName = context.request().getParam(("behaviourName"));
+			R resource = getLoadedResource(id);
+			FMLRTVirtualModelInstanceResourceImpl rtvmiri = (FMLRTVirtualModelInstanceResourceImpl) resource;			
+			FMLRTVirtualModelInstance  rtvmi = rtvmiri.getModel();
+			VirtualModel vm = rtvmi.getVirtualModel();					               
+			
+			// Find the behaviour
+			List<FlexoBehaviour> lBehaviours = vm.getAccessibleFlexoBehaviours(false);			
+			FlexoBehaviour selectedBehavour = vm.getAccessibleFlexoBehaviours(false).stream().filter((fb) -> fb.getName().equals(behaviourName)).findFirst().get();
+			
+			// Only ActionScheme supported
+			if(selectedBehavour instanceof ActionScheme) {
+				ActionScheme as = (ActionScheme) selectedBehavour;
+				ActionSchemeActionFactory actionType = new ActionSchemeActionFactory(as, rtvmi.getFlexoConceptInstance());
+				ActionSchemeAction action = actionType.makeNewAction(rtvmi.getVirtualModelInstance(), null, rtvmi.getEditor());
+				
+				for(FlexoBehaviourParameter p : as.getParameters()) {
+					// Only string parameters supported
+					String paramType = p.getType().getTypeName();
+					if(paramType.equals("java.lang.String")){
+						String parameterValue = context.request().getParam((p.getName()));
+						if(parameterValue == null) {
+							throw new Exception("Missing parameter value : " + p.getName());
+						}
+						action.setParameterValue(p, parameterValue);
+					} else {
+						throw new Exception("Only string parameters are supported");
+					}
+				}
+				action.doAction();
+			} else {
+				throw new Exception("On");
+			}
+			
+			// Save the resource
+			rtvmiri.save();
+			
+		} catch (Exception e) {
+			error(context, e);
+		}
+		
+		// Response
+		JsonObject successResult = new JsonObject();
+		successResult.put("Status", "Ok");
+		context.response().end(successResult.encodePrettily());
+	}
+	
+	private void createInstance(RoutingContext context) {
+		try {
+			// Getting the context
+			String id = context.request().getParam(("id"));
+			String instanceName = context.request().getParam(("instanceName"));
+			String instanceDescription = context.request().getParam(("instanceDescription"));
+			String creationSchemeName = context.request().getParam(("creationSchemeName"));
+			R resource = getLoadedResource(id);
+			
+			if (resource != null) {
+				boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
+				
+				if(resource instanceof VirtualModelResourceImpl) {
+						
+					VirtualModelResourceImpl vmr = (VirtualModelResourceImpl) resource;
+					VirtualModel vm = vmr.getVirtualModel();					
+					
+					// Check for creation scheme
+					if(!vm.hasCreationScheme()) {
+						throw new Exception("The model doesn't have any creation scheme");
+					}
+					
+					// Find the requested creation behaviour
+					CreationScheme selectedCreationScheme = vm.getCreationSchemes().stream().filter((cs) -> cs.getName().equals(creationSchemeName)).findFirst().get();					
+					
+					// Create the instantiation action
+					FlexoEditor editor = OpenFlexoServer.Options.globalEditor;
+					CreateBasicVirtualModelInstance action = CreateBasicVirtualModelInstance.actionType.makeNewAction(editor.getProject().getVirtualModelInstanceRepository().getRootFolder(), null, editor);
+					action.setCreationScheme(selectedCreationScheme);
+					action.setNewVirtualModelInstanceName(instanceName);
+					action.setNewVirtualModelInstanceTitle(instanceDescription);
+					action.setVirtualModel(vm);
+					
+					// Fill parameters
+					for(FlexoBehaviourParameter p : selectedCreationScheme.getParameters()) {
+						// Only string parameters supported
+						String paramType = p.getType().getTypeName();
+						if(paramType.equals("java.lang.String")){
+							String parameterValue = context.request().getParam((p.getName()));
+							if(parameterValue == null) {
+								throw new Exception("Missing parameter value : " + p.getName());
+							}
+							action.setParameterValue(p, parameterValue);
+						} else {
+							throw new Exception("Only string parameters are supported");
+						}
+					}
+					
+					action.doAction();
+					
+					// Check for success
+					if(action.hasActionExecutionSucceeded()) {
+						FMLRTVirtualModelInstance newVirtualModelInstance = action.getNewVirtualModelInstance();
+					} else {
+						throw new Exception("Error while creation new virtual model");
+					}
+					
+					// Response
+					JsonObject successResult = new JsonObject();
+					successResult.put("Status", "Ok");
+					context.response().end(successResult.encodePrettily());
+				} else {
+					throw new Exception("The resource is not a VirtualModel, cannot instantiate");
+				}
+			}
+			else {
+				notFound(context);
+			}
+		} catch (Exception e) {
+			error(context, e);
+		}
+	}
+	
 	private void serveResourceList(RoutingContext context) {
 		try {
 			boolean detailed = context.request().getParam(DETAILED_PARAM) != null;
@@ -151,7 +289,8 @@ public abstract class ResourceRestService<D, R> {
 				JsonArray result = new JsonArray();
 				for (Object object : embeddedObjects) {
 					result.add(serializer.toJson(object, detailed));
-				}
+				}				
+				
 				context.response().end(result.encodePrettily());
 
 			}
@@ -180,7 +319,6 @@ public abstract class ResourceRestService<D, R> {
 				else {
 					notFound(context);
 				}
-
 			}
 			else {
 				notFound(context);
