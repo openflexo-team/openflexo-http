@@ -21,7 +21,7 @@
 		<flexodocresourcecenter.version>1.8.0</flexodocresourcecenter.version>
 		<flexodocresourcemanager.version>1.8.0</flexodocresourcemanager.version>
 		<flexocore.version>2.0.0</flexocore.version>
-		<poi.version>3.12</poi.version>
+		<poi.version>4.1.1</poi.version>
 		<ta.logo>https://support.openflexo.org/images/components/ta/http_ta/HTTP_200x100.png</ta.logo>
 	    <sitedeploy.dir>/home/www/sites/openflexo-http</sitedeploy.dir>
 	</properties>
