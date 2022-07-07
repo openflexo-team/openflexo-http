@@ -52,15 +52,15 @@ import org.openflexo.connie.DataBinding.BindingDefinitionType;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.connie.type.ParameterizedTypeImpl;
-import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.FlexoConceptInstanceType;
 import org.openflexo.foundation.fml.annotations.FML;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.editionaction.TechnologySpecificActionDefiningReceiver;
+import org.openflexo.foundation.fml.rt.FMLExecutionException;
+import org.openflexo.foundation.fml.rt.ReturnException;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
-import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext.ReturnException;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.xmlrpc.XmlRpcVirtualModelInstance;
@@ -286,7 +286,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefinin
 		}
 
 		@Override
-		public T execute(RunTimeEvaluationContext evaluationContext) throws ReturnException, FlexoException {
+		public T execute(RunTimeEvaluationContext evaluationContext) throws ReturnException, FMLExecutionException {
 
 			System.out.println("PerformXmlRpcRequest" + getEndPointName() + " " + getMethodName());
 
@@ -320,7 +320,7 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefinin
 			try {
 				urlObject = new URL(urlString);
 			} catch (MalformedURLException e) {
-				throw new FlexoException(e);
+				throw new FMLExecutionException(e);
 			}
 			XMLRPCClient object = new XMLRPCClient(urlObject);
 
@@ -383,16 +383,16 @@ public interface PerformXmlRpcRequest<T> extends TechnologySpecificActionDefinin
 				}
 
 			} catch (XMLRPCException e) {
-				throw new FlexoException(e);
+				throw new FMLExecutionException(e);
 			} catch (TypeMismatchException e) {
 				e.printStackTrace();
-				throw new FlexoException(e);
+				throw new FMLExecutionException(e);
 			} catch (NullReferenceException e) {
 				e.printStackTrace();
-				throw new FlexoException(e);
+				throw new FMLExecutionException(e);
 			} catch (ReflectiveOperationException e) {
 				e.printStackTrace();
-				throw new FlexoException(e);
+				throw new FMLExecutionException(e);
 			}
 
 		}

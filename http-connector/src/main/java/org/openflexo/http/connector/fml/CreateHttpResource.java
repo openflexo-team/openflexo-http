@@ -44,7 +44,6 @@ import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.InvalidArgumentException;
 import org.openflexo.foundation.fml.CreationScheme;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConceptInstanceRole;
@@ -53,6 +52,7 @@ import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.editionaction.AbstractCreateResource;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rm.CompilationUnitResource;
+import org.openflexo.foundation.fml.rt.FMLExecutionException;
 import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
 import org.openflexo.foundation.fml.rt.action.CreationSchemeAction;
 import org.openflexo.foundation.fml.rt.action.FlexoBehaviourAction;
@@ -380,7 +380,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 		}
 
 		@Override
-		public VMI execute(RunTimeEvaluationContext evaluationContext) throws FlexoException {
+		public VMI execute(RunTimeEvaluationContext evaluationContext) throws FMLExecutionException {
 			try {
 				String resourceName = getResourceName(evaluationContext);
 				String resourceURI = getResourceURI(evaluationContext);
@@ -459,12 +459,18 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 				}
 				else {
-					throw new InvalidArgumentException("AccessPoint creation must be affected to a HTTPModelSlot");
+					throw new FMLExecutionException("AccessPoint creation must be affected to a HTTPModelSlot");
 				}
 
 				return data;
-			} catch (ModelDefinitionException | FileNotFoundException | ResourceLoadingCancelledException e) {
-				throw new FlexoException(e);
+			} catch (FlexoException e) {
+				throw new FMLExecutionException(e);
+			} catch (ModelDefinitionException e) {
+				throw new FMLExecutionException(e);
+			} catch (FileNotFoundException e) {
+				throw new FMLExecutionException(e);
+			} catch (ResourceLoadingCancelledException e) {
+				throw new FMLExecutionException(e);
 			}
 
 		}
