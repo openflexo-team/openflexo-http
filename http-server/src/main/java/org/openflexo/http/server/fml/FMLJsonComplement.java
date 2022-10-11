@@ -108,12 +108,13 @@ package org.openflexo.http.server.fml;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.FlexoEnum;
 import org.openflexo.foundation.fml.FlexoProperty;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelSlot;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
-
 import io.vertx.core.json.JsonObject;
 
 /**
@@ -123,16 +124,20 @@ public class FMLJsonComplement implements JsonComplement {
 
 	private static void describeFlexoConcept(JsonSerializer serializer, FlexoConcept flexoConcept, JsonObject result, boolean detailed) {
 		result.put("description", serializer.toJson(flexoConcept.getDescription(), detailed));
+		result.put("uri",  serializer.toJson(flexoConcept.getURI(), detailed));
 		result.put("virtualModel", serializer.toReference(flexoConcept.getOwner()));
 		result.put("container", serializer.toReference(flexoConcept.getContainerFlexoConcept()));
 		result.put("childFlexoConcepts", serializer.toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 		result.put("parents", serializer.toReferenceArray(flexoConcept.getParentFlexoConcepts()));
-
 		result.put("properties", serializer.toMap(flexoConcept.getDeclaredProperties(), FlexoProperty::getName, detailed));
 		result.put("behaviors", serializer.toMap(flexoConcept.getDeclaredFlexoBehaviours(), FlexoBehaviour::getName, detailed));
-
-		result.put("childFlexoConcepts", serializer.toReferenceArray(flexoConcept.getChildFlexoConcepts()));
 	}
+	
+	
+	private static void describeFlexoEnum(JsonSerializer serializer, FlexoEnum flexoEnum, JsonObject result, boolean detailed) {
+		result.put("values", serializer.toJson(flexoEnum.getValues(), detailed));
+	}
+	
 
 	@Override
 	public void describeObject(JsonSerializer serializer, Object object, JsonObject result, boolean detailed) {
@@ -144,13 +149,24 @@ public class FMLJsonComplement implements JsonComplement {
 		
 		} else*/ if (object instanceof VirtualModel) {
 			VirtualModel model = (VirtualModel) object;
-			describeFlexoConcept(serializer, model, result, detailed);
+			describeFlexoConcept(serializer, model, result, detailed);			
 			result.put("flexoConcepts", serializer.toReferenceArray(model.getFlexoConcepts()));
+			
+			if (object instanceof FlexoEnum) {
+				FlexoEnum flexoEnum = (FlexoEnum) object;
+				describeFlexoEnum(serializer, flexoEnum, result, detailed);
+			}
 
 		}
 		else if (object instanceof FlexoConcept) {
 			FlexoConcept concept = (FlexoConcept) object;
 			describeFlexoConcept(serializer, concept, result, detailed);
+			
+			if (object instanceof FlexoEnum) {
+				FlexoEnum flexoEnum = (FlexoEnum) object;
+				describeFlexoEnum(serializer, flexoEnum, result, detailed);
+
+			}
 
 		}
 		else if (object instanceof FlexoRole) {
@@ -158,6 +174,11 @@ public class FMLJsonComplement implements JsonComplement {
 			result.put("cardinality", serializer.toJson(role.getCardinality(), detailed));
 			result.put("declaredType", serializer.toJson(role.getType(), detailed));
 			result.put("flexoConcept", serializer.toReference(role.getFlexoConcept()));
+			
+			if (object instanceof FMLRTVirtualModelInstanceModelSlot) {
+				FMLRTVirtualModelInstanceModelSlot modelSlot = (FMLRTVirtualModelInstanceModelSlot) object;
+				result.put("accessedVirtualModel", serializer.toJson(modelSlot.getAccessedVirtualModel().getName(), detailed));				
+			}
 
 		}
 		else if (object instanceof FlexoBehaviour) {

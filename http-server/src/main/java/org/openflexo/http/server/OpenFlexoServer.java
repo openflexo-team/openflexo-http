@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
-
 import org.openflexo.foundation.DefaultFlexoServiceManager;
+import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
@@ -35,6 +35,8 @@ public class OpenFlexoServer {
 		public final List<String> centerPaths = new ArrayList<>();
 
 		public final List<String> projectPaths = new ArrayList<>();
+				
+		public static FlexoEditor globalEditor;
 
 	}
 
@@ -162,7 +164,8 @@ public class OpenFlexoServer {
 
 		for (String path : options.projectPaths) {
 			try {
-				manager.getProjectLoaderService().loadProject(new File(path));
+				
+				Options.globalEditor = manager.getProjectLoaderService().loadProject(new File(path));
 			} catch (ProjectLoadingCancelledException | ProjectInitializerException e) {
 				System.err.println("[ERROR] Can't load project '" + path + "'.");
 			}
