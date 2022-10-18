@@ -35,6 +35,7 @@
 
 package org.openflexo.http.connector.fml;
 
+import java.beans.PropertyChangeSupport;
 import java.lang.reflect.Type;
 
 import org.openflexo.foundation.fml.TechnologySpecificType;
@@ -47,15 +48,26 @@ import org.openflexo.http.connector.model.AccessPoint;
  */
 public class AccessPointType implements TechnologySpecificType<HttpTechnologyAdapter> {
 
-	// private final HttpTechnologyAdapter technologyAdapter;
-
 	private final VirtualModelInstanceType instanceType;
 
-	public AccessPointType(/*HttpTechnologyAdapter technologyAdapter,*/ VirtualModelInstanceType instanceType) {
-		// this.technologyAdapter = technologyAdapter;
+	private final PropertyChangeSupport pcSupport;
+
+	public AccessPointType(VirtualModelInstanceType instanceType) {
+		pcSupport = new PropertyChangeSupport(this);
 		this.instanceType = instanceType;
 	}
 
+	@Override
+	public PropertyChangeSupport getPropertyChangeSupport() {
+		return pcSupport;
+	}
+
+	@Override
+	public String getDeletedProperty() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public VirtualModelInstanceType getInstanceType() {
 		return instanceType;
 	}
