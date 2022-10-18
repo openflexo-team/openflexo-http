@@ -27,4 +27,10 @@ public interface RouteService<Context> {
 		response.close();
 	}
 
+	default void badRequest(RoutingContext context) {
+		HttpServerResponse response = context.response();
+		response.setStatusCode(400);
+		response.close();
+	}
+
 }
