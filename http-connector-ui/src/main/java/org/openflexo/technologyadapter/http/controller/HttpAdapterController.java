@@ -58,6 +58,7 @@ package org.openflexo.technologyadapter.http.controller;
 import javax.swing.ImageIcon;
 
 import org.openflexo.fml.rt.controller.view.VirtualModelInstanceView;
+import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
@@ -137,7 +138,7 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	}
 
 	@Override
-	public ModuleView<?> createModuleViewForObject(final TechnologyObject<HttpTechnologyAdapter> object, final FlexoController controller,
+	public ModuleView<?> createModuleViewForMasterObject(final TechnologyObject<HttpTechnologyAdapter> object, final FlexoController controller,
 			final FlexoPerspective perspective) {
 		if (object instanceof HttpVirtualModelInstance) {
 			return new VirtualModelInstanceView((HttpVirtualModelInstance) object, controller, perspective);
@@ -163,13 +164,21 @@ public class HttpAdapterController extends TechnologyAdapterController<HttpTechn
 	}
 
 	@Override
-	public boolean hasModuleViewForObject(TechnologyObject<HttpTechnologyAdapter> obj, FlexoController controller) {
-		if (obj instanceof HttpVirtualModelInstance) {
-			return true;
-		}
-		return obj instanceof AccessPoint;
+	public boolean isRepresentableInModuleView(TechnologyObject<HttpTechnologyAdapter> object) {
+		return (object instanceof HttpVirtualModelInstance) || (object instanceof AccessPoint);
 	}
-
+	
+	@Override
+	public FlexoObject getRepresentableMasterObject(TechnologyObject<HttpTechnologyAdapter> object) {
+		if (object instanceof HttpVirtualModelInstance) {
+			return object;
+		}
+		if (object instanceof HttpVirtualModelInstance) {
+			return object;
+		}
+		return null;
+	}
+	
 	@Override
 	public ImageIcon getIconForFlexoBehaviour(Class<? extends FlexoBehaviour> flexoBehaviourClass) {
 		if (HttpInitializer.class.isAssignableFrom(flexoBehaviourClass)) {
