@@ -60,7 +60,9 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocketFrame;
 import io.vertx.core.json.DecodeException;
+import org.python.jline.internal.Log;
 
+import org.openflexo.toolbox.JsonUtils;
 /**
  * WebSocket service to evaluate Connie expressions
  */
@@ -237,44 +239,47 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			Response response = new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding<Object> binding = getOrCreateBinding(runtimeBinding.binding);
-			if (binding.isValid()) {
-				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
-				if (context != null) {
-
-					try {
-						Object value = binding.getBindingValue(context);
-						response.result = toJson(value, request.detailed);
-						;
-					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
-						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
-						System.out.println(error);
-						socket.write(Response.error(request.id, error).toBuffer());
-					}
-
-					BindingValueChangeListener<?> listener = listenedBindings.get(runtimeBinding);
-					if (listener == null) {
-						listener = new BindingValueChangeListener<Object>(binding, context) {
-							@Override
-							public void bindingValueChanged(Object source, Object newValue) {
-								sendChangeEvent(runtimeBinding, newValue);
-							}
-						};
-						listener.startObserving();
-					}
-					listenedBindings.put(runtimeBinding, listener);
-
-				}
-				else {
-					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
-					System.out.println(error);
-					socket.write(Response.error(request.id, error).toBuffer());
-				}
-
-			}
-			else {
-				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
-			}
+			
+			response.result = handleCanvasXml(request);
 			socket.write(response.toBuffer());
+			//			if (binding.isValid()) {
+//				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
+//				if (context != null) {
+//
+//					try {
+//						Object value = binding.getBindingValue(context);
+//						response.result = toJson(value, request.detailed);
+//						;
+//					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
+//						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
+//						System.out.println(error);
+//						socket.write(Response.error(request.id, error).toBuffer());
+//					}
+//
+//					BindingValueChangeListener<?> listener = listenedBindings.get(runtimeBinding);
+//					if (listener == null) {
+//						listener = new BindingValueChangeListener<Object>(binding, context) {
+//							@Override
+//							public void bindingValueChanged(Object source, Object newValue) {
+//								sendChangeEvent(runtimeBinding, newValue);
+//							}
+//						};
+//						listener.startObserving();
+//					}
+//					listenedBindings.put(runtimeBinding, listener);
+//
+//				}
+//				else {
+//					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
+//					System.out.println(error);
+//					socket.write(Response.error(request.id, error).toBuffer());
+//				}
+//
+//			}
+//			else {
+//				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
+//			}
+//			socket.write(response.toBuffer());
 		}
 
 		private void respondToAssignationRequest(AssignationRequest request) {
@@ -390,5 +395,14 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 	private Object toJson(Object object, boolean detailed) {
 		return taRouteService.getSerializer().toJson(object, detailed);
+	}
+
+	private String handleCanvasXml(ListeningRequest request){
+		String message = request.runtimeBinding.binding.expression;
+
+		Log.info(message);
+		Log.info(JsonUtils.convertXmlToJson(message));
+
+		return JsonUtils.convertXmlToJson(message);
 	}
 }
