@@ -44,7 +44,7 @@ import java.util.WeakHashMap;
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
-import org.openflexo.connie.binding.BindingValueChangeListener;
+import org.openflexo.connie.binding.BindingPathChangeListener;
 import org.openflexo.connie.exception.NotSettableContextException;
 import org.openflexo.connie.exception.NullReferenceException;
 import org.openflexo.connie.exception.TypeMismatchException;
@@ -154,7 +154,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 
 		private final ServerWebSocket socket;
 
-		private final Map<RuntimeBindingId, BindingValueChangeListener> listenedBindings = new HashMap<>();
+		private final Map<RuntimeBindingId, BindingPathChangeListener> listenedBindings = new HashMap<>();
 
 		private final Map<RuntimeBindingId, BindingEvaluationContext> contexts = new WeakHashMap<>();
 
@@ -250,9 +250,9 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 						socket.write(Response.error(request.id, error).toBuffer());
 					}
 
-					BindingValueChangeListener<?> listener = listenedBindings.get(runtimeBinding);
+					BindingPathChangeListener<?> listener = listenedBindings.get(runtimeBinding);
 					if (listener == null) {
-						listener = new BindingValueChangeListener<Object>(binding, context) {
+						listener = new BindingPathChangeListener<Object>(binding, context) {
 							@Override
 							public void bindingValueChanged(Object source, Object newValue) {
 								sendChangeEvent(runtimeBinding, newValue);
@@ -374,7 +374,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void endHandler(Void nothing) {
-			for (BindingValueChangeListener<?> listener : listenedBindings.values()) {
+			for (BindingPathChangeListener<?> listener : listenedBindings.values()) {
 				listener.stopObserving();
 			}
 			listenedBindings.clear();
