@@ -73,5 +73,29 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/prj/add").produces(JSON).handler(prjController::add);
         router.post("/prj/:id/edit").produces(JSON).handler(prjController::edit);
         router.delete("/prj/:id/delete").produces(JSON).handler(prjController::delete);
+
+        router.get("/vm/").produces(JSON).handler(vmController::list);
+        router.get("/vm/:id").produces(JSON).handler(vmController::get);
+        router.post("/vm/add").produces(JSON).handler(vmController::add);
+        router.post("/vm/:id/edit").produces(JSON).handler(vmController::edit);
+        router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
+
+        router.get("/vmi/").produces(JSON).handler(vmiController::list);
+        router.get("/vmi/:id").produces(JSON).handler(vmiController::get);
+        router.post("/vmi/add").produces(JSON).handler(vmiController::add);
+        router.post("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
+        router.delete("/vmi/:id/delete").produces(JSON).handler(vmiController::delete);
+
+        router.get("/cp/").produces(JSON).handler(cpController::list);
+        router.get("/cp/:id").produces(JSON).handler(cpController::get);
+        router.post("/cp/add").produces(JSON).handler(cpController::add);
+        router.post("/cp/:id/edit").produces(JSON).handler(cpController::edit);
+        router.delete("/cp/:id/delete").produces(JSON).handler(cpController::delete);
+
+        router.get("/cpi/").produces(JSON).handler(cpiController::list);
+        router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
+        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
+        router.post("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
+        router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
     }
 }
