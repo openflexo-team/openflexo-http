@@ -46,9 +46,8 @@ public class ProjectsController extends GenericController {
     }
 
     public void get(RoutingContext context) {
-        String projectId    = context.request().getParam(("id"));
-        String uri          = IdUtils.decodeId(projectId);
-
+        String projectId        = context.request().getParam(("id"));
+        String uri              = IdUtils.decodeId(projectId);
         FlexoProject<?> project = null;
 
         for (FlexoProject<?> prj : projectLoader.getRootProjects()) {

@@ -1,6 +1,7 @@
 package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 
 public class GenericController {
@@ -20,6 +21,11 @@ public class GenericController {
         HttpServerResponse response = context.response();
         response.setStatusCode(400);
         response.close();
+    }
 
+    public void badValidation(RoutingContext context, JsonArray errors) {
+        HttpServerResponse response = context.response();
+        response.setStatusCode(200);
+        response.end(errors.encodePrettily());
     }
 }

@@ -30,7 +30,9 @@ public class JsonSerializer {
         result.put("type", "VirtualModel");
         result.put("uri", uri);
         result.put("id", id);
-        result.put("url", "/prj/" + id);
+        result.put("url", "/vm/" + id);
+        result.put("visibility", virtualModel.getVisibility());
+        result.put("is_abstract", virtualModel.isAbstract());
 
         return result;
     }
