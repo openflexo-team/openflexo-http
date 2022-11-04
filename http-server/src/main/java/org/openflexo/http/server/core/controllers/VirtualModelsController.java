@@ -11,8 +11,9 @@ import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
+import org.openflexo.http.server.core.repositories.ProjectsRepositories;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.VirtualModelValidator;
+import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 
@@ -33,13 +34,13 @@ public class VirtualModelsController extends GenericController {
     }
 
     public void add(RoutingContext context) {
-        VirtualModelValidator validator = new VirtualModelValidator(context.request(), virtualModelLibrary);
-        JsonArray errors                = validator.validate();
+        VirtualModelsValidator validator    = new VirtualModelsValidator(context.request(), virtualModelLibrary);
+        JsonArray errors                    = validator.validate();
 
         if(validator.isValide()){
             FMLTechnologyAdapter fmlTechnologyAdapter   = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
             VirtualModelResourceFactory factory         = fmlTechnologyAdapter.getVirtualModelResourceFactory();
-            FlexoProject<?> project                     = Helpers.getProjectById(virtualModelLibrary, validator.getProjectId());
+            FlexoProject<?> project                     = ProjectsRepositories.getProjectById(virtualModelLibrary, validator.getProjectId());
             VirtualModel newVirtualModel                = null;
             VirtualModelResource newVirtualModelResource;
 

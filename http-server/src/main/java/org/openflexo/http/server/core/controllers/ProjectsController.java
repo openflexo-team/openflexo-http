@@ -8,6 +8,8 @@ import org.openflexo.foundation.action.CreateProject;
 import org.openflexo.foundation.project.ProjectLoader;
 import org.openflexo.foundation.resource.*;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
+import org.openflexo.http.server.core.validators.ProjectsValidator;
+import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.python.jline.internal.Log;
@@ -30,19 +32,23 @@ public class ProjectsController extends GenericController {
     }
 
     public void add(RoutingContext context) {
+        ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
+        JsonArray errors            = validator.validate();
 
-        String name                 = context.request().getFormAttribute("name");
-        String rcid                 = context.request().getFormAttribute("rcid");
-        FlexoResourceCenter<?> rc   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(rcid));
-        CreateProject action        = CreateProject.actionType.makeNewAction((RepositoryFolder) rc.getRootFolder(), null, projectLoader.getServiceManager().getDefaultEditor());
+        if(validator.isValide()){
+            FlexoResourceCenter<?> rc   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(validator.getRcId()));
+            CreateProject action        = CreateProject.actionType.makeNewAction((RepositoryFolder) rc.getRootFolder(), null, projectLoader.getServiceManager().getDefaultEditor());
 
-        action.setNewProjectName(name);
-        action.doAction();
+            action.setNewProjectName(validator.getName());
+            action.doAction();
 
-        FlexoProject<?> project = action.getNewProject();
+            FlexoProject<?> project = action.getNewProject();
 
-        projectLoader.getRootProjects().add(project);
-        context.response().end(JsonSerializer.projectSerializer(project).encodePrettily());
+            projectLoader.getRootProjects().add(project);
+            context.response().end(JsonSerializer.projectSerializer(project).encodePrettily());
+        } else {
+            badValidation(context, errors);
+        }
     }
 
     public void get(RoutingContext context) {

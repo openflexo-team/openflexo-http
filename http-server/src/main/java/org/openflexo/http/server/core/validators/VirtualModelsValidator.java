@@ -6,10 +6,11 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.helpers.Helpers;
+import org.openflexo.http.server.core.repositories.ProjectsRepositories;
 
 import java.util.Arrays;
 
-public class VirtualModelValidator {
+public class VirtualModelsValidator {
 
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
@@ -21,12 +22,11 @@ public class VirtualModelValidator {
     private boolean isAbstract;
     private String projectId;
 
-    public VirtualModelValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary){
+    public VirtualModelsValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary){
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
         isValide                    = false;
     }
-
 
     public JsonArray validate(){
         String rName        = request.getFormAttribute("name");
@@ -70,15 +70,13 @@ public class VirtualModelValidator {
             isAbstract = false;
         }
 
-
-
         if(rProjectId == null || rProjectId.isEmpty()){
             errorLine = new JsonObject();
             errorLine.put("project_id", "field required");
             errors.add(errorLine);
         } else {
             try{
-                if(Helpers.getProjectById(virtualModelLibrary, rProjectId) == null){
+                if(ProjectsRepositories.getProjectById(virtualModelLibrary, rProjectId) == null){
                     errorLine = new JsonObject();
                     errorLine.put("project_id", "invalid value");
                     errors.add(errorLine);
