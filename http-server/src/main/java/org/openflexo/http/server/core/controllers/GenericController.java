@@ -25,7 +25,7 @@ public class GenericController {
 
     public void badValidation(RoutingContext context, JsonArray errors) {
         HttpServerResponse response = context.response();
-        response.setStatusCode(200);
+        response.setStatusCode(422);
         response.end(errors.encodePrettily());
     }
 }

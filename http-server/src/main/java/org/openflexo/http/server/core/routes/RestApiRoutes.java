@@ -44,6 +44,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
         router.get("/rc").produces(JSON).handler(rcsController::list);
         router.post("/rc/add").produces(JSON).handler(rcsController::add);
+        router.post("/rc/upload").produces(JSON).handler(rcsController::upload);
         router.get("/rc/:rcid").produces(JSON).handler(rcsController::get);
         router.get("/rc/:rcid/resource").produces(JSON).handler(rcsController::resources);
         router.get("/rc/:rcid/resource/*").produces(JSON).handler(rcsController::resourceFolder);

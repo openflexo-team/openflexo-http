@@ -11,6 +11,8 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.FlexoResourceCenterService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+import org.openflexo.http.server.core.validators.ProjectsValidator;
+import org.openflexo.http.server.core.validators.ResourceCentersValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.toolbox.ZipUtils;
@@ -133,7 +135,6 @@ public class ResourceCentersController extends GenericController {
             else {
                 notFound(context);
             }
-
         }
         else {
             notFound(context);
@@ -141,104 +142,78 @@ public class ResourceCentersController extends GenericController {
     }
 
     public void add(RoutingContext context){
-        String rcPath = context.request().getFormAttribute("rcpath");
+        ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
+        JsonArray errors                    = validator.validate();
 
-        if (rcPath != null){
-            if(Files.exists(Paths.get(rcPath))){
-                addViaPath(context, resourceCenterService);
-            } else {
+        if(validator.isValide()){
+            DirectoryResourceCenter center = null;
+            try {
+                center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(validator.getRcPath()), resourceCenterService);
+                resourceCenterService.addToResourceCenters(center);
+                context.response().end(JsonUtils.getCenterDescription(center).encodePrettily());
+            } catch (IOException e) {
                 badRequest(context);
             }
         } else {
-            addViaFile(context, resourceCenterService);
+            badValidation(context, errors);
         }
     }
 
-    public void addViaPath(RoutingContext context, FlexoResourceCenterService centerService) {
-        String rcPath = context.request().getFormAttribute("rcpath");
+    public void upload(RoutingContext context){
+        ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
+        JsonArray errors                    = validator.validateUpload(context.fileUploads());
 
-        if(Files.exists(Paths.get(rcPath))){
-            DirectoryResourceCenter center = null;
-            try {
-                center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(rcPath), centerService);
-                centerService.addToResourceCenters(center);
-                context.response().end(JsonUtils.getCenterDescription(center).encodePrettily());
-            } catch (IOException e) {
-                error(context, e);
-            }
-        } else {
-            notFound(context);
-        }
-    }
+        if(validator.isValide()){
+            Set<FileUpload> fileUploadSet 			= context.fileUploads();
+            Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
+            JsonObject response 					= new JsonObject();
+            int counter								= 1;
 
-    public void addViaFile(RoutingContext context, FlexoResourceCenterService centerService) {
-        Set<FileUpload> fileUploadSet 			= context.fileUploads();
-        Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
-        JsonObject response 					= new JsonObject();
-        int counter								= 1;
-
-        while (fileUploadIterator.hasNext()){
-            FileUpload fileUpload 	= fileUploadIterator.next();
-            Buffer uploadedFile 	= context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
-            byte[] buffredBytes 	= uploadedFile.getBytes();
-
-            try {
-//				long now 			= System.currentTimeMillis();
-//				String targetDir 	= resourceCentersLocation + "uploaded_rc/" + now + "/";
-                String targetDir 	= resourceCentersLocation + "uploaded_rc/";
-                File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
-
-                FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
-                ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip",targetDir);
-
-                //Delete unnecessary files
-                uploadedRc.delete();
-
-                try{
-//					Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/" + now + "/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                } catch(NoSuchFileException e){
-                    Log.warn("No __MACOSX folder to delete");
-                }
-
-                try{
-//					Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/" + now + "/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                } catch(NoSuchFileException e){
-                    Log.warn("No DS_Store file to delete");
-                }
-
-                File[] files = new File(targetDir).listFiles();
-
-                if(files != null && files.length > 0 && files[0].getName().endsWith(".prj")){
-                    targetDir += files[0].getName();
-                }
+            while (fileUploadIterator.hasNext()){
+                FileUpload fileUpload 	= fileUploadIterator.next();
+                Buffer uploadedFile 	= context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
+                byte[] buffredBytes 	= uploadedFile.getBytes();
 
                 try {
-                    DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir), centerService);
-                    centerService.addToResourceCenters(center);
+                    String targetDir 	= resourceCentersLocation + "uploaded_rc/";
+                    File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
+
+                    FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
+                    ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip",targetDir);
+
+                    //Delete unnecessary files
+                    uploadedRc.delete();
+
+                    try{
+                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                    } catch(NoSuchFileException e){
+                        Log.warn("No __MACOSX folder to delete");
+                    }
+
+                    try{
+                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                    } catch(NoSuchFileException e){
+                        Log.warn("No DS_Store file to delete");
+                    }
+
+                    File[] files = new File(targetDir).listFiles();
+
+                    if(files != null && files.length > 0 && files[0].getName().endsWith(".prj")){
+                        targetDir += files[0].getName();
+                    }
+
+                    DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir), resourceCenterService);
+                    resourceCenterService.addToResourceCenters(center);
                     response.put("rc" + counter, JsonUtils.getCenterDescription(center));
-                    Log.info(JsonUtils.getCenterDescription(center));
+
                     counter++;
                 } catch (IOException e) {
-                    error(context, e);
+                    badRequest(context);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
-
-            // some useful information (for future validation rules)
-            try {
-                String fileName = URLDecoder.decode(fileUpload.fileName(), "UTF-8");
-                Log.info(fileName);
-                Log.info(fileUpload.size());
-                Log.info(fileUpload.contentType());
-                Log.info(fileUpload.contentTransferEncoding());
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
-
+            context.response().end(response.encodePrettily());
+        } else {
+            badValidation(context, errors);
         }
-        context.response().end(response.encodePrettily());
     }
 }

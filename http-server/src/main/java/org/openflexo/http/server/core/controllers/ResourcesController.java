@@ -59,7 +59,6 @@ public class ResourcesController extends GenericController{
             } catch (SaveResourceException e) {
                 error(context, e);
             }
-
         }
         else {
             notFound(context);
