@@ -15,6 +15,7 @@ import org.openflexo.http.server.connie.ConnieHandler;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 
 import io.vertx.core.Vertx;
+import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.ext.web.Router;
@@ -33,7 +34,8 @@ public class HttpService extends FlexoServiceImpl {
 	private final int port;
 	private final String host;
 
-	private final Vertx vertx = Vertx.vertx();
+	// DEBUG TIMEOUT - Better to handle via vertx handler / executor / thread
+	private final Vertx vertx = Vertx.vertx(new VertxOptions().setBlockedThreadCheckInterval(999999999));
 	private final HttpServerOptions serverOptions;
 
 	private HttpServer server = null;
@@ -74,6 +76,10 @@ public class HttpService extends FlexoServiceImpl {
 	@Override
 	public void initialize() {
 		DataBinding.setDefaultCachingStrategy(DataBinding.CachingStrategy.NO_CACHING);
+		
+		// TEST FLX
+		DataBinding.setDefaultCachingStrategy(DataBinding.CachingStrategy.PRAGMATIC_CACHE);
+		
 
 		// initializes technology adapter standalone and for each resource center.
 		FlexoServiceManager serviceManager = getServiceManager();

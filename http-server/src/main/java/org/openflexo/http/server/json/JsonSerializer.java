@@ -71,6 +71,7 @@
 package org.openflexo.http.server.json;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -82,9 +83,12 @@ import java.util.stream.Stream;
 
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstanceNature;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+import org.openflexo.http.server.fml.FMLRtJsonComplement;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.pamela.ModelEntity;
 import org.openflexo.pamela.ModelProperty;
@@ -243,7 +247,14 @@ public class JsonSerializer {
 			// Used for debugging purposes
 			// result.put("__debug_object__", object.toString());
 		}
-		result.put("kind", getType(object));
+		result.put("kind", getType(object));	
+		
+		if(object instanceof FlexoConceptInstance) {
+			FlexoConceptInstance fci  = (FlexoConceptInstance) object;
+			result.put("type", fci.getFlexoConcept().getName());
+		}
+		
+		
 		return id != null;
 	}
 

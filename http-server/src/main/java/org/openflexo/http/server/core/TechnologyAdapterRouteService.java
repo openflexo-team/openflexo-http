@@ -216,7 +216,9 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		TechnologyAdapter<?> technologyAdapter = technologyAdapterMap.get(id);
 		if (technologyAdapter != null) {
 			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, this);
-			context.response().end(object.encodePrettily());
+			// Removed encodePrettily
+			//context.response().end(object.encodePrettily());
+			context.response().end(object.encode());
 		}
 		else {
 			notFound(context);

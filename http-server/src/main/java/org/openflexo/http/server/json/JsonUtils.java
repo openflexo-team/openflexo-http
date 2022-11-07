@@ -146,6 +146,7 @@ public class JsonUtils {
 		resourceDescription.put("id", id);
 		resourceDescription.put("modified", resource.isModified());
 		resourceDescription.put("loaded", resource.isLoaded());
+		resourceDescription.put("hash", resource.hash());
 
 		if (resource.getResourceCenter() != null) {
 			String centerId = IdUtils.encodeuri(resource.getResourceCenter().getDefaultBaseURI());

@@ -42,9 +42,16 @@ import org.openflexo.foundation.fml.ActionScheme;
 import org.openflexo.foundation.fml.CreationScheme;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.FlexoBehaviourParameter;
+import org.openflexo.foundation.fml.FlexoRole;
+import org.openflexo.foundation.fml.PropertyCardinality;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceImpl;
+import org.openflexo.foundation.fml.rt.ActorReference;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance.FMLRTVirtualModelInstanceImpl;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.ModelObjectActorReference;
+import org.openflexo.foundation.fml.rt.PrimitiveActorReference;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
@@ -76,6 +83,8 @@ public abstract class ResourceRestService<D, R> {
 		this.prefix = prefix;
 		this.resourceClass = resourceClass;
 		this.serializer = serializer;
+		
+		
 	}
 
 	public String getPrefix() {
@@ -101,10 +110,82 @@ public abstract class ResourceRestService<D, R> {
 		router.get(prefix + "/:id").produces(RouteService.JSON).handler(this::serveRoot);
 		router.get(prefix + "/:id/object").produces(RouteService.JSON).handler(this::serveEntityList);
 		router.get(prefix + "/:id/object/:eid").produces(RouteService.JSON).handler(this::serveEntity);
+		router.get(prefix + "/:id/describe").produces(RouteService.JSON).handler(this::describeEntity);
 		router.post(prefix + "/:id/createInstance").produces(RouteService.JSON).handler(this::createInstance);
 		router.post(prefix + "/:id/executeBehaviour").produces(RouteService.JSON).handler(this::executeBehaviour);
 	}
 
+	private void describeEntity(RoutingContext context) {
+		try {
+			// Getting the context
+			String id = context.request().getParam(("id"));
+			R resource = getLoadedResource(id);
+			FMLRTVirtualModelInstanceResourceImpl rtvmiri = (FMLRTVirtualModelInstanceResourceImpl) resource;			
+			FMLRTVirtualModelInstance  rtvmi = rtvmiri.getModel();
+			
+			
+			JsonObject result = new JsonObject();
+			result.put("id", rtvmi.getFlexoID());
+			result.put("name", rtvmi.getTitle());
+			result.put("type", rtvmi.getVirtualModel().getName());
+			
+			// Print basic actors
+			result.put("actors", convertFciActorsToJson(rtvmi));
+			
+			// Print root flexo concept instances
+			JsonArray fciEmbedded = new JsonArray();
+			for(FlexoConceptInstance fci : rtvmi.getAllRootFlexoConceptInstances()) {
+				JsonObject fciObject = new JsonObject();
+				fciObject.put("id", fci.getFlexoID());
+				fciObject.put("type", fci.getFlexoConcept().getName());
+				fciObject.put("actors", convertFciActorsToJson(fci));
+				fciObject.put("embeddedFlexoConceptInstances", convertEmbeddedFlexoInstancesListToJson(fci));
+				fciEmbedded.add(fciObject);
+			}
+			result.put("embeddedFlexoConceptInstances", fciEmbedded);
+			context.response().end(result.encode());
+		} catch (Exception e) {
+			error(context, e);
+		}
+	}
+	
+	private JsonArray convertEmbeddedFlexoInstancesListToJson(FlexoConceptInstance rootFci) {
+		// Print root flexo concept instances
+		JsonArray fciEmbedded = new JsonArray();
+		for(FlexoConceptInstance fci : rootFci.getEmbeddedFlexoConceptInstances()) {
+			JsonObject fciObject = new JsonObject();
+			fciObject.put("id", fci.getFlexoID());
+			fciObject.put("type", fci.getFlexoConcept().getName());
+			fciObject.put("actors", convertFciActorsToJson(fci));			
+			fciEmbedded.add(fciObject);
+		}
+		return fciEmbedded;
+					
+	}
+	
+	private JsonArray convertFciActorsToJson(FlexoConceptInstance fci) {
+		JsonArray result = new JsonArray();
+		for(ActorReference actor : fci.getActors()) {
+			JsonObject actorObj = new JsonObject();
+			PropertyCardinality actorCardinality = actor.getFlexoRole().getCardinality();
+			if(actorCardinality == PropertyCardinality.One || actorCardinality == PropertyCardinality.ZeroOne ) {
+				actorObj.put("id", actor.getFlexoID());
+				actorObj.put("name", actor.getRoleName());
+				
+				if(actor instanceof PrimitiveActorReference){
+					actorObj.put("value", actor.getModellingElement().toString());
+				}				
+				if(actor instanceof ModelObjectActorReference){
+					actorObj.put("reference", convertFciActorsToJson((FlexoConceptInstance) actor.getModellingElement()).getJsonObject(0));
+				}
+				result.add(actorObj);
+			} else {
+				
+			}
+		}
+		return result;
+	}
+	
 	private void executeBehaviour(RoutingContext context) {
 		try {
 			// Getting the context
@@ -209,6 +290,7 @@ public abstract class ResourceRestService<D, R> {
 					// Check for success
 					if(action.hasActionExecutionSucceeded()) {
 						FMLRTVirtualModelInstance newVirtualModelInstance = action.getNewVirtualModelInstance();
+						newVirtualModelInstance.getResource().save();
 					} else {
 						throw new Exception("Error while creation new virtual model");
 					}
