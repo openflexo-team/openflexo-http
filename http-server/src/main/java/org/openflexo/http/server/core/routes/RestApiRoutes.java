@@ -15,6 +15,11 @@ import org.openflexo.http.server.util.ResourceRestService;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Here is where we can register web routes for our application.
+ *
+ * @author Ihab Benamer
+ */
 public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
     private ResourceCentersController rcsController;
@@ -26,6 +31,12 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private ConceptsController cpController;
     private ConceptInstancesController cpiController;
 
+    /**
+     * It creates all the necessary controllers and registers them with the service
+     *
+     * @param service the HttpService instance
+     * @param serviceManager the service manager that will be used to access the Flexo services
+     */
     @Override
     public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
         rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService());
@@ -38,6 +49,12 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         cpiController   = new ConceptInstancesController();
     }
 
+    /**
+     * It adds routes to the router
+     *
+     * @param vertx the Vert.x instance
+     * @param router the router to which the routes will be added
+     */
     @Override
     public void addRoutes(Vertx vertx, Router router) {
         router.route().handler(BodyHandler.create());

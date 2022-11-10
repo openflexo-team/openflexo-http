@@ -163,34 +163,6 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		restServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
 	}
 
-//	public void complementTechnologyAdapter(TechnologyAdapter<?> adapter, JsonObject result) {
-//		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
-//		result.put("complemented", complement != null);
-//		for (ResourceRestService service : restServices.getOrDefault(adapter, Collections.emptyList())) {
-//			String simpleName = service.getResourceClass().getSimpleName();
-//			String route = result.getString("url") + service.getPrefix();
-//			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
-//		}
-//	}
-
-//	@Override
-//	public void addRoutes(Vertx vertx, Router router) {
-//		router.get("/ta").produces(JSON).handler(this::serveTechnologyAdapterList);
-//		router.get("/ta/:taid").produces(JSON).handler(this::serveTechnologyAdapter);
-//
-//		for (Map.Entry<TechnologyAdapter<?>, TechnologyAdapterRouteComplement> entry : complementMap.entrySet()) {
-//			Router subRouter = Router.router(vertx);
-//			String route = "/ta/" + IdUtils.getTechnologyAdapterId(entry.getKey());
-//			router.mountSubRouter(route, subRouter);
-//			entry.getValue().addRoutes(vertx, subRouter);
-//
-//			for (ResourceRestService service : restServices.getOrDefault(entry.getKey(), Collections.emptyList())) {
-//				service.addRoutes(subRouter);
-//				resourcePrefixes.put(service.getResourceClass(), route + service.getPrefix());
-//			}
-//		}
-//	}
-
 	public String getPrefix(FlexoResource<?> resource) {
 		if (resource == null)
 			return null;
@@ -201,27 +173,6 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		}
 		return null;
 	}
-
-//	private void serveTechnologyAdapterList(RoutingContext context) {
-//		JsonArray result = new JsonArray();
-//		for (Map.Entry<String, TechnologyAdapter<?>> entry : technologyAdapterMap.entrySet()) {
-//			TechnologyAdapter<?> technologyAdapter = entry.getValue();
-//			result.add(JsonUtils.getTechnologyAdapterDescription(entry.getKey(), technologyAdapter, this));
-//		}
-//		context.response().end(result.encodePrettily());
-//	}
-//
-//	private void serveTechnologyAdapter(RoutingContext context) {
-//		String id = context.request().getParam(("taid"));
-//		TechnologyAdapter<?> technologyAdapter = technologyAdapterMap.get(id);
-//		if (technologyAdapter != null) {
-//			JsonObject object = JsonUtils.getTechnologyAdapterDescription(id, technologyAdapter, this);
-//			context.response().end(object.encodePrettily());
-//		}
-//		else {
-//			notFound(context);
-//		}
-//	}
 
 	public JsonSerializer getSerializer() {
 		return serializer;

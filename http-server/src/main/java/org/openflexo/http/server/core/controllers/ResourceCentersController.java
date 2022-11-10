@@ -6,10 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
 import org.apache.commons.io.FileUtils;
-import org.openflexo.foundation.resource.DirectoryResourceCenter;
-import org.openflexo.foundation.resource.FlexoResource;
-import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.resource.FlexoResourceCenterService;
+import org.openflexo.foundation.resource.*;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.core.validators.ProjectsValidator;
 import org.openflexo.http.server.core.validators.ResourceCentersValidator;
@@ -31,17 +28,34 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Resource centers rest apis controller.
+ *
+ * @author Ihab Benamer
+ */
 public class ResourceCentersController extends GenericController {
 
     private final FlexoResourceCenterService resourceCenterService;
     private final TechnologyAdapterRouteService technologyAdapterRestService;
     private final static String resourceCentersLocation = "/Users/mac/openflexo/2.0.1/openflexo-http/http-connector-rc/src/main/resources/API/";
 
+    /**
+     * Instantiates a new Resource centers controller.
+     *
+     * @param resourceCenterService        the resource center service
+     * @param technologyAdapterRestService the technology adapter rest service
+     */
     public ResourceCentersController(FlexoResourceCenterService resourceCenterService, TechnologyAdapterRouteService technologyAdapterRestService){
         this.resourceCenterService          = resourceCenterService;
         this.technologyAdapterRestService   = technologyAdapterRestService;
     }
 
+    /**
+     * It creates a JSON array, iterates over all the resource centers, and adds a JSON object to the array for each
+     * resource center
+     *
+     * @param context the routing context
+     */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
         for (FlexoResourceCenter<?> center : resourceCenterService.getResourceCenters()) {
@@ -50,9 +64,15 @@ public class ResourceCentersController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
+    /**
+     * It gets the resource center id from the request, decodes it, gets the resource center from the service, and returns
+     * a JSON representation of the resource center
+     *
+     * @param context the context of the request
+     */
     public void get(RoutingContext context) {
         String centerId = context.request().getParam(("rcid"));
-        String uri = IdUtils.decodeId(centerId);
+        String uri      = IdUtils.decodeId(centerId);
 
         FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(uri);
         if (resourceCenter != null) {
@@ -63,9 +83,14 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It gets the resource center from the request, and returns a JSON array of all the resources in that resource center
+     *
+     * @param context the context of the request
+     */
     public void resources(RoutingContext context) {
-        String centerId = context.request().getParam(("rcid"));
-        String centerUri = IdUtils.decodeId(centerId);
+        String centerId     = context.request().getParam(("rcid"));
+        String centerUri    = IdUtils.decodeId(centerId);
 
         FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(centerUri);
         if (resourceCenter != null) {
@@ -80,15 +105,20 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It takes a path, and returns a list of resources and folders contained in the folder corresponding to the path
+     *
+     * @param context the routing context
+     */
     public void resourceFolder(RoutingContext context) {
-        String centerId = context.request().getParam(("rcid"));
-        String centerUri = IdUtils.decodeId(centerId);
+        String centerId     = context.request().getParam(("rcid"));
+        String centerUri    = IdUtils.decodeId(centerId);
 
-        String path = context.request().path();
+        String path         = context.request().path();
         String pathFragment = "resource";
-        String folder = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
+        String folder       = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
 
-        String[] fragments = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
+        String[] fragments  = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
 
         FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
         if (resourceCenter != null) {
@@ -141,12 +171,18 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * > The function validates the request, if the request is valid, it creates a new resource center and adds it to the
+     * resource center service
+     *
+     * @param context the routing context
+     */
     public void add(RoutingContext context){
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validate();
 
         if(validator.isValide()){
-            DirectoryResourceCenter center = null;
+            DirectoryResourceCenter center  = null;
             try {
                 center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(validator.getRcPath()), resourceCenterService);
                 resourceCenterService.addToResourceCenters(center);
@@ -159,6 +195,12 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It takes a zip file, unzips it, deletes the unnecessary files, and adds the resource center to the resource center
+     * service
+     *
+     * @param context the context of the request
+     */
     public void upload(RoutingContext context){
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validateUpload(context.fileUploads());
@@ -175,8 +217,8 @@ public class ResourceCentersController extends GenericController {
                 byte[] buffredBytes 	= uploadedFile.getBytes();
 
                 try {
-                    String targetDir 	= resourceCentersLocation + "uploaded_rc/";
-                    File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
+                    String targetDir    = resourceCentersLocation + "uploaded_rc/";
+                    File uploadedRc     = new File(resourceCentersLocation + "uploaded_rc.zip");
 
                     FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
                     ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip",targetDir);
