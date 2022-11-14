@@ -6,15 +6,10 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.openflexo.http.server.core.repositories.ProjectsRepository;
+import org.openflexo.http.server.core.repositories.ProjectsRepositories;
 
 import java.util.Arrays;
 
-/**
- * The Virtual models validator class.
- *
- * @author Ihab Benamer
- */
 public class VirtualModelsValidator {
 
     private final VirtualModelLibrary virtualModelLibrary;
@@ -27,12 +22,6 @@ public class VirtualModelsValidator {
     private boolean isAbstract;
     private String projectId;
 
-    /**
-     * Instantiates a new Virtual models validator.
-     *
-     * @param request             the request
-     * @param virtualModelLibrary the virtual model library
-     */
     public VirtualModelsValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary){
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
@@ -87,7 +76,7 @@ public class VirtualModelsValidator {
             errors.add(errorLine);
         } else {
             try{
-                if(ProjectsRepository.getProjectById(virtualModelLibrary, rProjectId) == null){
+                if(ProjectsRepositories.getProjectById(virtualModelLibrary, rProjectId) == null){
                     errorLine = new JsonObject();
                     errorLine.put("project_id", "invalid value");
                     errors.add(errorLine);
@@ -113,56 +102,26 @@ public class VirtualModelsValidator {
         return errors;
     }
 
-    /**
-     * This function checks if the user inputs are valid
-     *
-     * @return isValide
-     */
     public boolean isValide(){
         return isValide;
     }
 
-    /**
-     * This function returns the virtual model name
-     *
-     * @return The name is being returned.
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * This function returns the virtual model description
-     *
-     * @return The description is being returned.
-     */
     public String getDescription() {
         return description;
     }
 
-    /**
-     * This function returns the virtual model visibility
-     *
-     * @return The visibility is being returned.
-     */
     public Visibility getVisibility() {
         return visibility;
     }
 
-    /**
-     * This function returns the isAbstract
-     *
-     * @return The isAbstract is being returned.
-     */
     public boolean isAbstract() {
         return isAbstract;
     }
 
-    /**
-     * This function returns the project id
-     *
-     * @return The projectId is being returned.
-     */
     public String getProjectId() {
         return projectId;
     }

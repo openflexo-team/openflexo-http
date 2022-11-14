@@ -1,4 +1,3 @@
-
 package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
@@ -14,31 +13,14 @@ import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.python.jline.internal.Log;
-import java.util.stream.Collectors;
 
-/**
- *  Projects rest apis controller.
- * @author Ihab Benamer
- */
 public class ProjectsController extends GenericController {
 
     private final ProjectLoader projectLoader;
-
-    /**
-     * Instantiates a new Projects controller.
-     *
-     * @param projectLoader the project loader
-     */
     public ProjectsController(ProjectLoader projectLoader) {
         this.projectLoader = projectLoader;
     }
 
-    /**
-     * It creates a JSON array, iterates over all the projects in the project loader, and adds a JSON representation of
-     * each project to the array
-     *
-     * @param context the routing context
-     */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
 
@@ -49,12 +31,6 @@ public class ProjectsController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
-    /**
-     * The function validates the request, if the request is valid, it creates a new project
-     *
-     * @param context The routing context is a wrapper around the request and response objects. It also contains the
-     * request body and the response body.
-     */
     public void add(RoutingContext context) {
         ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
         JsonArray errors            = validator.validate();
@@ -75,12 +51,6 @@ public class ProjectsController extends GenericController {
         }
     }
 
-    /**
-     * It gets the project id from the request, decodes it, finds the project in the project loader, and if it exists,
-     * serializes it and sends it back to the client
-     *
-     * @param context the routing context
-     */
     public void get(RoutingContext context) {
         String projectId        = context.request().getParam(("id"));
         String uri              = IdUtils.decodeId(projectId);
@@ -92,11 +62,12 @@ public class ProjectsController extends GenericController {
             }
         }
 
-        if (project != null) {
+        if (project != null){
             context.response().end(JsonSerializer.projectSerializer(project).encodePrettily());
         } else {
             notFound(context);
         }
+
     }
     public void edit(RoutingContext context) {}
     public void delete(RoutingContext context) {}

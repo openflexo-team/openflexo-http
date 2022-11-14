@@ -9,6 +9,3 @@ dependencies {
     testCompile flexoFoundationTest()
     
 }
-
-apply plugin: 'application'
-mainClassName = "org.openflexo.http.server.OpenFlexoServer"

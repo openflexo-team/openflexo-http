@@ -12,35 +12,20 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
-
-/**
- * The Resource centers validator class.
- *
- * @author Ihab Benamer
- */
 public class ResourceCentersValidator {
     private final static long MAX_UPLOAD_SIZE = 50 * 1000 * 1000;
+
     private final static String[] formats = {"application/zip"};
     private final HttpServerRequest request;
     private boolean isValide;
     private JsonArray errors;
     private String rcPath;
 
-    /**
-     * Instantiates a new Resource centers validator.
-     *
-     * @param request the request
-     */
     public ResourceCentersValidator(HttpServerRequest request) {
-        this.request  = request;
-        isValide      = false;
+        this.request    = request;
+        isValide        = false;
     }
 
-    /**
-     * The function validates the form data and returns a JsonArray of errors
-     *
-     * @return A JsonArray of JsonObjects.
-     */
     public JsonArray validate(){
         String rRcPath  = request.getFormAttribute("rc_path");
         errors          = new JsonArray();
@@ -68,14 +53,6 @@ public class ResourceCentersValidator {
         return errors;
     }
 
-    /**
-     * It takes a set of file uploads, checks if the file name is valid, if the file size is smaller than the maximum
-     * allowed size and if the file format is supported. If any of these conditions is not met, an error is added to the
-     * error array
-     *
-     * @param fileUploadSet The set of files uploaded by the user
-     * @return A JsonArray of errors
-     */
     public JsonArray validateUpload(Set<FileUpload> fileUploadSet){
         Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
         errors                                  = new JsonArray();
@@ -119,20 +96,10 @@ public class ResourceCentersValidator {
         return errors;
     }
 
-    /**
-     * This function checks if the user inputs are valid
-     *
-     * @return isValide
-     */
     public boolean isValide() {
         return isValide;
     }
 
-    /**
-     * This function returns the resource center path
-     *
-     * @return The rcId is being returned.
-     */
     public String getRcPath() {
         return rcPath;
     }

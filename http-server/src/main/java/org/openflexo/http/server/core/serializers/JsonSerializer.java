@@ -5,19 +5,8 @@ import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.http.server.util.IdUtils;
 
-/**
- * A class for defining Json serializers
- *
- * @author Ihab Benamer
- */
 public class JsonSerializer {
 
-    /**
-     * It takes a FlexoProject object and returns a JsonObject that contains the project's name, type, uri, id, and url
-     *
-     * @param project the project to serialize
-     * @return A JsonObject
-     */
     public static JsonObject projectSerializer(FlexoProject<?> project) {
         String uri          = project.getProjectURI();
         String id           = IdUtils.encodeuri(uri);
@@ -32,13 +21,6 @@ public class JsonSerializer {
         return result;
     }
 
-    /**
-     * It takes a VirtualModel object and returns a JsonObject that contains the VirtualModel's name, type, uri, id, url,
-     * visibility, and is_abstract
-     *
-     * @param virtualModel The VirtualModel object to serialize
-     * @return A JsonObject
-     */
     public static JsonObject virtualModelSerializer(VirtualModel virtualModel) {
         String uri          = virtualModel.getURI();
         String id           = IdUtils.encodeuri(uri);

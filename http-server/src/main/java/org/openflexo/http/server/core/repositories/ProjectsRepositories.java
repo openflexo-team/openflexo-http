@@ -4,21 +4,8 @@ import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.http.server.util.IdUtils;
 
-/**
- *  A repository for managing the Project resource.
- *
- * @author Ihab Benamer
- */
-public class ProjectsRepository {
+public class ProjectsRepositories {
 
-
-    /**
-     * It returns a project from a project id
-     *
-     * @param virtualModelLibrary the VirtualModelLibrary instance
-     * @param projectId the id of the project to load
-     * @return A FlexoProject
-     */
     public static FlexoProject<?> getProjectById(VirtualModelLibrary virtualModelLibrary, String projectId) {
         FlexoProject<?> project = null;
 
