@@ -25,6 +25,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private VirtualModelInstancesController vmiController;
     private ConceptsController cpController;
     private ConceptInstancesController cpiController;
+    private PropertiesController prtController;
 
     @Override
     public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
@@ -36,6 +37,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         vmiController   = new VirtualModelInstancesController();
         cpController    = new ConceptsController();
         cpiController   = new ConceptInstancesController();
+        prtController   = new PropertiesController(serviceManager.getVirtualModelLibrary());
     }
 
     @Override
@@ -80,7 +82,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/add").produces(JSON).handler(vmController::add);
         router.post("/vm/:id/edit").produces(JSON).handler(vmController::edit);
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
-
+        
         router.get("/vmi/").produces(JSON).handler(vmiController::list);
         router.get("/vmi/:id").produces(JSON).handler(vmiController::get);
         router.post("/vmi/add").produces(JSON).handler(vmiController::add);
@@ -98,5 +100,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/cpi/add").produces(JSON).handler(cpiController::add);
         router.post("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
         router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
+
+        router.post("/properties/:vmid/add-primitive").produces(JSON).handler(prtController::addPrimitive);
     }
 }

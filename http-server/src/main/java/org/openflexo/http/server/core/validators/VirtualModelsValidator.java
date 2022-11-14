@@ -6,7 +6,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.openflexo.http.server.core.repositories.ProjectsRepositories;
+import org.openflexo.http.server.core.repositories.ProjectsRepository;
 
 import java.util.Arrays;
 
@@ -14,6 +14,7 @@ public class VirtualModelsValidator {
 
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
+    private final String [] visibilities = {"public", "protected", "default", "private"};
     private boolean isValide;
     private JsonArray errors;
     private String name;
@@ -46,7 +47,7 @@ public class VirtualModelsValidator {
             errors.add(errorLine);
         }
 
-        if(rVisibility != null && !rVisibility.isEmpty() && Arrays.asList(new String[]{"public", "protected", "default", "private"}).contains(rVisibility.toLowerCase())) {
+        if(rVisibility != null && !rVisibility.isEmpty() && Arrays.asList(visibilities).contains(rVisibility.toLowerCase())) {
             visibility = Helpers.getVisibility(rVisibility);
         } else if (rVisibility == null || rVisibility.isEmpty()){
             visibility = Helpers.getVisibility(rVisibility);
@@ -76,7 +77,7 @@ public class VirtualModelsValidator {
             errors.add(errorLine);
         } else {
             try{
-                if(ProjectsRepositories.getProjectById(virtualModelLibrary, rProjectId) == null){
+                if(ProjectsRepository.getProjectById(virtualModelLibrary, rProjectId) == null){
                     errorLine = new JsonObject();
                     errorLine.put("project_id", "invalid value");
                     errors.add(errorLine);

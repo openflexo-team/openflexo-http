@@ -4,7 +4,7 @@ import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.http.server.util.IdUtils;
 
-public class ProjectsRepositories {
+public class ProjectsRepository {
 
     public static FlexoProject<?> getProjectById(VirtualModelLibrary virtualModelLibrary, String projectId) {
         FlexoProject<?> project = null;

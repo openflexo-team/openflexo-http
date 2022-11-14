@@ -3,6 +3,7 @@ package org.openflexo.http.server.core.serializers;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.http.server.util.IdUtils;
 
 public class JsonSerializer {
@@ -33,6 +34,21 @@ public class JsonSerializer {
         result.put("url", "/vm/" + id);
         result.put("visibility", virtualModel.getVisibility());
         result.put("is_abstract", virtualModel.isAbstract());
+
+        return result;
+    }
+
+    public  static JsonObject primitivePropertySerializer(CreatePrimitiveRole createPrimitiveRole) {
+        String uri          = createPrimitiveRole.getFlexoConcept().getURI();
+        String id           = IdUtils.encodeuri(uri);
+        String name         = createPrimitiveRole.getRoleName();
+        JsonObject result   = new JsonObject();
+
+        result.put("name", name);
+        result.put("Resource_type", "PrimitiveProperty");
+        result.put("url", "/vm/" + id + "/" + name);
+        result.put("cardinality", createPrimitiveRole.getCardinality());
+        result.put("type", createPrimitiveRole.getPrimitiveType());
 
         return result;
     }
