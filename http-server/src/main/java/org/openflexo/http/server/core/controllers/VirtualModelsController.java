@@ -6,11 +6,10 @@ import io.vertx.ext.web.RoutingContext;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.connie.type.TypeUtils;
+import org.openflexo.foundation.DefaultFlexoEditor;
+import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.FlexoProperty;
-import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
+import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.*;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
@@ -20,6 +19,8 @@ import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.repositories.VirtualModelsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
+import org.openflexo.http.server.core.validators.BehaviourValidator;
+import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
 import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
@@ -85,5 +86,69 @@ public class VirtualModelsController extends GenericController {
 
     public void edit(RoutingContext context) {}
     public void delete(RoutingContext context) {}
+
+    public void addPrimitive(RoutingContext context){
+        String id           = context.request().getParam("id");
+        VirtualModel model  = VirtualModelsRepository.getVirtualModelById(virtualModelLibrary, id);
+
+        if (model != null){
+            PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
+            JsonArray errors                        = validator.validate();
+
+            if(validator.isValide()){
+                CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(model, null, new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager()));
+                property.setRoleName(validator.getName());
+                property.setPrimitiveType(validator.getType());
+                property.setCardinality(validator.getCardinality());
+                property.setDescription(validator.getDescription());
+                property.doAction();
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.primitivePropertySerializer(property).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
+    public void addBehaviour(RoutingContext context){
+        String id           = context.request().getParam("id");
+        VirtualModel model  = VirtualModelsRepository.getVirtualModelById(virtualModelLibrary, id);
+
+        if (model != null){
+            BehaviourValidator validator    = new BehaviourValidator(context.request());
+            JsonArray errors                = validator.validate();
+
+            if(validator.isValide()){
+                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(model, null, new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager()));
+
+                behaviour.setFlexoBehaviourName(validator.getName());
+                behaviour.setFlexoBehaviourClass(validator.getType());
+                behaviour.setDescription(validator.getDescription());
+                behaviour.setVisibility(validator.getVisibility());
+                behaviour.setIsAbstract(validator.isAbstract());
+                behaviour.doAction();
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
 
 }

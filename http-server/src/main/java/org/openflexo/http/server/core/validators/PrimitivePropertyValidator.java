@@ -5,10 +5,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.fml.PropertyCardinality;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.project.ProjectLoader;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.openflexo.http.server.core.repositories.ResourceCentersRepository;
 
 import java.util.Arrays;
 
@@ -48,7 +45,7 @@ public class PrimitivePropertyValidator {
             }
         } else {
             errorLine = new JsonObject();
-            errorLine.put("name", "field required");
+            errorLine.put("name", "Field required");
             errors.add(errorLine);
         }
 
@@ -58,11 +55,11 @@ public class PrimitivePropertyValidator {
                 errorLine.put("type", "Invalid value");
                 errors.add(errorLine);
             } else {
-                type = Helpers.createPrimitiveType(rType);
+                type = Helpers.getPrimitiveType(rType);
             }
         } else {
             errorLine = new JsonObject();
-            errorLine.put("type", "field required");
+            errorLine.put("type", "Field required");
             errors.add(errorLine);
         }
 
@@ -72,11 +69,11 @@ public class PrimitivePropertyValidator {
                 errorLine.put("cardinality", "Invalid value");
                 errors.add(errorLine);
             } else {
-                cardinality = Helpers.createCardinality(rCardinality);
+                cardinality = Helpers.getCardinality(rCardinality);
             }
         } else {
             errorLine = new JsonObject();
-            errorLine.put("cardinality", "field required");
+            errorLine.put("cardinality", "Field required");
             errors.add(errorLine);
         }
 

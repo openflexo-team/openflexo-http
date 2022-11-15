@@ -1,19 +1,11 @@
 package org.openflexo.http.server.core.helpers;
 
 import org.openflexo.connie.type.PrimitiveType;
-import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.action.FlexoAction;
 import org.openflexo.foundation.fml.*;
-import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.foundation.fml.action.PropertyEntry;
-import org.openflexo.foundation.project.ProjectLoader;
-import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.technologyadapter.ModelSlot;
-import org.openflexo.http.server.util.IdUtils;
 
 import java.lang.reflect.Type;
-import java.util.Date;
 
 public class Helpers {
 
@@ -37,7 +29,30 @@ public class Helpers {
         }
     }
 
-    public static PropertyCardinality createCardinality(String cardinality) {
+    public static PropertyEntry.PropertyType getPropertyType(String type){
+        switch (type){
+            case "PRIMITIVE":
+                return PropertyEntry.PropertyType.PRIMITIVE;
+            case "ABSTRACT_PROPERTY":
+                return PropertyEntry.PropertyType.ABSTRACT_PROPERTY;
+            case "EXPRESSION_PROPERTY":
+                return PropertyEntry.PropertyType.EXPRESSION_PROPERTY;
+            case "GET_PROPERTY":
+                return PropertyEntry.PropertyType.GET_PROPERTY;
+            case "GET_SET_PROPERTY":
+                return PropertyEntry.PropertyType.GET_SET_PROPERTY;
+            case "FLEXO_CONCEPT_INSTANCE":
+                return PropertyEntry.PropertyType.FLEXO_CONCEPT_INSTANCE;
+            case "MODEL_SLOT":
+                return PropertyEntry.PropertyType.MODEL_SLOT;
+            case "TECHNOLOGY_ROLE":
+                return PropertyEntry.PropertyType.TECHNOLOGY_ROLE;
+            default:
+                return null;
+        }
+    }
+
+    public static PropertyCardinality getCardinality(String cardinality) {
         switch (cardinality){
             case "One":
                 return PropertyCardinality.One;
@@ -50,7 +65,7 @@ public class Helpers {
         }
     }
     
-    public static PrimitiveType createPrimitiveType(String  type){
+    public static PrimitiveType getPrimitiveType(String  type){
         switch (type){
             case "String":
                 return PrimitiveType.String;
@@ -67,6 +82,37 @@ public class Helpers {
                 return PrimitiveType.Float;
             case "Double":
                 return PrimitiveType.Double;
+        }
+        return null;
+    }
+
+    public static Type getAbstractType(String type) {
+        switch (type){
+            case "FlexoConcept":
+                return FlexoConcept.class;
+            case "VirtualModel":
+                return VirtualModel.class;
+            default:
+                return (Type) getPrimitiveType(type);
+        }
+    }
+
+    public static Class<? extends FlexoBehaviour> getBehaviourType(String type){
+        switch (type){
+            case "action":
+                return ActionScheme.class;
+            case "cloning":
+                return CloningScheme.class;
+            case "creation":
+                return CreationScheme.class;
+            case "deletion":
+                return DeletionScheme.class;
+            case "event":
+                return EventListener.class;
+            case "synchronization":
+                return SynchronizationScheme.class;
+            case "navigation":
+                return NavigationScheme.class;
         }
         return null;
     }

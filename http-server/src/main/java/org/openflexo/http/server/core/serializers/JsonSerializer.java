@@ -3,6 +3,7 @@ package org.openflexo.http.server.core.serializers;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.action.CreateFlexoBehaviour;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.http.server.util.IdUtils;
 
@@ -38,17 +39,35 @@ public class JsonSerializer {
         return result;
     }
 
-    public  static JsonObject primitivePropertySerializer(CreatePrimitiveRole createPrimitiveRole) {
-        String uri          = createPrimitiveRole.getFlexoConcept().getURI();
+    public  static JsonObject primitivePropertySerializer(CreatePrimitiveRole role) {
+        String uri          = role.getFlexoConcept().getURI();
         String id           = IdUtils.encodeuri(uri);
-        String name         = createPrimitiveRole.getRoleName();
+        String name         = role.getRoleName();
         JsonObject result   = new JsonObject();
 
         result.put("name", name);
         result.put("Resource_type", "PrimitiveProperty");
         result.put("url", "/vm/" + id + "/" + name);
-        result.put("cardinality", createPrimitiveRole.getCardinality());
-        result.put("type", createPrimitiveRole.getPrimitiveType());
+        result.put("cardinality", role.getCardinality());
+        result.put("type", role.getPrimitiveType());
+
+        return result;
+    }
+
+    public static JsonObject behaviourSerializer(CreateFlexoBehaviour behaviour){
+        String uri          = behaviour.getFlexoConcept().getURI();
+        String id           = IdUtils.encodeuri(uri);
+        String name         = behaviour.getFlexoBehaviourName();
+        JsonObject result   = new JsonObject();
+
+        result.put("name", name);
+        result.put("Resource_type", "FlexoBehaviour");
+        result.put("url", "/vm/" + id + "/" + name);
+        result.put("type", behaviour.getFlexoBehaviourClass());
+        result.put("visibility", behaviour.getVisibility());
+        result.put("is_abstract", behaviour.getIsAbstract());
+        result.put("description", behaviour.getDescription());
+
 
         return result;
     }
