@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VirtualModel id="FLX-1" virtualModelClass="org.openflexo.foundation.fml.VirtualModel" modelVersion="2.0" uri="http://www.openflexo.org/projects/2022/11/test_1668603825632.prj/virtualModelTest.fml" version="0.1" visibility="Public" isAbstract="true" name="virtualModelTest" description="desc" userID="FLX" flexoID="1">
+  <Inspector id="FLX-2" inspectorTitle="virtualModelTest" userID="FLX" flexoID="2" />
+  <ActionScheme id="FLX-3" visibility="Public" label="behaviour" width="800" name="behaviour" height="600" userID="FLX" flexoID="3">
+    <BehaviourControlGraph_EmptyControlGraph id="FLX-4" userID="FLX" flexoID="4" />
+  </ActionScheme>
+</VirtualModel>

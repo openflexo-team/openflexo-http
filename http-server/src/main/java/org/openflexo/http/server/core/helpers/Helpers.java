@@ -1,13 +1,26 @@
 package org.openflexo.http.server.core.helpers;
 
 import org.openflexo.connie.type.PrimitiveType;
+import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.PropertyEntry;
 
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class Helpers {
+
+    private static DefaultFlexoEditor defaultFlexoEditor;
+
+    public static DefaultFlexoEditor getDefaultFlexoEditor(VirtualModelLibrary virtualModelLibrary){
+        if (defaultFlexoEditor != null)
+            defaultFlexoEditor = new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager());
+
+        return defaultFlexoEditor;
+    }
 
     public static String createVirtualModelUri(FlexoProject<?> project, String name) {
         return project.getProjectURI() + "/" + name + ".fml";
@@ -113,6 +126,34 @@ public class Helpers {
                 return SynchronizationScheme.class;
             case "navigation":
                 return NavigationScheme.class;
+        }
+        return null;
+    }
+
+    public static Object castPrimitiveValue(String type, String value){
+        switch (type){
+            case "String":
+                return value;
+            case "Date":
+                try {
+                    return new SimpleDateFormat("dd-MM-yyyy").parse(value);
+                } catch (ParseException e) {
+                    return null;
+                }
+            case "Boolean":
+                return Boolean.valueOf(value);
+            case "Integer":
+                return Integer.valueOf(value);
+            case "Byte":
+                return Byte.valueOf(value);
+            case "Long":
+                return Long.valueOf(value);
+            case "Short":
+                return Short.valueOf(value);
+            case "Float":
+                return Float.valueOf(value);
+            case "Double":
+                return Double.valueOf(value);
         }
         return null;
     }

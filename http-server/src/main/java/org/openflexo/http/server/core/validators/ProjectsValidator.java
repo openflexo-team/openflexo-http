@@ -4,12 +4,13 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.project.ProjectLoader;
+import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ResourceCentersRepository;
 
-public class ProjectsValidator {
+public class ProjectsValidator extends GenericValidator{
     private final ProjectLoader projectLoader;
     private final HttpServerRequest request;
-    private boolean isValide;
+    private boolean isValid;
     private JsonArray errors;
     private String name;
     private String rcId;
@@ -17,7 +18,19 @@ public class ProjectsValidator {
     public ProjectsValidator(ProjectLoader projectLoader, HttpServerRequest request) {
         this.projectLoader  = projectLoader;
         this.request        = request;
-        isValide            = false;
+        isValid             = false;
+    }
+
+    public String validateResourceCenterID(String id) throws BadValidationException {
+        if(id == null || id.isEmpty()){
+            throw new BadValidationException("Field required");
+        } else {
+            if(ResourceCentersRepository.getResourceCenterById(projectLoader, id) == null){
+                throw new BadValidationException("Field required");
+            } else {
+                return id;
+            }
+        }
     }
 
     public JsonArray validate(){
@@ -27,35 +40,30 @@ public class ProjectsValidator {
 
         JsonObject errorLine;
 
-        if(rName != null && !rName.isEmpty()){
-            name = rName;
-        } else {
+        try{
+            name = validateProjectName(rName);
+        } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", "field required");
+            errorLine.put("name", e);
             errors.add(errorLine);
         }
 
-        if(rRcId == null || rRcId.isEmpty()){
+        try{
+            rcId = validateResourceCenterID(rRcId);
+        } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("rc_id", "field required");
+            errorLine.put("rc_id", e);
             errors.add(errorLine);
-        } else {
-            if(ResourceCentersRepository.getResourceCenterById(projectLoader, rRcId) == null){
-                errorLine = new JsonObject();
-                errorLine.put("rc_id", "invalid value");
-                errors.add(errorLine);
-            } else {
-                rcId = rRcId;
-            }
         }
 
         if(errors.isEmpty())
-            isValide = true;
+            isValid = true;
+
         return errors;
     }
 
-    public boolean isValide() {
-        return isValide;
+    public boolean isValid() {
+        return isValid;
     }
 
     public String getName() {

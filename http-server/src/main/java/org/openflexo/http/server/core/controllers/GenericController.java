@@ -4,7 +4,7 @@ import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 
-public class GenericController {
+public abstract class GenericController {
 
     public void notFound(RoutingContext context) {
         context.response().setStatusCode(404).close();

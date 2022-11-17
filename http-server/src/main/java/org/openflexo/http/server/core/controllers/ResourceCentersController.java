@@ -145,7 +145,7 @@ public class ResourceCentersController extends GenericController {
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validate();
 
-        if(validator.isValide()){
+        if(validator.isValid()){
             DirectoryResourceCenter center = null;
             try {
                 center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(validator.getRcPath()), resourceCenterService);
@@ -163,7 +163,7 @@ public class ResourceCentersController extends GenericController {
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validateUpload(context.fileUploads());
 
-        if(validator.isValide()){
+        if(validator.isValid()){
             Set<FileUpload> fileUploadSet 			= context.fileUploads();
             Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
             JsonObject response 					= new JsonObject();

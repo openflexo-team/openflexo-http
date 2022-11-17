@@ -2,9 +2,10 @@ package org.openflexo.http.server.core.serializers;
 
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
+import org.openflexo.foundation.fml.FlexoBehaviour;
+import org.openflexo.foundation.fml.FlexoBehaviourParameter;
+import org.openflexo.foundation.fml.PrimitiveRole;
 import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.action.CreateFlexoBehaviour;
-import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.http.server.util.IdUtils;
 
 public class JsonSerializer {
@@ -15,10 +16,10 @@ public class JsonSerializer {
         JsonObject result   = new JsonObject();
 
         result.put("name", project.getDisplayableName());
-        result.put("type", "Project");
+        result.put("resource_type", "Project");
         result.put("uri", uri);
         result.put("id", id);
-        result.put("url", "/prj/" + id);
+        result.put("resource_center_id", project.getResourceCenter().getFlexoID());
 
         return result;
     }
@@ -29,47 +30,55 @@ public class JsonSerializer {
         JsonObject result   = new JsonObject();
 
         result.put("name", virtualModel.getName());
-        result.put("type", "VirtualModel");
+        result.put("resource_type", "VirtualModel");
         result.put("uri", uri);
         result.put("id", id);
-        result.put("url", "/vm/" + id);
         result.put("visibility", virtualModel.getVisibility());
         result.put("is_abstract", virtualModel.isAbstract());
 
         return result;
     }
 
-    public  static JsonObject primitivePropertySerializer(CreatePrimitiveRole role) {
-        String uri          = role.getFlexoConcept().getURI();
-        String id           = IdUtils.encodeuri(uri);
+    public  static JsonObject primitivePropertySerializer(PrimitiveRole<?> role) {
         String name         = role.getRoleName();
         JsonObject result   = new JsonObject();
 
         result.put("name", name);
-        result.put("Resource_type", "PrimitiveProperty");
-        result.put("url", "/vm/" + id + "/" + name);
+        result.put("resource_type", "PrimitiveProperty");
         result.put("cardinality", role.getCardinality());
         result.put("type", role.getPrimitiveType());
+        result.put("virtual_model_id", IdUtils.encodeuri(role.getDeclaringVirtualModel().getURI()));
 
         return result;
     }
 
-    public static JsonObject behaviourSerializer(CreateFlexoBehaviour behaviour){
-        String uri          = behaviour.getFlexoConcept().getURI();
-        String id           = IdUtils.encodeuri(uri);
-        String name         = behaviour.getFlexoBehaviourName();
+    public static JsonObject behaviourSerializer(FlexoBehaviour behaviour){
         JsonObject result   = new JsonObject();
 
-        result.put("name", name);
-        result.put("Resource_type", "FlexoBehaviour");
-        result.put("url", "/vm/" + id + "/" + name);
-        result.put("type", behaviour.getFlexoBehaviourClass());
+        result.put("name", behaviour.getName());
+        result.put("resource_type", "Behaviour");
+        result.put("id", behaviour.getURI());
+        result.put("type", behaviour.getFlexoBehaviourActionType().getClass().getName());
         result.put("visibility", behaviour.getVisibility());
-        result.put("is_abstract", behaviour.getIsAbstract());
+        result.put("is_abstract", behaviour.isAbstract());
         result.put("description", behaviour.getDescription());
-
+        result.put("signature", behaviour.getSignature());
+        result.put("virtual_model_id", IdUtils.encodeuri(behaviour.getDeclaringVirtualModel().getURI()));
 
         return result;
     }
 
+    public static JsonObject behaviourParameterSerializer(FlexoBehaviourParameter parameter){
+        JsonObject result           = new JsonObject();
+
+        result.put("name", parameter.getName());
+        result.put("resource_type", "BehaviourParameter");
+        result.put("type", parameter.getType().toString());
+        result.put("default_value", parameter.getDefaultValue().toString());
+        result.put("is_required", parameter.getIsRequired());
+        result.put("description", parameter.getDescription());
+        result.put("behaviour_id", IdUtils.encodeuri(parameter.getBehaviour().getURI()));
+
+        return result;
+    }
 }

@@ -35,7 +35,7 @@ public class ProjectsController extends GenericController {
         ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
         JsonArray errors            = validator.validate();
 
-        if(validator.isValide()){
+        if(validator.isValid()){
             FlexoResourceCenter<?> rc   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(validator.getRcId()));
             CreateProject action        = CreateProject.actionType.makeNewAction((RepositoryFolder) rc.getRootFolder(), null, projectLoader.getServiceManager().getDefaultEditor());
 

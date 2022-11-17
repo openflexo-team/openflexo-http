@@ -5,17 +5,14 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
-import org.openflexo.http.server.core.helpers.Helpers;
+import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 
-import java.util.Arrays;
-
-public class VirtualModelsValidator {
+public class VirtualModelsValidator extends GenericValidator{
 
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
-    private final String [] visibilities = {"public", "protected", "default", "private"};
-    private boolean isValide;
+    private boolean isValid;
     private JsonArray errors;
     private String name;
     private String description;
@@ -26,7 +23,23 @@ public class VirtualModelsValidator {
     public VirtualModelsValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary){
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
-        isValide                    = false;
+        isValid                     = false;
+    }
+
+    public String validateProjectID(String id) throws BadValidationException {
+        if(id == null || id.isEmpty()){
+            throw new BadValidationException("Field required");
+        } else {
+            try{
+                if(ProjectsRepository.getProjectById(virtualModelLibrary, id) == null){
+                    throw new BadValidationException("Invalid value");
+                } else {
+                    return id;
+                }
+            } catch (IllegalArgumentException e){
+                throw new BadValidationException("Invalid value");
+            }
+        }
     }
 
     public JsonArray validate(){
@@ -39,72 +52,48 @@ public class VirtualModelsValidator {
 
         JsonObject errorLine;
 
-        if(rName != null && !rName.isEmpty()){
-            name = rName;
-        } else {
+        try{
+            name = validateName(rName);
+        } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", "field required");
+            errorLine.put("name", e);
             errors.add(errorLine);
         }
 
-        if(rVisibility != null && !rVisibility.isEmpty() && Arrays.asList(visibilities).contains(rVisibility.toLowerCase())) {
-            visibility = Helpers.getVisibility(rVisibility);
-        } else if (rVisibility == null || rVisibility.isEmpty()){
-            visibility = Helpers.getVisibility(rVisibility);
-        } else {
+        try{
+            visibility = validateVisibility(rVisibility);
+        } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("visibility", "invalid value");
+            errorLine.put("visibility", e);
             errors.add(errorLine);
         }
 
-        if(rIsAbstract != null && !rIsAbstract.isEmpty()){
-            if(rIsAbstract.equalsIgnoreCase("true") || rIsAbstract.equals("1")){
-                isAbstract = true;
-            } else if(rIsAbstract.equalsIgnoreCase("false") || rIsAbstract.equals("0")){
-                isAbstract = false;
-            } else {
-                errorLine = new JsonObject();
-                errorLine.put("is_abstract", "invalid value");
-                errors.add(errorLine);
-            }
-        } else {
-            isAbstract = false;
-        }
-
-        if(rProjectId == null || rProjectId.isEmpty()){
+        try{
+            isAbstract = validateBoolean(rIsAbstract);
+        } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("project_id", "field required");
+            errorLine.put("is_abstract", e);
             errors.add(errorLine);
-        } else {
-            try{
-                if(ProjectsRepository.getProjectById(virtualModelLibrary, rProjectId) == null){
-                    errorLine = new JsonObject();
-                    errorLine.put("project_id", "invalid value");
-                    errors.add(errorLine);
-                } else {
-                    projectId = rProjectId;
-                }
-            } catch (IllegalArgumentException e){
-                errorLine = new JsonObject();
-                errorLine.put("project_id", "invalid value");
-                errors.add(errorLine);
-            }
         }
 
-        if (rDescription != null && !rDescription.isEmpty()){
-            description = rDescription.trim();
-        } else {
-            description = rDescription;
+        try{
+            projectId = validateProjectID(rProjectId);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("project_id", e);
+            errors.add(errorLine);
         }
+
+        description = validateDescription(rDescription);
 
         if(errors.isEmpty())
-            isValide = true;
+            isValid = true;
 
         return errors;
     }
 
-    public boolean isValide(){
-        return isValide;
+    public boolean isValid(){
+        return isValid;
     }
 
     public String getName() {

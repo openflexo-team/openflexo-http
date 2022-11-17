@@ -19,6 +19,7 @@ import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.repositories.VirtualModelsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
+import org.openflexo.http.server.core.validators.BehaviourParameterValidator;
 import org.openflexo.http.server.core.validators.BehaviourValidator;
 import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
 import org.openflexo.http.server.core.validators.VirtualModelsValidator;
@@ -27,6 +28,7 @@ import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.python.jline.internal.Log;
 
 import java.lang.reflect.Type;
+import java.util.Arrays;
 
 public class VirtualModelsController extends GenericController {
 
@@ -48,7 +50,7 @@ public class VirtualModelsController extends GenericController {
         VirtualModelsValidator validator    = new VirtualModelsValidator(context.request(), virtualModelLibrary);
         JsonArray errors                    = validator.validate();
 
-        if(validator.isValide()){
+        if(validator.isValid()){
             FMLTechnologyAdapter fmlTechnologyAdapter   = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
             VirtualModelResourceFactory factory         = fmlTechnologyAdapter.getVirtualModelResourceFactory();
             FlexoProject<?> project                     = ProjectsRepository.getProjectById(virtualModelLibrary, validator.getProjectId());
@@ -95,8 +97,8 @@ public class VirtualModelsController extends GenericController {
             PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
             JsonArray errors                        = validator.validate();
 
-            if(validator.isValide()){
-                CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(model, null, new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager()));
+            if(validator.isValid()){
+                CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
                 property.setRoleName(validator.getName());
                 property.setPrimitiveType(validator.getType());
                 property.setCardinality(validator.getCardinality());
@@ -109,7 +111,9 @@ public class VirtualModelsController extends GenericController {
                     badRequest(context);
                 }
 
-                context.response().end(JsonSerializer.primitivePropertySerializer(property).encodePrettily());
+                PrimitiveRole<?> prop = property.getNewFlexoRole();
+
+                context.response().end(JsonSerializer.primitivePropertySerializer(prop).encodePrettily());
             } else {
                 badValidation(context, errors);
             }
@@ -126,8 +130,8 @@ public class VirtualModelsController extends GenericController {
             BehaviourValidator validator    = new BehaviourValidator(context.request());
             JsonArray errors                = validator.validate();
 
-            if(validator.isValide()){
-                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(model, null, new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager()));
+            if(validator.isValid()){
+                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
 
                 behaviour.setFlexoBehaviourName(validator.getName());
                 behaviour.setFlexoBehaviourClass(validator.getType());
@@ -142,10 +146,48 @@ public class VirtualModelsController extends GenericController {
                     badRequest(context);
                 }
 
-                context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
+                context.response().end(JsonSerializer.behaviourSerializer(behaviour.getNewFlexoBehaviour()).encodePrettily());
             } else {
                 badValidation(context, errors);
             }
+        } else {
+            notFound(context);
+        }
+    }
+
+    public void addBehaviourParameter(RoutingContext context){
+        String uri          = context.request().getFormAttribute("uri");
+        String signature    = context.request().getFormAttribute("signature");
+
+        FlexoBehaviour behaviour = virtualModelLibrary.getFlexoConcept(uri).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            BehaviourParameterValidator validator   = new BehaviourParameterValidator(context.request());
+            JsonArray errors                        = validator.validate();
+
+            if(validator.isValid()){
+                CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+                parameter.setParameterName(validator.getName());
+                parameter.setParameterType(validator.getType());
+                parameter.setDescription(validator.getDescription());
+                parameter.setIsRequired(validator.isRequired());
+//                parameter.setDefaultValue(validator.getDefaultValue());
+                parameter.doAction();
+                FlexoBehaviourParameter param = parameter.getNewParameter();
+                Log.info(parameter.hasActionExecutionSucceeded());
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.behaviourParameterSerializer(param).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+
         } else {
             notFound(context);
         }
