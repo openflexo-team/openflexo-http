@@ -9,6 +9,7 @@ import org.openflexo.foundation.fml.PropertyCardinality;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.helpers.Helpers;
+import org.python.jline.internal.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -18,12 +19,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 public abstract class GenericValidator {
-    private final String[] primitiveTypes   = {"String", "Date", "Boolean", "Integer", "Byte", "Long", "Short", "Float", "Double"};
-    private final String [] visibilities    = {"public", "protected", "default", "private"};
-    private final String [] behaviourTypes  = {"action", "cloning", "creation", "deletion", "event", "synchronization", "navigation"};
-    private final String[] cardinalities    = {"One", "ZeroMany", "OneMany", "ZeroOne"};
+    private final String[] primitiveTypes   = {"string", "date", "boolean", "integer", "byte", "long", "short", "float", "double"};
+    private final String[] visibilities     = {"public", "protected", "default", "private"};
+    private final String[] behaviourTypes   = {"action", "cloning", "creation", "deletion", "event", "synchronization", "navigation"};
+    private final String[] cardinalities    = {"one", "zeromany", "onemany", "zeroone"};
     private final String[] formats          = {"application/zip"};
     private final long MAX_UPLOAD_SIZE      = 50 * 1000 * 1000;
+
     public boolean validateBoolean(String field) throws BadValidationException {
         if(field != null && !field.isEmpty()){
             if(field.equalsIgnoreCase("true") || field.equals("1")){
@@ -60,7 +62,7 @@ public abstract class GenericValidator {
 
     public PrimitiveType validatePrimitiveType(String field) throws BadValidationException {
         if(field != null && !field.isEmpty()){
-            if(!Arrays.asList(primitiveTypes).contains(field)){
+            if(!Arrays.asList(primitiveTypes).contains(field.toLowerCase())){
                 throw new BadValidationException("Invalid value");
             } else {
                 return Helpers.getPrimitiveType(field);
@@ -72,7 +74,7 @@ public abstract class GenericValidator {
 
     public PropertyCardinality validateCardinality(String field) throws BadValidationException {
         if(field != null && !field.isEmpty()){
-            if(!Arrays.asList(cardinalities).contains(field)){
+            if(!Arrays.asList(cardinalities).contains(field.toLowerCase())){
                 throw new BadValidationException("Invalid value");
             } else {
                 return Helpers.getCardinality(field);
@@ -83,8 +85,9 @@ public abstract class GenericValidator {
     }
 
     public Visibility validateVisibility(String field) throws BadValidationException {
+
         if(field != null && !field.isEmpty()){
-            if(!Arrays.asList(visibilities).contains(field)){
+            if(!Arrays.asList(visibilities).contains(field.toLowerCase())){
                 throw new BadValidationException("Invalid value");
             } else {
                 return Helpers.getVisibility(field);
@@ -95,7 +98,7 @@ public abstract class GenericValidator {
     }
     public Class<? extends FlexoBehaviour> validateBehaviourType(String field) throws BadValidationException {
         if(field != null && !field.isEmpty()){
-            if(!Arrays.asList(behaviourTypes).contains(field)){
+            if(!Arrays.asList(behaviourTypes).contains(field.toLowerCase())){
                 throw new BadValidationException("Invalid value");
             } else {
                 return Helpers.getBehaviourType(field);

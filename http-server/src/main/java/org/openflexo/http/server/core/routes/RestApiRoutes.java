@@ -80,9 +80,9 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/add").produces(JSON).handler(vmController::add);
         router.post("/vm/:id/edit").produces(JSON).handler(vmController::edit);
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
-        router.post("/vm/:id/add-primitive-property").produces(JSON).handler(vmController::addPrimitive);
-
+        router.post("/vm/:id/properties/add").produces(JSON).handler(vmController::addPrimitive);
         router.post("/vm/:id/behaviour/add").produces(JSON).handler(vmController::addBehaviour);
+
         router.post("/behaviour/parameters/add").produces(JSON).handler(vmController::addBehaviourParameter);
 
         router.get("/vmi/").produces(JSON).handler(vmiController::list);
@@ -93,7 +93,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
         router.get("/cp/").produces(JSON).handler(cpController::list);
         router.get("/cp/:id").produces(JSON).handler(cpController::get);
-        router.post("/cp/add").produces(JSON).handler(cpController::add);
+        router.post("/vm/:vmid/cp/add").produces(JSON).handler(cpController::add);
         router.post("/cp/:id/edit").produces(JSON).handler(cpController::edit);
         router.delete("/cp/:id/delete").produces(JSON).handler(cpController::delete);
 

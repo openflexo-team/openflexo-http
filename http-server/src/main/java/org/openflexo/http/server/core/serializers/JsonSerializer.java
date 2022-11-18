@@ -2,10 +2,7 @@ package org.openflexo.http.server.core.serializers;
 
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.fml.FlexoBehaviour;
-import org.openflexo.foundation.fml.FlexoBehaviourParameter;
-import org.openflexo.foundation.fml.PrimitiveRole;
-import org.openflexo.foundation.fml.VirtualModel;
+import org.openflexo.foundation.fml.*;
 import org.openflexo.http.server.util.IdUtils;
 
 public class JsonSerializer {
@@ -78,6 +75,20 @@ public class JsonSerializer {
         result.put("is_required", parameter.getIsRequired());
         result.put("description", parameter.getDescription());
         result.put("behaviour_id", IdUtils.encodeuri(parameter.getBehaviour().getURI()));
+
+        return result;
+    }
+
+    public static JsonObject conceptSerializer(FlexoConcept concept) {
+        JsonObject result           = new JsonObject();
+
+        result.put("name", concept.getName());
+        result.put("resource_type", "Concept");
+        result.put("visibility", concept.getVisibility().toString());
+        result.put("parent_concepts", concept.getParentFlexoConcepts().size());
+        result.put("is_required", concept.isAbstract());
+        result.put("description", concept.getDescription());
+        result.put("behaviour_id", IdUtils.encodeuri(concept.getURI()));
 
         return result;
     }
