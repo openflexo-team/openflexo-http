@@ -16,7 +16,7 @@ public class Helpers {
     private static DefaultFlexoEditor defaultFlexoEditor;
 
     public static DefaultFlexoEditor getDefaultFlexoEditor(VirtualModelLibrary virtualModelLibrary){
-        if (defaultFlexoEditor != null)
+        if (defaultFlexoEditor == null)
             defaultFlexoEditor = new DefaultFlexoEditor(null, virtualModelLibrary.getServiceManager());
 
         return defaultFlexoEditor;

@@ -3,6 +3,7 @@ package org.openflexo.http.server.core.serializers;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.http.server.util.IdUtils;
 
 public class JsonSerializer {
@@ -89,6 +90,17 @@ public class JsonSerializer {
         result.put("is_required", concept.isAbstract());
         result.put("description", concept.getDescription());
         result.put("behaviour_id", IdUtils.encodeuri(concept.getURI()));
+
+        return result;
+    }
+
+    public static JsonObject virtualModelSerializer(VirtualModelInstance instance) {
+        JsonObject result           = new JsonObject();
+
+        result.put("name", instance.getName());
+        result.put("resource_type", "VirtualModelInstance");
+        result.put("title", instance.getTitle());
+        result.put("virtual_model_id", IdUtils.encodeuri(instance.getVirtualModel().getURI()));
 
         return result;
     }

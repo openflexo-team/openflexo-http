@@ -33,7 +33,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         taController    = new TechnologyAdaptersController();
         prjController   = new ProjectsController(serviceManager.getProjectLoaderService());
         vmController    = new VirtualModelsController(serviceManager.getVirtualModelLibrary());
-        vmiController   = new VirtualModelInstancesController();
+        vmiController   = new VirtualModelInstancesController(serviceManager.getVirtualModelLibrary());
         cpController    = new ConceptsController(serviceManager.getVirtualModelLibrary());
         cpiController   = new ConceptInstancesController();
     }
@@ -42,7 +42,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     public void addRoutes(Vertx vertx, Router router) {
         router.route().handler(BodyHandler.create());
 
-        router.get("/rc").produces(JSON).handler(rcsController::list);
+        router.get("/rc/").produces(JSON).handler(rcsController::list);
         router.post("/rc/add").produces(JSON).handler(rcsController::add);
         router.post("/rc/upload").produces(JSON).handler(rcsController::upload);
         router.get("/rc/:rcid").produces(JSON).handler(rcsController::get);
@@ -80,6 +80,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/add").produces(JSON).handler(vmController::add);
         router.post("/vm/:id/edit").produces(JSON).handler(vmController::edit);
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
+
         router.post("/vm/:id/properties/add").produces(JSON).handler(vmController::addPrimitive);
         router.post("/vm/:id/behaviour/add").produces(JSON).handler(vmController::addBehaviour);
 
@@ -87,7 +88,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
         router.get("/vmi/").produces(JSON).handler(vmiController::list);
         router.get("/vmi/:id").produces(JSON).handler(vmiController::get);
-        router.post("/vmi/add").produces(JSON).handler(vmiController::add);
+        router.post("/prj/:prjid/vmi/add").produces(JSON).handler(vmiController::add);
         router.post("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
         router.delete("/vmi/:id/delete").produces(JSON).handler(vmiController::delete);
 
