@@ -22,6 +22,7 @@ import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.ConceptInstanceValidator;
+import org.openflexo.http.server.core.validators.VirtualModelInstanceValidator;
 import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.fml.FMLRtRouteComplement;
 import org.openflexo.http.server.util.IdUtils;
@@ -58,38 +59,34 @@ public class ConceptInstancesController extends GenericController {
      */
     public void add(RoutingContext context) {
 
-        String conceptUri                   = context.request().getFormAttribute("concept_uri");
-        String projectId                    = context.request().getFormAttribute("project_id");
-        String vmiUri                       = context.request().getFormAttribute("vmi_uri");
+        ConceptInstanceValidator validator = new ConceptInstanceValidator(context.request(), virtualModelLibrary);
+        JsonArray errors                   = validator.validate();
 
-        FlexoConcept concept                = virtualModelLibrary.getFlexoConcept(conceptUri, true);
-        FlexoProject<?> project             = ProjectsRepository.getProjectById(virtualModelLibrary, projectId);
-        FMLRTVirtualModelInstance vmi       = project.getVirtualModelInstanceRepository().getVirtualModelInstance(vmiUri).getVirtualModelInstance();
+        if(validator.isValid()){
+            CreateFlexoConceptInstance action   = CreateFlexoConceptInstance.actionType.makeNewAction(validator.getContainer(), null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+            action.setFlexoConcept(validator.getConcept());
 
-        CreateFlexoConceptInstance action   = CreateFlexoConceptInstance.actionType.makeNewAction(vmi, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
-        action.setFlexoConcept(concept);
+            if (validator.getConcept().getCreationSchemes().size() > 0) {
+                CreationScheme cs = validator.getConcept().getCreationSchemes().get(0);
+                action.setCreationScheme(cs);
+            }
 
-        if (concept.getCreationSchemes().size() > 0) {
-            CreationScheme cs = concept.getCreationSchemes().get(0);
-            action.setCreationScheme(cs);
-//            for (int i = 0; i < parameters.length; i++) {
-//                action.setParameterValue(cs.getParameters().get(i), parameters[i]);
-//            }
+            action.doAction();
+
+            try {
+                validator.getContainer().getResource().save();
+            } catch (SaveResourceException e) {
+                throw new RuntimeException(e);
+            }
+
+            context.response().end(JsonSerializer.conceptInstanceSerializer(action.getNewFlexoConceptInstance()).encodePrettily());
+        } else {
+            badValidation(context, errors);
         }
-
-        action.doAction();
-
-        try {
-            vmi.getResource().save();
-        } catch (SaveResourceException e) {
-            throw new RuntimeException(e);
-        }
-
-        context.response().end(JsonSerializer.conceptInstanceSerializer(action.getNewFlexoConceptInstance()).encodePrettily());
     }
 
     public void edit(RoutingContext context) {}
-    
+
     public void delete(RoutingContext context) {}
 
 }
