@@ -62,7 +62,7 @@ public class JsonSerializer {
      * @param role the role to serialize
      * @return A JsonObject
      */
-    public  static JsonObject primitivePropertySerializer(PrimitiveRole<?> role) {
+    public static JsonObject primitivePropertySerializer(PrimitiveRole<?> role) {
         JsonObject result = new JsonObject();
 
         result.put("name", role.getRoleName());
@@ -109,7 +109,7 @@ public class JsonSerializer {
 
         result.put("name", parameter.getName());
         result.put("resource_type", "BehaviourParameter");
-        result.put("type", parameter.getType().toString());
+        result.put("type", parameter.getType().getTypeName());
         result.put("default_value", parameter.getDefaultValue().toString());
         result.put("is_required", parameter.getIsRequired());
         result.put("description", parameter.getDescription());

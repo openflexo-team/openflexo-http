@@ -42,7 +42,7 @@ public class ConceptsController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getParam("vmid");
+        String id = context.request().getFormAttribute("virtual_model_id");
 
         try {
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));

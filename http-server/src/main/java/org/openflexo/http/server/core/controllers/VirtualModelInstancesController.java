@@ -6,7 +6,9 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -32,9 +34,46 @@ public class VirtualModelInstancesController extends GenericController{
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
-    public void list(RoutingContext context) {}
+    /**
+     * It gets the project id and the virtual model id from the request, then it gets the project from the repository, then
+     * it gets the virtual model instances from the project, then it serializes them to JSON and sends them back to the
+     * client
+     *
+     * @param context the context of the request
+     */
+    public void list(RoutingContext context) {
+//        String id   = context.request().getFormAttribute("project_id");
+//        String vmId = context.request().getFormAttribute("vm_id");
+//        try {
+//            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
+//            JsonArray result        = new JsonArray();
+//
+//            for (FMLRTVirtualModelInstance vmi: project.getVirtualModelInstanceRepository().getVirtualModelInstancesConformToVirtualModel(vmId)){
+//                result.add(JsonSerializer.virtualModelInstanceSerializer(vmi));
+//            }
+//
+//            context.response().end(result.encodePrettily());
+//        } catch (Exception e) {
+//            notFound(context);
+//        }
+    }
 
-    public void get(RoutingContext context) {}
+    /**
+     * It gets the project id from the request, gets the project from the repository, gets the virtual model instance from
+     * the project, and then serializes it to JSON
+     *
+     * @param context the routing context
+     */
+    public void get(RoutingContext context) {
+//        String id       = context.request().getFormAttribute("project_id");
+//        String vmiId    = context.request().getParam("vmi_id");
+//        try {
+//            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
+//            context.response().end(JsonSerializer.virtualModelInstanceSerializer(project.getVirtualModelInstanceRepository().getVirtualModelInstance(vmiId).getVirtualModelInstance()).encodePrettily());
+//        } catch (Exception e) {
+//            notFound(context);
+//        }
+    }
 
     /**
      * It creates a new virtual model instance in the project with the given id
@@ -42,7 +81,7 @@ public class VirtualModelInstancesController extends GenericController{
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id               = context.request().getParam("prjid");
+        String id               = context.request().getFormAttribute("project_id");
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
 
         if(project != null){

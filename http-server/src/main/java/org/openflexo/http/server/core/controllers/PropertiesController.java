@@ -3,9 +3,7 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.fml.PrimitiveRole;
-import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
+import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
@@ -32,9 +30,46 @@ public class PropertiesController extends GenericController {
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
-    public void list(RoutingContext context) {}
+    /**
+     * It gets the virtual model from the library, then iterates over its properties and serializes them to JSON
+     *
+     * @param context the routing context
+     */
+    public void list(RoutingContext context) {
+        String id = context.request().getFormAttribute("vm_id");
+        try {
+            VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            JsonArray result    = new JsonArray();
 
-    public void get(RoutingContext context) {}
+            for (FlexoProperty<?> property : model.getDeclaredProperties()) {
+                result.add(JsonSerializer.primitivePropertySerializer((PrimitiveRole<?>) property));
+            }
+
+            context.response().end(result.encodePrettily());
+        } catch (Exception e) {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It gets the virtual model with the given id, gets the primitive property with the given name, and returns the value
+     * of that property
+     *
+     * @param context The routing context is the object that contains all the information about the current HTTP request
+     * and response.
+     */
+    public void get(RoutingContext context) {
+        String id   = context.request().getFormAttribute("vm_id");
+        String name = context.request().getParam("name");
+
+        try {
+            VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+
+            context.response().end(JsonSerializer.primitivePropertySerializer((PrimitiveRole<?>) model.getAccessibleProperty(name)).encodePrettily());
+        } catch (Exception e) {
+            notFound(context);
+        }
+    }
 
     /**
      * It creates a new primitive property in the virtual model with the given id

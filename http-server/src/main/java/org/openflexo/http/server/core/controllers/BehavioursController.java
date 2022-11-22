@@ -7,6 +7,7 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.CreateFlexoBehaviour;
 import org.openflexo.foundation.fml.action.CreateGenericBehaviourParameter;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
+import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -34,9 +35,46 @@ public class BehavioursController extends GenericController {
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
-    public void list(RoutingContext context) {}
+    /**
+     * It gets the virtual model id from the request, gets the virtual model from the library, creates a JSON array, adds
+     * all the behaviours of the virtual model to the array, and returns the array as the response
+     *
+     * @param context the routing context
+     */
+    public void list(RoutingContext context) {
+        String id = context.request().getFormAttribute("vm_id");
+        try {
+            VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            JsonArray result    = new JsonArray();
 
-    public void get(RoutingContext context) {}
+            for (FlexoBehaviour behaviour : model.getFlexoBehaviours()) {
+                result.add(JsonSerializer.behaviourSerializer(behaviour));
+            }
+
+            context.response().end(result.encodePrettily());
+        } catch (Exception e) {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It gets the virtual model id and the signature of the behaviour from the request, gets the virtual model and the
+     * behaviour from the virtual model library, and then serializes the behaviour to JSON and sends it back to the client
+     *
+     * @param context the context of the request.
+     */
+    public void get(RoutingContext context) {
+        try {
+            String modelId              = context.request().getFormAttribute("vm_id");
+            String signature            = context.request().getParam("signature");
+            VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(modelId));
+            FlexoBehaviour behaviour    = model.getDeclaredFlexoBehaviour(signature);
+            context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
+
+        } catch (Exception e) {
+            notFound(context);
+        }
+    }
 
     /**
      * It creates a new behaviour in the virtual model
@@ -85,9 +123,9 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addParameter(RoutingContext context) {
-        String uri                  = context.request().getFormAttribute("uri");
-        String signature            = context.request().getFormAttribute("signature");
-        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(uri).getDeclaredFlexoBehaviour(signature);
+        String vm_id                = context.request().getFormAttribute("vm_id");
+        String signature            = context.request().getParam("signature");
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
             VirtualModel model                      = behaviour.getDeclaringVirtualModel();
@@ -119,5 +157,19 @@ public class BehavioursController extends GenericController {
         }
     }
 
+    public void parameters(RoutingContext context) {
+        JsonArray result            = new JsonArray();
+        String vm_id                = context.request().getFormAttribute("vm_id");
+        String signature            = context.request().getParam("signature");
+
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+
+
+        for (FlexoBehaviourParameter param : behaviour.getParameters()) {
+            result.add(JsonSerializer.behaviourParameterSerializer(param));
+        }
+
+        context.response().end(result.encodePrettily());
+    }
 
 }

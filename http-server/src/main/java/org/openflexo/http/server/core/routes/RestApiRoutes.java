@@ -101,25 +101,30 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
 
         router.post("/properties/add").produces(JSON).handler(prpController::add);
+        router.post("/properties/").produces(JSON).handler(prpController::list);
+        router.post("/properties/:name").produces(JSON).handler(prpController::get);
 
         router.post("/behaviour/add").produces(JSON).handler(bhvController::add);
-        router.post("/behaviour/parameters/add").produces(JSON).handler(bhvController::addParameter);
+        router.post("/behaviour/").produces(JSON).handler(bhvController::list);
+        router.post("/behaviour/:signature").produces(JSON).handler(bhvController::get);
+        router.post("/behaviour/:signature/parameters/add").produces(JSON).handler(bhvController::addParameter);
+        router.post("/behaviour/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
 
-        router.get("/vmi/").produces(JSON).handler(vmiController::list);
-        router.get("/vmi/:id").produces(JSON).handler(vmiController::get);
-        router.post("/prj/:prjid/vmi/add").produces(JSON).handler(vmiController::add);
+        router.post("/vmi/add").produces(JSON).handler(vmiController::add);
+        router.post("/vmi/").produces(JSON).handler(vmiController::list);
+        router.post("/vmi/:id").produces(JSON).handler(vmiController::get);
         router.post("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
         router.delete("/vmi/:id/delete").produces(JSON).handler(vmiController::delete);
 
+        router.post("/cp/add").produces(JSON).handler(cpController::add);
         router.get("/cp/").produces(JSON).handler(cpController::list);
         router.get("/cp/:id").produces(JSON).handler(cpController::get);
-        router.post("/vm/:vmid/cp/add").produces(JSON).handler(cpController::add);
         router.post("/cp/:id/edit").produces(JSON).handler(cpController::edit);
         router.delete("/cp/:id/delete").produces(JSON).handler(cpController::delete);
 
+        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
         router.get("/cpi/").produces(JSON).handler(cpiController::list);
         router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
-        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
         router.post("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
         router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
 

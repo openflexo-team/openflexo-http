@@ -44,8 +44,8 @@ public class VirtualModelsController extends GenericController {
      */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
-        for (VirtualModelResource virtualModel : virtualModelLibrary.getVirtualModels()) {
-            result.add(JsonSerializer.virtualModelSerializer(virtualModel.getVirtualModel()));
+        for (VirtualModel virtualModel : virtualModelLibrary.getLoadedVirtualModels()) {
+            result.add(JsonSerializer.virtualModelSerializer(virtualModel));
         }
         context.response().end(result.encodePrettily());
     }
