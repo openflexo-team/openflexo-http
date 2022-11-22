@@ -8,6 +8,11 @@ import org.openflexo.http.server.core.exceptions.BadValidationException;
 import java.util.Iterator;
 import java.util.Set;
 
+/**
+ * The Resource centers validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class ResourceCentersValidator extends GenericValidator{
 
     private final HttpServerRequest request;
@@ -15,11 +20,26 @@ public class ResourceCentersValidator extends GenericValidator{
     private JsonArray errors;
     private String rcPath;
 
+    /**
+     * Instantiates a new Resource centers validator.
+     *
+     * @param request the request
+     */
     public ResourceCentersValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rRcPath  = request.getFormAttribute("rc_path");
         errors          = new JsonArray();
@@ -40,6 +60,12 @@ public class ResourceCentersValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * > It takes a set of file uploads, iterates through them, and validates each one
+     * 
+     * @param fileUploadSet A set of file uploads
+     * @return A JsonArray of errors.
+     */
     public JsonArray validateUpload(Set<FileUpload> fileUploadSet){
         Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
         errors                                  = new JsonArray();
@@ -72,10 +98,20 @@ public class ResourceCentersValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * Returns true if the object is valid, false otherwise.
+     * 
+     * @return The boolean value of isValid.
+     */
     public boolean isValid() {
         return isValid;
     }
 
+    /**
+     * This method returns the path to the resource file
+     * 
+     * @return The path to the resource file.
+     */
     public String getRcPath() {
         return rcPath;
     }

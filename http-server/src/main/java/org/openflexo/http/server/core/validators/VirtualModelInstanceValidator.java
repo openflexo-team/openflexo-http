@@ -13,6 +13,11 @@ import org.openflexo.http.server.util.IdUtils;
 
 import java.io.FileNotFoundException;
 
+/**
+ * The Virtual Model instances validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class VirtualModelInstanceValidator extends GenericValidator{
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
@@ -22,12 +27,24 @@ public class VirtualModelInstanceValidator extends GenericValidator{
     private String title;
     private String virtualModelId;
 
+    /**
+     * Instantiates a new Virtual model instance validator.
+     *
+     * @param request             the request
+     * @param virtualModelLibrary the virtual model library
+     */
     public VirtualModelInstanceValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
         isValid                     = false;
     }
 
+    /**
+     * It checks if the id is valid and if it corresponds to a virtual model in the project
+     * 
+     * @param id the id of the virtual model to validate
+     * @return The id of the virtual model
+     */
     public String validateVirtualModelId(String id) throws BadValidationException {
         if(id == null || id.isEmpty()){
             throw new BadValidationException("Field required");
@@ -44,6 +61,16 @@ public class VirtualModelInstanceValidator extends GenericValidator{
         }
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rName    = request.getFormAttribute("name");
         String rTitle   = request.getFormAttribute("title");
@@ -82,18 +109,38 @@ public class VirtualModelInstanceValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * Returns true if the object is valid, false otherwise.
+     * 
+     * @return The boolean value of isValid.
+     */
     public boolean isValid() {
         return isValid;
     }
 
+    /**
+     * This method returns the name of the virtual model instance.
+     * 
+     * @return The name of the person.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * This method returns the title of the virtual model instance
+     * 
+     * @return The title of the book.
+     */
     public String getTitle() {
         return title;
     }
 
+    /**
+     * This method returns the virtual model id
+     * 
+     * @return The virtualModelId
+     */
     public String getVirtualModelId() {
         return virtualModelId;
     }

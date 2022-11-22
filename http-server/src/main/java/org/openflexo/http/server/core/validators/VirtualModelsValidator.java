@@ -8,6 +8,11 @@ import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 
+/**
+ * The Virtual Models validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class VirtualModelsValidator extends GenericValidator{
 
     private final VirtualModelLibrary virtualModelLibrary;
@@ -20,12 +25,26 @@ public class VirtualModelsValidator extends GenericValidator{
     private boolean isAbstract;
     private String projectId;
 
+    /**
+     * Instantiates a new Virtual models validator.
+     *
+     * @param request             the request
+     * @param virtualModelLibrary the virtual model library
+     */
     public VirtualModelsValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary){
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
         isValid                     = false;
     }
 
+    /**
+     * If the id is null or empty, throw a BadValidationException with the message "Field required". Otherwise, try to get
+     * the project by id. If the project is null, throw a BadValidationException with the message "Invalid value".
+     * Otherwise, return the id
+     * 
+     * @param id the value to validate
+     * @return The project ID
+     */
     public String validateProjectID(String id) throws BadValidationException {
         if(id == null || id.isEmpty()){
             throw new BadValidationException("Field required");
@@ -42,6 +61,16 @@ public class VirtualModelsValidator extends GenericValidator{
         }
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rName        = request.getFormAttribute("name");
         String rDescription = request.getFormAttribute("description");
@@ -92,26 +121,56 @@ public class VirtualModelsValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * This method returns true if the object is valid, and false if it is not.
+     * 
+     * @return The boolean value of isValid.
+     */
     public boolean isValid(){
         return isValid;
     }
 
+    /**
+     * This method returns the name of the virtual model.
+     * 
+     * @return The name of the person.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * This method returns the description of the virtual model
+     * 
+     * @return The description of the item.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns the visibility of the virtual model.
+     * 
+     * @return The visibility of the field.
+     */
     public Visibility getVisibility() {
         return visibility;
     }
 
+    /**
+     * Returns true if this method is abstract, false otherwise.
+     * 
+     * @return The value of the isAbstract variable.
+     */
     public boolean isAbstract() {
         return isAbstract;
     }
 
+    /**
+     * This method returns the projectId of the project
+     * 
+     * @return The projectId
+     */
     public String getProjectId() {
         return projectId;
     }

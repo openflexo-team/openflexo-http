@@ -7,6 +7,11 @@ import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 
+/**
+ * The Behaviours validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class BehaviourValidator extends GenericValidator{
     private final HttpServerRequest request;
     private boolean isValid;
@@ -17,11 +22,26 @@ public class BehaviourValidator extends GenericValidator{
     private Class<? extends FlexoBehaviour> type;
     private Visibility visibility;
 
+    /**
+     * Instantiates a new Behaviour validator.
+     *
+     * @param request the request
+     */
     public BehaviourValidator(HttpServerRequest request) {
         this.request                = request;
         isValid                     = false;
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rName        = request.getFormAttribute("name").trim();
         String rVisibility  = request.getFormAttribute("visibility");

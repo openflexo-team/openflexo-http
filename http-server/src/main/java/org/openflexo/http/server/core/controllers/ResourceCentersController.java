@@ -31,17 +31,33 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ *  Resource centers rest apis controller.
+ * @author Ihab Benamer
+ */
 public class ResourceCentersController extends GenericController {
 
     private final FlexoResourceCenterService resourceCenterService;
     private final TechnologyAdapterRouteService technologyAdapterRestService;
     private final static String resourceCentersLocation = "/Users/mac/openflexo/2.0.1/openflexo-http/http-connector-rc/src/main/resources/API/";
 
+    /**
+     * Instantiates a new Resource centers controller.
+     *
+     * @param resourceCenterService        the resource center service
+     * @param technologyAdapterRestService the technology adapter rest service
+     */
     public ResourceCentersController(FlexoResourceCenterService resourceCenterService, TechnologyAdapterRouteService technologyAdapterRestService){
         this.resourceCenterService          = resourceCenterService;
         this.technologyAdapterRestService   = technologyAdapterRestService;
     }
 
+    /**
+     * It creates a JSON array, iterates over all the resource centers, and adds a JSON object to the array for each
+     * resource center
+     *
+     * @param context the context of the request
+     */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
         for (FlexoResourceCenter<?> center : resourceCenterService.getResourceCenters()) {
@@ -50,6 +66,12 @@ public class ResourceCentersController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
+    /**
+     * It gets the resource center id from the request, decodes it, gets the resource center from the service, and returns
+     * a JSON representation of the resource center
+     *
+     * @param context the context of the request
+     */
     public void get(RoutingContext context) {
         String centerId = context.request().getParam(("rcid"));
         String uri = IdUtils.decodeId(centerId);
@@ -63,6 +85,11 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It gets the resource center from the request, and returns a JSON array of all the resources in that resource center
+     *
+     * @param context the context of the request
+     */
     public void resources(RoutingContext context) {
         String centerId = context.request().getParam(("rcid"));
         String centerUri = IdUtils.decodeId(centerId);
@@ -80,6 +107,11 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It takes a path, and returns a list of files and folders in that path
+     *
+     * @param context the context of the request
+     */
     public void resourceFolder(RoutingContext context) {
         String centerId = context.request().getParam(("rcid"));
         String centerUri = IdUtils.decodeId(centerId);
@@ -141,6 +173,12 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It creates a new DirectoryResourceCenter object, adds it to the resource center service, and returns a JSON
+     * representation of the new resource center
+     *
+     * @param context the routing context
+     */
     public void add(RoutingContext context){
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validate();
@@ -159,6 +197,12 @@ public class ResourceCentersController extends GenericController {
         }
     }
 
+    /**
+     * It takes a zip file, unzips it, deletes the unnecessary files, and adds the resource center to the resource center
+     * service
+     *
+     * @param context The routing context of the request.
+     */
     public void upload(RoutingContext context){
         ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
         JsonArray errors                    = validator.validateUpload(context.fileUploads());

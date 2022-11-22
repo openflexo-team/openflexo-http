@@ -10,6 +10,11 @@ import org.openflexo.http.server.core.helpers.Helpers;
 
 import java.util.Arrays;
 
+/**
+ * The Properties validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class PrimitivePropertyValidator extends GenericValidator {
 
     private final HttpServerRequest request;
@@ -20,11 +25,26 @@ public class PrimitivePropertyValidator extends GenericValidator {
     private PropertyCardinality cardinality;
     private String description;
 
+    /**
+     * Instantiates a new Primitive property validator.
+     *
+     * @param request the request
+     */
     public PrimitivePropertyValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rName        = request.getFormAttribute("name").trim();
         String rType        = request.getFormAttribute("type");
@@ -66,22 +86,47 @@ public class PrimitivePropertyValidator extends GenericValidator {
         return errors;
     }
 
+    /**
+     * Returns true if the object is valid, false otherwise.
+     * 
+     * @return The boolean value of isValid.
+     */
     public boolean isValid() {
         return isValid;
     }
 
+    /**
+     * This method returns the name of the property.
+     * 
+     * @return The name of the person.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the type of this primitive.
+     * 
+     * @return The type of the variable.
+     */
     public PrimitiveType getType() {
         return type;
     }
 
+    /**
+     * > Returns the cardinality of the property
+     * 
+     * @return The cardinality of the property.
+     */
     public PropertyCardinality getCardinality() {
         return cardinality;
     }
 
+    /**
+     * This method returns the description of the property
+     * 
+     * @return The description of the item.
+     */
     public String getDescription() {
         return description;
     }

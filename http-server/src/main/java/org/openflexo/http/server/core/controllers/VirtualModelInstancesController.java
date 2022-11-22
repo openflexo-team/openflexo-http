@@ -4,38 +4,43 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.action.CreateFlexoConcept;
-import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
-import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.ConceptValidator;
 import org.openflexo.http.server.core.validators.VirtualModelInstanceValidator;
-import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.toolbox.StringUtils;
-import org.python.jline.internal.Log;
-
 import java.io.FileNotFoundException;
 
+/**
+ *  Virtual Model Instances rest apis controller.
+ * @author Ihab Benamer
+ */
 public class VirtualModelInstancesController extends GenericController{
     private final VirtualModelLibrary virtualModelLibrary;
 
+    /**
+     * Instantiates a new Virtual model instances controller.
+     *
+     * @param virtualModelLibrary the virtual model library
+     */
     public VirtualModelInstancesController(VirtualModelLibrary virtualModelLibrary) {
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
     public void list(RoutingContext context) {}
+
     public void get(RoutingContext context) {}
+
+    /**
+     * It creates a new virtual model instance in the project with the given id
+     *
+     * @param context the routing context
+     */
     public void add(RoutingContext context) {
         String id               = context.request().getParam("prjid");
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
@@ -61,7 +66,7 @@ public class VirtualModelInstancesController extends GenericController{
                         badRequest(context);
                     }
 
-                    context.response().end(JsonSerializer.virtualModelSerializer(vmi.getNewVirtualModelInstance()).encodePrettily());
+                    context.response().end(JsonSerializer.virtualModelInstanceSerializer(vmi.getNewVirtualModelInstance()).encodePrettily());
                 } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
                     notFound(context);
                 }
@@ -74,6 +79,7 @@ public class VirtualModelInstancesController extends GenericController{
     }
 
     public void edit(RoutingContext context) {}
+
     public void delete(RoutingContext context) {}
 
 }

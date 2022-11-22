@@ -3,32 +3,32 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.fml.PrimitiveRole;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.action.CreateFlexoConcept;
+import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.openflexo.http.server.core.repositories.VirtualModelsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.ConceptValidator;
+import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
 import org.openflexo.http.server.util.IdUtils;
 
 import java.io.FileNotFoundException;
 
 /**
- *  Concepts rest apis controller.
+ *  Properties rest apis controller.
  * @author Ihab Benamer
  */
-public class ConceptsController extends GenericController {
+public class PropertiesController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
 
     /**
-     * Instantiates a new Concepts controller.
+     * Instantiates a new Properties controller.
      *
      * @param virtualModelLibrary the virtual model library
      */
-    public ConceptsController(VirtualModelLibrary virtualModelLibrary) {
+    public PropertiesController(VirtualModelLibrary virtualModelLibrary) {
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
@@ -37,25 +37,24 @@ public class ConceptsController extends GenericController {
     public void get(RoutingContext context) {}
 
     /**
-     * It adds a new concept to a virtual model
+     * It creates a new primitive property in the virtual model with the given id
      *
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getParam("vmid");
-
+        String id = context.request().getFormAttribute("id");
         try {
-            VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            ConceptValidator validator  = new ConceptValidator(context.request());
-            JsonArray errors            = validator.validate();
+            VirtualModel model                      = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
+            JsonArray errors                        = validator.validate();
 
             if(validator.isValid()){
-                CreateFlexoConcept concept = CreateFlexoConcept.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
-                concept.setNewFlexoConceptName(validator.getName());
-                concept.setVisibility(validator.getVisibility());
-                concept.setIsAbstract(validator.isAbstract());
-                concept.setNewFlexoConceptDescription(validator.getDescription());
-                concept.doAction();
+                CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+                property.setRoleName(validator.getName());
+                property.setPrimitiveType(validator.getType());
+                property.setCardinality(validator.getCardinality());
+                property.setDescription(validator.getDescription());
+                property.doAction();
 
                 try {
                     model.getResource().save();
@@ -63,7 +62,9 @@ public class ConceptsController extends GenericController {
                     badRequest(context);
                 }
 
-                context.response().end(JsonSerializer.conceptSerializer(concept.getNewFlexoConcept()).encodePrettily());
+                PrimitiveRole<?> prop = property.getNewFlexoRole();
+
+                context.response().end(JsonSerializer.primitivePropertySerializer(prop).encodePrettily());
             } else {
                 badValidation(context, errors);
             }
@@ -75,5 +76,4 @@ public class ConceptsController extends GenericController {
     public void edit(RoutingContext context) {}
 
     public void delete(RoutingContext context) {}
-
 }

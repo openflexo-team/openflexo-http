@@ -8,6 +8,11 @@ import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import java.util.List;
 
+/**
+ * The Concepts validator class.
+ *
+ * @author Ihab Benamer
+ */
 public class ConceptValidator extends GenericValidator{
     private final HttpServerRequest request;
     private boolean isValid;
@@ -18,11 +23,26 @@ public class ConceptValidator extends GenericValidator{
     private String description;
     private List<FlexoConcept> parentConcepts;
 
+    /**
+     * Instantiates a new Concept validator.
+     *
+     * @param request the request
+     */
     public ConceptValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }
 
+    /**
+     * It validates the form data and returns a JsonArray of errors
+     *
+     * @return A JsonArray of JsonObjects. Each JsonObject contains a key-value pair of the form:
+     * ```
+     * {
+     *     "name": "error message"
+     * }
+     * ```
+     */
     public JsonArray validate(){
         String rName            = request.getFormAttribute("name").trim();
         String rVisibility      = request.getFormAttribute("visibility");
@@ -67,26 +87,56 @@ public class ConceptValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * Returns true if the object is valid, false otherwise.
+     * 
+     * @return The boolean value of isValid.
+     */
     public boolean isValid() {
         return isValid;
     }
 
+    /**
+     * This method returns the name of the person.
+     * 
+     * @return The name of the person.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * > This method returns the visibility of the current object
+     * 
+     * @return The visibility of the field.
+     */
     public Visibility getVisibility() {
         return visibility;
     }
 
+    /**
+     * Returns true if this method is abstract, false otherwise.
+     * 
+     * @return The value of the isAbstract variable.
+     */
     public boolean isAbstract() {
         return isAbstract;
     }
 
+    /**
+     * > This method returns the description of the object
+     * 
+     * @return The description of the item.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * > Returns the list of parent concepts of this concept
+     * 
+     * @return A list of FlexoConcepts
+     */
     public List<FlexoConcept> getParentConcepts() {
         return parentConcepts;
     }

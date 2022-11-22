@@ -15,6 +15,9 @@ import org.openflexo.http.server.util.ResourceRestService;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * A web router, class used to declare web routes.
+ */
 public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
     private ResourceCentersController rcsController;
@@ -25,7 +28,15 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private VirtualModelInstancesController vmiController;
     private ConceptsController cpController;
     private ConceptInstancesController cpiController;
+    private PropertiesController prpController;
+    private BehavioursController bhvController;
 
+    /**
+     * It creates all the necessary controllers and registers them with the service.
+     *
+     * @param service the HttpService instance
+     * @param serviceManager the service manager that will be used to access the Flexo services
+     */
     @Override
     public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
         rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService());
@@ -35,9 +46,17 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         vmController    = new VirtualModelsController(serviceManager.getVirtualModelLibrary());
         vmiController   = new VirtualModelInstancesController(serviceManager.getVirtualModelLibrary());
         cpController    = new ConceptsController(serviceManager.getVirtualModelLibrary());
-        cpiController   = new ConceptInstancesController();
+        cpiController   = new ConceptInstancesController(serviceManager.getVirtualModelLibrary());
+        prpController   = new PropertiesController(serviceManager.getVirtualModelLibrary());
+        bhvController   = new BehavioursController(serviceManager.getVirtualModelLibrary());
     }
 
+    /**
+     * It adds routes to the router
+     *
+     * @param vertx the Vert.x instance
+     * @param router the router to which the routes will be added
+     */
     @Override
     public void addRoutes(Vertx vertx, Router router) {
         router.route().handler(BodyHandler.create());
@@ -81,10 +100,10 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/:id/edit").produces(JSON).handler(vmController::edit);
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
 
-        router.post("/vm/:id/properties/add").produces(JSON).handler(vmController::addPrimitive);
-        router.post("/vm/:id/behaviour/add").produces(JSON).handler(vmController::addBehaviour);
+        router.post("/properties/add").produces(JSON).handler(prpController::add);
 
-        router.post("/behaviour/parameters/add").produces(JSON).handler(vmController::addBehaviourParameter);
+        router.post("/behaviour/add").produces(JSON).handler(bhvController::add);
+        router.post("/behaviour/parameters/add").produces(JSON).handler(bhvController::addParameter);
 
         router.get("/vmi/").produces(JSON).handler(vmiController::list);
         router.get("/vmi/:id").produces(JSON).handler(vmiController::get);
