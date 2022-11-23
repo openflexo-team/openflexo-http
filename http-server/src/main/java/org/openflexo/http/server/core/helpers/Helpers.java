@@ -54,7 +54,7 @@ public class Helpers {
         if (visibility == null)
             visibility = "";
 
-        switch (visibility) {
+        switch (visibility.toLowerCase()) {
             case "public":
                 return Visibility.Public;
             case "protected":

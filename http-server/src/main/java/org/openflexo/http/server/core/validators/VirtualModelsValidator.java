@@ -85,7 +85,7 @@ public class VirtualModelsValidator extends GenericValidator{
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -93,7 +93,7 @@ public class VirtualModelsValidator extends GenericValidator{
             visibility = validateVisibility(rVisibility);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("visibility", e);
+            errorLine.put("visibility", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -101,7 +101,7 @@ public class VirtualModelsValidator extends GenericValidator{
             isAbstract = validateBoolean(rIsAbstract);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("is_abstract", e);
+            errorLine.put("is_abstract", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -109,7 +109,7 @@ public class VirtualModelsValidator extends GenericValidator{
             projectId = validateProjectID(rProjectId);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("project_id", e);
+            errorLine.put("project_id", e.getMessage());
             errors.add(errorLine);
         }
 

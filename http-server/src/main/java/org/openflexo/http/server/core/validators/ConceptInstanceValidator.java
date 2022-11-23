@@ -44,7 +44,7 @@ public class ConceptInstanceValidator extends GenericValidator{
      * @return A FlexoConcept
      */
     public FlexoConcept validateConcept(String conceptUri) throws BadValidationException {
-        if(conceptUri.isEmpty()){
+        if(conceptUri == null || conceptUri.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
             FlexoConcept tContainer = virtualModelLibrary.getFlexoConcept(conceptUri, true);
@@ -63,7 +63,7 @@ public class ConceptInstanceValidator extends GenericValidator{
      * @return A FlexoProject
      */
     public FlexoProject<?> validateProject(String projectId) throws BadValidationException {
-        if(projectId.isEmpty()){
+        if(projectId == null || projectId.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
             FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, projectId);
@@ -86,7 +86,7 @@ public class ConceptInstanceValidator extends GenericValidator{
      * @return A VirtualModelInstance
      */
     public FMLRTVirtualModelInstance validateVirtualModelInstanceUri(String vmiUri, FlexoProject<?> project) throws BadValidationException {
-        if(vmiUri.isEmpty()){
+        if(vmiUri == null || vmiUri.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
             FMLRTVirtualModelInstance vmi = project.getVirtualModelInstanceRepository().getVirtualModelInstance(vmiUri).getVirtualModelInstance();
@@ -117,7 +117,7 @@ public class ConceptInstanceValidator extends GenericValidator{
             concept = validateConcept(rConceptUri);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("concept_uri", e);
+            errorLine.put("concept_uri", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -127,12 +127,12 @@ public class ConceptInstanceValidator extends GenericValidator{
                 container = validateVirtualModelInstanceUri(rContainerUri, project);
             } catch (BadValidationException e){
                 errorLine = new JsonObject();
-                errorLine.put("container_uri", e);
+                errorLine.put("container_uri", e.getMessage());
                 errors.add(errorLine);
             }
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("project_id", e);
+            errorLine.put("project_id", e.getMessage());
             errors.add(errorLine);
         }
 

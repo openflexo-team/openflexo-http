@@ -58,7 +58,7 @@ public class PrimitivePropertyValidator extends GenericValidator {
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -66,7 +66,7 @@ public class PrimitivePropertyValidator extends GenericValidator {
             type = validatePrimitiveType(rType);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("type", e);
+            errorLine.put("type", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -74,7 +74,7 @@ public class PrimitivePropertyValidator extends GenericValidator {
             cardinality = validateCardinality(rCardinality);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("cardinality", e);
+            errorLine.put("cardinality", e.getMessage());
             errors.add(errorLine);
         }
 

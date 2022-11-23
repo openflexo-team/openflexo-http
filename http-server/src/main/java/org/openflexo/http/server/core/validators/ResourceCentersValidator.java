@@ -50,7 +50,7 @@ public class ResourceCentersValidator extends GenericValidator{
             rcPath = validatePath(rRcPath);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("rc_path", e);
+            errorLine.put("rc_path", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -84,7 +84,7 @@ public class ResourceCentersValidator extends GenericValidator{
                     validateFileUpload(fileUploadIterator);
                 } catch (BadValidationException e){
                     errorLine = new JsonObject();
-                    errorLine.put("File "+ counter, e);
+                    errorLine.put("File "+ counter, e.getMessage());
                     errors.add(errorLine);
                 }
 

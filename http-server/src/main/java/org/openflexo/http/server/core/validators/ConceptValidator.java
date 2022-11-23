@@ -57,7 +57,7 @@ public class ConceptValidator extends GenericValidator{
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -65,7 +65,7 @@ public class ConceptValidator extends GenericValidator{
             visibility = validateVisibility(rVisibility);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("visibility", e);
+            errorLine.put("visibility", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -73,7 +73,7 @@ public class ConceptValidator extends GenericValidator{
             isAbstract = validateBoolean(rIsAbstract);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("is_abstract", e);
+            errorLine.put("is_abstract", e.getMessage());
             errors.add(errorLine);
         }
 

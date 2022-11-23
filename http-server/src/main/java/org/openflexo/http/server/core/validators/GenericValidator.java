@@ -41,7 +41,7 @@ public abstract class GenericValidator {
     }
 
     public String validateName(String name) throws BadValidationException {
-        if(!name.isEmpty()){
+        if(name != null && !name.isEmpty()){
             if(name.contains(" ")){
                 throw new BadValidationException("Invalid value");
             } else {
@@ -53,7 +53,7 @@ public abstract class GenericValidator {
     }
 
     public String validateProjectName(String name) throws BadValidationException {
-        if(!name.isEmpty()){
+        if(name != null && !name.isEmpty()){
             return name;
         } else {
             throw new BadValidationException("Field required");
@@ -85,7 +85,6 @@ public abstract class GenericValidator {
     }
 
     public Visibility validateVisibility(String field) throws BadValidationException {
-
         if(field != null && !field.isEmpty()){
             if(!Arrays.asList(visibilities).contains(field.toLowerCase())){
                 throw new BadValidationException("Invalid value");

@@ -72,7 +72,7 @@ public class ProjectsValidator extends GenericValidator{
             name = validateProjectName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -80,7 +80,7 @@ public class ProjectsValidator extends GenericValidator{
             rcId = validateResourceCenterID(rRcId);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("rc_id", e);
+            errorLine.put("rc_id", e.getMessage());
             errors.add(errorLine);
         }
 

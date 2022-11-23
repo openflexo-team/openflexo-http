@@ -57,7 +57,7 @@ public class BehaviourParameterValidator extends GenericValidator{
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -65,7 +65,7 @@ public class BehaviourParameterValidator extends GenericValidator{
             type = validatePrimitiveType(rType).getType();
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("type", e);
+            errorLine.put("type", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -73,7 +73,7 @@ public class BehaviourParameterValidator extends GenericValidator{
             isRequired = validateBoolean(rIsRequired);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("is_Required", e);
+            errorLine.put("is_Required", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -81,7 +81,7 @@ public class BehaviourParameterValidator extends GenericValidator{
             defaultValue = validateObjectValue(rDefValue, rType);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("default_value", e);
+            errorLine.put("default_value", e.getMessage());
             errors.add(errorLine);
         }
 

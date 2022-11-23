@@ -56,7 +56,7 @@ public class BehaviourValidator extends GenericValidator{
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -64,7 +64,7 @@ public class BehaviourValidator extends GenericValidator{
             visibility = validateVisibility(rVisibility);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("visibility", e);
+            errorLine.put("visibility", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -72,7 +72,7 @@ public class BehaviourValidator extends GenericValidator{
             type = validateBehaviourType(rType);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("type", e);
+            errorLine.put("type", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -80,7 +80,7 @@ public class BehaviourValidator extends GenericValidator{
             isAbstract = validateBoolean(rIsAbstract);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("is_abstract", e);
+            errorLine.put("is_abstract", e.getMessage());
             errors.add(errorLine);
         }
 

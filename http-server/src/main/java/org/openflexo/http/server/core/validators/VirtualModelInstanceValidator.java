@@ -83,7 +83,7 @@ public class VirtualModelInstanceValidator extends GenericValidator{
             name = validateName(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("name", e);
+            errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -91,7 +91,7 @@ public class VirtualModelInstanceValidator extends GenericValidator{
             title = validateName(rTitle);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("title", e);
+            errorLine.put("title", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -99,7 +99,7 @@ public class VirtualModelInstanceValidator extends GenericValidator{
             virtualModelId = validateVirtualModelId(rVmId);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("virtual_model_id", e);
+            errorLine.put("virtual_model_id", e.getMessage());
             errors.add(errorLine);
         }
 
