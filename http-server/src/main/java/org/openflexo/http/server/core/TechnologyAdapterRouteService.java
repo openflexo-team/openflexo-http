@@ -163,15 +163,15 @@ public class TechnologyAdapterRouteService implements RouteService<FlexoServiceM
 		restServices.computeIfAbsent(adapter, (a) -> new ArrayList<>()).add(service);
 	}
 
-//	public void complementTechnologyAdapter(TechnologyAdapter<?> adapter, JsonObject result) {
-//		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
-//		result.put("complemented", complement != null);
-//		for (ResourceRestService service : restServices.getOrDefault(adapter, Collections.emptyList())) {
-//			String simpleName = service.getResourceClass().getSimpleName();
-//			String route = result.getString("url") + service.getPrefix();
-//			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
-//		}
-//	}
+	public void complementTechnologyAdapter(TechnologyAdapter<?> adapter, JsonObject result) {
+		TechnologyAdapterRouteComplement complement = complementMap.get(adapter);
+		result.put("complemented", complement != null);
+		for (ResourceRestService service : restServices.getOrDefault(adapter, Collections.emptyList())) {
+			String simpleName = service.getResourceClass().getSimpleName();
+			String route = result.getString("url") + service.getPrefix();
+			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
+		}
+	}
 
 //	@Override
 //	public void addRoutes(Vertx vertx, Router router) {

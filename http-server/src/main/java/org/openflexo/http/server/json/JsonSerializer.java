@@ -82,6 +82,7 @@ import java.util.stream.Stream;
 
 import org.openflexo.connie.type.TypeUtils;
 import org.openflexo.foundation.fml.FMLObject;
+import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
@@ -244,6 +245,13 @@ public class JsonSerializer {
 			// result.put("__debug_object__", object.toString());
 		}
 		result.put("kind", getType(object));
+
+		if(object instanceof FlexoConceptInstance) {
+			FlexoConceptInstance fci  = (FlexoConceptInstance) object;
+			result.put("type", fci.getFlexoConcept().getName());
+		}
+
+
 		return id != null;
 	}
 

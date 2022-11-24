@@ -62,7 +62,7 @@ import io.vertx.core.http.WebSocketFrame;
 import io.vertx.core.json.DecodeException;
 import org.python.jline.internal.Log;
 
-import org.openflexo.toolbox.JsonUtils;
+//import org.openflexo.toolbox.JsonUtils;
 /**
  * WebSocket service to evaluate Connie expressions
  */
@@ -240,7 +240,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
 			DataBinding<Object> binding = getOrCreateBinding(runtimeBinding.binding);
 			
-			response.result = handleCanvasXml(request);
+//			response.result = handleCanvasXml(request);
 			socket.write(response.toBuffer());
 			//			if (binding.isValid()) {
 //				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
@@ -397,12 +397,12 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		return taRouteService.getSerializer().toJson(object, detailed);
 	}
 
-	private String handleCanvasXml(ListeningRequest request){
-		String message = request.runtimeBinding.binding.expression;
-
-		Log.info(message);
-		Log.info(JsonUtils.convertXmlToJson(message));
-
-		return JsonUtils.convertXmlToJson(message);
-	}
+//	private String handleCanvasXml(ListeningRequest request){
+//		String message = request.runtimeBinding.binding.expression;
+//
+//		Log.info(message);
+//		Log.info(JsonUtils.convertXmlToJson(message));
+//
+//		return JsonUtils.convertXmlToJson(message);
+//	}
 }
