@@ -109,6 +109,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/behaviour/:signature").produces(JSON).handler(bhvController::get);
         router.post("/behaviour/:signature/parameters/add").produces(JSON).handler(bhvController::addParameter);
         router.post("/behaviour/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
+        router.post("/behaviour/:signature/actions/add").produces(JSON).handler(bhvController::addAction);
 
         router.post("/vmi/add").produces(JSON).handler(vmiController::add);
         router.post("/vmi/").produces(JSON).handler(vmiController::list);

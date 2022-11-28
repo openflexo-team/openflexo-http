@@ -69,7 +69,7 @@ public class ProjectsValidator extends GenericValidator{
         JsonObject errorLine;
 
         try{
-            name = validateProjectName(rName);
+            name = validateString(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("name", e.getMessage());

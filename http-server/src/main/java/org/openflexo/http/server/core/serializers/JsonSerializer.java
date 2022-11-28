@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.resource.FlexoResource;
@@ -303,6 +304,17 @@ public class JsonSerializer {
         result.put("url", url);
 
         service.complementTechnologyAdapter(adapter, result);
+
+        return result;
+    }
+
+    public static JsonObject behaviourActionSerializer(EditionAction action){
+        JsonObject result = new JsonObject();
+
+        result.put("name", action.getName());
+        result.put("resource_type", "BehaviourAction");
+        result.put("description", action.getDescription());
+        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getURI()));
 
         return result;
     }

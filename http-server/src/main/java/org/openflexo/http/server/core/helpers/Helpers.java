@@ -5,6 +5,8 @@ import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.PropertyEntry;
+import org.openflexo.foundation.fml.rt.logging.FMLConsole;
+
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -215,6 +217,26 @@ public class Helpers {
                 return Float.valueOf(value);
             case "Double":
                 return Double.valueOf(value);
+        }
+        return null;
+    }
+
+    public static FMLConsole.LogLevel getLogLevel(String level){
+        switch (level){
+            case "info":
+                return FMLConsole.LogLevel.INFO;
+            case "severe":
+                return FMLConsole.LogLevel.SEVERE;
+            case "warning":
+                return FMLConsole.LogLevel.WARNING;
+            case "fine":
+                return FMLConsole.LogLevel.FINE;
+            case "finer":
+                return FMLConsole.LogLevel.FINER;
+            case "finest":
+                return FMLConsole.LogLevel.FINEST;
+            case "debug":
+                return FMLConsole.LogLevel.DEBUG;
         }
         return null;
     }

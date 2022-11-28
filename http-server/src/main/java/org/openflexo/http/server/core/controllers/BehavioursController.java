@@ -2,20 +2,29 @@ package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
+import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.action.CreateEditionAction;
 import org.openflexo.foundation.fml.action.CreateFlexoBehaviour;
 import org.openflexo.foundation.fml.action.CreateGenericBehaviourParameter;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
+import org.openflexo.foundation.fml.editionaction.AssignationAction;
+import org.openflexo.foundation.fml.editionaction.EditionAction;
+import org.openflexo.foundation.fml.editionaction.ExpressionAction;
+import org.openflexo.foundation.fml.editionaction.LogAction;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
+import org.openflexo.http.server.core.validators.BehaviourActionValidator;
 import org.openflexo.http.server.core.validators.BehaviourParameterValidator;
 import org.openflexo.http.server.core.validators.BehaviourValidator;
 import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
 import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -157,19 +166,63 @@ public class BehavioursController extends GenericController {
         }
     }
 
+    /**
+     * It takes a `vm_id` and a `signature` as parameters, and returns a list of parameters for the behaviour with the
+     * given signature
+     *
+     * @param context the routing context
+     */
     public void parameters(RoutingContext context) {
         JsonArray result            = new JsonArray();
         String vm_id                = context.request().getFormAttribute("vm_id");
         String signature            = context.request().getParam("signature");
-
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
-
 
         for (FlexoBehaviourParameter param : behaviour.getParameters()) {
             result.add(JsonSerializer.behaviourParameterSerializer(param));
         }
 
         context.response().end(result.encodePrettily());
+    }
+
+    /**
+     * It creates a new LogAction in the given behaviour
+     *
+     * @param context the routing context
+     */
+    public void addAction(RoutingContext context) {
+        String vm_id                = context.request().getFormAttribute("vm_id");
+        String signature            = context.request().getParam("signature");
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            BehaviourActionValidator validator  = new BehaviourActionValidator(context.request());
+            JsonArray errors                    = validator.validateLogAction();
+
+            if(validator.isValid()){
+                CreateEditionAction createAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+
+                createAction.setEditionActionClass(LogAction.class);
+                createAction.doAction();
+
+                LogAction action = (LogAction) createAction.getNewEditionAction();
+                action.setLogLevel(validator.getLogLevel());
+                action.setLogString(new DataBinding<>(validator.getValue()));
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.behaviourActionSerializer(action).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
     }
 
 }

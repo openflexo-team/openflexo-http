@@ -1,15 +1,14 @@
 package org.openflexo.http.server.core.validators;
 
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.PropertyCardinality;
 import org.openflexo.foundation.fml.Visibility;
+import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.python.jline.internal.Log;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -23,6 +22,7 @@ public abstract class GenericValidator {
     private final String[] visibilities     = {"public", "protected", "default", "private"};
     private final String[] behaviourTypes   = {"action", "cloning", "creation", "deletion", "event", "synchronization", "navigation"};
     private final String[] cardinalities    = {"one", "zeromany", "onemany", "zeroone"};
+    private final String[] logLevels        = {"info", "severe", "warning", "fine", "finer", "finest", "debug"};
     private final String[] formats          = {"application/zip"};
     private final long MAX_UPLOAD_SIZE      = 50 * 1000 * 1000;
 
@@ -52,7 +52,7 @@ public abstract class GenericValidator {
         }
     }
 
-    public String validateProjectName(String name) throws BadValidationException {
+    public String validateString(String name) throws BadValidationException {
         if(name != null && !name.isEmpty()){
             return name;
         } else {
@@ -145,5 +145,17 @@ public abstract class GenericValidator {
     public DataBinding<Object> validateObjectValue(String field, String type) throws BadValidationException {
         // TODO: cast default value to other formats
         return null;
+    }
+
+    public FMLConsole.LogLevel validateLogLevel(String level) throws BadValidationException {
+        if(level != null && !level.isEmpty()){
+            if(!Arrays.asList(logLevels).contains(level.toLowerCase())){
+                throw new BadValidationException("Invalid value");
+            } else {
+                return Helpers.getLogLevel(level);
+            }
+        } else {
+            throw new BadValidationException("Field required");
+        }
     }
 }
