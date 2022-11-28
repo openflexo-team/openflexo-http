@@ -90,7 +90,7 @@ public class VirtualModelsController extends GenericController {
      * @param context the context of the request
      */
     public void get(RoutingContext context) {
-        String id = context.request().getParam("id");
+        String id = context.request().getParam("id").trim();
         try {
             VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             context.response().end(JsonSerializer.virtualModelSerializer(model).encodePrettily());

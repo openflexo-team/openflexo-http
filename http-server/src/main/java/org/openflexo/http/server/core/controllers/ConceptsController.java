@@ -3,8 +3,7 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.FlexoException;
-import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
+import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.CreateFlexoConcept;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
@@ -32,9 +31,42 @@ public class ConceptsController extends GenericController {
         this.virtualModelLibrary = virtualModelLibrary;
     }
 
-    public void list(RoutingContext context) {}
+    /**
+     * It gets the virtual model from the library, then serializes all the concepts in it and returns the result
+     *
+     * @param context the routing context
+     */
+    public void list(RoutingContext context) {
+        String id = context.request().getParam("vmid").trim();
+        try {
+            VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            JsonArray result    = new JsonArray();
 
-    public void get(RoutingContext context) {}
+            for (FlexoConcept concept : model.getFlexoConcepts()) {
+                result.add(JsonSerializer.conceptSerializer(concept));
+            }
+
+            context.response().end(result.encodePrettily());
+        } catch (Exception e) {
+            notFound(context);
+        }
+    }
+
+    /**
+     * Get the concept with the given id and return it as a JSON object
+     *
+     * @param context the routing context
+     */
+    public void get(RoutingContext context) {
+        String id               = context.request().getParam("id").trim();
+        FlexoConcept concept    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+
+        if (concept != null){
+            context.response().end(JsonSerializer.conceptSerializer(concept).encodePrettily());
+        } else {
+            notFound(context);
+        }
+    }
 
     /**
      * It adds a new concept to a virtual model
@@ -75,5 +107,9 @@ public class ConceptsController extends GenericController {
     public void edit(RoutingContext context) {}
 
     public void delete(RoutingContext context) {}
+
+    public void addProperties(RoutingContext context){
+
+    }
 
 }

@@ -150,7 +150,7 @@ public class JsonSerializer {
     public static JsonObject conceptSerializer(FlexoConcept concept) {
         JsonObject result           = new JsonObject();
 
-        result.put("id", concept.getName());
+        result.put("id", IdUtils.encodeuri(concept.getURI()));
         result.put("name", concept.getName());
         result.put("uri", concept.getURI());
         result.put("resource_type", "Concept");

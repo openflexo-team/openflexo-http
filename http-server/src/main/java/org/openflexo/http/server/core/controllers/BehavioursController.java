@@ -51,7 +51,7 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void list(RoutingContext context) {
-        String id = context.request().getFormAttribute("vm_id");
+        String id = context.request().getParam("vmid").trim();
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             JsonArray result    = new JsonArray();
@@ -74,8 +74,8 @@ public class BehavioursController extends GenericController {
      */
     public void get(RoutingContext context) {
         try {
-            String modelId              = context.request().getFormAttribute("vm_id");
-            String signature            = context.request().getParam("signature");
+            String modelId              = context.request().getParam("vmid").trim();
+            String signature            = context.request().getParam("signature").trim();
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(modelId));
             FlexoBehaviour behaviour    = model.getDeclaredFlexoBehaviour(signature);
             context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
@@ -91,14 +91,15 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getFormAttribute("id");
+        String id = context.request().getParam("id").trim();
+
         try {
-            VirtualModel model              = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            FlexoConcept concept            = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             BehaviourValidator validator    = new BehaviourValidator(context.request());
             JsonArray errors                = validator.validate();
 
             if(validator.isValid()){
-                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(concept, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
 
                 behaviour.setFlexoBehaviourName(validator.getName());
                 behaviour.setFlexoBehaviourClass(validator.getType());
@@ -108,7 +109,7 @@ public class BehavioursController extends GenericController {
                 behaviour.doAction();
 
                 try {
-                    model.getResource().save();
+                    concept.getDeclaringVirtualModel().getResource().save();
                 } catch (SaveResourceException e) {
                     badRequest(context);
                 }
@@ -132,8 +133,8 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addParameter(RoutingContext context) {
-        String vm_id                = context.request().getFormAttribute("vm_id");
-        String signature            = context.request().getParam("signature");
+        String vm_id                = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
@@ -174,8 +175,8 @@ public class BehavioursController extends GenericController {
      */
     public void parameters(RoutingContext context) {
         JsonArray result            = new JsonArray();
-        String vm_id                = context.request().getFormAttribute("vm_id");
-        String signature            = context.request().getParam("signature");
+        String vm_id                = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         for (FlexoBehaviourParameter param : behaviour.getParameters()) {
@@ -191,8 +192,8 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addAction(RoutingContext context) {
-        String vm_id                = context.request().getFormAttribute("vm_id");
-        String signature            = context.request().getParam("signature");
+        String vm_id                = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){

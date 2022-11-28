@@ -36,7 +36,7 @@ public class PropertiesController extends GenericController {
      * @param context the routing context
      */
     public void list(RoutingContext context) {
-        String id = context.request().getFormAttribute("vm_id");
+        String id = context.request().getParam("id").trim();
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             JsonArray result    = new JsonArray();
@@ -59,8 +59,8 @@ public class PropertiesController extends GenericController {
      * and response.
      */
     public void get(RoutingContext context) {
-        String id   = context.request().getFormAttribute("vm_id");
-        String name = context.request().getParam("name");
+        String id   = context.request().getParam("id").trim();
+        String name = context.request().getParam("name").trim();
 
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
@@ -77,34 +77,30 @@ public class PropertiesController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getFormAttribute("id");
-        try {
-            VirtualModel model                      = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
-            JsonArray errors                        = validator.validate();
+        String id                               = context.request().getParam("id").trim();
+        FlexoConcept concept                    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
+        JsonArray errors                        = validator.validate();
 
-            if(validator.isValid()){
-                CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(model, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
-                property.setRoleName(validator.getName());
-                property.setPrimitiveType(validator.getType());
-                property.setCardinality(validator.getCardinality());
-                property.setDescription(validator.getDescription());
-                property.doAction();
+        if(validator.isValid()){
+            CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(concept, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+            property.setRoleName(validator.getName());
+            property.setPrimitiveType(validator.getType());
+            property.setCardinality(validator.getCardinality());
+            property.setDescription(validator.getDescription());
+            property.doAction();
 
-                try {
-                    model.getResource().save();
-                } catch (SaveResourceException e) {
-                    badRequest(context);
-                }
-
-                PrimitiveRole<?> prop = property.getNewFlexoRole();
-
-                context.response().end(JsonSerializer.primitivePropertySerializer(prop).encodePrettily());
-            } else {
-                badValidation(context, errors);
+            try {
+                concept.getDeclaringVirtualModel().getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
             }
-        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
-            notFound(context);
+
+            PrimitiveRole<?> prop = property.getNewFlexoRole();
+
+            context.response().end(JsonSerializer.primitivePropertySerializer(prop).encodePrettily());
+        } else {
+            badValidation(context, errors);
         }
     }
 

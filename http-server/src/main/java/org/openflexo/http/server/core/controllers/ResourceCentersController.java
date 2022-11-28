@@ -91,7 +91,7 @@ public class ResourceCentersController extends GenericController {
      * @param context the context of the request
      */
     public void resources(RoutingContext context) {
-        String centerId = context.request().getParam(("rcid"));
+        String centerId = context.request().getParam("rcid").trim();
         String centerUri = IdUtils.decodeId(centerId);
 
         FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(centerUri);
@@ -113,7 +113,7 @@ public class ResourceCentersController extends GenericController {
      * @param context the context of the request
      */
     public void resourceFolder(RoutingContext context) {
-        String centerId = context.request().getParam(("rcid"));
+        String centerId = context.request().getParam("rcid").trim();
         String centerUri = IdUtils.decodeId(centerId);
 
         String path = context.request().path();

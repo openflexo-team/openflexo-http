@@ -57,7 +57,7 @@ public class ResourcesController extends GenericController{
      * @param context the routing context
      */
     public void get(RoutingContext context) {
-        String id = context.request().getParam(("rid"));
+        String id = context.request().getParam("rid").trim();
         String uri = IdUtils.decodeId(id);
 
         FlexoResource<?> resource = resourceManager.getResource(uri);
@@ -76,7 +76,7 @@ public class ResourcesController extends GenericController{
      * @param context the routing context
      */
     public void process(RoutingContext context) {
-        String id = context.request().getParam(("rid"));
+        String id = context.request().getParam("rid").trim();
         String uri = IdUtils.decodeId(id);
 
         FlexoResource<?> resource = resourceManager.getResource(uri);
@@ -99,7 +99,7 @@ public class ResourcesController extends GenericController{
      * @param context the routing context
      */
     public void contents(RoutingContext context) {
-        String id = context.request().getParam(("rid"));
+        String id = context.request().getParam("rid").trim();
         String uri = IdUtils.decodeId(id);
 
         FlexoResource<?> resource = resourceManager.getResource(uri);
