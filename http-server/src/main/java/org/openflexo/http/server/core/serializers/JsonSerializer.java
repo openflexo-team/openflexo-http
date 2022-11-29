@@ -7,6 +7,7 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceData;
@@ -308,6 +309,13 @@ public class JsonSerializer {
         return result;
     }
 
+    /**
+     * It takes an EditionAction and returns a JSON object that contains the action's name, description, and the ID of the
+     * behaviour that owns it
+     *
+     * @param action The action to be serialized
+     * @return A JsonObject
+     */
     public static JsonObject behaviourActionSerializer(EditionAction action){
         JsonObject result = new JsonObject();
 
@@ -315,6 +323,24 @@ public class JsonSerializer {
         result.put("resource_type", "BehaviourAction");
         result.put("description", action.getDescription());
         result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getURI()));
+
+        return result;
+    }
+
+    /**
+     * It takes a log record and returns a JSON object
+     *
+     * @param record the log record to serialize
+     * @return A JsonObject
+     */
+    public  static  JsonObject logRecordSerializer(FMLLogRecord record){
+        JsonObject result = new JsonObject();
+
+        result.put("level", record.level.toString());
+        result.put("message", record.message);
+        result.put("date", record.date.toString());
+        result.put("millis", record.millis);
+        result.put("concept_id", IdUtils.encodeuri(record.flexoConceptInstance.getFlexoConceptURI()));
 
         return result;
     }

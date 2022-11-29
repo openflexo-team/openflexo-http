@@ -97,6 +97,10 @@ public class VirtualModelInstancesController extends GenericController{
                     vmi.setNewVirtualModelInstanceTitle(validator.getTitle());
                     vmi.setVirtualModel(model);
 
+                    if (model.hasCreationScheme()){
+                        vmi.setCreationScheme(model.getCreationSchemes().get(0));
+                    }
+
                     vmi.doAction();
 
                     try {

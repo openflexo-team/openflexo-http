@@ -30,6 +30,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private ConceptInstancesController cpiController;
     private PropertiesController prpController;
     private BehavioursController bhvController;
+    private ConsoleController cslController;
 
     /**
      * It creates all the necessary controllers and registers them with the service.
@@ -49,6 +50,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         cpiController   = new ConceptInstancesController(serviceManager.getVirtualModelLibrary());
         prpController   = new PropertiesController(serviceManager.getVirtualModelLibrary());
         bhvController   = new BehavioursController(serviceManager.getVirtualModelLibrary());
+        cslController   = new ConsoleController(serviceManager.getVirtualModelLibrary());
     }
 
     /**
@@ -126,7 +128,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.patch("/concept-instances/:id/edit").produces(JSON).handler(cpiController::edit);
         router.delete("/concept-instances/:id/delete").produces(JSON).handler(cpiController::delete);
 
-
+        router.get("/console").produces(JSON).handler(cslController::show);
 
         // -------------- SHORT ROUTES --------------
 
