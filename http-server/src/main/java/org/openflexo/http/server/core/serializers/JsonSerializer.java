@@ -1,10 +1,12 @@
 package org.openflexo.http.server.core.serializers;
 
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
+import org.openflexo.foundation.fml.rt.FMLRTModelSlot;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
@@ -12,6 +14,7 @@ import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.foundation.resource.ResourceRepository;
+import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
@@ -176,9 +179,10 @@ public class JsonSerializer {
 
         result.put("name", instance.getName());
         result.put("uri", instance.getURI());
+        result.put("id", IdUtils.encodeuri(instance.getURI()));
         result.put("resource_type", "VirtualModelInstance");
         result.put("title", instance.getTitle());
-        result.put("virtual_model_uri", instance.getVirtualModel().getURI());
+        result.put("virtual_model_id", IdUtils.encodeuri(instance.getVirtualModel().getURI()));
 
         return result;
     }
@@ -341,6 +345,41 @@ public class JsonSerializer {
         result.put("date", record.date.toString());
         result.put("millis", record.millis);
         result.put("concept_id", IdUtils.encodeuri(record.flexoConceptInstance.getFlexoConceptURI()));
+
+        return result;
+    }
+
+    /**
+     * It takes a FlexoConceptInstanceRole and returns a JsonObject that contains the information needed to recreate the
+     * role
+     *
+     * @param role the role to serialize
+     * @return A JsonObject
+     */
+    public static JsonObject conceptInstanceRoleSerializer(FlexoConceptInstanceRole role) {
+        JsonObject result = new JsonObject();
+
+        result.put("name", role.getRoleName());
+        result.put("resource_type", "ConceptInstanceRole");
+        result.put("cardinality", role.getCardinality());
+        result.put("description", role.getDescription());
+        result.put("concept_type_name", role.getFlexoConceptType().getName());
+        result.put("concept_type_id", IdUtils.encodeuri(role.getFlexoConceptType().getURI()));
+        result.put("concept_id", IdUtils.encodeuri(role.getFlexoConcept().getURI()));
+
+        return result;
+    }
+
+    public static JsonObject modelSlotSerializer(FMLRTModelSlot<?, ?> modelSlot) {
+        JsonObject result = new JsonObject();
+
+        result.put("name", modelSlot.getRoleName());
+        result.put("resource_type", "ModelSlot");
+        result.put("technology_adapter", modelSlot.getTechnologyAdapter().getName());
+        result.put("read_only", modelSlot.getIsReadOnly());
+        result.put("required", modelSlot.getIsRequired());
+        result.put("description", modelSlot.getDescription());
+        result.put("concept_id", IdUtils.encodeuri(modelSlot.getFlexoConcept().getURI()));
 
         return result;
     }

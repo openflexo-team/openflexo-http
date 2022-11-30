@@ -2,6 +2,7 @@ package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
+import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
@@ -38,6 +39,7 @@ import java.io.FileNotFoundException;
  */
 public class ConceptInstancesController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
+    private final DefaultFlexoEditor editor;
 
     /**
      * Instantiates a new Concept instances controller.
@@ -45,7 +47,8 @@ public class ConceptInstancesController extends GenericController {
      * @param virtualModelLibrary the virtual model library
      */
     public ConceptInstancesController(VirtualModelLibrary virtualModelLibrary) {
-        this.virtualModelLibrary = virtualModelLibrary;
+        this.virtualModelLibrary    = virtualModelLibrary;
+        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
     public void list(RoutingContext context) {}
@@ -63,7 +66,7 @@ public class ConceptInstancesController extends GenericController {
         JsonArray errors                   = validator.validate();
 
         if(validator.isValid()){
-            CreateFlexoConceptInstance action   = CreateFlexoConceptInstance.actionType.makeNewAction(validator.getContainer(), null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+            CreateFlexoConceptInstance action   = CreateFlexoConceptInstance.actionType.makeNewAction(validator.getContainer(), null, editor);
             action.setFlexoConcept(validator.getConcept());
 
             if (validator.getConcept().getCreationSchemes().size() > 0) {

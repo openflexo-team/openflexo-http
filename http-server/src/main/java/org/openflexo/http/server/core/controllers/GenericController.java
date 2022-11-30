@@ -17,11 +17,11 @@ public abstract class GenericController {
      * @param context The routing context.
      */
     public void notFound(RoutingContext context) {
-        context.response().setStatusCode(404).close();
+        context.response().setStatusCode(404).end();
     }
 
     /**
-     * > It takes a RoutingContext and an Exception, and writes a JSON response to the client with the exception's class
+     * It takes a RoutingContext and an Exception, and writes a JSON response to the client with the exception's class
      * name, message, and stack trace
      *
      * @param context The routing context of the request.
@@ -44,7 +44,7 @@ public abstract class GenericController {
     public void badRequest(RoutingContext context) {
         HttpServerResponse response = context.response();
         response.setStatusCode(400);
-        response.close();
+        response.end();
     }
 
     /**
@@ -57,5 +57,16 @@ public abstract class GenericController {
         HttpServerResponse response = context.response();
         response.setStatusCode(422);
         response.end(errors.encodePrettily());
+    }
+
+    /**
+     * Set the status code to 204 and end the response.
+     *
+     * @param context The routing context is the object that contains the request and response objects.
+     */
+    public void emptyResponse(RoutingContext context) {
+        HttpServerResponse response = context.response();
+        response.setStatusCode(204);
+        response.end();
     }
 }

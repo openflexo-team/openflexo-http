@@ -9,6 +9,7 @@ import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
+import org.openflexo.http.server.util.IdUtils;
 import org.python.jline.internal.Log;
 
 /**
@@ -37,26 +38,6 @@ public class ConceptInstanceValidator extends GenericValidator{
     }
 
     /**
-     * If the conceptUri is empty, throw an exception, otherwise, if the conceptUri is valid, return the FlexoConcept,
-     * otherwise throw an exception
-     *
-     * @param conceptUri the value of the field
-     * @return A FlexoConcept
-     */
-    public FlexoConcept validateConcept(String conceptUri) throws BadValidationException {
-        if(conceptUri == null || conceptUri.isEmpty()){
-            throw new BadValidationException("Field required");
-        } else {
-            FlexoConcept tContainer = virtualModelLibrary.getFlexoConcept(conceptUri, true);
-            if (tContainer != null) {
-                return tContainer;
-            } else {
-                throw new BadValidationException("Invalid value");
-            }
-        }
-    }
-
-    /**
      * It validates a project id and returns the corresponding project
      *
      * @param projectId the name of the parameter that will be passed to the method.
@@ -76,20 +57,21 @@ public class ConceptInstanceValidator extends GenericValidator{
         }
     }
 
+
     /**
-     * It takes a string and a project, and returns a virtual model instance. If the string is empty, it throws a
-     * BadValidationException. If the string is not empty, it tries to get the virtual model instance from the project. If
-     * it succeeds, it returns the virtual model instance. If it fails, it throws a BadValidationException
+     * It takes a string as input, and returns a virtual model instance. If the string is empty, it throws an exception. If
+     * the string is not empty, it tries to find the virtual model instance with the given id. If it finds it, it returns
+     * it. If it doesn't find it, it throws an exception
      *
-     * @param vmiUri the value of the field
-     * @param project the project in which the validation is performed
+     * @param vmiId the id of the virtual model instance to validate
+     * @param project the project in which the virtual model instance is located
      * @return A VirtualModelInstance
      */
-    public FMLRTVirtualModelInstance validateVirtualModelInstanceUri(String vmiUri, FlexoProject<?> project) throws BadValidationException {
-        if(vmiUri == null || vmiUri.isEmpty()){
+    public FMLRTVirtualModelInstance validateVirtualModelInstanceId(String vmiId, FlexoProject<?> project) throws BadValidationException {
+        if(vmiId == null || vmiId.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
-            FMLRTVirtualModelInstance vmi = project.getVirtualModelInstanceRepository().getVirtualModelInstance(vmiUri).getVirtualModelInstance();
+            FMLRTVirtualModelInstance vmi = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(vmiId)).getVirtualModelInstance();
             if (vmi != null) {
                 return vmi;
             } else {
@@ -105,16 +87,15 @@ public class ConceptInstanceValidator extends GenericValidator{
      * that failed validation. The value is the error message.
      */
     public JsonArray validate(){
-        String rConceptUri      = request.getFormAttribute("concept_uri");
+        String rConceptId       = request.getFormAttribute("concept_id");
         String rProjectId       = request.getFormAttribute("project_id");
-        String rContainerUri    = request.getFormAttribute("container_uri");
-
+        String rContainerId     = request.getFormAttribute("container_id");
         errors                  = new JsonArray();
 
         JsonObject errorLine;
 
         try{
-            concept = validateConcept(rConceptUri);
+            concept = validateConcept(rConceptId, virtualModelLibrary);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("concept_uri", e.getMessage());
@@ -124,7 +105,7 @@ public class ConceptInstanceValidator extends GenericValidator{
         try{
             FlexoProject<?> project = validateProject(rProjectId);
             try{
-                container = validateVirtualModelInstanceUri(rContainerUri, project);
+                container = validateVirtualModelInstanceId(rContainerId, project);
             } catch (BadValidationException e){
                 errorLine = new JsonObject();
                 errorLine.put("container_uri", e.getMessage());
@@ -150,8 +131,6 @@ public class ConceptInstanceValidator extends GenericValidator{
     public boolean isValid() {
         return isValid;
     }
-
-
 
     /**
      * This method returns the FlexoConcept of this object

@@ -2,17 +2,18 @@ package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
-import org.openflexo.foundation.FlexoException;
+import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.action.CreateFlexoConceptInstanceRole;
+import org.openflexo.foundation.fml.action.CreateModelSlot;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
-import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
+import org.openflexo.foundation.fml.rt.FMLRTModelSlot;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelSlot;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
+import org.openflexo.http.server.core.validators.PropertiesValidator;
 import org.openflexo.http.server.util.IdUtils;
-
-import java.io.FileNotFoundException;
 
 /**
  *  Properties rest apis controller.
@@ -20,6 +21,7 @@ import java.io.FileNotFoundException;
  */
 public class PropertiesController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
+    private final DefaultFlexoEditor editor;
 
     /**
      * Instantiates a new Properties controller.
@@ -27,7 +29,8 @@ public class PropertiesController extends GenericController {
      * @param virtualModelLibrary the virtual model library
      */
     public PropertiesController(VirtualModelLibrary virtualModelLibrary) {
-        this.virtualModelLibrary = virtualModelLibrary;
+        this.virtualModelLibrary    = virtualModelLibrary;
+        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
     /**
@@ -37,6 +40,7 @@ public class PropertiesController extends GenericController {
      */
     public void list(RoutingContext context) {
         String id = context.request().getParam("id").trim();
+
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             JsonArray result    = new JsonArray();
@@ -76,14 +80,15 @@ public class PropertiesController extends GenericController {
      *
      * @param context the routing context
      */
-    public void add(RoutingContext context) {
-        String id                               = context.request().getParam("id").trim();
-        FlexoConcept concept                    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
-        PrimitivePropertyValidator validator    = new PrimitivePropertyValidator(context.request());
-        JsonArray errors                        = validator.validate();
+    public void addPrimitive(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        FlexoConcept concept        = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PropertiesValidator validator = new PropertiesValidator(context.request(), virtualModelLibrary);
+        JsonArray errors            = validator.validatePrimitive();
 
         if(validator.isValid()){
-            CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(concept, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+            CreatePrimitiveRole property = CreatePrimitiveRole.actionType.makeNewAction(concept, null, editor);
+
             property.setRoleName(validator.getName());
             property.setPrimitiveType(validator.getType());
             property.setCardinality(validator.getCardinality());
@@ -107,4 +112,73 @@ public class PropertiesController extends GenericController {
     public void edit(RoutingContext context) {}
 
     public void delete(RoutingContext context) {}
+
+    /**
+     * It creates a new FlexoConceptInstanceRole in the FlexoConcept identified by the id parameter
+     *
+     * @param context the routing context
+     */
+    public void addFlexoConceptInstanceRole(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        FlexoConcept concept        = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PropertiesValidator validator = new PropertiesValidator(context.request(), virtualModelLibrary);
+        JsonArray errors            = validator.validateConceptInstanceRole();
+
+        if(validator.isValid()){
+
+            CreateFlexoConceptInstanceRole role = CreateFlexoConceptInstanceRole.actionType.makeNewAction(concept, null, editor);
+
+            role.setRoleName(validator.getName());
+            role.setFlexoConceptInstanceType(validator.getConcept());
+            role.setCardinality(validator.getCardinality());
+            role.setDescription(validator.getDescription());
+            role.doAction();
+
+            try {
+                concept.getDeclaringVirtualModel().getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+
+            context.response().end(JsonSerializer.conceptInstanceRoleSerializer(role.getNewFlexoRole()).encodePrettily());
+        } else {
+            badValidation(context, errors);
+        }
+    }
+
+    /**
+     * It creates a new model slot in the FlexoConcept identified by the id parameter
+     *
+     * @param context the routing context
+     */
+    public void addModelSlot(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        FlexoConcept concept        = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PropertiesValidator validator = new PropertiesValidator(context.request(), virtualModelLibrary);
+        JsonArray errors            = validator.validateModelSlot();
+
+        if(validator.isValid()){
+            CreateModelSlot modelSlot = CreateModelSlot.actionType.makeNewAction(concept, null, editor);
+
+            modelSlot.setModelSlotClass(FMLRTVirtualModelInstanceModelSlot.class);
+            modelSlot.setTechnologyAdapter(validator.getTechnologyAdapter());
+            modelSlot.setModelSlotName(validator.getName());
+            modelSlot.setDescription(validator.getDescription());
+            modelSlot.setReadOnly(validator.isReadOnly());
+            modelSlot.setRequired(validator.isRequired());
+            modelSlot.setVmRes(validator.getVirtualModelResource());
+            modelSlot.doAction();
+
+            VirtualModel model = concept.getDeclaringVirtualModel();
+            try {
+                model.getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+
+            context.response().end(JsonSerializer.modelSlotSerializer((FMLRTModelSlot<?, ?>) model.getModelSlot(modelSlot.getModelSlotName())).encodePrettily());
+        } else {
+            badValidation(context, errors);
+        }
+    }
 }

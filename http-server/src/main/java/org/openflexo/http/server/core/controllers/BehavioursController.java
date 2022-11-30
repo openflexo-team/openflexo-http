@@ -3,17 +3,11 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.connie.DataBinding;
+import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.*;
-import org.openflexo.foundation.fml.action.CreateEditionAction;
-import org.openflexo.foundation.fml.action.CreateFlexoBehaviour;
-import org.openflexo.foundation.fml.action.CreateGenericBehaviourParameter;
-import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
-import org.openflexo.foundation.fml.editionaction.AssignationAction;
-import org.openflexo.foundation.fml.editionaction.EditionAction;
-import org.openflexo.foundation.fml.editionaction.ExpressionAction;
+import org.openflexo.foundation.fml.action.*;
 import org.openflexo.foundation.fml.editionaction.LogAction;
-import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -21,10 +15,7 @@ import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.BehaviourActionValidator;
 import org.openflexo.http.server.core.validators.BehaviourParameterValidator;
 import org.openflexo.http.server.core.validators.BehaviourValidator;
-import org.openflexo.http.server.core.validators.PrimitivePropertyValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -34,6 +25,7 @@ import java.io.FileNotFoundException;
  */
 public class BehavioursController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
+    private final DefaultFlexoEditor editor;
 
     /**
      * Instantiates a new Properties controller.
@@ -41,7 +33,8 @@ public class BehavioursController extends GenericController {
      * @param virtualModelLibrary the virtual model library
      */
     public BehavioursController(VirtualModelLibrary virtualModelLibrary) {
-        this.virtualModelLibrary = virtualModelLibrary;
+        this.virtualModelLibrary    = virtualModelLibrary;
+        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
     /**
@@ -78,8 +71,8 @@ public class BehavioursController extends GenericController {
             String signature            = context.request().getParam("signature").trim();
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(modelId));
             FlexoBehaviour behaviour    = model.getDeclaredFlexoBehaviour(signature);
-            context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
 
+            context.response().end(JsonSerializer.behaviourSerializer(behaviour).encodePrettily());
         } catch (Exception e) {
             notFound(context);
         }
@@ -91,41 +84,65 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getParam("id").trim();
+        String id                       = context.request().getParam("id").trim();
+        FlexoConcept concept            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        BehaviourValidator validator    = new BehaviourValidator(context.request());
+        JsonArray errors                = validator.validate();
 
-        try {
-            FlexoConcept concept            = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            BehaviourValidator validator    = new BehaviourValidator(context.request());
-            JsonArray errors                = validator.validate();
+        if(validator.isValid()){
+            CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(concept, null, editor);
 
-            if(validator.isValid()){
-                CreateFlexoBehaviour behaviour = CreateFlexoBehaviour.actionType.makeNewAction(concept, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+            behaviour.setFlexoBehaviourName(validator.getName());
+            behaviour.setFlexoBehaviourClass(validator.getType());
+            behaviour.setDescription(validator.getDescription());
+            behaviour.setVisibility(validator.getVisibility());
+            behaviour.setIsAbstract(validator.isAbstract());
+            behaviour.doAction();
 
-                behaviour.setFlexoBehaviourName(validator.getName());
-                behaviour.setFlexoBehaviourClass(validator.getType());
-                behaviour.setDescription(validator.getDescription());
-                behaviour.setVisibility(validator.getVisibility());
-                behaviour.setIsAbstract(validator.isAbstract());
-                behaviour.doAction();
-
-                try {
-                    concept.getDeclaringVirtualModel().getResource().save();
-                } catch (SaveResourceException e) {
-                    badRequest(context);
-                }
-
-                context.response().end(JsonSerializer.behaviourSerializer(behaviour.getNewFlexoBehaviour()).encodePrettily());
-            } else {
-                badValidation(context, errors);
+            try {
+                concept.getDeclaringVirtualModel().getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
             }
-        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
-            notFound(context);
+
+            context.response().end(JsonSerializer.behaviourSerializer(behaviour.getNewFlexoBehaviour()).encodePrettily());
+        } else {
+            badValidation(context, errors);
         }
     }
 
     public void edit(RoutingContext context) {}
 
-    public void delete(RoutingContext context) {}
+    public void delete(RoutingContext context) {
+
+        String modelId              = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature").trim();
+        VirtualModel model          = null;
+
+        try {
+            model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(modelId));
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+
+        FlexoBehaviour behaviour = model.getDeclaredFlexoBehaviour(signature);
+
+        if(behaviour != null){
+            DeleteFlexoConceptObjects action = DeleteFlexoConceptObjects.actionType.makeNewAction(behaviour, null, editor);
+            action.doAction();
+
+            try {
+                model.getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+            emptyResponse(context);
+        } else {
+            notFound(context);
+        }
+
+
+    }
 
     /**
      * It creates a new parameter for a behaviour
@@ -143,7 +160,7 @@ public class BehavioursController extends GenericController {
             JsonArray errors                        = validator.validate();
 
             if(validator.isValid()){
-                CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+                CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, editor);
                 parameter.setParameterName(validator.getName());
                 parameter.setParameterType(validator.getType());
                 parameter.setDescription(validator.getDescription());
@@ -192,9 +209,9 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addAction(RoutingContext context) {
-        String vm_id                = context.request().getParam("vmid").trim();
+        String id                   = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
-        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
             VirtualModel model                  = behaviour.getDeclaringVirtualModel();
@@ -202,7 +219,7 @@ public class BehavioursController extends GenericController {
             JsonArray errors                    = validator.validateLogAction();
 
             if(validator.isValid()){
-                CreateEditionAction createAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, Helpers.getDefaultFlexoEditor(virtualModelLibrary));
+                CreateEditionAction createAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
 
                 createAction.setEditionActionClass(LogAction.class);
                 createAction.doAction();
@@ -225,5 +242,4 @@ public class BehavioursController extends GenericController {
             notFound(context);
         }
     }
-
 }

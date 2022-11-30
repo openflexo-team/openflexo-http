@@ -3,9 +3,11 @@ package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
+import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
@@ -16,6 +18,7 @@ import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
+import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -26,6 +29,7 @@ import java.io.FileNotFoundException;
 public class VirtualModelsController extends GenericController {
 
     private final VirtualModelLibrary virtualModelLibrary;
+    private final DefaultFlexoEditor editor;
 
     /**
      * Instantiates a new Virtual models controller.
@@ -33,7 +37,8 @@ public class VirtualModelsController extends GenericController {
      * @param virtualModelLibrary the virtual model library
      */
     public VirtualModelsController(VirtualModelLibrary virtualModelLibrary) {
-        this.virtualModelLibrary = virtualModelLibrary;
+        this.virtualModelLibrary    = virtualModelLibrary;
+        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
     /**
@@ -101,6 +106,23 @@ public class VirtualModelsController extends GenericController {
 
     public void edit(RoutingContext context) {}
 
-    public void delete(RoutingContext context) {}
+    /**
+     * It deletes a virtual model
+     *
+     * @param context the routing context
+     */
+    public void delete(RoutingContext context) {
+        String id = context.request().getParam("id").trim();
+        try {
+            VirtualModel model                  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            DeleteFlexoConceptObjects action    = DeleteFlexoConceptObjects.actionType.makeNewAction(model, null, editor);
 
+            action.doAction();
+            model.getResource().destroy();
+
+            emptyResponse(context);
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+    }
 }

@@ -65,137 +65,32 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
 
         // Resource centers
         router.get("/resource-centers/").produces(JSON).handler(rcsController::list);
-        router.post("/resource-centers/add").produces(JSON).handler(rcsController::add);
-        router.post("/resource-centers/upload").produces(JSON).handler(rcsController::upload);
-        router.get("/resource-centers/:rcid").produces(JSON).handler(rcsController::get);
-        router.get("/resource-centers/:rcid/resource").produces(JSON).handler(rcsController::resources);
-        router.get("/resource-centers/:rcid/resource/*").produces(JSON).handler(rcsController::resourceFolder);
-
-        // Resources
-        router.get("/resource").produces(JSON).handler(rsController::list);
-        router.get("/resource/:rid").produces(JSON).handler(rsController::get);
-        router.post("/resource/:rid").produces(JSON).handler(rsController::process);
-        router.get("/resource/:rid/contents").handler(rsController::contents);
-
-        // Technology Adapters
-        router.get("/technology-adapters").produces(JSON).handler(taController::list);
-        router.get("/technology-adapters/:taid").produces(JSON).handler(taController::get);
-
-        // Projects
-        router.get("/projects/").produces(JSON).handler(prjController::list);
-        router.get("/projects/:id").produces(JSON).handler(prjController::get);
-        router.post("/projects/add").produces(JSON).handler(prjController::add);
-        router.patch("/projects/:id/edit").produces(JSON).handler(prjController::edit);
-        router.delete("/projects/:id/delete").produces(JSON).handler(prjController::delete);
-
-        // Virtual Models
-        router.get("/virtual-models/").produces(JSON).handler(vmController::list);
-        router.get("/virtual-models/:id").produces(JSON).handler(vmController::get);
-        router.post("/virtual-models/add").produces(JSON).handler(vmController::add);
-        router.patch("/virtual-models/:id/edit").produces(JSON).handler(vmController::edit);
-        router.delete("/virtual-models/:id/delete").produces(JSON).handler(vmController::delete);
-        // Concepts
-        router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
-        router.get("/virtual-models/:vmid/concepts/:id").produces(JSON).handler(cpController::get);
-        router.post("/virtual-models/:vmid/concepts/add").produces(JSON).handler(cpController::add);
-        router.patch("/virtual-models/:vmid/concepts/:id/edit").produces(JSON).handler(cpController::edit);
-        router.delete("/virtual-models/:vmid/concepts/:id/delete").produces(JSON).handler(cpController::delete);
-        // properties
-        router.get("/virtual-models/:vmid/concepts/:id/properties/").produces(JSON).handler(prpController::list);
-        router.get("/virtual-models/:vmid/concepts/:id/properties/:name").produces(JSON).handler(prpController::get);
-        router.post("/virtual-models/:vmid/concepts/:id/properties/add").produces(JSON).handler(prpController::add);
-        // Behaviours
-        router.get("/virtual-models/:vmid/concepts/:id/behaviours/").produces(JSON).handler(bhvController::list);
-        router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature").produces(JSON).handler(bhvController::get);
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/add").produces(JSON).handler(bhvController::add);
-        // Parameters
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add").produces(JSON).handler(bhvController::addParameter);
-        router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
-        // Actions
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add").produces(JSON).handler(bhvController::addAction);
-
-        // Virtual Model Instances
-        router.post("/virtual-model-instances/add").produces(JSON).handler(vmiController::add);
-        router.post("/virtual-model-instances/").produces(JSON).handler(vmiController::list);
-        router.post("/virtual-model-instances/:id").produces(JSON).handler(vmiController::get);
-        router.patch("/virtual-model-instances/:id/edit").produces(JSON).handler(vmiController::edit);
-        router.delete("/virtual-model-instances/:id/delete").produces(JSON).handler(vmiController::delete);
-
-        // Concept Instances
-        router.post("/concept-instances/add").produces(JSON).handler(cpiController::add);
-        router.get("/concept-instances/").produces(JSON).handler(cpiController::list);
-        router.get("/concept-instances/:id").produces(JSON).handler(cpiController::get);
-        router.patch("/concept-instances/:id/edit").produces(JSON).handler(cpiController::edit);
-        router.delete("/concept-instances/:id/delete").produces(JSON).handler(cpiController::delete);
-
-        router.get("/console").produces(JSON).handler(cslController::show);
-
-        // -------------- SHORT ROUTES --------------
-
-
-        // Resource Centers
         router.get("/rc/").produces(JSON).handler(rcsController::list);
+        router.post("/resource-centers/add").produces(JSON).handler(rcsController::add);
         router.post("/rc/add").produces(JSON).handler(rcsController::add);
+        router.post("/resource-centers/upload").produces(JSON).handler(rcsController::upload);
         router.post("/rc/upload").produces(JSON).handler(rcsController::upload);
+        router.get("/resource-centers/:rcid").produces(JSON).handler(rcsController::get);
         router.get("/rc/:rcid").produces(JSON).handler(rcsController::get);
+        router.get("/resource-centers/:rcid/resource").produces(JSON).handler(rcsController::resources);
         router.get("/rc/:rcid/rsc").produces(JSON).handler(rcsController::resources);
+        router.get("/resource-centers/:rcid/resource/*").produces(JSON).handler(rcsController::resourceFolder);
         router.get("/rc/:rcid/rsc/*").produces(JSON).handler(rcsController::resourceFolder);
 
         // Resources
+        router.get("/resource").produces(JSON).handler(rsController::list);
         router.get("/rsc").produces(JSON).handler(rsController::list);
+        router.get("/resource/:rid").produces(JSON).handler(rsController::get);
         router.get("/rsc/:rid").produces(JSON).handler(rsController::get);
+        router.post("/resource/:rid").produces(JSON).handler(rsController::process);
         router.post("/rsc/:rid").produces(JSON).handler(rsController::process);
+        router.get("/resource/:rid/contents").handler(rsController::contents);
         router.get("/rsc/:rid/contents").handler(rsController::contents);
 
-        // Projects
-        router.get("/prj/").produces(JSON).handler(prjController::list);
-        router.get("/prj/:id").produces(JSON).handler(prjController::get);
-        router.post("/prj/add").produces(JSON).handler(prjController::add);
-        router.patch("/prj/:id/edit").produces(JSON).handler(prjController::edit);
-        router.delete("/prj/:id/delete").produces(JSON).handler(prjController::delete);
-
-        // Virtual Models
-        router.get("/vm/").produces(JSON).handler(vmController::list);
-        router.get("/vm/:id").produces(JSON).handler(vmController::get);
-        router.post("/vm/add").produces(JSON).handler(vmController::add);
-        router.patch("/vm/:id/edit").produces(JSON).handler(vmController::edit);
-        router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
-        // Concepts
-        router.get("/vm/:vmid/cp/").produces(JSON).handler(cpController::list);
-        router.get("/vm/:vmid/cp/:id").produces(JSON).handler(cpController::get);
-        router.post("/vm/:vmid/cp/add").produces(JSON).handler(cpController::add);
-        router.patch("/vm/:vmid/cp/:id/edit").produces(JSON).handler(cpController::edit);
-        router.delete("/vm/:vmid/cp/:id/delete").produces(JSON).handler(cpController::delete);
-        // Properties
-        router.get("/vm/:vmid/cp/:id/prp/").produces(JSON).handler(prpController::list);
-        router.get("/vm/:vmid/cp/:id/prp/:name").produces(JSON).handler(prpController::get);
-        router.post("/vm/:vmid/cp/:id/prp/add").produces(JSON).handler(prpController::add);
-        // Behaviours
-        router.get("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::list);
-        router.get("/vm/:vmid/cp/:id/bhv/:signature").produces(JSON).handler(bhvController::get);
-        router.post("/vm/:vmid/cp/:id/bhv/add").produces(JSON).handler(bhvController::add);
-        // Parameters
-        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add").produces(JSON).handler(bhvController::addParameter);
-        router.get("/vm/:vmid/cp/:id/bhv/:signature/param/").produces(JSON).handler(bhvController::parameters);
-        // Actions
-        router.post("/vm/:vmid/cp/:id/bhv/:signature/act/add").produces(JSON).handler(bhvController::addAction);
-
-        // Virtual Model Instances
-        router.post("/vmi/add").produces(JSON).handler(vmiController::add);
-        router.post("/vmi/").produces(JSON).handler(vmiController::list);
-        router.post("/vmi/:id").produces(JSON).handler(vmiController::get);
-        router.patch("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
-        router.delete("/vmi/:id/delete").produces(JSON).handler(vmiController::delete);
-
-        // Concept Instances
-        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
-        router.get("/cpi/").produces(JSON).handler(cpiController::list);
-        router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
-        router.patch("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
-        router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
-
         // Technology Adapters
+        router.get("/technology-adapters").produces(JSON).handler(taController::list);
         router.get("/ta").produces(JSON).handler(taController::list);
+        router.get("/technology-adapters/:taid").produces(JSON).handler(taController::get);
         router.get("/ta/:taid").produces(JSON).handler(taController::get);
 
         for (Map.Entry<TechnologyAdapter<?>, TechnologyAdapterRouteComplement> entry : taController.getComplementMap().entrySet()) {
@@ -212,5 +107,99 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
                 taController.getResourcePrefixes().put(service.getResourceClass(), route + service.getPrefix());
             }
         }
+
+        // Projects
+        router.get("/projects/").produces(JSON).handler(prjController::list);
+        router.get("/prj/").produces(JSON).handler(prjController::list);
+        router.get("/projects/:id").produces(JSON).handler(prjController::get);
+        router.get("/prj/:id").produces(JSON).handler(prjController::get);
+        router.post("/projects/add").produces(JSON).handler(prjController::add);
+        router.post("/prj/add").produces(JSON).handler(prjController::add);
+        router.patch("/projects/:id/edit").produces(JSON).handler(prjController::edit);
+        router.patch("/prj/:id/edit").produces(JSON).handler(prjController::edit);
+        router.delete("/projects/:id/delete").produces(JSON).handler(prjController::delete);
+        router.delete("/prj/:id/delete").produces(JSON).handler(prjController::delete);
+
+        // Virtual Models
+        router.get("/virtual-models/").produces(JSON).handler(vmController::list);
+        router.get("/vm/").produces(JSON).handler(vmController::list);
+        router.get("/virtual-models/:id").produces(JSON).handler(vmController::get);
+        router.get("/vm/:id").produces(JSON).handler(vmController::get);
+        router.post("/virtual-models/add").produces(JSON).handler(vmController::add);
+        router.post("/vm/add").produces(JSON).handler(vmController::add);
+        router.patch("/virtual-models/:id/edit").produces(JSON).handler(vmController::edit);
+        router.patch("/vm/:id/edit").produces(JSON).handler(vmController::edit);
+        router.delete("/virtual-models/:id/delete").produces(JSON).handler(vmController::delete);
+        router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
+
+        // Concepts
+        router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
+        router.get("/vm/:vmid/cp/").produces(JSON).handler(cpController::list);
+        router.get("/virtual-models/:vmid/concepts/:id").produces(JSON).handler(cpController::get);
+        router.get("/vm/:vmid/cp/:id").produces(JSON).handler(cpController::get);
+        router.post("/virtual-models/:vmid/concepts/add").produces(JSON).handler(cpController::add);
+        router.post("/vm/:vmid/cp/add").produces(JSON).handler(cpController::add);
+        router.patch("/virtual-models/:vmid/concepts/:id/edit").produces(JSON).handler(cpController::edit);
+        router.patch("/vm/:vmid/cp/:id/edit").produces(JSON).handler(cpController::edit);
+        router.delete("/virtual-models/:vmid/concepts/:id/delete").produces(JSON).handler(cpController::delete);
+        router.delete("/vm/:vmid/cp/:id/delete").produces(JSON).handler(cpController::delete);
+
+        // properties
+        router.get("/virtual-models/:vmid/concepts/:id/properties/").produces(JSON).handler(prpController::list);
+        router.get("/vm/:vmid/cp/:id/prp/").produces(JSON).handler(prpController::list);
+        router.get("/virtual-models/:vmid/concepts/:id/properties/:name").produces(JSON).handler(prpController::get);
+        router.get("/vm/:vmid/cp/:id/prp/:name").produces(JSON).handler(prpController::get);
+        router.post("/virtual-models/:vmid/concepts/:id/properties/add-primitive").produces(JSON).handler(prpController::addPrimitive);
+        router.post("/vm/:vmid/cp/:id/prp/add-primitive").produces(JSON).handler(prpController::addPrimitive);
+        router.post("/virtual-models/:vmid/concepts/:id/properties/add-flexo-concept-instance-role").produces(JSON).handler(prpController::addFlexoConceptInstanceRole);
+        router.post("/vm/:vmid/cp/:id/prp/add-fcir").produces(JSON).handler(prpController::addFlexoConceptInstanceRole);
+        router.post("/virtual-models/:vmid/concepts/:id/properties/add-model-slot").produces(JSON).handler(prpController::addModelSlot);
+        router.post("/vm/:vmid/cp/:id/prp/add-ms").produces(JSON).handler(prpController::addModelSlot);
+
+        // Behaviours
+        router.get("/virtual-models/:vmid/concepts/:id/behaviours/").produces(JSON).handler(bhvController::list);
+        router.get("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::list);
+        router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature").produces(JSON).handler(bhvController::get);
+        router.get("/vm/:vmid/cp/:id/bhv/:signature").produces(JSON).handler(bhvController::get);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/add").produces(JSON).handler(bhvController::add);
+        router.post("/vm/:vmid/cp/:id/bhv/add").produces(JSON).handler(bhvController::add);
+        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/delete").produces(JSON).handler(bhvController::delete);
+        router.post("/vm/:vmid/cp/:id/bhv/delete").produces(JSON).handler(bhvController::delete);
+
+        // Parameters
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add").produces(JSON).handler(bhvController::addParameter);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add").produces(JSON).handler(bhvController::addParameter);
+        router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
+        router.get("/vm/:vmid/cp/:id/bhv/:signature/param/").produces(JSON).handler(bhvController::parameters);
+
+        // Actions
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add").produces(JSON).handler(bhvController::addAction);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/act/add").produces(JSON).handler(bhvController::addAction);
+
+        // Virtual Model Instances
+        router.post("/virtual-model-instances/add").produces(JSON).handler(vmiController::add);
+        router.post("/vmi/add").produces(JSON).handler(vmiController::add);
+        router.post("/virtual-model-instances/").produces(JSON).handler(vmiController::list);
+        router.post("/vmi/").produces(JSON).handler(vmiController::list);
+        router.post("/virtual-model-instances/:id").produces(JSON).handler(vmiController::get);
+        router.post("/vmi/:id").produces(JSON).handler(vmiController::get);
+        router.patch("/virtual-model-instances/:id/edit").produces(JSON).handler(vmiController::edit);
+        router.patch("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
+        router.delete("/virtual-model-instances/:id/delete").produces(JSON).handler(vmiController::delete);
+        router.delete("/vmi/:id/delete").produces(JSON).handler(vmiController::delete);
+
+        // Concept Instances
+        router.post("/concept-instances/add").produces(JSON).handler(cpiController::add);
+        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
+        router.get("/concept-instances/").produces(JSON).handler(cpiController::list);
+        router.get("/cpi/").produces(JSON).handler(cpiController::list);
+        router.get("/concept-instances/:id").produces(JSON).handler(cpiController::get);
+        router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
+        router.patch("/concept-instances/:id/edit").produces(JSON).handler(cpiController::edit);
+        router.patch("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
+        router.delete("/concept-instances/:id/delete").produces(JSON).handler(cpiController::delete);
+        router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
+
+        router.get("/console").produces(JSON).handler(cslController::show);
     }
 }

@@ -3,14 +3,16 @@ package org.openflexo.http.server.core.helpers;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
+import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.PropertyEntry;
+import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
+import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  *  Generic Helpers.
@@ -139,8 +141,9 @@ public class Helpers {
                 return PrimitiveType.Float;
             case "Double":
                 return PrimitiveType.Double;
+            default:
+                return null;
         }
-        return null;
     }
 
     /**
@@ -182,8 +185,9 @@ public class Helpers {
                 return SynchronizationScheme.class;
             case "navigation":
                 return NavigationScheme.class;
+            default:
+                return null;
         }
-        return null;
     }
 
     /**
@@ -217,8 +221,9 @@ public class Helpers {
                 return Float.valueOf(value);
             case "Double":
                 return Double.valueOf(value);
+            default:
+                return null;
         }
-        return null;
     }
 
     public static FMLConsole.LogLevel getLogLevel(String level){
@@ -237,7 +242,20 @@ public class Helpers {
                 return FMLConsole.LogLevel.FINEST;
             case "debug":
                 return FMLConsole.LogLevel.DEBUG;
+            default:
+                return null;
         }
-        return null;
+    }
+
+    public static TechnologyAdapter<?> getTechnologyAdapterClass(String ta, FlexoServiceManager serviceManager) {
+        switch (ta){
+            case "fml":
+                return serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
+            case "fmlrt":
+                return serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLRTTechnologyAdapter.class);
+            // TODO: add other  technology adapters
+            default:
+                return null;
+        }
     }
 }
