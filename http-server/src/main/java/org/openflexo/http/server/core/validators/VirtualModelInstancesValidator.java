@@ -5,10 +5,8 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
-import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.util.IdUtils;
 
 import java.io.FileNotFoundException;
@@ -18,7 +16,7 @@ import java.io.FileNotFoundException;
  *
  * @author Ihab Benamer
  */
-public class VirtualModelInstanceValidator extends GenericValidator{
+public class VirtualModelInstancesValidator extends GenericValidator{
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
     private boolean isValid;
@@ -33,7 +31,7 @@ public class VirtualModelInstanceValidator extends GenericValidator{
      * @param request             the request
      * @param virtualModelLibrary the virtual model library
      */
-    public VirtualModelInstanceValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
+    public VirtualModelInstancesValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
         this.request                = request;
         this.virtualModelLibrary    = virtualModelLibrary;
         isValid                     = false;

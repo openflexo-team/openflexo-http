@@ -13,7 +13,7 @@ import java.util.List;
  *
  * @author Ihab Benamer
  */
-public class ConceptValidator extends GenericValidator{
+public class ConceptsValidator extends GenericValidator{
     private final HttpServerRequest request;
     private boolean isValid;
     private JsonArray errors;
@@ -21,14 +21,13 @@ public class ConceptValidator extends GenericValidator{
     private Visibility visibility;
     private boolean isAbstract;
     private String description;
-    private List<FlexoConcept> parentConcepts;
 
     /**
      * Instantiates a new Concept validator.
      *
      * @param request the request
      */
-    public ConceptValidator(HttpServerRequest request) {
+    public ConceptsValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }
@@ -48,7 +47,6 @@ public class ConceptValidator extends GenericValidator{
         String rVisibility      = request.getFormAttribute("visibility");
         String rDescription     = request.getFormAttribute("description");
         String rIsAbstract      = request.getFormAttribute("is_abstract");
-        String rParentConcepts  = request.getFormAttribute("parent_concepts[]");
         errors                  = new JsonArray();
 
         JsonObject errorLine;
@@ -132,12 +130,4 @@ public class ConceptValidator extends GenericValidator{
         return description;
     }
 
-    /**
-     * > Returns the list of parent concepts of this concept
-     * 
-     * @return A list of FlexoConcepts
-     */
-    public List<FlexoConcept> getParentConcepts() {
-        return parentConcepts;
-    }
 }

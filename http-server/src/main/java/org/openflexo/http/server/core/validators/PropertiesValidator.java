@@ -283,7 +283,6 @@ public class PropertiesValidator extends GenericValidator {
         return concept;
     }
 
-
     /**
      * This function returns the technology adapter of the current object
      *

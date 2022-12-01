@@ -3,21 +3,15 @@ package org.openflexo.http.server.core.validators;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
-import org.openflexo.connie.DataBinding;
-import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
-import org.openflexo.http.server.core.helpers.Helpers;
-
-import java.lang.reflect.Type;
-import java.util.Arrays;
 
 /**
  * The Behaviour Actions validator class.
  *
  * @author Ihab Benamer
  */
-public class BehaviourActionValidator extends GenericValidator {
+public class BehaviourActionsValidator extends GenericValidator {
     private final HttpServerRequest request;
     private boolean isValid;
     private JsonArray errors;
@@ -29,7 +23,7 @@ public class BehaviourActionValidator extends GenericValidator {
      *
      * @param request the request
      */
-    public BehaviourActionValidator(HttpServerRequest request) {
+    public BehaviourActionsValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }

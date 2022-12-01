@@ -31,6 +31,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private PropertiesController prpController;
     private BehavioursController bhvController;
     private ConsoleController cslController;
+    private EnumsController enmController;
 
     /**
      * It creates all the necessary controllers and registers them with the service.
@@ -51,6 +52,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         prpController   = new PropertiesController(serviceManager.getVirtualModelLibrary());
         bhvController   = new BehavioursController(serviceManager.getVirtualModelLibrary());
         cslController   = new ConsoleController(serviceManager.getVirtualModelLibrary());
+        enmController   = new EnumsController(serviceManager.getVirtualModelLibrary());
     }
 
     /**
@@ -132,6 +134,18 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.delete("/virtual-models/:id/delete").produces(JSON).handler(vmController::delete);
         router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
 
+        // Enums
+        router.get("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::list);
+        router.get("/vm/:vmid/enums/").produces(JSON).handler(enmController::list);
+        router.get("/virtual-models/:vmid/enums/:id").produces(JSON).handler(enmController::get);
+        router.get("/vm/:vmid/enums/:id").produces(JSON).handler(enmController::get);
+        router.post("/virtual-models/:vmid/enums/add").produces(JSON).handler(enmController::add);
+        router.post("/vm/:vmid/enums/add").produces(JSON).handler(enmController::add);
+        router.get("/virtual-models/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
+        router.get("/vm/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
+        router.post("/virtual-models/:vmid/enums/:id/values/add").produces(JSON).handler(enmController::addValue);
+        router.post("/vm/:vmid/enums/:id/values/add").produces(JSON).handler(enmController::addValue);
+
         // Concepts
         router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
         router.get("/vm/:vmid/cp/").produces(JSON).handler(cpController::list);
@@ -164,13 +178,13 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/add").produces(JSON).handler(bhvController::add);
         router.post("/vm/:vmid/cp/:id/bhv/add").produces(JSON).handler(bhvController::add);
         router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/delete").produces(JSON).handler(bhvController::delete);
-        router.post("/vm/:vmid/cp/:id/bhv/delete").produces(JSON).handler(bhvController::delete);
+        router.delete("/vm/:vmid/cp/:id/bhv/delete").produces(JSON).handler(bhvController::delete);
 
         // Parameters
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add").produces(JSON).handler(bhvController::addParameter);
-        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add").produces(JSON).handler(bhvController::addParameter);
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
         router.get("/vm/:vmid/cp/:id/bhv/:signature/param/").produces(JSON).handler(bhvController::parameters);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-primitive").produces(JSON).handler(bhvController::addParameter);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-primitive").produces(JSON).handler(bhvController::addParameter);
 
         // Actions
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add").produces(JSON).handler(bhvController::addAction);

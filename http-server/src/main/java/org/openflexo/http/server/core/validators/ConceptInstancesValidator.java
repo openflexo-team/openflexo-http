@@ -6,18 +6,16 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
-import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.util.IdUtils;
-import org.python.jline.internal.Log;
 
 /**
  * The Concept Instances validator class.
  *
  * @author Ihab Benamer
  */
-public class ConceptInstanceValidator extends GenericValidator{
+public class ConceptInstancesValidator extends GenericValidator{
     private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
     private boolean isValid;
@@ -31,7 +29,7 @@ public class ConceptInstanceValidator extends GenericValidator{
      * @param request             the request
      * @param virtualModelLibrary the virtual model library
      */
-    public ConceptInstanceValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
+    public ConceptInstancesValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
         this.virtualModelLibrary    = virtualModelLibrary;
         this.request                = request;
         isValid                     = false;

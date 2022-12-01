@@ -12,7 +12,7 @@ import java.lang.reflect.Type;
  *
  * @author Ihab Benamer
  */
-public class BehaviourParameterValidator extends GenericValidator{
+public class BehaviourParametersValidator extends GenericValidator{
 
     private final HttpServerRequest request;
     private boolean isValid;
@@ -28,7 +28,7 @@ public class BehaviourParameterValidator extends GenericValidator{
      *
      * @param request the request
      */
-    public BehaviourParameterValidator(HttpServerRequest request) {
+    public BehaviourParametersValidator(HttpServerRequest request) {
         this.request    = request;
         isValid         = false;
     }

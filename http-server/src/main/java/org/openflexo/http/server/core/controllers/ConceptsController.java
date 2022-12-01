@@ -10,11 +10,9 @@ import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
-import org.openflexo.http.server.core.repositories.VirtualModelsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.ConceptValidator;
+import org.openflexo.http.server.core.validators.ConceptsValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -83,7 +81,7 @@ public class ConceptsController extends GenericController {
 
         try {
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            ConceptValidator validator  = new ConceptValidator(context.request());
+            ConceptsValidator validator = new ConceptsValidator(context.request());
             JsonArray errors            = validator.validate();
 
             if(validator.isValid()){

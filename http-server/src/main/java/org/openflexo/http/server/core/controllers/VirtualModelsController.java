@@ -98,7 +98,12 @@ public class VirtualModelsController extends GenericController {
         String id = context.request().getParam("id").trim();
         try {
             VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            context.response().end(JsonSerializer.virtualModelSerializer(model).encodePrettily());
+            if (model != null){
+                context.response().end(JsonSerializer.virtualModelSerializer(model).encodePrettily());
+            } else {
+                notFound(context);
+            }
+
         } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
             notFound(context);
         }

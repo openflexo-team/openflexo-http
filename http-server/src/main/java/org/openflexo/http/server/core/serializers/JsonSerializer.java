@@ -159,8 +159,7 @@ public class JsonSerializer {
         result.put("uri", concept.getURI());
         result.put("resource_type", "Concept");
         result.put("visibility", concept.getVisibility().toString());
-        result.put("parent_concepts", concept.getParentFlexoConcepts().size());
-        result.put("is_required", concept.isAbstract());
+        result.put("is_abstract", concept.isAbstract());
         result.put("description", concept.getDescription());
         result.put("behaviour_id", IdUtils.encodeuri(concept.getURI()));
 
@@ -370,6 +369,12 @@ public class JsonSerializer {
         return result;
     }
 
+    /**
+     * It takes a model slot and returns a JSON object that contains all the information needed to recreate the model slot
+     *
+     * @param modelSlot the model slot to serialize
+     * @return A JsonObject
+     */
     public static JsonObject modelSlotSerializer(FMLRTModelSlot<?, ?> modelSlot) {
         JsonObject result = new JsonObject();
 
@@ -380,6 +385,34 @@ public class JsonSerializer {
         result.put("required", modelSlot.getIsRequired());
         result.put("description", modelSlot.getDescription());
         result.put("concept_id", IdUtils.encodeuri(modelSlot.getFlexoConcept().getURI()));
+
+        return result;
+    }
+
+    public static JsonObject enumSerializer(FlexoConcept concept) {
+        JsonObject result           = new JsonObject();
+
+        result.put("id", IdUtils.encodeuri(concept.getURI()));
+        result.put("name", concept.getName());
+        result.put("uri", concept.getURI());
+        result.put("resource_type", "FlexoEnum");
+        result.put("visibility", concept.getVisibility().toString());
+        result.put("is_abstract", concept.isAbstract());
+        result.put("description", concept.getDescription());
+        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringVirtualModel().getURI()));
+
+        return result;
+    }
+
+    public static JsonObject enumValueSerializer(FlexoEnumValue value){
+        JsonObject result           = new JsonObject();
+
+        result.put("id", IdUtils.encodeuri(value.getURI()));
+        result.put("name", value.getName());
+        result.put("uri", value.getURI());
+        result.put("resource_type", "FlexoEnum");
+        result.put("index", value.getIndex());
+        result.put("enum_id", IdUtils.encodeuri(value.getFlexoConcept().getURI()));
 
         return result;
     }

@@ -12,9 +12,9 @@ import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.BehaviourActionValidator;
-import org.openflexo.http.server.core.validators.BehaviourParameterValidator;
-import org.openflexo.http.server.core.validators.BehaviourValidator;
+import org.openflexo.http.server.core.validators.BehaviourActionsValidator;
+import org.openflexo.http.server.core.validators.BehaviourParametersValidator;
+import org.openflexo.http.server.core.validators.BehavioursValidator;
 import org.openflexo.http.server.util.IdUtils;
 
 import java.io.FileNotFoundException;
@@ -86,7 +86,7 @@ public class BehavioursController extends GenericController {
     public void add(RoutingContext context) {
         String id                       = context.request().getParam("id").trim();
         FlexoConcept concept            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
-        BehaviourValidator validator    = new BehaviourValidator(context.request());
+        BehavioursValidator validator    = new BehavioursValidator(context.request());
         JsonArray errors                = validator.validate();
 
         if(validator.isValid()){
@@ -156,7 +156,7 @@ public class BehavioursController extends GenericController {
 
         if (behaviour != null){
             VirtualModel model                      = behaviour.getDeclaringVirtualModel();
-            BehaviourParameterValidator validator   = new BehaviourParameterValidator(context.request());
+            BehaviourParametersValidator validator   = new BehaviourParametersValidator(context.request());
             JsonArray errors                        = validator.validate();
 
             if(validator.isValid()){
@@ -215,7 +215,7 @@ public class BehavioursController extends GenericController {
 
         if (behaviour != null){
             VirtualModel model                  = behaviour.getDeclaringVirtualModel();
-            BehaviourActionValidator validator  = new BehaviourActionValidator(context.request());
+            BehaviourActionsValidator validator  = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateLogAction();
 
             if(validator.isValid()){

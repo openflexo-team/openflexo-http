@@ -7,15 +7,13 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
-import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.openflexo.http.server.core.validators.VirtualModelInstanceValidator;
+import org.openflexo.http.server.core.validators.VirtualModelInstancesValidator;
 import org.openflexo.http.server.util.IdUtils;
 import java.io.FileNotFoundException;
 
@@ -88,7 +86,7 @@ public class VirtualModelInstancesController extends GenericController{
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
 
         if(project != null){
-            VirtualModelInstanceValidator validator = new VirtualModelInstanceValidator(context.request(), virtualModelLibrary);
+            VirtualModelInstancesValidator validator = new VirtualModelInstancesValidator(context.request(), virtualModelLibrary);
             JsonArray errors                        = validator.validate();
 
             if(validator.isValid()){
