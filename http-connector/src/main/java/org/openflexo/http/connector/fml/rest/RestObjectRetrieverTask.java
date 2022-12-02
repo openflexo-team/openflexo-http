@@ -61,7 +61,7 @@ public class RestObjectRetrieverTask extends CoreFlexoTask {
 	private RestFlexoConceptInstance restFlexoConceptInstance;
 
 	public RestObjectRetrieverTask(RestFlexoConceptInstance restFlexoConceptInstance, FlexoEditor editor) {
-		super("Retrieve REST object " + restFlexoConceptInstance.toString(), editor);
+		super("RestObjectRetriever", "Retrieve REST object " + restFlexoConceptInstance.toString(), editor);
 		this.restFlexoConceptInstance = restFlexoConceptInstance;
 	}
 
