@@ -92,26 +92,56 @@ public class BehavioursValidator extends GenericValidator{
         return errors;
     }
 
+    /**
+     * Returns true if the object is valid, false otherwise.
+     *
+     * @return The boolean value of isValid.
+     */
     public boolean isValid() {
         return isValid;
     }
 
+    /**
+     * This function returns the name of the person.
+     *
+     * @return The name of the person.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * This function returns the description of the object
+     *
+     * @return The description of the item.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns true if this method is abstract, false otherwise.
+     *
+     * @return The value of the isAbstract variable.
+     */
     public boolean isAbstract() {
         return isAbstract;
     }
 
+    /**
+     * Returns the type of the behaviour.
+     *
+     * @return The type of the FlexoBehaviour.
+     */
     public Class<? extends FlexoBehaviour> getType() {
         return type;
     }
 
+    /**
+     * Returns the visibility of the field.
+     *
+     * @return The visibility of the field.
+     */
     public Visibility getVisibility() {
         return visibility;
     }

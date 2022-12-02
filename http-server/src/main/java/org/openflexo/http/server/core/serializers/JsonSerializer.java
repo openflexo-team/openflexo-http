@@ -23,6 +23,7 @@ import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.http.server.util.ResourceUtils;
+import org.python.jline.internal.Log;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -141,6 +142,7 @@ public class JsonSerializer {
         result.put("is_required", parameter.getIsRequired());
         result.put("description", parameter.getDescription());
         result.put("behaviour_id", IdUtils.encodeuri(parameter.getBehaviour().getURI()));
+        result.put("behaviour_signature", parameter.getBehaviour().getSignature());
 
         return result;
     }
@@ -389,6 +391,13 @@ public class JsonSerializer {
         return result;
     }
 
+    /**
+     * It takes a FlexoConcept as input and returns a JsonObject that contains the information we want to send to the
+     * client
+     *
+     * @param concept the FlexoConcept to serialize
+     * @return A JsonObject
+     */
     public static JsonObject enumSerializer(FlexoConcept concept) {
         JsonObject result           = new JsonObject();
 
@@ -404,6 +413,12 @@ public class JsonSerializer {
         return result;
     }
 
+    /**
+     * It takes a FlexoEnumValue and returns a JsonObject
+     *
+     * @param value the FlexoEnumValue to serialize
+     * @return A JsonObject
+     */
     public static JsonObject enumValueSerializer(FlexoEnumValue value){
         JsonObject result           = new JsonObject();
 

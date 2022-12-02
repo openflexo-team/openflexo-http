@@ -183,12 +183,18 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         // Parameters
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
         router.get("/vm/:vmid/cp/:id/bhv/:signature/param/").produces(JSON).handler(bhvController::parameters);
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-primitive").produces(JSON).handler(bhvController::addParameter);
-        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-primitive").produces(JSON).handler(bhvController::addParameter);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-primitive").produces(JSON).handler(bhvController::addPrimitiveParameter);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-primitive").produces(JSON).handler(bhvController::addPrimitiveParameter);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-fml-instance").produces(JSON).handler(bhvController::addFmlInstance);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-fmli").produces(JSON).handler(bhvController::addFmlInstance);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-fml-enum").produces(JSON).handler(bhvController::addFmlEnum);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-fmle").produces(JSON).handler(bhvController::addFmlEnum);
 
         // Actions
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add").produces(JSON).handler(bhvController::addAction);
-        router.post("/vm/:vmid/cp/:id/bhv/:signature/act/add").produces(JSON).handler(bhvController::addAction);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add-log").produces(JSON).handler(bhvController::addLogAction);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/act/add-log").produces(JSON).handler(bhvController::addLogAction);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add-assignation").produces(JSON).handler(bhvController::addAssignation);
+        router.post("/vm/:vmid/cp/:id/bhv/:signature/act/add-assign").produces(JSON).handler(bhvController::addAssignation);
 
         // Virtual Model Instances
         router.post("/virtual-model-instances/add").produces(JSON).handler(vmiController::add);

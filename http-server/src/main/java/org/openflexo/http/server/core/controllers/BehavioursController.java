@@ -7,6 +7,9 @@ import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.*;
+import org.openflexo.foundation.fml.editionaction.AssignationAction;
+import org.openflexo.foundation.fml.editionaction.DeclarationAction;
+import org.openflexo.foundation.fml.editionaction.ExpressionAction;
 import org.openflexo.foundation.fml.editionaction.LogAction;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
@@ -16,6 +19,7 @@ import org.openflexo.http.server.core.validators.BehaviourActionsValidator;
 import org.openflexo.http.server.core.validators.BehaviourParametersValidator;
 import org.openflexo.http.server.core.validators.BehavioursValidator;
 import org.openflexo.http.server.util.IdUtils;
+import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -149,15 +153,15 @@ public class BehavioursController extends GenericController {
      *
      * @param context the routing context
      */
-    public void addParameter(RoutingContext context) {
+    public void addPrimitiveParameter(RoutingContext context) {
         String vm_id                = context.request().getParam("vmid").trim();
         String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
             VirtualModel model                      = behaviour.getDeclaringVirtualModel();
-            BehaviourParametersValidator validator   = new BehaviourParametersValidator(context.request());
-            JsonArray errors                        = validator.validate();
+            BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
+            JsonArray errors                        = validator.validatePrimitive();
 
             if(validator.isValid()){
                 CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, editor);
@@ -166,6 +170,84 @@ public class BehavioursController extends GenericController {
                 parameter.setDescription(validator.getDescription());
                 parameter.setIsRequired(validator.isRequired());
 //                parameter.setDefaultValue(validator.getDefaultValue());
+                parameter.doAction();
+                FlexoBehaviourParameter param = parameter.getNewParameter();
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.behaviourParameterSerializer(param).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It creates a new FML instance parameter for a given FML instance
+     *
+     * @param context the routing context
+     */
+    public void addFmlInstance(RoutingContext context) {
+        String vm_id                = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature");
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
+            JsonArray errors                        = validator.validateFmlInstance();
+
+            if(validator.isValid()){
+                CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, editor);
+                parameter.setParameterName(validator.getName());
+                parameter.setParameterType(validator.getType());
+                parameter.setDescription(validator.getDescription());
+                parameter.setIsRequired(validator.isRequired());
+                parameter.doAction();
+                FlexoBehaviourParameter param = parameter.getNewParameter();
+
+                try {
+                    model.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+
+                context.response().end(JsonSerializer.behaviourParameterSerializer(param).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It adds a new parameter to a behaviour
+     *
+     * @param context the routing context
+     */
+    public void addFmlEnum(RoutingContext context) {
+        String vm_id                = context.request().getParam("vmid").trim();
+        String signature            = context.request().getParam("signature");
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
+            JsonArray errors                        = validator.validateFmlEnum();
+
+            if(validator.isValid()){
+                CreateGenericBehaviourParameter parameter = CreateGenericBehaviourParameter.actionType.makeNewAction(behaviour, null, editor);
+                parameter.setParameterName(validator.getName());
+                parameter.setParameterType(validator.getType());
+                parameter.setDescription(validator.getDescription());
+                parameter.setIsRequired(validator.isRequired());
                 parameter.doAction();
                 FlexoBehaviourParameter param = parameter.getNewParameter();
 
@@ -208,7 +290,7 @@ public class BehavioursController extends GenericController {
      *
      * @param context the routing context
      */
-    public void addAction(RoutingContext context) {
+    public void addLogAction(RoutingContext context) {
         String id                   = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
@@ -235,6 +317,49 @@ public class BehavioursController extends GenericController {
                 }
 
                 context.response().end(JsonSerializer.behaviourActionSerializer(action).encodePrettily());
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It creates a new assignation action in the control graph of the behaviour
+     *
+     * @param context the routing context
+     */
+    public void addAssignation(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        String signature            = context.request().getParam("signature").trim();
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
+            JsonArray errors                    = validator.validateAssignationAction(behaviour);
+
+            if(validator.isValid()){
+                CreateEditionAction assignAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
+                assignAction.setEditionActionClass(ExpressionAction.class);
+                assignAction.setAssignation(new DataBinding<>(validator.getLeft()));
+                assignAction.doAction();
+
+                AssignationAction<?> createValue = (AssignationAction<?>) assignAction.getNewEditionAction();
+                ((ExpressionAction<?>) createValue.getAssignableAction()).setExpression(new DataBinding<>(validator.getRight()));
+
+                if (assignAction.getAssignation().isValid() && createValue.getAssignation().isValid()){
+                    try {
+                        model.getResource().save();
+                    } catch (SaveResourceException e) {
+                        badRequest(context);
+                    }
+                    createValue.setOwner(behaviour);
+                    context.response().end(JsonSerializer.behaviourActionSerializer(createValue).encodePrettily());
+                } else {
+                    badRequest(context);
+                }
             } else {
                 badValidation(context, errors);
             }
