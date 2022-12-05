@@ -44,7 +44,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService());
         rsController    = new ResourcesController(serviceManager.getResourceManager(), service.getTechnologyAdapterRestService());
         taController    = new TechnologyAdaptersController();
-        prjController   = new ProjectsController(serviceManager.getProjectLoaderService());
+        prjController   = new ProjectsController(serviceManager.getVirtualModelLibrary(), serviceManager.getProjectLoaderService());
         vmController    = new VirtualModelsController(serviceManager.getVirtualModelLibrary());
         vmiController   = new VirtualModelInstancesController(serviceManager.getVirtualModelLibrary());
         cpController    = new ConceptsController(serviceManager.getVirtualModelLibrary());
@@ -121,6 +121,12 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.patch("/prj/:id/edit").produces(JSON).handler(prjController::edit);
         router.delete("/projects/:id/delete").produces(JSON).handler(prjController::delete);
         router.delete("/prj/:id/delete").produces(JSON).handler(prjController::delete);
+
+        // Folders
+        router.get("/projects/:id/folders").produces(JSON).handler(prjController::folders);
+        router.get("/prj/:id/fdr").produces(JSON).handler(prjController::folders);
+        router.post("/projects/:id/folders/add").produces(JSON).handler(prjController::addFolder);
+        router.post("/prj/:id/fdr/add").produces(JSON).handler(prjController::addFolder);
 
         // Virtual Models
         router.get("/virtual-models/").produces(JSON).handler(vmController::list);

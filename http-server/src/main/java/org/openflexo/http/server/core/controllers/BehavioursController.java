@@ -89,7 +89,7 @@ public class BehavioursController extends GenericController {
     public void add(RoutingContext context) {
         String id                       = context.request().getParam("id").trim();
         FlexoConcept concept            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
-        BehavioursValidator validator    = new BehavioursValidator(context.request());
+        BehavioursValidator validator   = new BehavioursValidator(context.request());
         JsonArray errors                = validator.validate();
 
         if(validator.isValid()){

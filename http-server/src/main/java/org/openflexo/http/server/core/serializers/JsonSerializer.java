@@ -10,10 +10,7 @@ import org.openflexo.foundation.fml.rt.FMLRTModelSlot;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
-import org.openflexo.foundation.resource.FlexoResource;
-import org.openflexo.foundation.resource.FlexoResourceCenter;
-import org.openflexo.foundation.resource.ResourceData;
-import org.openflexo.foundation.resource.ResourceRepository;
+import org.openflexo.foundation.resource.*;
 import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
@@ -57,7 +54,7 @@ public class JsonSerializer {
         result.put("resource_type", "Project");
         result.put("uri", uri);
         result.put("id", id);
-        result.put("resource_center_id", project.getResourceCenter().getFlexoID());
+        result.put("resource_center_id", IdUtils.encodeuri(project.getResourceCenter().getDefaultBaseURI()));
 
         return result;
     }
@@ -420,7 +417,7 @@ public class JsonSerializer {
      * @return A JsonObject
      */
     public static JsonObject enumValueSerializer(FlexoEnumValue value){
-        JsonObject result           = new JsonObject();
+        JsonObject result = new JsonObject();
 
         result.put("id", IdUtils.encodeuri(value.getURI()));
         result.put("name", value.getName());
@@ -428,6 +425,17 @@ public class JsonSerializer {
         result.put("resource_type", "FlexoEnum");
         result.put("index", value.getIndex());
         result.put("enum_id", IdUtils.encodeuri(value.getFlexoConcept().getURI()));
+
+        return result;
+    }
+
+    public static JsonObject folderSerializer(RepositoryFolder folder) {
+        JsonObject result = new JsonObject();
+
+        result.put("name", folder.getName());
+        result.put("type", "Folder");
+        result.put("parent", folder.getParentFolder().getName());
+        result.put("modified", folder.isModified());
 
         return result;
     }
