@@ -113,16 +113,15 @@ public class ResourceCentersController extends GenericController {
      * @param context the context of the request
      */
     public void resourceFolder(RoutingContext context) {
-        String centerId = context.request().getParam("rcid").trim();
-        String centerUri = IdUtils.decodeId(centerId);
-
-        String path = context.request().path();
+        String centerId     = context.request().getParam("rcid").trim();
+        String centerUri    = IdUtils.decodeId(centerId);
+        String path         = context.request().path();
         String pathFragment = "resource";
-        String folder = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
-
-        String[] fragments = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
+        String folder       = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
+        String[] fragments  = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
 
         FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
+
         if (resourceCenter != null) {
             Object current = resourceCenter.getBaseArtefact();
             if (fragments.length > 0) {

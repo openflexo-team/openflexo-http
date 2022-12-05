@@ -4,11 +4,11 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.*;
-import org.openflexo.foundation.fml.editionaction.AssignationAction;
-import org.openflexo.foundation.fml.editionaction.DeclarationAction;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
-import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.pamela.annotations.Getter;
+
+import java.util.List;
 
 /**
  * The Behaviour Actions validator class.
@@ -54,6 +54,16 @@ public class BehaviourActionsValidator extends GenericValidator {
                 if(property.getPropertyName().equals(side)){
                     return side;
                 }
+            }
+        }
+
+        throw new BadValidationException("Invalid value");
+    }
+
+    public String validateList(String list, FlexoBehaviour behaviour) throws  BadValidationException {
+        for (FlexoProperty property: behaviour.getDeclaringVirtualModel().getDeclaredProperties()) {
+            if(property.getPropertyName().equals(list) && (property.getCardinality() == PropertyCardinality.ZeroMany || property.getCardinality() == PropertyCardinality.OneMany)){
+                return list;
             }
         }
 
@@ -107,8 +117,8 @@ public class BehaviourActionsValidator extends GenericValidator {
      * @return A JsonArray of JsonObjects.
      */
     public JsonArray validateAssignationAction(FlexoBehaviour behaviour){
-        String rLeft  = request.getFormAttribute("left").trim();
-        String rRight  = request.getFormAttribute("right").trim();
+        String rLeft    = request.getFormAttribute("left").trim();
+        String rRight   = request.getFormAttribute("right").trim();
         errors          = new JsonArray();
 
         JsonObject errorLine;
@@ -118,6 +128,35 @@ public class BehaviourActionsValidator extends GenericValidator {
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("source", e.getMessage());
+            errors.add(errorLine);
+        }
+
+        try{
+            right = validateAssignationSide(rRight, behaviour);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("target", e.getMessage());
+            errors.add(errorLine);
+        }
+
+        if(errors.isEmpty())
+            isValid = true;
+
+        return errors;
+    }
+
+    public JsonArray validateAddToListAction(FlexoBehaviour behaviour){
+        String rLeft    = request.getFormAttribute("left").trim();
+        String rRight   = request.getFormAttribute("right").trim();
+        errors          = new JsonArray();
+
+        JsonObject errorLine;
+
+        try{
+            left = validateList(rLeft, behaviour);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("list", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -172,7 +211,7 @@ public class BehaviourActionsValidator extends GenericValidator {
     }
 
     /**
-     * This function returns the right child of the node
+     * This function returns the right string
      *
      * @return The right side of the equation.
      */

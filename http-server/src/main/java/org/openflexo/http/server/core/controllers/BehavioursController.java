@@ -2,15 +2,13 @@ package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
+import org.openflexo.connie.Bindable;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.*;
-import org.openflexo.foundation.fml.editionaction.AssignationAction;
-import org.openflexo.foundation.fml.editionaction.DeclarationAction;
-import org.openflexo.foundation.fml.editionaction.ExpressionAction;
-import org.openflexo.foundation.fml.editionaction.LogAction;
+import org.openflexo.foundation.fml.editionaction.*;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -22,6 +20,7 @@ import org.openflexo.http.server.util.IdUtils;
 import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  *  Behaviours rest apis controller.
@@ -367,4 +366,90 @@ public class BehavioursController extends GenericController {
             notFound(context);
         }
     }
+
+    public void addToList(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        String signature            = context.request().getParam("signature").trim();
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
+            JsonArray errors                    = validator.validateAssignationAction(behaviour);
+
+            if(validator.isValid()){
+
+                CreateEditionAction editionAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
+                editionAction.setEditionActionClass(ExpressionAction.class);
+                editionAction.setAddToListAction(true);
+                editionAction.setListExpression(new DataBinding<>(validator.getLeft()));
+
+                editionAction.doAction();
+
+
+                ExpressionAction expressionAction = (ExpressionAction) editionAction.getBaseEditionAction();
+                expressionAction.setExpression(new DataBinding<>(validator.getRight()));
+
+                if (expressionAction.getExpression().isValid()){
+                    try {
+                        model.getResource().save();
+                    } catch (SaveResourceException e) {
+                        badRequest(context);
+                    }
+                    expressionAction.setOwner(behaviour);
+                    context.response().end(JsonSerializer.behaviourActionSerializer(expressionAction).encodePrettily());
+                } else {
+                    badRequest(context);
+                }
+
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
+    public void removeFromList(RoutingContext context) {
+        String id                   = context.request().getParam("id").trim();
+        String signature            = context.request().getParam("signature").trim();
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
+
+        if (behaviour != null){
+            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
+            JsonArray errors                    = validator.validateAssignationAction(behaviour);
+
+            if(validator.isValid()){
+                CreateEditionAction editionAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
+                editionAction.setEditionActionClass(RemoveFromListAction.class);
+                editionAction.setListExpression(new DataBinding<>(validator.getLeft()));
+
+                editionAction.doAction();
+
+
+                RemoveFromListAction expressionAction = (RemoveFromListAction) editionAction.getBaseEditionAction();
+                expressionAction.setList(new DataBinding<>(validator.getLeft()));
+                expressionAction.setValue(new DataBinding<>(validator.getRight()));
+
+
+                if (expressionAction.getValue().isValid() && expressionAction.getList().isValid()){
+                    try {
+                        model.getResource().save();
+                    } catch (SaveResourceException e) {
+                        badRequest(context);
+                    }
+                    expressionAction.setOwner(behaviour);
+                    context.response().end(JsonSerializer.behaviourActionSerializer(expressionAction).encodePrettily());
+                } else {
+                    badRequest(context);
+                }
+            } else {
+                badValidation(context, errors);
+            }
+        } else {
+            notFound(context);
+        }
+    }
+
 }
