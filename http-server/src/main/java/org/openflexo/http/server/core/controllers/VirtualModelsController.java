@@ -10,6 +10,7 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
+import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -73,7 +74,13 @@ public class VirtualModelsController extends GenericController {
 
             try {
                 String virtualModelUri  = Helpers.createVirtualModelUri(project, validator.getName());
-                newVirtualModelResource = factory.makeTopLevelVirtualModelResource(validator.getName(), virtualModelUri, fmlTechnologyAdapter.getGlobalRepository(project).getRootFolder(), true);
+                RepositoryFolder folder = project.getRootFolder().getFolderNamed(validator.getFolderName());
+
+                if (folder == null) {
+                    folder = fmlTechnologyAdapter.getGlobalRepository(project).getRootFolder();
+                }
+
+                newVirtualModelResource = factory.makeTopLevelVirtualModelResource(validator.getName(), virtualModelUri, folder, true);
                 newVirtualModel         = newVirtualModelResource.getLoadedResourceData();
 
                 newVirtualModel.setDescription(validator.getDescription());

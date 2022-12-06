@@ -3,6 +3,7 @@ package org.openflexo.http.server.core.validators;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
@@ -24,6 +25,7 @@ public class VirtualModelsValidator extends GenericValidator{
     private Visibility visibility;
     private boolean isAbstract;
     private String projectId;
+    private String folderName;
 
     /**
      * Instantiates a new Virtual models validator.
@@ -77,6 +79,7 @@ public class VirtualModelsValidator extends GenericValidator{
         String rVisibility  = request.getFormAttribute("visibility");
         String rIsAbstract  = request.getFormAttribute("is_abstract");
         String rProjectId   = request.getFormAttribute("project_id");
+        folderName          = request.getFormAttribute("folder_name");
         errors              = new JsonArray();
 
         JsonObject errorLine;
@@ -173,5 +176,14 @@ public class VirtualModelsValidator extends GenericValidator{
      */
     public String getProjectId() {
         return projectId;
+    }
+
+    /**
+     * This method returns the folderName of the project
+     * 
+     * @return The folderName
+     */
+    public String getFolderName() {
+        return folderName;
     }
 }

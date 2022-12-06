@@ -436,6 +436,8 @@ public class JsonSerializer {
         result.put("type", "Folder");
         result.put("parent", folder.getParentFolder().getName());
         result.put("modified", folder.isModified());
+        result.put("uri", folder.getDefaultBaseURI());
+        result.put("id", IdUtils.encodeuri(folder.getDefaultBaseURI()));
 
         return result;
     }

@@ -127,7 +127,7 @@ public class BehaviourActionsValidator extends GenericValidator {
             left = validateAssignationSide(rLeft, behaviour);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("source", e.getMessage());
+            errorLine.put("left", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -135,7 +135,7 @@ public class BehaviourActionsValidator extends GenericValidator {
             right = validateAssignationSide(rRight, behaviour);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("target", e.getMessage());
+            errorLine.put("right", e.getMessage());
             errors.add(errorLine);
         }
 

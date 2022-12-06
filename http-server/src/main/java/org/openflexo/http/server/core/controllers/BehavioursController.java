@@ -296,7 +296,7 @@ public class BehavioursController extends GenericController {
 
         if (behaviour != null){
             VirtualModel model                  = behaviour.getDeclaringVirtualModel();
-            BehaviourActionsValidator validator  = new BehaviourActionsValidator(context.request());
+            BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateLogAction();
 
             if(validator.isValid()){
