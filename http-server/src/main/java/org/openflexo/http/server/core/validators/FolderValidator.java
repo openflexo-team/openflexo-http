@@ -9,7 +9,8 @@ public class FolderValidator extends GenericValidator {
     private final HttpServerRequest request;
     private boolean isValid;
     private JsonArray errors;
-    private String  name;
+    private String name;
+    private String parent;
 
     public FolderValidator(HttpServerRequest request) {
         this.request    = request;
@@ -18,6 +19,7 @@ public class FolderValidator extends GenericValidator {
 
     public JsonArray validate(){
         String rName        = request.getFormAttribute("name").trim();
+        String rParent      = request.getFormAttribute("parent");
         errors              = new JsonArray();
 
         JsonObject errorLine;
@@ -29,6 +31,8 @@ public class FolderValidator extends GenericValidator {
             errorLine.put("name", e.getMessage());
             errors.add(errorLine);
         }
+
+        parent = validateDescription(rParent);
 
         if(errors.isEmpty())
             isValid = true;
@@ -42,5 +46,9 @@ public class FolderValidator extends GenericValidator {
 
     public String getName() {
         return name;
+    }
+
+    public String getParent() {
+        return parent;
     }
 }

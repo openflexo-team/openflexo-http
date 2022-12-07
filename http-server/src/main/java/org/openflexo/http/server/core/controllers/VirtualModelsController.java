@@ -74,7 +74,12 @@ public class VirtualModelsController extends GenericController {
 
             try {
                 String virtualModelUri  = Helpers.createVirtualModelUri(project, validator.getName());
-                RepositoryFolder folder = project.getRootFolder().getFolderNamed(validator.getFolderName());
+                String path             = validator.getPath();
+                RepositoryFolder folder = null;
+
+                if (path != null && !path.isEmpty()) {
+                    folder = Helpers.getFolderFromPath(path, project);
+                }
 
                 if (folder == null) {
                     folder = fmlTechnologyAdapter.getGlobalRepository(project).getRootFolder();
@@ -89,7 +94,6 @@ public class VirtualModelsController extends GenericController {
             } catch (SaveResourceException | ModelDefinitionException e) {
                 badRequest(context);
             }
-
             context.response().end(JsonSerializer.virtualModelSerializer(newVirtualModel).encodePrettily());
         } else {
             badValidation(context, errors);

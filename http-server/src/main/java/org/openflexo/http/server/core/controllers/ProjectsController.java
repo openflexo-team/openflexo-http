@@ -132,7 +132,14 @@ public class ProjectsController extends GenericController {
         JsonArray errors            = validator.validate();
 
         if(validator.isValid()){
-            AddRepositoryFolder addRepositoryFolder = AddRepositoryFolder.actionType.makeNewAction(project.getRootFolder(), null, editor);
+            // TODO: add validation rule for the parent field
+            RepositoryFolder parent = Helpers.getFolderFromPath(validator.getParent(), project);
+
+            if (parent == null) {
+                parent = project.getRootFolder();
+            }
+
+            AddRepositoryFolder addRepositoryFolder = AddRepositoryFolder.actionType.makeNewAction(parent, null, editor);
             addRepositoryFolder.setNewFolderName(validator.getName());
             addRepositoryFolder.doAction();
 

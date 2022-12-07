@@ -8,11 +8,15 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.PropertyEntry;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
+import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  *  Generic Helpers.
@@ -257,5 +261,26 @@ public class Helpers {
             default:
                 return null;
         }
+    }
+
+    public static RepositoryFolder getFolderFromPath(String path, FlexoProject<?> project){
+        RepositoryFolder folder     = project.getRootFolder();
+        RepositoryFolder subFolder  = null;
+
+        if (path != null && !path.isEmpty()){
+            List<String> folders = new LinkedList(Arrays.asList(path.split("/")));
+
+            while (folders.size() > 0){
+                if(!folders.get(0).isEmpty()){
+                    subFolder = folder.getFolderNamed(folders.get(0));
+                    if (subFolder == null){
+                        break;
+                    }
+                    folder = subFolder;
+                }
+                folders.remove(0);
+            }
+        }
+        return subFolder;
     }
 }

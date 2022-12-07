@@ -25,7 +25,7 @@ public class VirtualModelsValidator extends GenericValidator{
     private Visibility visibility;
     private boolean isAbstract;
     private String projectId;
-    private String folderName;
+    private String path;
 
     /**
      * Instantiates a new Virtual models validator.
@@ -79,7 +79,7 @@ public class VirtualModelsValidator extends GenericValidator{
         String rVisibility  = request.getFormAttribute("visibility");
         String rIsAbstract  = request.getFormAttribute("is_abstract");
         String rProjectId   = request.getFormAttribute("project_id");
-        folderName          = request.getFormAttribute("folder_name");
+        String rPath        = request.getFormAttribute("path");
         errors              = new JsonArray();
 
         JsonObject errorLine;
@@ -117,6 +117,7 @@ public class VirtualModelsValidator extends GenericValidator{
         }
 
         description = validateDescription(rDescription);
+        path        = validateDescription(rPath);
 
         if(errors.isEmpty())
             isValid = true;
@@ -179,11 +180,11 @@ public class VirtualModelsValidator extends GenericValidator{
     }
 
     /**
-     * This method returns the folderName of the project
+     * This method returns the path of the project
      * 
-     * @return The folderName
+     * @return The path
      */
-    public String getFolderName() {
-        return folderName;
+    public String getPath() {
+        return path;
     }
 }
