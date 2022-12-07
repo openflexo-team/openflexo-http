@@ -176,7 +176,7 @@ public class PropertiesController extends GenericController {
                 badRequest(context);
             }
 
-            context.response().end(JsonSerializer.modelSlotSerializer((FMLRTModelSlot<?, ?>) model.getModelSlot(modelSlot.getModelSlotName())).encodePrettily());
+            context.response().end(JsonSerializer.modelSlotSerializer((FMLRTModelSlot<?, ?>) modelSlot.getNewModelSlot()).encodePrettily());
         } else {
             badValidation(context, errors);
         }

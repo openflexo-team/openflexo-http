@@ -4,6 +4,7 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.Visibility;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Ihab Benamer
  */
 public class ConceptsValidator extends GenericValidator{
+    private final VirtualModelLibrary virtualModelLibrary;
     private final HttpServerRequest request;
     private boolean isValid;
     private JsonArray errors;
@@ -21,15 +23,17 @@ public class ConceptsValidator extends GenericValidator{
     private Visibility visibility;
     private boolean isAbstract;
     private String description;
+    private FlexoConcept parent;
 
     /**
      * Instantiates a new Concept validator.
      *
      * @param request the request
      */
-    public ConceptsValidator(HttpServerRequest request) {
-        this.request    = request;
-        isValid         = false;
+    public ConceptsValidator(HttpServerRequest request, VirtualModelLibrary virtualModelLibrary) {
+        this.virtualModelLibrary    = virtualModelLibrary;
+        this.request                = request;
+        isValid                     = false;
     }
 
     /**
@@ -47,6 +51,7 @@ public class ConceptsValidator extends GenericValidator{
         String rVisibility      = request.getFormAttribute("visibility");
         String rDescription     = request.getFormAttribute("description");
         String rIsAbstract      = request.getFormAttribute("is_abstract");
+        String rParentId        = request.getFormAttribute("parent_id");
         errors                  = new JsonArray();
 
         JsonObject errorLine;
@@ -75,7 +80,15 @@ public class ConceptsValidator extends GenericValidator{
             errors.add(errorLine);
         }
 
-        // TODO: validate parent concepts
+        try{
+            parent = validateParentConcept(rParentId, virtualModelLibrary);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("parent_id", e.getMessage());
+            errors.add(errorLine);
+        }
+
+        // TODO: support multiple parent concepts
 
         description = validateDescription(rDescription);
 
@@ -130,4 +143,7 @@ public class ConceptsValidator extends GenericValidator{
         return description;
     }
 
+    public FlexoConcept getParent() {
+        return parent;
+    }
 }

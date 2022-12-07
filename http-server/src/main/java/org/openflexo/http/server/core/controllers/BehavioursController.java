@@ -47,7 +47,7 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void list(RoutingContext context) {
-        String id = context.request().getParam("vmid").trim();
+        String id = context.request().getParam("id").trim();
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             JsonArray result    = new JsonArray();
@@ -70,7 +70,7 @@ public class BehavioursController extends GenericController {
      */
     public void get(RoutingContext context) {
         try {
-            String modelId              = context.request().getParam("vmid").trim();
+            String modelId              = context.request().getParam("id").trim();
             String signature            = context.request().getParam("signature").trim();
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(modelId));
             FlexoBehaviour behaviour    = model.getDeclaredFlexoBehaviour(signature);
@@ -118,7 +118,7 @@ public class BehavioursController extends GenericController {
 
     public void delete(RoutingContext context) {
 
-        String modelId              = context.request().getParam("vmid").trim();
+        String modelId              = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
         VirtualModel model          = null;
 
@@ -153,7 +153,7 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addPrimitiveParameter(RoutingContext context) {
-        String vm_id                = context.request().getParam("vmid").trim();
+        String vm_id                = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
@@ -193,7 +193,7 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addFmlInstance(RoutingContext context) {
-        String vm_id                = context.request().getParam("vmid").trim();
+        String vm_id                = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature");
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
@@ -232,7 +232,7 @@ public class BehavioursController extends GenericController {
      * @param context the routing context
      */
     public void addFmlEnum(RoutingContext context) {
-        String vm_id                = context.request().getParam("vmid").trim();
+        String vm_id                = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature");
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
@@ -273,7 +273,7 @@ public class BehavioursController extends GenericController {
      */
     public void parameters(RoutingContext context) {
         JsonArray result            = new JsonArray();
-        String vm_id                = context.request().getParam("vmid").trim();
+        String vm_id                = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
@@ -343,6 +343,7 @@ public class BehavioursController extends GenericController {
                 CreateEditionAction assignAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
                 assignAction.setEditionActionClass(ExpressionAction.class);
                 assignAction.setAssignation(new DataBinding<>(validator.getLeft()));
+
                 assignAction.doAction();
 
                 AssignationAction<?> createValue = (AssignationAction<?>) assignAction.getNewEditionAction();

@@ -81,7 +81,7 @@ public class ConceptsController extends GenericController {
 
         try {
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            ConceptsValidator validator = new ConceptsValidator(context.request());
+            ConceptsValidator validator = new ConceptsValidator(context.request(), virtualModelLibrary);
             JsonArray errors            = validator.validate();
 
             if(validator.isValid()){
@@ -90,6 +90,11 @@ public class ConceptsController extends GenericController {
                 concept.setVisibility(validator.getVisibility());
                 concept.setIsAbstract(validator.isAbstract());
                 concept.setNewFlexoConceptDescription(validator.getDescription());
+
+                if(validator.getParent() != null) {
+                    concept.addToParentConcepts(validator.getParent());
+                }
+
                 concept.doAction();
 
                 try {

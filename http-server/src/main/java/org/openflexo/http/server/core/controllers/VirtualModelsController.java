@@ -91,10 +91,15 @@ public class VirtualModelsController extends GenericController {
                 newVirtualModel.setDescription(validator.getDescription());
                 newVirtualModel.setVisibility(validator.getVisibility());
                 newVirtualModel.setAbstract(validator.isAbstract());
-            } catch (SaveResourceException | ModelDefinitionException e) {
+
+                if(validator.getParent() != null){
+                    newVirtualModel.addToParentFlexoConcepts(validator.getParent());
+                }
+
+                context.response().end(JsonSerializer.virtualModelSerializer(newVirtualModel).encodePrettily());
+            } catch (SaveResourceException | ModelDefinitionException | InconsistentFlexoConceptHierarchyException e) {
                 badRequest(context);
             }
-            context.response().end(JsonSerializer.virtualModelSerializer(newVirtualModel).encodePrettily());
         } else {
             badValidation(context, errors);
         }

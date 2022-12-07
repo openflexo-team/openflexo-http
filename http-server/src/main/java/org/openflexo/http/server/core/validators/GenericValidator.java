@@ -259,4 +259,19 @@ public abstract class GenericValidator {
             }
         }
     }
+
+    public FlexoConcept validateParentConcept(String conceptId, VirtualModelLibrary virtualModelLibrary) throws BadValidationException {
+        if(conceptId == null || conceptId.isEmpty()){
+            return null;
+        } else {
+            FlexoConcept tContainer = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(conceptId), true);
+            if (tContainer != null) {
+                return tContainer;
+            } else {
+                throw new BadValidationException("Invalid value");
+            }
+        }
+    }
+
+
 }

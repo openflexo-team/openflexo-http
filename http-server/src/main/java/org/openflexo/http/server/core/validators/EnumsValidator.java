@@ -69,7 +69,7 @@ public class EnumsValidator extends GenericValidator{
         JsonObject errorLine;
 
         try{
-            name = validateName(rName);
+            name = validateString(rName);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("name", e.getMessage());

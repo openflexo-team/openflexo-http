@@ -7,6 +7,7 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.pamela.annotations.Getter;
+import org.python.jline.internal.Log;
 
 import java.util.List;
 
@@ -50,7 +51,9 @@ public class BehaviourActionsValidator extends GenericValidator {
                 }
             }
         } else {
-            for (FlexoProperty property: behaviour.getDeclaringVirtualModel().getDeclaredProperties()) {
+            // TODO: check parent concept's properties
+            for (FlexoProperty property: behaviour.getFlexoConcept().getFlexoProperties()) {
+
                 if(property.getPropertyName().equals(side)){
                     return side;
                 }

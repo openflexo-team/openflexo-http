@@ -377,7 +377,7 @@ public class JsonSerializer {
     public static JsonObject modelSlotSerializer(FMLRTModelSlot<?, ?> modelSlot) {
         JsonObject result = new JsonObject();
 
-        result.put("name", modelSlot.getRoleName());
+        result.put("name", modelSlot.getName());
         result.put("resource_type", "ModelSlot");
         result.put("technology_adapter", modelSlot.getTechnologyAdapter().getName());
         result.put("read_only", modelSlot.getIsReadOnly());
