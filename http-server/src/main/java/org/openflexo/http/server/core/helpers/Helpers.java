@@ -257,7 +257,7 @@ public class Helpers {
                 return serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
             case "fmlrt":
                 return serviceManager.getTechnologyAdapterService().getTechnologyAdapter(FMLRTTechnologyAdapter.class);
-            // TODO: add other  technology adapters
+            // TODO: add other technology adapters
             default:
                 return null;
         }
@@ -265,7 +265,7 @@ public class Helpers {
 
     public static RepositoryFolder getFolderFromPath(String path, FlexoProject<?> project){
         RepositoryFolder folder     = project.getRootFolder();
-        RepositoryFolder subFolder  = null;
+        RepositoryFolder subFolder;
 
         if (path != null && !path.isEmpty()){
             List<String> folders = new LinkedList(Arrays.asList(path.split("/")));
@@ -281,6 +281,6 @@ public class Helpers {
                 folders.remove(0);
             }
         }
-        return subFolder;
+        return folder;
     }
 }

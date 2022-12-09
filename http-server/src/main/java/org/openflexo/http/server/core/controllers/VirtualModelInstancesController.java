@@ -5,9 +5,14 @@ import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
-import org.openflexo.foundation.fml.VirtualModel;
-import org.openflexo.foundation.fml.VirtualModelLibrary;
+import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
+import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
+import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResource;
+import org.openflexo.foundation.fml.rt.rm.FMLRTVirtualModelInstanceResourceImpl;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
@@ -15,7 +20,10 @@ import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.VirtualModelInstancesValidator;
 import org.openflexo.http.server.util.IdUtils;
+import org.python.jline.internal.Log;
+
 import java.io.FileNotFoundException;
+import java.util.List;
 
 /**
  *  Virtual Model Instances rest apis controller.
@@ -43,20 +51,21 @@ public class VirtualModelInstancesController extends GenericController{
      * @param context the context of the request
      */
     public void list(RoutingContext context) {
-//        String id   = context.request().getFormAttribute("project_id");
-//        String vmId = context.request().getFormAttribute("vm_id");
-//        try {
-//            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
-//            JsonArray result        = new JsonArray();
-//
-//            for (FMLRTVirtualModelInstance vmi: project.getVirtualModelInstanceRepository().getVirtualModelInstancesConformToVirtualModel(vmId)){
-//                result.add(JsonSerializer.virtualModelInstanceSerializer(vmi));
-//            }
-//
-//            context.response().end(result.encodePrettily());
-//        } catch (Exception e) {
-//            notFound(context);
-//        }
+        String prjid    = context.request().getParam("prjid");
+        String vmid     = context.request().getParam("vmid");
+
+        try {
+            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
+            JsonArray result        = new JsonArray();
+
+            for (FMLRTVirtualModelInstance vmi: project.getVirtualModelInstanceRepository().getVirtualModelInstancesConformToVirtualModel(IdUtils.decodeId(vmid))){
+                result.add(JsonSerializer.virtualModelInstanceSerializer(vmi));
+            }
+
+            context.response().end(result.encodePrettily());
+        } catch (Exception e) {
+            notFound(context);
+        }
     }
 
     /**
@@ -66,14 +75,16 @@ public class VirtualModelInstancesController extends GenericController{
      * @param context the routing context
      */
     public void get(RoutingContext context) {
-//        String id       = context.request().getFormAttribute("project_id");
-//        String vmiId    = context.request().getParam("vmi_id");
-//        try {
-//            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
-//            context.response().end(JsonSerializer.virtualModelInstanceSerializer(project.getVirtualModelInstanceRepository().getVirtualModelInstance(vmiId).getVirtualModelInstance()).encodePrettily());
-//        } catch (Exception e) {
-//            notFound(context);
-//        }
+        String prjid    = context.request().getParam("prjid");
+        String id       = context.request().getParam("id");
+
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
+        if (project != null) {
+            FMLRTVirtualModelInstance instance = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(id)).getVirtualModelInstance();
+            context.response().end(JsonSerializer.virtualModelInstanceSerializer(instance).encodePrettily());
+        } else {
+            notFound(context);
+        }
     }
 
     /**
@@ -125,5 +136,49 @@ public class VirtualModelInstancesController extends GenericController{
     public void edit(RoutingContext context) {}
 
     public void delete(RoutingContext context) {}
+
+    public void executeBehaviour(RoutingContext context) {
+//        String prjid        = context.request().getParam("prjid");
+//        String vmid         = context.request().getParam("vmid");
+//        String id           = context.request().getParam("id");
+//        String signature    = context.request().getParam("signature");
+//
+//        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
+//        if (project != null) {
+//            FMLRTVirtualModelInstance instance = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(id)).getVirtualModelInstance();
+//
+//            FlexoBehaviour behaviour = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vmid)).getDeclaredFlexoBehaviour(signature);
+//            if(behaviour instanceof ActionScheme) {
+//                ActionScheme as = (ActionScheme) behaviour;
+//                ActionSchemeActionFactory actionType = new ActionSchemeActionFactory(as, rtvmi.getFlexoConceptInstance());
+//                ActionSchemeAction action = actionType.makeNewAction(rtvmi.getVirtualModelInstance(), null, rtvmi.getEditor());
+//
+//                for(FlexoBehaviourParameter p : as.getParameters()) {
+//                    // Only string parameters supported
+//                    String paramType = p.getType().getTypeName();
+//                    if(paramType.equals("java.lang.String")){
+//                        String parameterValue = context.request().getParam((p.getName()));
+//                        if(parameterValue == null) {
+//                            throw new Exception("Missing parameter value : " + p.getName());
+//                        }
+//                        action.setParameterValue(p, parameterValue);
+//                    } else {
+//                        throw new Exception("Only string parameters are supported");
+//                    }
+//                }
+//                action.doAction();
+//
+//                try {
+//                    instance.getResource().save();
+//                } catch (SaveResourceException e) {
+//                    badRequest(context);
+//                }
+//            } else {
+//                badRequest(context);
+//            }
+//        } else {
+//            notFound(context);
+//        }
+    }
 
 }

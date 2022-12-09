@@ -209,10 +209,11 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         // Virtual Model Instances
         router.post("/virtual-model-instances/add").produces(JSON).handler(vmiController::add);
         router.post("/vmi/add").produces(JSON).handler(vmiController::add);
-        router.post("/virtual-model-instances/").produces(JSON).handler(vmiController::list);
-        router.post("/vmi/").produces(JSON).handler(vmiController::list);
-        router.post("/virtual-model-instances/:id").produces(JSON).handler(vmiController::get);
-        router.post("/vmi/:id").produces(JSON).handler(vmiController::get);
+        router.get("/projects/:prjid/virtual-model-instances/:vmid/instances/").produces(JSON).handler(vmiController::list);
+        router.get("/prj/:prjid/vmi/:vmid/instances/").produces(JSON).handler(vmiController::list);
+        router.get("/projects/:prjid/virtual-model-instances/:vmid/instances/:id").produces(JSON).handler(vmiController::get);
+        router.get("/prj/:prjid/vmi/:vmid/instances/:id").produces(JSON).handler(vmiController::get);
+
         router.patch("/virtual-model-instances/:id/edit").produces(JSON).handler(vmiController::edit);
         router.patch("/vmi/:id/edit").produces(JSON).handler(vmiController::edit);
         router.delete("/virtual-model-instances/:id/delete").produces(JSON).handler(vmiController::delete);
