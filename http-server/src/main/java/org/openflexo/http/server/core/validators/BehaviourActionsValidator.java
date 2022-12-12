@@ -63,6 +63,15 @@ public class BehaviourActionsValidator extends GenericValidator {
         throw new BadValidationException("Invalid value");
     }
 
+    /**
+     * It checks if the value of the parameter `list` is a valid property name of the virtual model of the behaviour, and
+     * if this property is a list. If it is, it returns the value of the parameter `list`. If it is not, it throws a
+     * `BadValidationException`
+     *
+     * @param list the value of the parameter
+     * @param behaviour the behaviour that is being validated
+     * @return The name of the property
+     */
     public String validateList(String list, FlexoBehaviour behaviour) throws  BadValidationException {
         for (FlexoProperty property: behaviour.getDeclaringVirtualModel().getDeclaredProperties()) {
             if(property.getPropertyName().equals(list) && (property.getCardinality() == PropertyCardinality.ZeroMany || property.getCardinality() == PropertyCardinality.OneMany)){
@@ -87,11 +96,6 @@ public class BehaviourActionsValidator extends GenericValidator {
 
         try{
             value = validateString(rValue);
-            if (value.charAt(0) != '"')
-                value = "\"" + value;
-            if (value.charAt(value.length() - 1) != '"')
-                value += "\"";
-
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("value", e.getMessage());
@@ -148,6 +152,13 @@ public class BehaviourActionsValidator extends GenericValidator {
         return errors;
     }
 
+    /**
+     * It validates the form data sent by the user and returns a list of errors
+     *
+     * @param behaviour the behaviour that is being edited
+     * @return A JsonArray containing JsonObjects. Each JsonObject contains a key and a value. The key is the name of the
+     * field that has an error. The value is the error message.
+     */
     public JsonArray validateAddToListAction(FlexoBehaviour behaviour){
         String rLeft    = request.getFormAttribute("left").trim();
         String rRight   = request.getFormAttribute("right").trim();

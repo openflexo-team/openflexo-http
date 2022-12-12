@@ -48,6 +48,18 @@ public abstract class GenericController {
     }
 
     /**
+     * If the request is bad, send a 400 response with the given message.
+     *
+     * @param context The routing context.
+     * @param message The message to send to the client.
+     */
+    public void badRequest(RoutingContext context, String message) {
+        HttpServerResponse response = context.response();
+        response.setStatusCode(400);
+        response.end(message);
+    }
+
+    /**
      * It takes a RoutingContext and a JsonArray, sets the status code to 422, and then sends the JsonArray as the response
      *
      * @param context The routing context.

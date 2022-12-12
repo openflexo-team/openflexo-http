@@ -1,6 +1,7 @@
 package org.openflexo.http.server.core.controllers;
 
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoException;
@@ -93,8 +94,9 @@ public class VirtualModelInstancesController extends GenericController{
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id               = context.request().getFormAttribute("project_id");
-        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
+        String prjId            = context.request().getParam("prjid");
+        String vmId             = context.request().getParam("vmid");
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjId);
 
         if(project != null){
             VirtualModelInstancesValidator validator = new VirtualModelInstancesValidator(context.request(), virtualModelLibrary);
@@ -102,7 +104,7 @@ public class VirtualModelInstancesController extends GenericController{
 
             if(validator.isValid()){
                 try {
-                    VirtualModel model                  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(validator.getVirtualModelId()));
+                    VirtualModel model                  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(vmId));
                     CreateBasicVirtualModelInstance vmi = CreateBasicVirtualModelInstance.actionType.makeNewAction(project.getVirtualModelInstanceRepository().getRootFolder(), null, editor);
 
                     vmi.setNewVirtualModelInstanceName(validator.getName());
@@ -137,48 +139,68 @@ public class VirtualModelInstancesController extends GenericController{
 
     public void delete(RoutingContext context) {}
 
+    public void behaviours(RoutingContext context) {
+        String vmid             = context.request().getParam("vmid");
+
+        try {
+            VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(vmid));
+            JsonArray result    = new JsonArray();
+
+            for (FlexoBehaviour behaviour : model.getFlexoBehaviours()) {
+                if (behaviour instanceof ActionScheme && behaviour.getVisibility() == Visibility.Public){
+                    result.add(JsonSerializer.behaviourSerializer(behaviour));
+                }
+            }
+
+            context.response().end(result.encodePrettily());
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+    }
+
     public void executeBehaviour(RoutingContext context) {
-//        String prjid        = context.request().getParam("prjid");
-//        String vmid         = context.request().getParam("vmid");
-//        String id           = context.request().getParam("id");
-//        String signature    = context.request().getParam("signature");
-//
-//        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
-//        if (project != null) {
-//            FMLRTVirtualModelInstance instance = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(id)).getVirtualModelInstance();
-//
-//            FlexoBehaviour behaviour = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vmid)).getDeclaredFlexoBehaviour(signature);
-//            if(behaviour instanceof ActionScheme) {
-//                ActionScheme as = (ActionScheme) behaviour;
-//                ActionSchemeActionFactory actionType = new ActionSchemeActionFactory(as, rtvmi.getFlexoConceptInstance());
-//                ActionSchemeAction action = actionType.makeNewAction(rtvmi.getVirtualModelInstance(), null, rtvmi.getEditor());
-//
-//                for(FlexoBehaviourParameter p : as.getParameters()) {
-//                    // Only string parameters supported
-//                    String paramType = p.getType().getTypeName();
-//                    if(paramType.equals("java.lang.String")){
-//                        String parameterValue = context.request().getParam((p.getName()));
-//                        if(parameterValue == null) {
-//                            throw new Exception("Missing parameter value : " + p.getName());
-//                        }
-//                        action.setParameterValue(p, parameterValue);
-//                    } else {
-//                        throw new Exception("Only string parameters are supported");
-//                    }
-//                }
-//                action.doAction();
-//
-//                try {
-//                    instance.getResource().save();
-//                } catch (SaveResourceException e) {
-//                    badRequest(context);
-//                }
-//            } else {
-//                badRequest(context);
-//            }
-//        } else {
-//            notFound(context);
-//        }
+        String prjid            = context.request().getParam("prjid");
+        String vmid             = context.request().getParam("vmid");
+        String id               = context.request().getParam("id");
+        String signature        = context.request().getParam("signature");
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
+
+        if (project != null) {
+            FMLRTVirtualModelInstance instance  = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(id)).getVirtualModelInstance();
+            FlexoBehaviour behaviour            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vmid)).getDeclaredFlexoBehaviour(signature);
+
+            if(behaviour instanceof ActionScheme && behaviour.getVisibility() == Visibility.Public) {
+                ActionScheme actionScheme               = (ActionScheme) behaviour;
+                ActionSchemeActionFactory actionType    = new ActionSchemeActionFactory(actionScheme, instance.getFlexoConceptInstance());
+                ActionSchemeAction action               = actionType.makeNewAction(instance.getVirtualModelInstance(), null, editor);
+
+                for(FlexoBehaviourParameter p : actionScheme.getParameters()) {
+                    if(p.getType().getTypeName().equals("java.lang.String")){
+                        String parameterValue = context.request().getParam((p.getName()));
+                        if(parameterValue == null) {
+                            JsonObject errorLine = new JsonObject();
+                            errorLine.put(p.getName(), "Missing parameter value");
+                            badValidation(context, new JsonArray().add(errorLine));
+                        }
+                        action.setParameterValue(p, parameterValue);
+                    } else {
+                        badRequest(context, "Only string parameters are supported");
+                    }
+                }
+                action.doAction();
+
+                try {
+                    instance.getResource().save();
+                } catch (SaveResourceException e) {
+                    badRequest(context);
+                }
+                emptyResponse(context);
+            } else {
+                badRequest(context, "Invalid behaviour's type or visibility");
+            }
+        } else {
+            notFound(context);
+        }
     }
 
 }

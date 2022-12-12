@@ -324,7 +324,7 @@ public class JsonSerializer {
         result.put("name", action.getName());
         result.put("resource_type", "BehaviourAction");
         result.put("description", action.getDescription());
-        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getURI()));
+        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getFlexoConcept().getURI()));
 
         return result;
     }

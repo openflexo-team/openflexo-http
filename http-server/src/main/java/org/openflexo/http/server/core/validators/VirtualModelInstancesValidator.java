@@ -23,7 +23,6 @@ public class VirtualModelInstancesValidator extends GenericValidator{
     private JsonArray errors;
     private String name;
     private String title;
-    private String virtualModelId;
 
     /**
      * Instantiates a new Virtual model instance validator.
@@ -72,7 +71,6 @@ public class VirtualModelInstancesValidator extends GenericValidator{
     public JsonArray validate(){
         String rName    = request.getFormAttribute("name");
         String rTitle   = request.getFormAttribute("title");
-        String rVmId    = request.getFormAttribute("virtual_model_id");
         errors          = new JsonArray();
 
         JsonObject errorLine;
@@ -90,14 +88,6 @@ public class VirtualModelInstancesValidator extends GenericValidator{
         } catch (BadValidationException e){
             errorLine = new JsonObject();
             errorLine.put("title", e.getMessage());
-            errors.add(errorLine);
-        }
-
-        try{
-            virtualModelId = validateVirtualModelId(rVmId);
-        } catch (BadValidationException e){
-            errorLine = new JsonObject();
-            errorLine.put("virtual_model_id", e.getMessage());
             errors.add(errorLine);
         }
 
@@ -134,12 +124,4 @@ public class VirtualModelInstancesValidator extends GenericValidator{
         return title;
     }
 
-    /**
-     * This method returns the virtual model id
-     * 
-     * @return The virtualModelId
-     */
-    public String getVirtualModelId() {
-        return virtualModelId;
-    }
 }
