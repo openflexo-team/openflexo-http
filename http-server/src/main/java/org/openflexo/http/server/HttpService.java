@@ -146,8 +146,8 @@ public class HttpService extends FlexoServiceImpl {
 		router.get("/*").handler(staticHandler);
 
 		server = vertx.createHttpServer(serverOptions);
-		server.requestHandler(router::accept);
-		server.websocketHandler(new ConnieHandler(serviceManager, technologyAdapterRestService));
+		server.requestHandler(router);
+		server.webSocketHandler(new ConnieHandler(serviceManager, technologyAdapterRestService));
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);

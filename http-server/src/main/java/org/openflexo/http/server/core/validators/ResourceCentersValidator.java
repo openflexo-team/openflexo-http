@@ -6,6 +6,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.FileUpload;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,7 +14,7 @@ import java.util.Set;
  *
  * @author Ihab Benamer
  */
-public class ResourceCentersValidator extends GenericValidator{
+public class ResourceCentersValidator extends GenericValidator {
 
     private final HttpServerRequest request;
     private boolean isValid;
@@ -66,7 +67,7 @@ public class ResourceCentersValidator extends GenericValidator{
      * @param fileUploadSet A set of file uploads
      * @return A JsonArray of errors.
      */
-    public JsonArray validateUpload(Set<FileUpload> fileUploadSet){
+    public JsonArray validateUpload(List<FileUpload> fileUploadSet){
         Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
         errors                                  = new JsonArray();
 

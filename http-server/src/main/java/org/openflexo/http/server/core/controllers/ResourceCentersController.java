@@ -73,7 +73,7 @@ public class ResourceCentersController extends GenericController {
      * @param context the context of the request
      */
     public void get(RoutingContext context) {
-        String centerId = context.request().getParam(("rcid"));
+        String centerId = context.request().getParam("rcid");
         String uri = IdUtils.decodeId(centerId);
 
         FlexoResourceCenter<?> resourceCenter = resourceCenterService.getFlexoResourceCenter(uri);
@@ -207,7 +207,7 @@ public class ResourceCentersController extends GenericController {
         JsonArray errors                    = validator.validateUpload(context.fileUploads());
 
         if(validator.isValid()){
-            Set<FileUpload> fileUploadSet 			= context.fileUploads();
+            List<FileUpload> fileUploadSet          = context.fileUploads();
             Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
             JsonObject response 					= new JsonObject();
             int counter								= 1;

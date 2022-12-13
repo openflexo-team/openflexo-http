@@ -2,13 +2,20 @@ dependencies {
 
     compile flexoFoundation()
 
-    compile 'io.vertx:vertx-core:3.3.3'
-    compile 'io.vertx:vertx-web:3.3.3'
+    compile 'io.vertx:vertx-core:4.3.6'
+    compile 'io.vertx:vertx-web:4.3.6'
+    compile 'com.fasterxml.jackson.core:jackson-annotations:2.14.1'
 
     testCompile testUtils()
     testCompile flexoFoundationTest()
-    
+    testCompile 'io.vertx:vertx-unit:4.3.6'
+    testCompile 'io.vertx:vertx-junit5:4.3.6'
+    testCompile 'io.vertx:vertx-web-client:4.3.6'
+
 }
 
+test {
+    useJUnitPlatform()
+}
 apply plugin: 'application'
 mainClassName = "org.openflexo.http.server.OpenFlexoServer"
