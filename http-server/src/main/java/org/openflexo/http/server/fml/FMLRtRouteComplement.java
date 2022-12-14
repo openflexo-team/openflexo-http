@@ -69,7 +69,7 @@ public class FMLRtRouteComplement implements TechnologyAdapterRouteComplement {
 		PamelaResourceRestService<FMLRTVirtualModelInstance, FMLRTVirtualModelInstanceResource> viewConverter = new PamelaResourceRestService<>(
 				"/instance", this::getVirtualModelInstanceResources, this::getVirtualModelInstanceResource,
 				FMLRTVirtualModelInstanceResource.class, taService,
-				PamelaMetaModelLibrary.getModelContext(FMLRTVirtualModelInstance.class));
+				PamelaMetaModelLibrary.retrieveMetaModel(FMLRTVirtualModelInstance.class));
 		taRouteService.registerPamelaResourceRestService(technologyAdapter, viewConverter);
 
 	}

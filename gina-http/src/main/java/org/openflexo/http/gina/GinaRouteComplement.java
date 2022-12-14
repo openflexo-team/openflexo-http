@@ -72,7 +72,7 @@ public class GinaRouteComplement implements TechnologyAdapterRouteComplement {
 		PamelaResourceRestService fibService = new PamelaResourceRestService<>(
 			"/fib", this::getResources, this::getGinaResource,
 			GINAFIBComponentResource.class, technologyAdapterRouteService,
-			PamelaMetaModelLibrary.getModelContext(FIBComponent.class)
+			PamelaMetaModelLibrary.retrieveMetaModel(FIBComponent.class)
 		);
 		technologyAdapterRouteService.registerPamelaResourceRestService(technologyAdapter, fibService);
 	}
