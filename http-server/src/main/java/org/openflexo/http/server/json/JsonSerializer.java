@@ -93,7 +93,7 @@ import org.openflexo.pamela.annotations.XMLAttribute;
 import org.openflexo.pamela.annotations.XMLElement;
 import org.openflexo.pamela.exceptions.InvalidDataException;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 import org.openflexo.pamela.factory.ProxyMethodHandler;
 import org.openflexo.pamela.factory.StringEncoder;
 import org.openflexo.pamela.model.ModelEntity;
@@ -131,7 +131,7 @@ public class JsonSerializer {
 			complements.add(complement);
 
 			try {
-				ModelFactory factory = complement.getFactory();
+				PamelaModelFactory factory = complement.getFactory();
 				if (factory != null && factory.getStringEncoder() != null) {
 					encoders.add(factory.getStringEncoder());
 				}

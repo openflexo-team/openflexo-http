@@ -156,7 +156,7 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 			FlexoServiceManager serviceManager);
 
 	/**
-	 * Build and return a new ModelFactory used to build embedded HttpVirtualModelInstance
+	 * Build and return a new PamelaModelFactory used to build embedded HttpVirtualModelInstance
 	 * 
 	 * @param serviceManager
 	 * @return

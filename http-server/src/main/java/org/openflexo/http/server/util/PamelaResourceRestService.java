@@ -43,7 +43,7 @@ import org.openflexo.foundation.resource.PamelaResource;
 import org.openflexo.foundation.resource.ResourceData;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
-import org.openflexo.pamela.ModelContext;
+import org.openflexo.pamela.PamelaMetaModel;
 import org.openflexo.pamela.factory.EmbeddingType;
 
 import io.vertx.ext.web.Router;
@@ -58,7 +58,7 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 
 	private final Function<String, R> finder;
 
-	private final ModelContext modelContext;
+	private final PamelaMetaModel pamelaMetaModel;
 
 	private String typescript = null;
 
@@ -68,17 +68,17 @@ public class PamelaResourceRestService<D extends ResourceData<D>, R extends Pame
 	}
 
 	public PamelaResourceRestService(String prefix, Supplier<Collection<R>> supplier, Function<String, R> finder, Class<R> resourceClass,
-			TechnologyAdapterRouteService service, ModelContext modelContext) {
+			TechnologyAdapterRouteService service, PamelaMetaModel pamelaMetaModel) {
 		super(prefix, resourceClass, service.getSerializer());
 		this.supplier = supplier;
 		this.finder = finder;
-		this.modelContext = modelContext;
+		this.pamelaMetaModel = pamelaMetaModel;
 	}
 
 	@Override
 	public void addRoutes(Router router) {
-		if (modelContext != null) {
-			typescript = new TypescriptModelFromPamela(modelContext).generateTypeScript();
+		if (pamelaMetaModel != null) {
+			typescript = new TypescriptModelFromPamela(pamelaMetaModel).generateTypeScript();
 			router.get(prefix + "/model.d.ts").produces(RouteService.JSON).handler(this::serveTypeScript);
 		}
 		super.addRoutes(router);

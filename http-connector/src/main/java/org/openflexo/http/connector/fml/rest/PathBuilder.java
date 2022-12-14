@@ -56,7 +56,7 @@ import org.openflexo.pamela.annotations.XMLAttribute;
 import org.openflexo.pamela.annotations.XMLElement;
 import org.openflexo.pamela.annotations.Getter.Cardinality;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 /**
  * Allows to build an URL from a template and a series of binding
@@ -100,7 +100,7 @@ public interface PathBuilder {
 
 	default void addNewParameter() {
 		try {
-			PathParameter parameter = new ModelFactory(PathBuilder.class).newInstance(PathParameter.class);
+			PathParameter parameter = new PamelaModelFactory(PathBuilder.class).newInstance(PathParameter.class);
 			parameter.setName(new DataBinding<>("\"param1\"", getOwner(), String.class, BindingDefinitionType.GET));
 			parameter.setValue(new DataBinding<>("\"value1\"", getOwner(), String.class, BindingDefinitionType.GET));
 			addToParameters(parameter);

@@ -26,7 +26,7 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 import org.openflexo.pamela.annotations.ModelEntity;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 @ModelEntity
 public interface HttpResourceRepository<I>
@@ -34,9 +34,9 @@ public interface HttpResourceRepository<I>
 
 	public static <I> HttpResourceRepository<I> instanciateNewRepository(HttpTechnologyAdapter technologyAdapter,
 			FlexoResourceCenter<I> resourceCenter) {
-		ModelFactory factory;
+		PamelaModelFactory factory;
 		try {
-			factory = new ModelFactory(HttpResourceRepository.class);
+			factory = new PamelaModelFactory(HttpResourceRepository.class);
 			HttpResourceRepository<I> newRepository = factory.newInstance(HttpResourceRepository.class);
 			newRepository.setTechnologyAdapter(technologyAdapter);
 			newRepository.setResourceCenter(resourceCenter);

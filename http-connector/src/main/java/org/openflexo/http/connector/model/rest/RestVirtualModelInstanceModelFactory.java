@@ -50,10 +50,10 @@ import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 /**
- * {@link ModelFactory} used to handle RestVirtualModelInstance models<br>
+ * {@link PamelaModelFactory} used to handle RestVirtualModelInstance models<br>
  * 
  * @author sylvain
  * 

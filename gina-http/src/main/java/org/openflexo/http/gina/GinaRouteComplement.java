@@ -45,7 +45,7 @@ import org.openflexo.http.server.HttpService;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.PamelaResourceRestService;
-import org.openflexo.pamela.ModelContextLibrary;
+import org.openflexo.pamela.PamelaMetaModelLibrary;
 import org.openflexo.technologyadapter.gina.GINATechnologyAdapter;
 import org.openflexo.technologyadapter.gina.rm.GINAFIBComponentResource;
 
@@ -72,7 +72,7 @@ public class GinaRouteComplement implements TechnologyAdapterRouteComplement {
 		PamelaResourceRestService fibService = new PamelaResourceRestService<>(
 			"/fib", this::getResources, this::getGinaResource,
 			GINAFIBComponentResource.class, technologyAdapterRouteService,
-			ModelContextLibrary.getModelContext(FIBComponent.class)
+			PamelaMetaModelLibrary.getModelContext(FIBComponent.class)
 		);
 		technologyAdapterRouteService.registerPamelaResourceRestService(technologyAdapter, fibService);
 	}

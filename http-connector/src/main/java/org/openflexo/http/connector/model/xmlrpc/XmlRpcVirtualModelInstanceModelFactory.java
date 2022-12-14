@@ -47,10 +47,10 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 /**
- * {@link ModelFactory} used to handle XmlRpcVirtualModelInstance models<br>
+ * {@link PamelaModelFactory} used to handle XmlRpcVirtualModelInstance models<br>
  * 
  * @author sylvain
  * 

@@ -71,7 +71,7 @@
 package org.openflexo.http.server.json;
 
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 import io.vertx.core.json.JsonObject;
 
@@ -83,7 +83,7 @@ public interface JsonComplement {
 	 * @throws ModelDefinitionException
 	 *             raised by children
 	 */
-	default ModelFactory getFactory() throws ModelDefinitionException {
+	default PamelaModelFactory getFactory() throws ModelDefinitionException {
 		return null;
 	}
 

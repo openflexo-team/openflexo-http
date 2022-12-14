@@ -51,13 +51,13 @@ import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.pamela.converter.RelativePathResourceConverter;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 /**
  * @author charlie
  *
  */
-public class AccessPointFactory extends ModelFactory implements PamelaResourceModelFactory<AccessPointResource> {
+public class AccessPointFactory extends PamelaModelFactory implements PamelaResourceModelFactory<AccessPointResource> {
 
 	private final AccessPointResource resource;
 

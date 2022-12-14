@@ -47,7 +47,7 @@ import java.util.stream.Stream;
 
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.TypeUtils;
-import org.openflexo.pamela.ModelContext;
+import org.openflexo.pamela.PamelaMetaModel;
 import org.openflexo.pamela.annotations.CloningStrategy;
 import org.openflexo.pamela.annotations.Getter;
 import org.openflexo.pamela.annotations.XMLAttribute;
@@ -62,9 +62,9 @@ import org.openflexo.pamela.model.ModelProperty;
 public class TypescriptModelFromPamela {
 
 	private final Set<String> ignoredNames = Stream.of("name").collect(Collectors.toSet());
-	private final ModelContext context;
+	private final PamelaMetaModel context;
 
-	public TypescriptModelFromPamela(ModelContext context) {
+	public TypescriptModelFromPamela(PamelaMetaModel context) {
 		this.context = context;
 	}
 

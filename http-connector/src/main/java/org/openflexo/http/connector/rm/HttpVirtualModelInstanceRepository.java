@@ -50,7 +50,7 @@ import org.openflexo.http.connector.model.HttpVirtualModelInstance;
 import org.openflexo.pamela.annotations.ImplementationClass;
 import org.openflexo.pamela.annotations.ModelEntity;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 
 /**
  * A repository storing {@link HttpVirtualModelInstanceResource} for a resource center
@@ -64,9 +64,9 @@ public interface HttpVirtualModelInstanceRepository<I> extends ResourceRepositor
 
 	public static <I> HttpVirtualModelInstanceRepository<I> instanciateNewRepository(HttpTechnologyAdapter adapter,
 			FlexoResourceCenter<I> resourceCenter) {
-		ModelFactory factory;
+		PamelaModelFactory factory;
 		try {
-			factory = new ModelFactory(HttpVirtualModelInstanceRepository.class);
+			factory = new PamelaModelFactory(HttpVirtualModelInstanceRepository.class);
 			HttpVirtualModelInstanceRepository<I> newRepository = factory.newInstance(HttpVirtualModelInstanceRepository.class);
 			newRepository.setResourceCenter(resourceCenter);
 			newRepository.setBaseArtefact(resourceCenter.getBaseArtefact());

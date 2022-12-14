@@ -41,7 +41,7 @@ import org.openflexo.gina.model.FIBModelFactory;
 import org.openflexo.http.server.json.JsonComplement;
 import org.openflexo.http.server.json.JsonSerializer;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.openflexo.pamela.factory.ModelFactory;
+import org.openflexo.pamela.factory.PamelaModelFactory;
 import org.openflexo.technologyadapter.gina.model.GINAFIBComponent;
 
 import io.vertx.core.json.JsonObject;
@@ -49,7 +49,7 @@ import io.vertx.core.json.JsonObject;
 public class GinaJsonComplement implements JsonComplement {
 
 	@Override
-	public ModelFactory getFactory() throws ModelDefinitionException {
+	public PamelaModelFactory getFactory() throws ModelDefinitionException {
 		return new FIBModelFactory(null);
 	}
 
