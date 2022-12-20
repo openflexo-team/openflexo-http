@@ -11,6 +11,8 @@ import io.vertx.junit5.VertxTestContext;
 import org.junit.jupiter.api.*;
 
 import java.io.File;
+import java.util.Random;
+import java.util.UUID;
 
 @DisplayName("Projects Integration tests")
 public class TestFlexoProjects extends AbstractRestTest {
@@ -27,36 +29,37 @@ public class TestFlexoProjects extends AbstractRestTest {
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
         client.post(9090, "localhost", "/rc/add")
-                .sendForm(form)
-                .onSuccess(res -> {
-                    resourceCenter = res.bodyAsJsonObject();
+            .sendForm(form)
+            .onSuccess(res -> {
+                resourceCenter = res.bodyAsJsonObject();
 
-                    Assertions.assertEquals(res.statusCode(), 200);
+                Assertions.assertEquals(res.statusCode(), 200);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
-    @Test
+    @RepeatedTest(5)
     @Order(2)
     @Timeout(1000)
     public void createProject(Vertx vertx, VertxTestContext context) {
         WebClient client    = WebClient.create(vertx);
         MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String name         = "Project" + new Random().nextInt(10);
 
         form.set("rc_id", resourceCenter.getString("id"));
-        form.set("name", "TestProject");
+        form.set("name", name);
 
         client.post(9090, "localhost", "/prj/add")
-                .sendForm(form)
-                .onSuccess(res -> {
-                    flexoProject = res.bodyAsJsonObject();
+            .sendForm(form)
+            .onSuccess(res -> {
+                flexoProject = res.bodyAsJsonObject();
 
-                    Assertions.assertEquals(flexoProject.getString("name"), "TestProject");
-                    Assertions.assertEquals(res.statusCode(), 200);
+                Assertions.assertEquals(flexoProject.getString("name"), name);
+                Assertions.assertEquals(res.statusCode(), 200);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
     @Test
@@ -67,14 +70,14 @@ public class TestFlexoProjects extends AbstractRestTest {
         String id           = flexoProject.getString("id");
 
         client.request(HttpMethod.GET, 9090, "localhost", "/prj/" + id)
-                .compose(req -> req.send()
-                        .compose(HttpClientResponse::body))
-                .onSuccess(res -> {
+            .compose(req -> req.send()
+            .compose(HttpClientResponse::body))
+            .onSuccess(res -> {
 
-                    Assertions.assertEquals(res.toJsonObject().getString("id"), id);
+                Assertions.assertEquals(res.toJsonObject().getString("id"), id);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
     @Test
@@ -84,34 +87,35 @@ public class TestFlexoProjects extends AbstractRestTest {
         HttpClient client = vertx.createHttpClient();
 
         client.request(HttpMethod.GET, 9090, "localhost", "/prj/")
-                .compose(req -> req.send()
-                .compose(HttpClientResponse::body))
-                .onSuccess(res -> {
-                    Assertions.assertEquals(res.toJsonArray().size(), 1);
+            .compose(req -> req.send()
+            .compose(HttpClientResponse::body))
+            .onSuccess(res -> {
+                Assertions.assertEquals(res.toJsonArray().size(), 5);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
         Assertions.assertEquals(3, 3);
     }
 
-    @Test
+    @RepeatedTest(5)
     @Order(5)
     @Timeout(1000)
     public void createFolder(Vertx vertx, VertxTestContext context) {
         WebClient client    = WebClient.create(vertx);
         MultiMap form       = MultiMap.caseInsensitiveMultiMap();
         String id           = flexoProject.getString("id");
-        form.set("name", "TestFolder");
+        String name         = "Folder" + UUID.randomUUID().hashCode();
+
+        form.set("name", name);
 
         client.post(9090, "localhost", "/prj/" + id + "/fdr/add")
-                .sendForm(form)
-                .onSuccess(res -> {
+            .sendForm(form)
+            .onSuccess(res -> {
+                Assertions.assertEquals(res.bodyAsJsonObject().getString("name"), name);
+                Assertions.assertEquals(res.statusCode(), 200);
 
-                    Assertions.assertEquals(res.bodyAsJsonObject().getString("name"), "TestFolder");
-                    Assertions.assertEquals(res.statusCode(), 200);
-
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
     @Test
@@ -122,13 +126,12 @@ public class TestFlexoProjects extends AbstractRestTest {
         String id           = flexoProject.getString("id");
 
         client.request(HttpMethod.GET, 9090, "localhost", "/prj/" + id + "/fdr/")
-                .compose(req -> req.send()
-                .compose(HttpClientResponse::body))
-                .onSuccess(res -> {
-                    Assertions.assertEquals(res.toJsonArray().size(), 1);
+            .compose(req -> req.send()
+            .compose(HttpClientResponse::body))
+            .onSuccess(res -> {
+                Assertions.assertEquals(res.toJsonArray().size(), 5);
 
-                    context.completeNow();
-                });
-        Assertions.assertEquals(3, 3);
+                context.completeNow();
+            });
     }
 }

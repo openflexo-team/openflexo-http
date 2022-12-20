@@ -18,7 +18,7 @@ public class TestResourceCenters extends AbstractRestTest {
     @Test
     @Order(1)
     @Timeout(1000)
-    public void createResourceCenter(Vertx vertx, VertxTestContext context) {
+    public void create(Vertx vertx, VertxTestContext context) {
         WebClient client        = WebClient.create(vertx);
         MultiMap form           = MultiMap.caseInsensitiveMultiMap();
         File resourcesDirectory = new File("src/test/resources/resource_center/");
@@ -39,7 +39,7 @@ public class TestResourceCenters extends AbstractRestTest {
     @Test
     @Order(2)
     @Timeout(1000)
-    public void listResourceCenters(Vertx vertx, VertxTestContext context) {
+    public void list(Vertx vertx, VertxTestContext context) {
         HttpClient client = vertx.createHttpClient();
 
         client.request(HttpMethod.GET, 9090, "localhost", "/rc/")
@@ -55,7 +55,7 @@ public class TestResourceCenters extends AbstractRestTest {
     @Test
     @Order(3)
     @Timeout(1000)
-    public void getResourceCenter(Vertx vertx, VertxTestContext context) {
+    public void get(Vertx vertx, VertxTestContext context) {
         HttpClient client   = vertx.createHttpClient();
         String id           = resourceCenter.getString("id");
 
@@ -75,7 +75,7 @@ public class TestResourceCenters extends AbstractRestTest {
 //    @Test
 //    @Order(4)
 //    @Timeout(5000)
-//    public void uploadResourceCenter(Vertx vertx, VertxTestContext context) {
+//    public void upload(Vertx vertx, VertxTestContext context) {
 //        WebClient client        = WebClient.create(vertx);
 //        File resourcesDirectory = new File("src/test/resources/testTest.prj.zip");
 //

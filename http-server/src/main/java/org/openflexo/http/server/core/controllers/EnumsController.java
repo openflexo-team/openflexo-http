@@ -84,7 +84,7 @@ public class EnumsController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        String id = context.request().getFormAttribute("virtual_model_id");
+        String id = context.request().getParam("vmid");
 
         try {
             VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));

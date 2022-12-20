@@ -111,7 +111,7 @@ public class JsonSerializer {
 
         result.put("name", behaviour.getName());
         result.put("resource_type", "Behaviour");
-        result.put("id", behaviour.getURI());
+        result.put("id", IdUtils.encodeuri(behaviour.getURI()));
         result.put("type", behaviour.getFlexoBehaviourType().getTypeName());
         result.put("visibility", behaviour.getVisibility());
         result.put("is_abstract", behaviour.isAbstract());
@@ -160,7 +160,7 @@ public class JsonSerializer {
         result.put("visibility", concept.getVisibility().toString());
         result.put("is_abstract", concept.isAbstract());
         result.put("description", concept.getDescription());
-        result.put("behaviour_id", IdUtils.encodeuri(concept.getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringVirtualModel().getURI()));
 
         return result;
     }
@@ -324,7 +324,7 @@ public class JsonSerializer {
         result.put("name", action.getName());
         result.put("resource_type", "BehaviourAction");
         result.put("description", action.getDescription());
-        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getFlexoConcept().getURI()));
+        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getURI()));
 
         return result;
     }
