@@ -15,8 +15,8 @@ import java.util.UUID;
 
 @DisplayName("Behaviour Actions Integration tests")
 public class TestBehaviourActions extends AbstractRestTest {
-    static JsonObject resourceCenter, flexoProject, vm, behaviour, action;
-
+    static JsonObject resourceCenter, flexoProject, vm, behaviour, action, prop, param;
+    static String newSignature;
     @Test
     @Order(1)
     @Timeout(1000)
@@ -28,12 +28,12 @@ public class TestBehaviourActions extends AbstractRestTest {
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
         client.post(9090, "localhost", "/rc/add")
-                .sendForm(form)
-                .onSuccess(res -> {
-                    resourceCenter = res.bodyAsJsonObject();
-                    Assertions.assertEquals(res.statusCode(), 200);
-                    context.completeNow();
-                });
+            .sendForm(form)
+            .onSuccess(res -> {
+                resourceCenter = res.bodyAsJsonObject();
+                Assertions.assertEquals(res.statusCode(), 200);
+                context.completeNow();
+            });
     }
 
     @Test
@@ -47,15 +47,15 @@ public class TestBehaviourActions extends AbstractRestTest {
         form.set("name", "TestProject");
 
         client.post(9090, "localhost", "/prj/add")
-                .sendForm(form)
-                .onSuccess(res -> {
-                    flexoProject = res.bodyAsJsonObject();
+            .sendForm(form)
+            .onSuccess(res -> {
+                flexoProject = res.bodyAsJsonObject();
 
-                    Assertions.assertEquals(flexoProject.getString("name"), "TestProject");
-                    Assertions.assertEquals(res.statusCode(), 200);
+                Assertions.assertEquals(flexoProject.getString("name"), "TestProject");
+                Assertions.assertEquals(res.statusCode(), 200);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
     @Test
@@ -71,16 +71,16 @@ public class TestBehaviourActions extends AbstractRestTest {
         form.set("visibility", "public");
 
         client.post(9090, "localhost", "/vm/add")
-                .sendForm(form)
-                .onSuccess(res -> {
-                    vm = res.bodyAsJsonObject();
+            .sendForm(form)
+            .onSuccess(res -> {
+                vm = res.bodyAsJsonObject();
 
-                    Assertions.assertEquals(vm.getString("name"), "VirtualModel");
-                    Assertions.assertEquals(flexoProject.getString("project_id"), vm.getString("project_id"));
-                    Assertions.assertEquals(res.statusCode(), 200);
+                Assertions.assertEquals(vm.getString("name"), "VirtualModel");
+                Assertions.assertEquals(flexoProject.getString("project_id"), vm.getString("project_id"));
+                Assertions.assertEquals(res.statusCode(), 200);
 
-                    context.completeNow();
-                });
+                context.completeNow();
+            });
     }
 
     @Test
@@ -98,14 +98,68 @@ public class TestBehaviourActions extends AbstractRestTest {
         form.set("type", "action");
 
         client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/add")
+            .sendForm(form)
+            .onSuccess(res -> {
+                behaviour = res.bodyAsJsonObject();
+
+                Assertions.assertEquals(behaviour.getString("visibility"), "Public");
+                Assertions.assertEquals(behaviour.getString("is_abstract"), "false");
+                Assertions.assertEquals(behaviour.getString("name"), name);
+                Assertions.assertEquals(behaviour.getString("virtual_model_id"), vmId);
+                Assertions.assertEquals(res.statusCode(), 200);
+
+                context.completeNow();
+            });
+    }
+
+    @Test
+    @Order(5)
+    @Timeout(1000)
+    public void initProp(Vertx vertx, VertxTestContext context) {
+        WebClient client    = WebClient.create(vertx);
+        MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String vmId         = vm.getString("id");
+
+        form.set("name", "prop");
+        form.set("type", "String");
+        form.set("cardinality", "OneMany");
+
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/prp/add-primitive")
+            .sendForm(form)
+            .onSuccess(res -> {
+                prop = res.bodyAsJsonObject();
+
+                Assertions.assertEquals(prop.getString("type"), "String");
+                Assertions.assertEquals(prop.getString("cardinality"), "OneMany");
+                Assertions.assertEquals(prop.getString("name"), "prop");
+                Assertions.assertEquals(prop.getString("virtual_model_id"), vmId);
+                Assertions.assertEquals(res.statusCode(), 200);
+
+                context.completeNow();
+            });
+    }
+
+    @Test
+    @Order(6)
+    @Timeout(1000)
+    public void initParam(Vertx vertx, VertxTestContext context) {
+        WebClient client    = WebClient.create(vertx);
+        MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String vmId         = vm.getString("id");
+
+        form.set("name", "param");
+        form.set("is_required", "false");
+        form.set("type", "String");
+
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + behaviour.getString("signature") + "/param/add-primitive")
                 .sendForm(form)
                 .onSuccess(res -> {
-                    behaviour = res.bodyAsJsonObject();
+                    param           = res.bodyAsJsonObject();
+                    newSignature    = param.getString("behaviour_signature");
 
-                    Assertions.assertEquals(behaviour.getString("visibility"), "Public");
-                    Assertions.assertEquals(behaviour.getString("is_abstract"), "false");
-                    Assertions.assertEquals(behaviour.getString("name"), name);
-                    Assertions.assertEquals(behaviour.getString("virtual_model_id"), vmId);
+                    Assertions.assertEquals(param.getString("type"), "java.lang.String");
+                    Assertions.assertEquals(param.getString("is_required"), "false");
+                    Assertions.assertEquals(param.getString("name"), "param");
                     Assertions.assertEquals(res.statusCode(), 200);
 
                     context.completeNow();
@@ -113,7 +167,7 @@ public class TestBehaviourActions extends AbstractRestTest {
     }
 
     @RepeatedTest(5)
-    @Order(5)
+    @Order(7)
     @Timeout(1000)
     public void createLogAction(Vertx vertx, VertxTestContext context) {
         WebClient client    = WebClient.create(vertx);
@@ -123,15 +177,82 @@ public class TestBehaviourActions extends AbstractRestTest {
         form.set("value", "\"Test\"");
         form.set("level", "info");
 
-        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + behaviour.getString("signature") + "/act/add-log")
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + newSignature + "/act/add-log")
+            .sendForm(form)
+            .onSuccess(res -> {
+                action = res.bodyAsJsonObject();
+
+                Assertions.assertEquals(action.getString("resource_type"), "BehaviourAction");
+                Assertions.assertEquals(res.statusCode(), 200);
+
+                context.completeNow();
+            });
+    }
+
+    @RepeatedTest(5)
+    @Order(8)
+    @Timeout(1000)
+    public void createAssignAction(Vertx vertx, VertxTestContext context) {
+        WebClient client    = WebClient.create(vertx);
+        MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String vmId         = vm.getString("id");
+
+        form.set("left", "prop");
+        form.set("right", "parameters.param");
+
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + newSignature + "/act/add-assign")
+            .sendForm(form)
+            .onSuccess(res -> {
+                action = res.bodyAsJsonObject();
+
+                Assertions.assertEquals(action.getString("resource_type"), "BehaviourAction");
+                Assertions.assertEquals(res.statusCode(), 200);
+
+                context.completeNow();
+            });
+    }
+
+    @RepeatedTest(5)
+    @Order(9)
+    @Timeout(1000)
+    public void createAddToListAction(Vertx vertx, VertxTestContext context) {
+        WebClient client    = WebClient.create(vertx);
+        MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String vmId         = vm.getString("id");
+
+        form.set("left", "prop");
+        form.set("right", "parameters.param");
+
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + newSignature + "/act/add-to-list")
                 .sendForm(form)
                 .onSuccess(res -> {
-
                     action = res.bodyAsJsonObject();
 
                     Assertions.assertEquals(action.getString("resource_type"), "BehaviourAction");
-//                    Assertions.assertEquals(action.getString("behaviour_id"), behaviour.getString("id"));
-//                    Assertions.assertEquals(res.statusCode(), 200);
+                    Assertions.assertEquals(res.statusCode(), 200);
+
+                    context.completeNow();
+                });
+    }
+
+    @RepeatedTest(5)
+    @Order(9)
+    @Timeout(1000)
+    public void createRemoveFromListAction(Vertx vertx, VertxTestContext context) {
+        WebClient client    = WebClient.create(vertx);
+        MultiMap form       = MultiMap.caseInsensitiveMultiMap();
+        String vmId         = vm.getString("id");
+
+        form.set("left", "prop");
+        form.set("right", "parameters.param");
+
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/" + newSignature + "/act/remove-from-list")
+                .sendForm(form)
+                .onSuccess(res -> {
+                    action = res.bodyAsJsonObject();
+
+                    Assertions.assertEquals(action.getString("resource_type"), "BehaviourAction");
+                    Assertions.assertEquals(res.statusCode(), 200);
 
                     context.completeNow();
                 });

@@ -197,7 +197,7 @@ public class JsonSerializer {
 
         result.put("flexo_id", instance.getFlexoID());
         result.put("resource_type", "FlexoConceptInstance");
-        result.put("concept_uri", instance.getFlexoConceptURI());
+        result.put("concept_id", IdUtils.encodeuri(instance.getFlexoConceptURI()));
 
         return result;
     }
