@@ -68,8 +68,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         // Resource centers
         router.get("/resource-centers/").produces(JSON).handler(rcsController::list);
         router.get("/rc/").produces(JSON).handler(rcsController::list);
-        router.post("/resource-centers/add").produces(JSON).handler(rcsController::add);
-        router.post("/rc/add").produces(JSON).handler(rcsController::add);
+        router.post("/resource-centers/").produces(JSON).handler(rcsController::add);
+        router.post("/rc/").produces(JSON).handler(rcsController::add);
         router.post("/resource-centers/upload").produces(JSON).handler(rcsController::upload);
         router.post("/rc/upload").produces(JSON).handler(rcsController::upload);
         router.get("/resource-centers/:rcid").produces(JSON).handler(rcsController::get);
@@ -115,54 +115,54 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/prj/").produces(JSON).handler(prjController::list);
         router.get("/projects/:id").produces(JSON).handler(prjController::get);
         router.get("/prj/:id").produces(JSON).handler(prjController::get);
-        router.post("/projects/add").produces(JSON).handler(prjController::add);
-        router.post("/prj/add").produces(JSON).handler(prjController::add);
-        router.patch("/projects/:id/edit").produces(JSON).handler(prjController::edit);
-        router.patch("/prj/:id/edit").produces(JSON).handler(prjController::edit);
-        router.delete("/projects/:id/delete").produces(JSON).handler(prjController::delete);
-        router.delete("/prj/:id/delete").produces(JSON).handler(prjController::delete);
+        router.post("/projects/").produces(JSON).handler(prjController::add);
+        router.post("/prj/").produces(JSON).handler(prjController::add);
+        router.patch("/projects/:id/").produces(JSON).handler(prjController::edit);
+        router.patch("/prj/:id/").produces(JSON).handler(prjController::edit);
+        router.delete("/projects/:id/").produces(JSON).handler(prjController::delete);
+        router.delete("/prj/:id/").produces(JSON).handler(prjController::delete);
 
         // Folders
         router.get("/projects/:id/folders").produces(JSON).handler(prjController::folders);
         router.get("/prj/:id/fdr").produces(JSON).handler(prjController::folders);
-        router.post("/projects/:id/folders/add").produces(JSON).handler(prjController::addFolder);
-        router.post("/prj/:id/fdr/add").produces(JSON).handler(prjController::addFolder);
+        router.post("/projects/:id/folders/").produces(JSON).handler(prjController::addFolder);
+        router.post("/prj/:id/fdr/").produces(JSON).handler(prjController::addFolder);
 
         // Virtual Models
         router.get("/virtual-models/").produces(JSON).handler(vmController::list);
         router.get("/vm/").produces(JSON).handler(vmController::list);
         router.get("/virtual-models/:id").produces(JSON).handler(vmController::get);
         router.get("/vm/:id").produces(JSON).handler(vmController::get);
-        router.post("/virtual-models/add").produces(JSON).handler(vmController::add);
-        router.post("/vm/add").produces(JSON).handler(vmController::add);
-        router.patch("/virtual-models/:id/edit").produces(JSON).handler(vmController::edit);
-        router.patch("/vm/:id/edit").produces(JSON).handler(vmController::edit);
-        router.delete("/virtual-models/:id/delete").produces(JSON).handler(vmController::delete);
-        router.delete("/vm/:id/delete").produces(JSON).handler(vmController::delete);
+        router.post("/virtual-models/").produces(JSON).handler(vmController::add);
+        router.post("/vm/").produces(JSON).handler(vmController::add);
+        router.patch("/virtual-models/:id/").produces(JSON).handler(vmController::edit);
+        router.patch("/vm/:id/").produces(JSON).handler(vmController::edit);
+        router.delete("/virtual-models/:id/").produces(JSON).handler(vmController::delete);
+        router.delete("/vm/:id/").produces(JSON).handler(vmController::delete);
 
         // Enums
         router.get("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::list);
         router.get("/vm/:vmid/enums/").produces(JSON).handler(enmController::list);
         router.get("/virtual-models/:vmid/enums/:id").produces(JSON).handler(enmController::get);
         router.get("/vm/:vmid/enums/:id").produces(JSON).handler(enmController::get);
-        router.post("/virtual-models/:vmid/enums/add").produces(JSON).handler(enmController::add);
-        router.post("/vm/:vmid/enums/add").produces(JSON).handler(enmController::add);
+        router.post("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::add);
+        router.post("/vm/:vmid/enums/").produces(JSON).handler(enmController::add);
         router.get("/virtual-models/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
         router.get("/vm/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
-        router.post("/virtual-models/:vmid/enums/:id/values/add").produces(JSON).handler(enmController::addValue);
-        router.post("/vm/:vmid/enums/:id/values/add").produces(JSON).handler(enmController::addValue);
+        router.post("/virtual-models/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
+        router.post("/vm/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
 
         // Concepts
         router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
         router.get("/vm/:vmid/cp/").produces(JSON).handler(cpController::list);
         router.get("/virtual-models/:vmid/concepts/:id").produces(JSON).handler(cpController::get);
         router.get("/vm/:vmid/cp/:id").produces(JSON).handler(cpController::get);
-        router.post("/virtual-models/:vmid/concepts/add").produces(JSON).handler(cpController::add);
-        router.post("/vm/:vmid/cp/add").produces(JSON).handler(cpController::add);
-        router.patch("/virtual-models/:vmid/concepts/:id/edit").produces(JSON).handler(cpController::edit);
-        router.patch("/vm/:vmid/cp/:id/edit").produces(JSON).handler(cpController::edit);
-        router.delete("/virtual-models/:vmid/concepts/:id/delete").produces(JSON).handler(cpController::delete);
-        router.delete("/vm/:vmid/cp/:id/delete").produces(JSON).handler(cpController::delete);
+        router.post("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::add);
+        router.post("/vm/:vmid/cp/").produces(JSON).handler(cpController::add);
+        router.patch("/virtual-models/:vmid/concepts/:id/").produces(JSON).handler(cpController::edit);
+        router.patch("/vm/:vmid/cp/:id/").produces(JSON).handler(cpController::edit);
+        router.delete("/virtual-models/:vmid/concepts/:id/").produces(JSON).handler(cpController::delete);
+        router.delete("/vm/:vmid/cp/:id/").produces(JSON).handler(cpController::delete);
 
         // properties
         router.get("/virtual-models/:vmid/concepts/:id/properties/").produces(JSON).handler(prpController::list);
@@ -181,10 +181,10 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::list);
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature").produces(JSON).handler(bhvController::get);
         router.get("/vm/:vmid/cp/:id/bhv/:signature").produces(JSON).handler(bhvController::get);
-        router.post("/virtual-models/:vmid/concepts/:id/behaviours/add").produces(JSON).handler(bhvController::add);
-        router.post("/vm/:vmid/cp/:id/bhv/add").produces(JSON).handler(bhvController::add);
-        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/delete").produces(JSON).handler(bhvController::delete);
-        router.delete("/vm/:vmid/cp/:id/bhv/delete").produces(JSON).handler(bhvController::delete);
+        router.post("/virtual-models/:vmid/concepts/:id/behaviours/").produces(JSON).handler(bhvController::add);
+        router.post("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::add);
+        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/").produces(JSON).handler(bhvController::delete);
+        router.delete("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::delete);
 
         // Parameters
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
@@ -211,30 +211,30 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/prj/:prjid/vm/:vmid/instances/").produces(JSON).handler(vmiController::list);
         router.get("/projects/:prjid/virtual-model/:vmid/instances/:id").produces(JSON).handler(vmiController::get);
         router.get("/prj/:prjid/vm/:vmid/instances/:id").produces(JSON).handler(vmiController::get);
-        router.post("/projects/:prjid/virtual-model/:vmid/instances/add").produces(JSON).handler(vmiController::add);
-        router.post("/prj/:prjid/vm/:vmid/instances/add").produces(JSON).handler(vmiController::add);
+        router.post("/projects/:prjid/virtual-model/:vmid/instances/").produces(JSON).handler(vmiController::add);
+        router.post("/prj/:prjid/vm/:vmid/instances/").produces(JSON).handler(vmiController::add);
         router.get("/projects/:prjid/virtual-model/:vmid/instances/:id/behaviours/").produces(JSON).handler(vmiController::behaviours);
         router.get("/prj/:prjid/vm/:vmid/instances/:id/bhv/").produces(JSON).handler(vmiController::behaviours);
 
         router.post("/projects/:prjid/virtual-model/:vmid/instances/:id/behaviours/:signature/execute").produces(JSON).handler(vmiController::executeBehaviour);
         router.post("/prj/:prjid/vm/:vmid/instances/:id/bhv/:signature/exe").produces(JSON).handler(vmiController::executeBehaviour);
 
-        router.patch("/projects/:prjid/virtual-model/:vmid/instances/:id/edit").produces(JSON).handler(vmiController::edit);
-        router.patch("/prj/:prjid/vm/:vmid/instances/:id/edit").produces(JSON).handler(vmiController::edit);
-        router.delete("/projects/:prjid/virtual-model/:vmid/instances/:id/delete").produces(JSON).handler(vmiController::delete);
-        router.delete("/prj/:prjid/vm/:vmid/instances/:id/delete").produces(JSON).handler(vmiController::delete);
+        router.patch("/projects/:prjid/virtual-model/:vmid/instances/:id/").produces(JSON).handler(vmiController::edit);
+        router.patch("/prj/:prjid/vm/:vmid/instances/:id/").produces(JSON).handler(vmiController::edit);
+        router.delete("/projects/:prjid/virtual-model/:vmid/instances/:id/").produces(JSON).handler(vmiController::delete);
+        router.delete("/prj/:prjid/vm/:vmid/instances/:id/").produces(JSON).handler(vmiController::delete);
 
         // Concept Instances
-        router.post("/concept-instances/add").produces(JSON).handler(cpiController::add);
-        router.post("/cpi/add").produces(JSON).handler(cpiController::add);
+        router.post("/concept-instances/").produces(JSON).handler(cpiController::add);
+        router.post("/cpi/").produces(JSON).handler(cpiController::add);
         router.get("/concept-instances/").produces(JSON).handler(cpiController::list);
         router.get("/cpi/").produces(JSON).handler(cpiController::list);
         router.get("/concept-instances/:id").produces(JSON).handler(cpiController::get);
         router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
-        router.patch("/concept-instances/:id/edit").produces(JSON).handler(cpiController::edit);
-        router.patch("/cpi/:id/edit").produces(JSON).handler(cpiController::edit);
-        router.delete("/concept-instances/:id/delete").produces(JSON).handler(cpiController::delete);
-        router.delete("/cpi/:id/delete").produces(JSON).handler(cpiController::delete);
+        router.patch("/concept-instances/:id/").produces(JSON).handler(cpiController::edit);
+        router.patch("/cpi/:id/").produces(JSON).handler(cpiController::edit);
+        router.delete("/concept-instances/:id/").produces(JSON).handler(cpiController::delete);
+        router.delete("/cpi/:id/").produces(JSON).handler(cpiController::delete);
 
         router.get("/console").produces(JSON).handler(cslController::show);
     }

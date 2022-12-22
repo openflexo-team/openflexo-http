@@ -27,7 +27,7 @@ public class TestConceptInstances extends AbstractRestTest {
 
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
-        client.post(9090, "localhost", "/rc/add")
+        client.post(9090, "localhost", "/rc/")
             .sendForm(form)
             .onSuccess(res -> {
                 resourceCenter = res.bodyAsJsonObject();
@@ -46,7 +46,7 @@ public class TestConceptInstances extends AbstractRestTest {
         form.set("rc_id", resourceCenter.getString("id"));
         form.set("name", "TestProject");
 
-        client.post(9090, "localhost", "/prj/add")
+        client.post(9090, "localhost", "/prj/")
             .sendForm(form)
             .onSuccess(res -> {
                 flexoProject = res.bodyAsJsonObject();
@@ -70,7 +70,7 @@ public class TestConceptInstances extends AbstractRestTest {
         form.set("is_abstract", "false");
         form.set("visibility", "public");
 
-        client.post(9090, "localhost", "/vm/add")
+        client.post(9090, "localhost", "/vm/")
             .sendForm(form)
             .onSuccess(res -> {
                 vm = res.bodyAsJsonObject();
@@ -95,7 +95,7 @@ public class TestConceptInstances extends AbstractRestTest {
         form.set("is_abstract", "false");
         form.set("visibility", "public");
 
-        client.post(9090, "localhost", "/vm/" + vmId + "/cp/add")
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/")
             .sendForm(form)
             .onSuccess(res -> {
                 concept = res.bodyAsJsonObject();
@@ -122,7 +122,7 @@ public class TestConceptInstances extends AbstractRestTest {
         form.set("title", title);
         form.set("name", name);
 
-        client.post(9090, "localhost", "/prj/" + flexoProject.getString("id") + "/vm/" + vm.getString("id") + "/instances/add")
+        client.post(9090, "localhost", "/prj/" + flexoProject.getString("id") + "/vm/" + vm.getString("id") + "/instances/")
             .sendForm(form)
             .onSuccess(res -> {
                 vmi = res.bodyAsJsonObject();
@@ -147,7 +147,7 @@ public class TestConceptInstances extends AbstractRestTest {
         form.set("project_id", flexoProject.getString("id"));
         form.set("container_id", vmi.getString("id"));
 
-        client.post(9090, "localhost", "/cpi/add")
+        client.post(9090, "localhost", "/cpi/")
             .sendForm(form)
             .onSuccess(res -> {
                 cpi = res.bodyAsJsonObject();

@@ -98,7 +98,7 @@ public class TestParameters extends AbstractRestTest {
         form.set("visibility", "public");
         form.set("type", "creation");
 
-        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/add")
+        client.post(9090, "localhost", "/vm/" + vmId + "/cp/" + vmId + "/bhv/")
             .sendForm(form)
             .onSuccess(res -> {
                 behaviour = res.bodyAsJsonObject();

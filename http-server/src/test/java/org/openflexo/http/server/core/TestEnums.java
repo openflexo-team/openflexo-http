@@ -28,7 +28,7 @@ public class TestEnums extends AbstractRestTest {
 
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
-        client.post(9090, "localhost", "/rc/add")
+        client.post(9090, "localhost", "/rc/")
             .sendForm(form)
             .onSuccess(res -> {
                 resourceCenter = res.bodyAsJsonObject();
@@ -47,7 +47,7 @@ public class TestEnums extends AbstractRestTest {
         form.set("rc_id", resourceCenter.getString("id"));
         form.set("name", "TestProject");
 
-        client.post(9090, "localhost", "/prj/add")
+        client.post(9090, "localhost", "/prj/")
             .sendForm(form)
             .onSuccess(res -> {
                 flexoProject = res.bodyAsJsonObject();
@@ -72,7 +72,7 @@ public class TestEnums extends AbstractRestTest {
         form.set("is_abstract", "false");
         form.set("visibility", "public");
 
-        client.post(9090, "localhost", "/vm/add")
+        client.post(9090, "localhost", "/vm/")
             .sendForm(form)
             .onSuccess(res -> {
                 vm = res.bodyAsJsonObject();
@@ -98,7 +98,7 @@ public class TestEnums extends AbstractRestTest {
         form.set("is_abstract", "false");
         form.set("visibility", "default");
 
-        client.post(9090, "localhost", "/vm/" + vmId + "/enums/add")
+        client.post(9090, "localhost", "/vm/" + vmId + "/enums/")
                 .sendForm(form)
                 .onSuccess(res -> {
                     flexoEnum = res.bodyAsJsonObject();

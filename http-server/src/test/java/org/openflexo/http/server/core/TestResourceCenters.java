@@ -25,7 +25,7 @@ public class TestResourceCenters extends AbstractRestTest {
 
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
-        client.post(9090, "localhost", "/rc/add")
+        client.post(9090, "localhost", "/rc/")
                 .sendForm(form)
                 .onSuccess(res -> {
                     resourceCenter = res.bodyAsJsonObject();

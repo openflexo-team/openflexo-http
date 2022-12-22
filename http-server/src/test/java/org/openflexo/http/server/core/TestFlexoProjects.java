@@ -28,7 +28,7 @@ public class TestFlexoProjects extends AbstractRestTest {
 
         form.set("rc_path", resourcesDirectory.getAbsolutePath());
 
-        client.post(9090, "localhost", "/rc/add")
+        client.post(9090, "localhost", "/rc/")
             .sendForm(form)
             .onSuccess(res -> {
                 resourceCenter = res.bodyAsJsonObject();
@@ -50,7 +50,7 @@ public class TestFlexoProjects extends AbstractRestTest {
         form.set("rc_id", resourceCenter.getString("id"));
         form.set("name", name);
 
-        client.post(9090, "localhost", "/prj/add")
+        client.post(9090, "localhost", "/prj/")
             .sendForm(form)
             .onSuccess(res -> {
                 flexoProject = res.bodyAsJsonObject();
@@ -108,7 +108,7 @@ public class TestFlexoProjects extends AbstractRestTest {
 
         form.set("name", name);
 
-        client.post(9090, "localhost", "/prj/" + id + "/fdr/add")
+        client.post(9090, "localhost", "/prj/" + id + "/fdr/")
             .sendForm(form)
             .onSuccess(res -> {
                 Assertions.assertEquals(res.bodyAsJsonObject().getString("name"), name);
