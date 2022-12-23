@@ -1,0 +1,203 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "version" : "1.0.0",
+    "title" : "Openflexo-http REST APIs",
+    "contact" : {
+      "email" : "contact@openflexo.org"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "server.openflexo.org",
+  "tags" : [ {
+    "name" : "Project",
+    "description" : "Logical container of resources located in project directory",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "https://openflexo.org"
+    }
+  } ],
+  "schemes" : [ "http", "https"],
+  "paths" : {
+    "/projects/" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Finds all projects",
+        "description" : "",
+        "operationId" : "findAllProjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Project" ],
+        "summary" : "Create new project",
+        "description" : "",
+        "operationId" : "addProject",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        } , {
+          "name" : "resource_center_id",
+          "required" : true
+        }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation"
+          },
+          "schema" : {
+            "type" : "array"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/{id}/" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Find project by ID",
+        "operationId" : "getProjectById",
+        "produces" : [ "application/xml", "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "patch" : {
+        "tags" : [ "Project" ],
+        "summary" : "Updates a project in the store with form data",
+        "operationId" : "editProject",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "description" : "Name of project that needs to be updated",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "200" : {
+            "description" : "successful operation"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Project" ],
+        "summary" : "Deletes a project",
+        "description" : "",
+        "operationId" : "deleteProject",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Project id to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    }
+  },
+  "definitions" : {
+    "Project" : {
+      "type" : "object",
+      "required" : [ "name" , "resource_center_id"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "resource_center_id" : {
+          "type" : "string"
+        }
+      },
+      "xml" : {
+        "name" : "Project"
+      }
+    },
+    "ApiResponse" : {
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ErrorCode" : {
+      "type" : "string",
+      "enum" : [ "REQUIRED_RESOURCE_ID_NOT_SET", "REQUIRED_RESOURCE_NOT_FOUND", "ALREADY_EXISTS", "SOMETHING_ELSE" ]
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}

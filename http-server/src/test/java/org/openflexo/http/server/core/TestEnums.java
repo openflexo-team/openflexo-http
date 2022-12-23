@@ -44,7 +44,7 @@ public class TestEnums extends AbstractRestTest {
         WebClient client        = WebClient.create(vertx);
         MultiMap form           = MultiMap.caseInsensitiveMultiMap();
 
-        form.set("rc_id", resourceCenter.getString("id"));
+        form.set("resource_center_id", resourceCenter.getString("id"));
         form.set("name", "TestProject");
 
         client.post(9090, "localhost", "/prj/")

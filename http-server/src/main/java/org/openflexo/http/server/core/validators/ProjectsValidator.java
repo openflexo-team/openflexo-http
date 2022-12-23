@@ -63,7 +63,7 @@ public class ProjectsValidator extends GenericValidator{
      */
     public JsonArray validate(){
         String rName    = request.getFormAttribute("name");
-        String rRcId    = request.getFormAttribute("rc_id");
+        String rRcId    = request.getFormAttribute("resource_center_id");
         errors          = new JsonArray();
 
         JsonObject errorLine;
@@ -80,7 +80,7 @@ public class ProjectsValidator extends GenericValidator{
             rcId = validateResourceCenterID(rRcId);
         } catch (BadValidationException e){
             errorLine = new JsonObject();
-            errorLine.put("rc_id", e.getMessage());
+            errorLine.put("resource_center_id", e.getMessage());
             errors.add(errorLine);
         }
 

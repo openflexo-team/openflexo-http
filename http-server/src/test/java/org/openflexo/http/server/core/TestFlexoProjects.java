@@ -47,7 +47,7 @@ public class TestFlexoProjects extends AbstractRestTest {
         MultiMap form       = MultiMap.caseInsensitiveMultiMap();
         String name         = "Project" + new Random().nextInt(10);
 
-        form.set("rc_id", resourceCenter.getString("id"));
+        form.set("resource_center_id", resourceCenter.getString("id"));
         form.set("name", name);
 
         client.post(9090, "localhost", "/prj/")
