@@ -51,6 +51,7 @@ import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance.FMLRTVirtualModelInstanceImpl;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.ModelObjectActorReference;
+import org.openflexo.foundation.fml.rt.ModelSlotInstance;
 import org.openflexo.foundation.fml.rt.PrimitiveActorReference;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
@@ -60,6 +61,7 @@ import org.openflexo.http.server.OpenFlexoServer;
 import org.openflexo.http.server.RouteService;
 import org.openflexo.http.server.json.JsonError;
 import org.openflexo.http.server.json.JsonSerializer;
+
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -168,10 +170,10 @@ public abstract class ResourceRestService<D, R> {
 		for(ActorReference actor : fci.getActors()) {
 			JsonObject actorObj = new JsonObject();
 			PropertyCardinality actorCardinality = actor.getFlexoRole().getCardinality();
+			actorObj.put("id", actor.getFlexoID());
+			actorObj.put("name", actor.getRoleName());
+			
 			if(actorCardinality == PropertyCardinality.One || actorCardinality == PropertyCardinality.ZeroOne ) {
-				actorObj.put("id", actor.getFlexoID());
-				actorObj.put("name", actor.getRoleName());
-				
 				if(actor instanceof PrimitiveActorReference){
 					actorObj.put("value", actor.getModellingElement().toString());
 				}				
@@ -180,7 +182,22 @@ public abstract class ResourceRestService<D, R> {
 				}
 				result.add(actorObj);
 			} else {
-				
+				//TODO optimizations; currently doing the same as ZeroOne / One cardinality 
+				if(actor instanceof PrimitiveActorReference){
+					actorObj.put("value", actor.getModellingElement().toString());
+				}				
+				if(actor instanceof ModelObjectActorReference){
+					actorObj.put("reference", convertFciActorsToJson((FlexoConceptInstance) actor.getModellingElement()).getJsonObject(0));
+				}
+				if(actor instanceof ModelSlotInstance) {
+					ModelSlotInstance msi = (ModelSlotInstance) actor;
+					JsonObject msiDescribe = new JsonObject();
+					msiDescribe.put("id", IdUtils.getId(msi.getResource()));
+					msiDescribe.put("name", msi.getModelSlotName());
+					msiDescribe.put("type", "ModelSlotInstance");
+					actorObj.put("reference", msiDescribe);
+				}
+				result.add(actorObj);
 			}
 		}
 		return result;
