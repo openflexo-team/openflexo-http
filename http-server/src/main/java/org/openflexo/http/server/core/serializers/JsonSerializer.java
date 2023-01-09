@@ -71,12 +71,21 @@ public class JsonSerializer {
         String id           = IdUtils.encodeuri(uri);
         JsonObject result   = new JsonObject();
 
+        String parent_id;
+
+        try{
+            parent_id = IdUtils.encodeuri(virtualModel.getParentFlexoConcepts().get(0).getURI());
+        } catch (NullPointerException | IndexOutOfBoundsException e)  {
+            parent_id = null;
+        }
+
         result.put("name", virtualModel.getName());
         result.put("resource_type", "VirtualModel");
         result.put("uri", uri);
         result.put("id", id);
         result.put("visibility", virtualModel.getVisibility());
         result.put("is_abstract", virtualModel.isAbstract());
+        result.put("parent_id", parent_id);
 
         return result;
     }
@@ -151,7 +160,14 @@ public class JsonSerializer {
      * @return A JsonObject
      */
     public static JsonObject conceptSerializer(FlexoConcept concept) {
-        JsonObject result           = new JsonObject();
+        JsonObject result = new JsonObject();
+        String parent_id;
+
+        try{
+            parent_id = IdUtils.encodeuri(concept.getParentFlexoConcepts().get(0).getURI());
+        } catch (NullPointerException | IndexOutOfBoundsException e)  {
+            parent_id = null;
+        }
 
         result.put("id", IdUtils.encodeuri(concept.getURI()));
         result.put("name", concept.getName());
@@ -160,6 +176,7 @@ public class JsonSerializer {
         result.put("visibility", concept.getVisibility().toString());
         result.put("is_abstract", concept.isAbstract());
         result.put("description", concept.getDescription());
+        result.put("parent_id", parent_id);
         result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringVirtualModel().getURI()));
 
         return result;
@@ -339,7 +356,7 @@ public class JsonSerializer {
         JsonObject result = new JsonObject();
 
         result.put("level", record.level.toString());
-        result.put("message", record.message);
+        result.put("value", record.message);
         result.put("date", record.date.toString());
         result.put("millis", record.millis);
         result.put("concept_id", IdUtils.encodeuri(record.flexoConceptInstance.getFlexoConceptURI()));
@@ -383,7 +400,7 @@ public class JsonSerializer {
         result.put("read_only", modelSlot.getIsReadOnly());
         result.put("required", modelSlot.getIsRequired());
         result.put("description", modelSlot.getDescription());
-        result.put("concept_id", IdUtils.encodeuri(modelSlot.getFlexoConcept().getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(modelSlot.getFlexoConcept().getURI()));
 
         return result;
     }
@@ -425,15 +442,23 @@ public class JsonSerializer {
         result.put("resource_type", "FlexoEnum");
         result.put("index", value.getIndex());
         result.put("enum_id", IdUtils.encodeuri(value.getFlexoConcept().getURI()));
+        result.put("description", value.getDescription());
 
         return result;
     }
 
+    /**
+     * It takes a folder object and returns a JSON object with the folder's name, resource type, parent folder,
+     * modification status, URI, and ID
+     *
+     * @param folder The folder object to be serialized.
+     * @return A JsonObject
+     */
     public static JsonObject folderSerializer(RepositoryFolder folder) {
         JsonObject result = new JsonObject();
 
         result.put("name", folder.getName());
-        result.put("type", "Folder");
+        result.put("resource_type", "Folder");
         result.put("parent", folder.getParentFolder().getName());
         result.put("modified", folder.isModified());
         result.put("uri", folder.getDefaultBaseURI());

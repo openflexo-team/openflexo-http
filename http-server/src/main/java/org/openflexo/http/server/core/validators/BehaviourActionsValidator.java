@@ -110,7 +110,6 @@ public class BehaviourActionsValidator extends GenericValidator {
             errors.add(errorLine);
         }
 
-
         if(errors.isEmpty())
             isValid = true;
 

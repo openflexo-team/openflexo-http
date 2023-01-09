@@ -1,7 +1,7 @@
 {
   "swagger" : "2.0",
   "info" : {
-    "description" : "This is a sample server Petstore server.  You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).  For this sample, you can use the api key `special-key` to test the authorization filters.",
+    "description" : "Documentation for Openflexo REST APIs.",
     "version" : "1.0.0",
     "title" : "Openflexo-http REST APIs",
     "contact" : {
@@ -171,9 +171,408 @@
         "resource_center_id" : {
           "type" : "string"
         }
-      },
-      "xml" : {
-        "name" : "Project"
+      }
+    },
+    "Folder" : {
+      "type" : "object",
+      "required" : ["name"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "parent" : {
+          "type" : "string"
+        },
+        "modified" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "VirtualModel" : {
+      "type" : "object",
+      "required" : [ "name" , "visibility", "is_abstract", "project_id", "parent_id"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "project_id" : {
+          "type" : "string"
+        },
+        "parent_id" : {
+          "type" : "string"
+        },
+        "path" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Enum" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EnumValue" : {
+      "type" : "object",
+      "required" : ["name"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "index" : {
+          "type" : "number"
+        },
+        "enum_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Concept" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PrimitiveProperty" : {
+      "type" : "object",
+      "required" : ["name", "is_abstract", "type", "cardinality"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["string", "date", "boolean", "integer", "byte", "long", "short", "float", "double"]
+        },
+        "cardinality" : {
+          "type" : "string",
+          "enum" : ["one", "zeromany", "onemany", "zeroone"]
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ConceptInstanceRole" : {
+      "type" : "object",
+      "required" : ["name", "concept_id", "cardinality"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "concept_id" : {
+          "type" : "string"
+        },
+        "concept_type_name" : {
+          "type" : "string"
+        },
+        "concept_type_id" : {
+          "type" : "string"
+        },
+        "cardinality" : {
+          "type" : "string",
+          "enum" : ["one", "zeromany", "onemany", "zeroone"]
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ModelSlot" : {
+      "type" : "object",
+      "required" : ["name", "virtual_model_id", "required", "read_only", "technology_adapter"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "technology_adapter" : {
+          "type" : "string"
+        },
+        "read_only" : {
+          "type" : "boolean"
+        },
+        "required" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Behaviour" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract", "type"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "signature" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["action", "cloning", "creation", "deletion", "event", "synchronization", "navigation"]
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PrimitiveParameter" : {
+      "type" : "object",
+      "required" : ["name", "type", "default_value", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["string", "date", "boolean", "integer", "byte", "long", "short", "float", "double"]
+        },
+        "default_Value" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FmlInstanceParameter" : {
+      "type" : "object",
+      "required" : ["name", "fml_instance_id", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "fml_instance_id" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FmlEnumParameter" : {
+      "type" : "object",
+      "required" : ["name", "enum_id", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "enum_id" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "BehaviourAction" : {
+      "type" : "object",
+      "required" : ["left", "right"],
+      "properties" : {
+        "resource_type" : {
+          "type" : "string"
+        },
+        "left" : {
+          "type" : "string"
+        },
+        "right" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "LogAction" : {
+      "type" : "object",
+      "required" : ["value", "level"],
+      "properties" : {
+        "resource_type" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "level" : {
+          "type" : "string"
+        },
+        "date" : {
+          "type" : "string"
+        },
+        "millis" : {
+          "type" : "number"
+        },
+        "concept_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "VirtualModelInstance" : {
+      "type" : "object",
+      "required" : ["name", "title"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FlexoConceptInstance" : {
+      "type" : "object",
+      "required" : ["concept_id"],
+      "properties" : {
+        "flexo_id" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "concept_id" : {
+          "type" : "string"
+        }
       }
     },
     "ApiResponse" : {
@@ -190,10 +589,6 @@
           "type" : "string"
         }
       }
-    },
-    "ErrorCode" : {
-      "type" : "string",
-      "enum" : [ "REQUIRED_RESOURCE_ID_NOT_SET", "REQUIRED_RESOURCE_NOT_FOUND", "ALREADY_EXISTS", "SOMETHING_ELSE" ]
     }
   },
   "externalDocs" : {
