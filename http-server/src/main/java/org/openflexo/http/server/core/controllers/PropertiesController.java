@@ -124,6 +124,11 @@ public class PropertiesController extends GenericController {
 
     public void edit(RoutingContext context) {}
 
+    /**
+     * It deletes a property from a virtual model
+     *
+     * @param context the routing context
+     */
     public void delete(RoutingContext context) {
 
         String id   = context.request().getParam("id").trim();
@@ -150,13 +155,12 @@ public class PropertiesController extends GenericController {
      * @param context the routing context
      */
     public void addFlexoConceptInstanceRole(RoutingContext context) {
-        String id                   = context.request().getParam("id").trim();
-        FlexoConcept concept        = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
-        PropertiesValidator validator = new PropertiesValidator(context.request(), virtualModelLibrary);
-        JsonArray errors            = validator.validateConceptInstanceRole();
+        String id                       = context.request().getParam("id").trim();
+        FlexoConcept concept            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PropertiesValidator validator   = new PropertiesValidator(context.request(), virtualModelLibrary);
+        JsonArray errors                = validator.validateConceptInstanceRole();
 
         if(validator.isValid()){
-
             CreateFlexoConceptInstanceRole role = CreateFlexoConceptInstanceRole.actionType.makeNewAction(concept, null, editor);
 
             role.setRoleName(validator.getName());

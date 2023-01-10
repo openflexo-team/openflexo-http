@@ -110,6 +110,12 @@ public class ProjectsController extends GenericController {
     }
 
     public void edit(RoutingContext context) {}
+
+    /**
+     * It deletes a project
+     *
+     * @param context the routing context
+     */
     public void delete(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
@@ -124,7 +130,12 @@ public class ProjectsController extends GenericController {
         }
     }
 
-
+    /**
+     * It gets the project id from the request, gets the project from the repository, creates a new JsonArray, iterates
+     * over the project's root folder's children, and adds each child to the JsonArray
+     *
+     * @param context the context of the request
+     */
     public void folders(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
@@ -136,6 +147,11 @@ public class ProjectsController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
+    /**
+     * It adds a folder to a project
+     *
+     * @param context the routing context
+     */
     public void addFolder(RoutingContext context) {
         String id                   = context.request().getParam("id").trim();
         FlexoProject<?> project     = ProjectsRepository.getProjectById(virtualModelLibrary, id);

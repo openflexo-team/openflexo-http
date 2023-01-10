@@ -139,6 +139,12 @@ public class VirtualModelInstancesController extends GenericController{
 
     public void delete(RoutingContext context) {}
 
+    /**
+     * It gets the virtual model with the given id, then iterates over all the behaviours of the virtual model, and if the
+     * behaviour is an action scheme and is public, it adds it to the result array
+     *
+     * @param context the routing context
+     */
     public void behaviours(RoutingContext context) {
         String vmid             = context.request().getParam("vmid");
 
@@ -158,6 +164,12 @@ public class VirtualModelInstancesController extends GenericController{
         }
     }
 
+    /**
+     * It gets the project, the virtual model instance and the behaviour from the request, then it creates an action of the
+     * behaviour's type, sets the parameters and executes it
+     *
+     * @param context the routing context
+     */
     public void executeBehaviour(RoutingContext context) {
         String prjid            = context.request().getParam("prjid");
         String vmid             = context.request().getParam("vmid");

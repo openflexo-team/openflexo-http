@@ -64,7 +64,7 @@ public class BehavioursController extends GenericController {
 
     /**
      * It gets the virtual model id and the signature of the behaviour from the request, gets the virtual model and the
-     * behaviour from the virtual model library, and then serializes the behaviour to JSON and sends it back to the client
+     * behaviour from the virtual model library, and then serializes the behaviour to JSON and sends it back
      *
      * @param context the context of the request.
      */
@@ -116,6 +116,11 @@ public class BehavioursController extends GenericController {
 
     public void edit(RoutingContext context) {}
 
+    /**
+     * It deletes a behaviour from a virtual model
+     *
+     * @param context the routing context
+     */
     public void delete(RoutingContext context) {
 
         String modelId              = context.request().getParam("id").trim();
@@ -143,8 +148,6 @@ public class BehavioursController extends GenericController {
         } else {
             notFound(context);
         }
-
-
     }
 
     /**
@@ -284,6 +287,14 @@ public class BehavioursController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
+    /**
+     * It gets the id of the virtual model, the signature of the behaviour and the name of the parameter from the request,
+     * then it gets the behaviour from the virtual model and loops through its parameters to find the one with the name
+     * that was passed in the request. If it finds it, it serializes it and sends it back to the client. If it doesn't find
+     * it, it sends a 404 error
+     *
+     * @param context the context of the request
+     */
     public void parameter(RoutingContext context) {
         String vm_id                = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
@@ -383,6 +394,11 @@ public class BehavioursController extends GenericController {
         }
     }
 
+    /**
+     * It creates a new addToList expression action and adds it to the behaviour
+     *
+     * @param context the context of the request
+     */
     public void addToList(RoutingContext context) {
         String id                   = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
@@ -426,6 +442,11 @@ public class BehavioursController extends GenericController {
         }
     }
 
+    /**
+     * It creates a new removeFromList expression action and adds it to the behaviour
+     *
+     * @param context the context of the request
+     */
     public void removeFromList(RoutingContext context) {
         String id                   = context.request().getParam("id").trim();
         String signature            = context.request().getParam("signature").trim();
@@ -468,6 +489,11 @@ public class BehavioursController extends GenericController {
         }
     }
 
+    /**
+     * It deletes a parameter from a behaviour
+     *
+     * @param context the routing context
+     */
     public void deleteParameter(RoutingContext context) {
         String vm_id                            = context.request().getParam("id").trim();
         String signature                        = context.request().getParam("signature").trim();
@@ -496,5 +522,4 @@ public class BehavioursController extends GenericController {
         }
 
     }
-
 }

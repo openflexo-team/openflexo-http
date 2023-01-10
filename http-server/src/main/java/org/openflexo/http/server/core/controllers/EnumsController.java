@@ -115,6 +115,12 @@ public class EnumsController extends GenericController {
         }
     }
 
+    /**
+     * It gets the id of the enum from the request, gets the enum from the virtual model library, creates a JsonArray, adds
+     * the serialized values of the enum to the JsonArray, and then sends the JsonArray as a response
+     *
+     * @param context the context of the request
+     */
     public void values(RoutingContext context) {
         String id           = context.request().getParam("id").trim();
         FlexoEnum flexoEnum = (FlexoEnum) virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
@@ -131,6 +137,11 @@ public class EnumsController extends GenericController {
         }
     }
 
+    /**
+     * It creates a new value for a given FlexoEnum
+     *
+     * @param context the routing context
+     */
     public void addValue(RoutingContext context) {
         String id                   = context.request().getParam("id").trim();
         FlexoEnum flexoEnum         = (FlexoEnum) virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
@@ -155,6 +166,11 @@ public class EnumsController extends GenericController {
         }
     }
 
+    /**
+     * It deletes a FlexoEnum from a VirtualModel
+     *
+     * @param context the routing context
+     */
     public void delete(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoConcept flexoEnum  = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));

@@ -114,6 +114,11 @@ public class ConceptsController extends GenericController {
 
     public void edit(RoutingContext context) {}
 
+    /**
+     * It deletes a concept from a virtual model
+     *
+     * @param context the routing context
+     */
     public void delete(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoConcept concept    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
