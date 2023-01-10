@@ -119,8 +119,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/prj/").produces(JSON).handler(prjController::add);
         router.patch("/projects/:id/").produces(JSON).handler(prjController::edit);
         router.patch("/prj/:id/").produces(JSON).handler(prjController::edit);
-        router.delete("/projects/:id/").produces(JSON).handler(prjController::delete);
-        router.delete("/prj/:id/").produces(JSON).handler(prjController::delete);
+        router.delete("/projects/:id").produces(JSON).handler(prjController::delete);
+        router.delete("/prj/:id").produces(JSON).handler(prjController::delete);
 
         // Folders
         router.get("/projects/:id/folders").produces(JSON).handler(prjController::folders);
@@ -137,8 +137,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/").produces(JSON).handler(vmController::add);
         router.patch("/virtual-models/:id/").produces(JSON).handler(vmController::edit);
         router.patch("/vm/:id/").produces(JSON).handler(vmController::edit);
-        router.delete("/virtual-models/:id/").produces(JSON).handler(vmController::delete);
-        router.delete("/vm/:id/").produces(JSON).handler(vmController::delete);
+        router.delete("/virtual-models/:id").produces(JSON).handler(vmController::delete);
+        router.delete("/vm/:id").produces(JSON).handler(vmController::delete);
 
         // Enums
         router.get("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::list);
@@ -151,6 +151,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/vm/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
         router.post("/virtual-models/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
         router.post("/vm/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
+        router.delete("/virtual-models/:vmid/enums/:id").produces(JSON).handler(enmController::delete);
+        router.delete("/vm/:vmid/enums/:id").produces(JSON).handler(enmController::delete);
 
         // Concepts
         router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
@@ -161,8 +163,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/:vmid/cp/").produces(JSON).handler(cpController::add);
         router.patch("/virtual-models/:vmid/concepts/:id/").produces(JSON).handler(cpController::edit);
         router.patch("/vm/:vmid/cp/:id/").produces(JSON).handler(cpController::edit);
-        router.delete("/virtual-models/:vmid/concepts/:id/").produces(JSON).handler(cpController::delete);
-        router.delete("/vm/:vmid/cp/:id/").produces(JSON).handler(cpController::delete);
+        router.delete("/virtual-models/:vmid/concepts/:id").produces(JSON).handler(cpController::delete);
+        router.delete("/vm/:vmid/cp/:id").produces(JSON).handler(cpController::delete);
 
         // properties
         router.get("/virtual-models/:vmid/concepts/:id/properties/").produces(JSON).handler(prpController::list);
@@ -175,6 +177,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/:vmid/cp/:id/prp/add-fcir").produces(JSON).handler(prpController::addFlexoConceptInstanceRole);
         router.post("/virtual-models/:vmid/concepts/:id/properties/add-model-slot").produces(JSON).handler(prpController::addModelSlot);
         router.post("/vm/:vmid/cp/:id/prp/add-ms").produces(JSON).handler(prpController::addModelSlot);
+        router.delete("/virtual-models/:vmid/concepts/:id/properties/:name").produces(JSON).handler(prpController::delete);
+        router.delete("/vm/:vmid/cp/:id/prp/:name").produces(JSON).handler(prpController::delete);
 
         // Behaviours
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/").produces(JSON).handler(bhvController::list);
@@ -183,18 +187,22 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/vm/:vmid/cp/:id/bhv/:signature").produces(JSON).handler(bhvController::get);
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/").produces(JSON).handler(bhvController::add);
         router.post("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::add);
-        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/").produces(JSON).handler(bhvController::delete);
-        router.delete("/vm/:vmid/cp/:id/bhv/").produces(JSON).handler(bhvController::delete);
+        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature").produces(JSON).handler(bhvController::delete);
+        router.delete("/vm/:vmid/cp/:id/bhv/:signature").produces(JSON).handler(bhvController::delete);
 
         // Parameters
         router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/").produces(JSON).handler(bhvController::parameters);
         router.get("/vm/:vmid/cp/:id/bhv/:signature/param/").produces(JSON).handler(bhvController::parameters);
+        router.get("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/:name").produces(JSON).handler(bhvController::parameter);
+        router.get("/vm/:vmid/cp/:id/bhv/:signature/param/:name").produces(JSON).handler(bhvController::parameter);
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-primitive").produces(JSON).handler(bhvController::addPrimitiveParameter);
         router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-primitive").produces(JSON).handler(bhvController::addPrimitiveParameter);
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-fml-instance").produces(JSON).handler(bhvController::addFmlInstance);
         router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-fmli").produces(JSON).handler(bhvController::addFmlInstance);
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/add-fml-enum").produces(JSON).handler(bhvController::addFmlEnum);
         router.post("/vm/:vmid/cp/:id/bhv/:signature/param/add-fmle").produces(JSON).handler(bhvController::addFmlEnum);
+        router.delete("/virtual-models/:vmid/concepts/:id/behaviours/:signature/parameters/:name").produces(JSON).handler(bhvController::deleteParameter);
+        router.delete("/vm/:vmid/cp/:id/bhv/:signature/param/:name").produces(JSON).handler(bhvController::deleteParameter);
 
         // Actions
         router.post("/virtual-models/:vmid/concepts/:id/behaviours/:signature/actions/add-log").produces(JSON).handler(bhvController::addLogAction);

@@ -110,14 +110,25 @@ public class ProjectsController extends GenericController {
     }
 
     public void edit(RoutingContext context) {}
-    public void delete(RoutingContext context) {}
+    public void delete(RoutingContext context) {
+        String id               = context.request().getParam("id").trim();
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
+
+        if (project != null){
+            virtualModelLibrary.getServiceManager().getProjectLoaderService().removeFromRootProjects(project);
+            project.delete();
+
+            emptyResponse(context);
+        } else {
+            notFound(context);
+        }
+    }
 
 
     public void folders(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
-
-        JsonArray result = new JsonArray();
+        JsonArray result        = new JsonArray();
 
         for (RepositoryFolder folder: project.getRootFolder().getChildren()) {
             result.add(JsonSerializer.folderSerializer(folder));

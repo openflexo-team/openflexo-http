@@ -154,4 +154,24 @@ public class EnumsController extends GenericController {
             badValidation(context, errors);
         }
     }
+
+    public void delete(RoutingContext context) {
+        String id               = context.request().getParam("id").trim();
+        FlexoConcept flexoEnum  = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+
+        if (flexoEnum instanceof FlexoEnum){
+            VirtualModel model = flexoEnum.getDeclaringVirtualModel();
+            flexoEnum.delete();
+
+            try {
+                model.getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+
+            emptyResponse(context);
+        } else {
+            notFound(context);
+        }
+    }
 }

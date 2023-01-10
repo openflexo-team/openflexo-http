@@ -8,6 +8,7 @@ import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
+import org.openflexo.foundation.fml.action.DeleteVirtualModel;
 import org.openflexo.foundation.fml.rm.VirtualModelResource;
 import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
 import org.openflexo.foundation.resource.RepositoryFolder;
@@ -134,12 +135,11 @@ public class VirtualModelsController extends GenericController {
      */
     public void delete(RoutingContext context) {
         String id = context.request().getParam("id").trim();
-        try {
-            VirtualModel model                  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            DeleteFlexoConceptObjects action    = DeleteFlexoConceptObjects.actionType.makeNewAction(model, null, editor);
 
+        try {
+            VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            DeleteVirtualModel action   = DeleteVirtualModel.actionType.makeNewAction(model, null, editor);
             action.doAction();
-            model.getResource().destroy();
 
             emptyResponse(context);
         } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {

@@ -284,6 +284,21 @@ public class BehavioursController extends GenericController {
         context.response().end(result.encodePrettily());
     }
 
+    public void parameter(RoutingContext context) {
+        String vm_id                = context.request().getParam("id").trim();
+        String signature            = context.request().getParam("signature").trim();
+        String parameter            = context.request().getParam("name").trim();
+        FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+
+        for (FlexoBehaviourParameter param : behaviour.getParameters()) {
+            if (param.getName().equals(parameter)){
+                context.response().end(JsonSerializer.behaviourParameterSerializer(param).encodePrettily());
+            }
+        }
+
+        notFound(context);
+    }
+
     /**
      * It creates a new LogAction in the given behaviour
      *
@@ -451,6 +466,35 @@ public class BehavioursController extends GenericController {
         } else {
             notFound(context);
         }
+    }
+
+    public void deleteParameter(RoutingContext context) {
+        String vm_id                            = context.request().getParam("id").trim();
+        String signature                        = context.request().getParam("signature").trim();
+        String parameter                        = context.request().getParam("name").trim();
+        FlexoBehaviour behaviour                = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
+        FlexoBehaviourParameter removedParam    = null;
+
+        for (FlexoBehaviourParameter param : behaviour.getParameters()) {
+            if (param.getName().equals(parameter)){
+                removedParam = param;
+            }
+        }
+
+        if (removedParam != null) {
+            behaviour.removeFromParameters(removedParam);
+
+            try {
+                behaviour.getDeclaringVirtualModel().getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+
+            emptyResponse(context);
+        } else {
+            notFound(context);
+        }
+
     }
 
 }

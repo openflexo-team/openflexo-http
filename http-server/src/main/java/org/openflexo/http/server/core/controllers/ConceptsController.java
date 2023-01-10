@@ -133,9 +133,4 @@ public class ConceptsController extends GenericController {
             notFound(context);
         }
     }
-
-    public void addProperties(RoutingContext context){
-
-    }
-
 }

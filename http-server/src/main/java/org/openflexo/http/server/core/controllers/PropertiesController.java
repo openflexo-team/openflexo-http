@@ -3,17 +3,22 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.DefaultFlexoEditor;
+import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.CreateFlexoConceptInstanceRole;
 import org.openflexo.foundation.fml.action.CreateModelSlot;
 import org.openflexo.foundation.fml.action.CreatePrimitiveRole;
+import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
 import org.openflexo.foundation.fml.rt.FMLRTModelSlot;
 import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstanceModelSlot;
+import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.PropertiesValidator;
 import org.openflexo.http.server.util.IdUtils;
+
+import java.io.FileNotFoundException;
 
 /**
  *  Properties rest apis controller.
@@ -119,7 +124,25 @@ public class PropertiesController extends GenericController {
 
     public void edit(RoutingContext context) {}
 
-    public void delete(RoutingContext context) {}
+    public void delete(RoutingContext context) {
+
+        String id   = context.request().getParam("id").trim();
+        String name = context.request().getParam("name").trim();
+
+        try {
+            VirtualModel model      = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            PrimitiveRole<?> prop   = (PrimitiveRole<?>) model.getAccessibleProperty(name);
+
+            prop.getFlexoConcept().removeFromFlexoProperties(prop);
+            prop.destroy();
+
+            model.getResource().save();
+
+            emptyResponse(context);
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+    }
 
     /**
      * It creates a new FlexoConceptInstanceRole in the FlexoConcept identified by the id parameter
