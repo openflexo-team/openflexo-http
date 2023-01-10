@@ -163,7 +163,7 @@ public class TestProperties extends AbstractRestTest {
                 Assertions.assertEquals(prop.getString("required"), "true");
                 Assertions.assertEquals(prop.getString("read_only"), "false");
                 Assertions.assertEquals(prop.getString("technology_adapter"), "FML technology adapter");
-                Assertions.assertEquals(prop.getString("concept_id"), vmId);
+                Assertions.assertEquals(prop.getString("virtual_model_id"), vmId);
                 Assertions.assertEquals(prop.getString("name"), name);
                 Assertions.assertEquals(res.statusCode(), 200);
 
@@ -204,7 +204,6 @@ public class TestProperties extends AbstractRestTest {
             .compose(HttpClientResponse::body))
             .onSuccess(res -> {
 
-                System.out.println(res.toJsonArray().size());
                 Assertions.assertEquals(res.toJsonArray().size(), 15);
 
                 context.completeNow();

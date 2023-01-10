@@ -45,6 +45,14 @@ public class PropertiesController extends GenericController {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
             JsonArray result    = new JsonArray();
 
+            for (FlexoProperty<?> property : model.getDeclaredRoles()) {
+                result.add(JsonSerializer.conceptInstanceRoleSerializer((FlexoConceptInstanceRole) property));
+            }
+
+            for (FlexoProperty<?> property : model.getModelSlots()) {
+                result.add(JsonSerializer.modelSlotSerializer((FMLRTModelSlot<?, ?>) property));
+            }
+
             for (FlexoProperty<?> property : model.getDeclaredProperties()) {
                 result.add(JsonSerializer.primitivePropertySerializer((PrimitiveRole<?>) property));
             }
