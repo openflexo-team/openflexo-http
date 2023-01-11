@@ -137,7 +137,33 @@ public class VirtualModelInstancesController extends GenericController{
 
     public void edit(RoutingContext context) {}
 
-    public void delete(RoutingContext context) {}
+    /**
+     * It deletes a virtual model instance from a project
+     *
+     * @param context the routing context
+     */
+    public void delete(RoutingContext context) {
+        String prjid            = context.request().getParam("prjid");
+        String id               = context.request().getParam("id");
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjid);
+
+        if (project != null) {
+            FMLRTVirtualModelInstance instance  = project.getVirtualModelInstanceRepository().getVirtualModelInstance(IdUtils.decodeId(id)).getVirtualModelInstance();
+            VirtualModel model                  = instance.getVirtualModel();
+
+            project.getVirtualModelInstanceRepository().getVirtualModelInstancesConformToVirtualModel(model.getURI()).remove(instance);
+            instance.getResource().delete();
+            try {
+                model.getResource().save();
+            } catch (SaveResourceException e) {
+                badRequest(context);
+            }
+
+            emptyResponse(context);
+        } else {
+            notFound(context);
+        }
+    }
 
     /**
      * It gets the virtual model with the given id, then iterates over all the behaviours of the virtual model, and if the
