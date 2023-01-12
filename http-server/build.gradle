@@ -20,3 +20,9 @@ test {
 }
 apply plugin: 'application'
 mainClassName = "org.openflexo.http.server.OpenFlexoServer"
+
+run {
+    if ( project.hasProperty("serverArgs") ) {
+        args Eval.me(serverArgs)
+    }
+}
