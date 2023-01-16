@@ -1,7 +1,6 @@
 package org.openflexo.http.server.core.validators;
 
 import io.vertx.ext.web.FileUpload;
-import jdk.nashorn.internal.runtime.URIUtils;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.fml.*;
