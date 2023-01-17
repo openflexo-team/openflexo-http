@@ -41,7 +41,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
      */
     @Override
     public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
-        rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService(), serviceManager.getProjectLoaderService());
+        rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService());
         rsController    = new ResourcesController(serviceManager.getResourceManager(), service.getTechnologyAdapterRestService());
         taController    = new TechnologyAdaptersController();
         prjController   = new ProjectsController(serviceManager.getVirtualModelLibrary(), serviceManager.getProjectLoaderService(), service.getTechnologyAdapterRestService());
