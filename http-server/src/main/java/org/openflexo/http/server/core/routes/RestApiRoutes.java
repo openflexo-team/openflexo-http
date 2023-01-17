@@ -41,10 +41,10 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
      */
     @Override
     public void initialize(HttpService service, FlexoServiceManager serviceManager) throws Exception {
-        rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService());
+        rcsController   = new ResourceCentersController(serviceManager.getResourceCenterService(), service.getTechnologyAdapterRestService(), serviceManager.getProjectLoaderService());
         rsController    = new ResourcesController(serviceManager.getResourceManager(), service.getTechnologyAdapterRestService());
         taController    = new TechnologyAdaptersController();
-        prjController   = new ProjectsController(serviceManager.getVirtualModelLibrary(), serviceManager.getProjectLoaderService());
+        prjController   = new ProjectsController(serviceManager.getVirtualModelLibrary(), serviceManager.getProjectLoaderService(), service.getTechnologyAdapterRestService());
         vmController    = new VirtualModelsController(serviceManager.getVirtualModelLibrary());
         vmiController   = new VirtualModelInstancesController(serviceManager.getVirtualModelLibrary());
         cpController    = new ConceptsController(serviceManager.getVirtualModelLibrary());
@@ -117,10 +117,16 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/prj/:id").produces(JSON).handler(prjController::get);
         router.post("/projects/").produces(JSON).handler(prjController::add);
         router.post("/prj/").produces(JSON).handler(prjController::add);
+        router.post("/projects/upload").produces(JSON).handler(prjController::upload);
+        router.post("/prj/upload").produces(JSON).handler(prjController::upload);
         router.patch("/projects/:id/").produces(JSON).handler(prjController::edit);
         router.patch("/prj/:id/").produces(JSON).handler(prjController::edit);
         router.delete("/projects/:id").produces(JSON).handler(prjController::delete);
         router.delete("/prj/:id").produces(JSON).handler(prjController::delete);
+        router.get("/projects/:id/resources/").produces(JSON).handler(prjController::resources);
+        router.get("/prj/:id/rsc/").produces(JSON).handler(prjController::resources);
+        router.post("/projects/:id/resources/load").produces(JSON).handler(prjController::loadResources);
+        router.post("/prj/:id/rsc/load").produces(JSON).handler(prjController::loadResources);
 
         // Folders
         router.get("/projects/:id/folders").produces(JSON).handler(prjController::folders);

@@ -3,9 +3,13 @@ package org.openflexo.http.server.core.validators;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.FileUpload;
 import org.openflexo.foundation.project.ProjectLoader;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.repositories.ResourceCentersRepository;
+
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * The Projects validator class.
@@ -74,6 +78,47 @@ public class ProjectsValidator extends GenericValidator{
             errorLine = new JsonObject();
             errorLine.put("name", e.getMessage());
             errors.add(errorLine);
+        }
+
+        try{
+            rcId = validateResourceCenterID(rRcId);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("resource_center_id", e.getMessage());
+            errors.add(errorLine);
+        }
+
+        if(errors.isEmpty())
+            isValid = true;
+
+        return errors;
+    }
+
+    public JsonArray validateUpload(List<FileUpload> fileUploads) {
+        String rRcId    = request.getFormAttribute("resource_center_id");
+        Iterator<FileUpload> fileUploadIterator = fileUploads.iterator();
+        errors                                  = new JsonArray();
+
+        JsonObject errorLine;
+
+        if(fileUploads.isEmpty()){
+            errorLine = new JsonObject();
+            errorLine.put("uploads", "No file uploaded");
+            errors.add(errorLine);
+        } else {
+            int counter =1;
+
+            while (fileUploadIterator.hasNext()){
+                try{
+                    validateFileUpload(fileUploadIterator);
+                } catch (BadValidationException e){
+                    errorLine = new JsonObject();
+                    errorLine.put("File "+ counter, e.getMessage());
+                    errors.add(errorLine);
+                }
+
+                counter++;
+            }
         }
 
         try{
