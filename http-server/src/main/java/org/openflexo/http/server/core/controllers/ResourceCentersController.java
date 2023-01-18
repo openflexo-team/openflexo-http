@@ -39,8 +39,6 @@ public class ResourceCentersController extends GenericController {
 
     private final FlexoResourceCenterService resourceCenterService;
     private final TechnologyAdapterRouteService technologyAdapterRestService;
-    private final static String resourceCentersLocation = "/Users/mac/openflexo/2.0.1/openflexo-http/http-connector-rc/src/main/resources/API/";
-
     /**
      * Instantiates a new Resource centers controller.
      *
@@ -113,14 +111,13 @@ public class ResourceCentersController extends GenericController {
      * @param context the context of the request
      */
     public void resourceFolder(RoutingContext context) {
-        String centerId     = context.request().getParam("rcid").trim();
-        String centerUri    = IdUtils.decodeId(centerId);
-        String path         = context.request().path();
-        String pathFragment = "resource";
-        String folder       = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
-        String[] fragments  = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
-
-        FlexoResourceCenter<Object> resourceCenter = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
+        String centerId                             = context.request().getParam("rcid").trim();
+        String centerUri                            = IdUtils.decodeId(centerId);
+        String path                                 = context.request().path();
+        String pathFragment                         = "resource";
+        String folder                               = path.substring(path.lastIndexOf(pathFragment) + pathFragment.length());
+        String[] fragments                          = IdUtils.decodeUrlSpecialCharacters(folder).split("/");
+        FlexoResourceCenter<Object> resourceCenter  = (FlexoResourceCenter<Object>) resourceCenterService.getFlexoResourceCenter(centerUri);
 
         if (resourceCenter != null) {
             Object current = resourceCenter.getBaseArtefact();
@@ -147,8 +144,9 @@ public class ResourceCentersController extends GenericController {
             }
 
             if (current != null) {
-                JsonArray result = new JsonArray();
-                List<Object> children = resourceCenter.getContents(current);
+                JsonArray result        = new JsonArray();
+                List<Object> children   = resourceCenter.getContents(current);
+
                 for (Object child : children) {
                     String name = resourceCenter.retrieveName(child);
                     if (resourceCenter.isDirectory(child)) {
@@ -185,7 +183,7 @@ public class ResourceCentersController extends GenericController {
         if(validator.isValid()){
             DirectoryResourceCenter center = null;
             try {
-                center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(validator.getRcPath()), resourceCenterService);
+                center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File("src/main/resources/" + validator.getRcPath()), resourceCenterService);
                 resourceCenterService.addToResourceCenters(center);
                 context.response().end(JsonUtils.getCenterDescription(center).encodePrettily());
             } catch (IOException e) {
@@ -209,8 +207,7 @@ public class ResourceCentersController extends GenericController {
         if(validator.isValid()){
             List<FileUpload> fileUploadSet          = context.fileUploads();
             Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
-            JsonObject response 					= new JsonObject();
-            int counter								= 1;
+            JsonArray results 					    = new JsonArray();
 
             while (fileUploadIterator.hasNext()){
                 FileUpload fileUpload 	= fileUploadIterator.next();
@@ -218,43 +215,43 @@ public class ResourceCentersController extends GenericController {
                 byte[] buffredBytes 	= uploadedFile.getBytes();
 
                 try {
-                    String targetDir 	= resourceCentersLocation + "uploaded_rc/";
-                    File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
+                    String targetDir 	= "src/main/resources/uploaded_rc/";
+                    File uploadedRc 	= new File("src/main/resources/uploaded_rc.zip");
 
                     FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
-                    ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip",targetDir);
+                    ZipUtils.unzipFile("src/main/resources/uploaded_rc.zip", targetDir);
 
                     //Delete unnecessary files
                     uploadedRc.delete();
 
                     try{
-                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                        Files.walk(Paths.get("src/main/resources/uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
                     } catch(NoSuchFileException e){
                         Log.warn("No __MACOSX folder to delete");
                     }
 
                     try{
-                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+                        Files.walk(Paths.get("src/main/resources/uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
                     } catch(NoSuchFileException e){
                         Log.warn("No DS_Store file to delete");
                     }
 
                     File[] files = new File(targetDir).listFiles();
 
-                    if(files != null && files.length > 0 && files[0].getName().endsWith(".prj")){
-                        targetDir += files[0].getName();
+                    if(files != null && files.length > 0) {
+                        for (File f : files){
+                            if (f.getName().endsWith(".prj")) {
+                                DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir + f.getName()), resourceCenterService);
+                                resourceCenterService.addToResourceCenters(center);
+                                results.add(JsonUtils.getCenterDescription(center));
+                            }
+                        }
                     }
-
-                    DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir), resourceCenterService);
-                    resourceCenterService.addToResourceCenters(center);
-                    response.put("rc" + counter, JsonUtils.getCenterDescription(center));
-
-                    counter++;
                 } catch (IOException e) {
                     badRequest(context);
                 }
             }
-            context.response().end(response.encodePrettily());
+            context.response().end(results.encodePrettily());
         } else {
             badValidation(context, errors);
         }

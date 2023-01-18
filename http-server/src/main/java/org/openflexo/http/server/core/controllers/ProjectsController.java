@@ -197,6 +197,11 @@ public class ProjectsController extends GenericController {
         }
     }
 
+    /**
+     *  It takes a file upload, unzips it, and loads the project contained in it
+     *
+     * @param context the routing context
+     */
     public void upload(RoutingContext context) {
         ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
         JsonArray errors            = validator.validateUpload(context.fileUploads());
@@ -223,7 +228,7 @@ public class ProjectsController extends GenericController {
 
 //                    //Delete unnecessary files
                     uploadedRc.delete();
-//
+
                     try{
                         Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
                     } catch(NoSuchFileException e){
@@ -237,7 +242,6 @@ public class ProjectsController extends GenericController {
                     }
 
                     File[] files = new File(targetDir).listFiles();
-
 
                     for (File containedResource: files) {
                         if (containedResource.getName().endsWith(".prj")){
@@ -253,7 +257,6 @@ public class ProjectsController extends GenericController {
                     }
 
                 } catch (IOException e) {
-                    Log.error(e.getMessage());
                     badRequest(context);
                 }
             }
@@ -264,6 +267,12 @@ public class ProjectsController extends GenericController {
         }
     }
 
+    /**
+     * It gets the project id from the request, gets the project from the repository, and then returns a JSON array of all
+     * the resources in the project
+     *
+     * @param context the context of the request
+     */
     public void resources(RoutingContext context) {
         String id               = context.request().getParam("id").trim();
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
@@ -280,6 +289,11 @@ public class ProjectsController extends GenericController {
         }
     }
 
+    /**
+     * It loads all the resources of a project
+     *
+     * @param context the routing context
+     */
     public void loadResources(RoutingContext context){
         String id               = context.request().getParam("id").trim();
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
@@ -306,17 +320,3 @@ public class ProjectsController extends GenericController {
         }
     }
 }
-
-
-
-//for (FlexoResource<?> resource: project.getAllResources()){
-//        Log.warn(resource.getName());
-//        Log.warn(resource.isLoaded());
-//        try {
-//        resource.loadResourceData();
-//        } catch (ResourceLoadingCancelledException | FileNotFoundException | FlexoException e) {
-//        Log.error(e.getMessage());
-//        }
-//        Log.warn(resource.isLoaded());
-//        Log.warn("---------------");
-//        }

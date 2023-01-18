@@ -8,7 +8,7 @@ import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.util.IdUtils;
-
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
@@ -171,11 +171,13 @@ public abstract class GenericValidator {
         if(path == null || path.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
-            if(!Files.exists(Paths.get(path))){
-                throw new BadValidationException("invalid value");
-            } else {
-                return path;
+            File f = new File("src/main/resources/" + path);
+
+            if(!Files.exists(Paths.get(f.getAbsolutePath()))){
+                f.mkdirs();
             }
+
+            return path;
         }
     }
 
@@ -259,6 +261,15 @@ public abstract class GenericValidator {
         }
     }
 
+    /**
+     * It takes a concept id and a virtual model library, and returns the corresponding concept. If the concept id is null
+     * or empty, it returns null. If the concept id is not null or empty, but the corresponding concept cannot be found, it
+     * throws a BadValidationException
+     *
+     * @param conceptId the id of the concept to validate
+     * @param virtualModelLibrary the VirtualModelLibrary where the FlexoConcept is to be created
+     * @return A FlexoConcept
+     */
     public FlexoConcept validateParentConcept(String conceptId, VirtualModelLibrary virtualModelLibrary) throws BadValidationException {
         if(conceptId == null || conceptId.isEmpty()){
             return null;
@@ -271,6 +282,4 @@ public abstract class GenericValidator {
             }
         }
     }
-
-
 }
