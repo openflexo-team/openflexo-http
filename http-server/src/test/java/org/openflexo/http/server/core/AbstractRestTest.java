@@ -17,7 +17,7 @@ import java.io.IOException;
 public abstract class AbstractRestTest {
     @BeforeAll
     public static void setUp(Vertx vertx, VertxTestContext testContext) {
-        File dir = new File("src/test/resources/resource_center/");
+        File dir = new File("src/main/resources/resource_center/");
         dir.mkdirs();
 
         vertx.deployVerticle(new OpenFlexoServer(), testContext.succeedingThenComplete());
@@ -27,7 +27,7 @@ public abstract class AbstractRestTest {
     public static void cleanUp(Vertx vertx) {
 
         try {
-            FileUtils.deleteDirectory(new File("src/test/resources/resource_center/"));
+            FileUtils.deleteDirectory(new File("src/main/resources/resource_center/"));
         } catch (IOException e) {
             ;
         }

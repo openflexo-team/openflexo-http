@@ -23,9 +23,8 @@ public class TestProperties extends AbstractRestTest {
     public void initRc(Vertx vertx, VertxTestContext context){
         WebClient client        = WebClient.create(vertx);
         MultiMap form           = MultiMap.caseInsensitiveMultiMap();
-        File resourcesDirectory = new File("src/test/resources/resource_center/");
 
-        form.set("rc_path", resourcesDirectory.getAbsolutePath());
+        form.set("rc_path", "resource_center/");
 
         client.post(9090, "localhost", "/rc/")
             .sendForm(form)
