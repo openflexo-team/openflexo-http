@@ -253,5 +253,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.delete("/cpi/:id/").produces(JSON).handler(cpiController::delete);
 
         router.get("/console").produces(JSON).handler(cslController::show);
+
+        router.post("/kill-server").produces(JSON).handler(cslController::shutdown);
     }
 }

@@ -1,6 +1,12 @@
 package org.openflexo.http.server.core.controllers;
 
+import io.vertx.core.Future;
 import io.vertx.core.json.JsonArray;
+import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.User;
+import io.vertx.ext.auth.authentication.Credentials;
+import io.vertx.ext.auth.htpasswd.HtpasswdAuth;
+import io.vertx.ext.auth.htpasswd.HtpasswdAuthOptions;
 import io.vertx.ext.web.RoutingContext;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.fml.FlexoConcept;
@@ -9,6 +15,7 @@ import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
+import org.python.jline.internal.Log;
 
 /**
  *  Console rest apis controller.
@@ -45,5 +52,23 @@ public class ConsoleController extends GenericController{
         }
 
         context.response().end(result.encodePrettily());
+    }
+
+    public void shutdown(RoutingContext context){
+        HtpasswdAuth authProvider   = HtpasswdAuth.create(context.vertx(), new HtpasswdAuthOptions());
+        JsonObject credentials      = new JsonObject();
+        String url                  = context.request().absoluteURI().replace("/kill-server", "");
+        String password             = context.request().headers().get("auth-token");
+
+        credentials.put("username", url.substring(url.length() - 4));
+        credentials.put("password", password);
+
+        authProvider.authenticate(credentials)
+                .onSuccess(user -> {
+                    context.vertx().close();
+                })
+                .onFailure(err -> {
+                    notAuthorized(context);
+                });
     }
 }

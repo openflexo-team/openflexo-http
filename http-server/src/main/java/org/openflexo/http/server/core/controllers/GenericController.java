@@ -81,4 +81,10 @@ public abstract class GenericController {
         response.setStatusCode(204);
         response.end();
     }
+
+    public void notAuthorized(RoutingContext context) {
+        HttpServerResponse response = context.response();
+        response.setStatusCode(401);
+        response.end();
+    }
 }
