@@ -89,18 +89,19 @@ public class VirtualModelInstancesController extends GenericController{
     }
 
     /**
-     * It creates a new virtual model instance in the project with the given id
+     * It creates a new virtual model instance from a virtual model
      *
      * @param context the routing context
      */
     public void add(RoutingContext context) {
         String prjId            = context.request().getParam("prjid");
         String vmId             = context.request().getParam("vmid");
+        String creationScheme   = context.request().getFormAttribute("creation_scheme");
         FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, prjId);
 
         if(project != null){
-            VirtualModelInstancesValidator validator = new VirtualModelInstancesValidator(context.request(), virtualModelLibrary);
-            JsonArray errors                        = validator.validate();
+            VirtualModelInstancesValidator validator    = new VirtualModelInstancesValidator(context.request(), virtualModelLibrary);
+            JsonArray errors                            = validator.validate();
 
             if(validator.isValid()){
                 try {
@@ -112,7 +113,38 @@ public class VirtualModelInstancesController extends GenericController{
                     vmi.setVirtualModel(model);
 
                     if (model.hasCreationScheme()){
-                        vmi.setCreationScheme(model.getCreationSchemes().get(0));
+                        CreationScheme creationBhv = null;
+
+                        try{
+                            creationBhv = model.getCreationSchemes().get(0);
+                        } catch (Exception e) {
+                            badRequest(context, "No creation scheme found");
+                        }
+
+                        if(creationScheme != null && !creationScheme.isEmpty()){
+                            for (CreationScheme behaviour: model.getCreationSchemes()) {
+                                if (behaviour.getSignature().equals(creationScheme.trim())){
+                                    creationBhv = behaviour;
+                                    vmi.setCreationScheme(behaviour);
+                                }
+                            }
+                        }
+                        vmi.setCreationScheme(creationBhv);
+
+                        for(FlexoBehaviourParameter p : creationBhv.getParameters()) {
+                            if(p.getType().getTypeName().equals("java.lang.String")){
+                                String parameterValue = context.request().getParam(p.getName());
+
+                                if(parameterValue == null) {
+                                    JsonObject errorLine = new JsonObject();
+                                    errorLine.put(p.getName(), "Missing parameter value");
+                                    badValidation(context, new JsonArray().add(errorLine));
+                                }
+                                vmi.setParameterValue(p, parameterValue);
+                            } else {
+                                badRequest(context, "Only string parameters are supported");
+                            }
+                        }
                     }
 
                     vmi.doAction();
