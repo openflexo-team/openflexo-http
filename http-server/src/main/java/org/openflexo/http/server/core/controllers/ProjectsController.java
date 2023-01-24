@@ -51,7 +51,6 @@ import java.util.*;
 public class ProjectsController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
     private final TechnologyAdapterRouteService technologyAdapterRestService;
-
     private final ProjectLoader projectLoader;
     private final DefaultFlexoEditor editor;
     private final static String resourceCentersLocation = "/Users/mac/openflexo/2.0.1/openflexo-http/http-connector-rc/src/main/resources/API/";
@@ -66,7 +65,6 @@ public class ProjectsController extends GenericController {
         this.projectLoader                  = projectLoader;
         this.technologyAdapterRestService   = technologyAdapterRestService;
         editor                              = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
-
     }
 
     /**

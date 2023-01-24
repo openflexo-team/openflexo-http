@@ -129,8 +129,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/prj/:id/rsc/load").produces(JSON).handler(prjController::loadResources);
 
         // Folders
-        router.get("/projects/:id/folders").produces(JSON).handler(prjController::folders);
-        router.get("/prj/:id/fdr").produces(JSON).handler(prjController::folders);
+        router.get("/projects/:id/folders/").produces(JSON).handler(prjController::folders);
+        router.get("/prj/:id/fdr/").produces(JSON).handler(prjController::folders);
         router.post("/projects/:id/folders/").produces(JSON).handler(prjController::addFolder);
         router.post("/prj/:id/fdr/").produces(JSON).handler(prjController::addFolder);
 
@@ -153,12 +153,12 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/vm/:vmid/enums/:id").produces(JSON).handler(enmController::get);
         router.post("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::add);
         router.post("/vm/:vmid/enums/").produces(JSON).handler(enmController::add);
-        router.get("/virtual-models/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
-        router.get("/vm/:vmid/enums/:id/items").produces(JSON).handler(enmController::values);
-        router.post("/virtual-models/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
-        router.post("/vm/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
         router.delete("/virtual-models/:vmid/enums/:id").produces(JSON).handler(enmController::delete);
         router.delete("/vm/:vmid/enums/:id").produces(JSON).handler(enmController::delete);
+        router.get("/virtual-models/:vmid/enums/:id/values/").produces(JSON).handler(enmController::values);
+        router.get("/vm/:vmid/enums/:id/values/").produces(JSON).handler(enmController::values);
+        router.post("/virtual-models/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
+        router.post("/vm/:vmid/enums/:id/values/").produces(JSON).handler(enmController::addValue);
 
         // Concepts
         router.get("/virtual-models/:vmid/concepts/").produces(JSON).handler(cpController::list);
