@@ -1,5 +1,8 @@
 package org.openflexo.http.server.core.helpers;
 
+import io.vertx.core.buffer.Buffer;
+import jline.internal.Log;
+import org.apache.commons.io.FileUtils;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
@@ -10,11 +13,19 @@ import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.toolbox.ZipUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +36,7 @@ import java.util.List;
  */
 public class Helpers {
 
+    private static final String WORKSPACE = "src/main/resources/";
     private static DefaultFlexoEditor defaultFlexoEditor;
 
     /**
@@ -282,5 +294,30 @@ public class Helpers {
             }
         }
         return folder;
+    }
+
+    public static File[] unzipFile(String targetDir, Buffer uploadedFile) throws IOException {
+        byte[] buffredBytes = uploadedFile.getBytes();
+        File uploadedRc     = new File(WORKSPACE + "uploaded_rc.zip");
+
+        FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
+        ZipUtils.unzipFile("src/main/resources/uploaded_rc.zip", targetDir);
+
+        //Delete unnecessary files
+        uploadedRc.delete();
+
+        try{
+            Files.walk(Paths.get(WORKSPACE + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        } catch(NoSuchFileException e){
+            Log.warn("No __MACOSX folder to delete");
+        }
+
+        try{
+            Files.walk(Paths.get(WORKSPACE + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        } catch(NoSuchFileException e){
+            Log.warn("No DS_Store file to delete");
+        }
+
+        return new File(targetDir).listFiles();
     }
 }

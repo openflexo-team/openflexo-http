@@ -1,6 +1,7 @@
 dependencies {
     implementation flexoFoundation()
     implementation group: 'org.openflexo', name: 'flexo-foundation-rm', version: '2.99-SNAPSHOT'
+    implementation group: 'jline', name: 'jline', version: '2.11'
 
     compile 'io.vertx:vertx-core:4.3.6'
     compile 'io.vertx:vertx-web:4.3.6'
