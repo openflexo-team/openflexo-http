@@ -55,7 +55,7 @@ public class ConsoleController extends GenericController{
     }
 
     public void shutdown(RoutingContext context){
-        HtpasswdAuth authProvider   = HtpasswdAuth.create(context.vertx(), new HtpasswdAuthOptions());
+        HtpasswdAuth authProvider   = HtpasswdAuth.create(context.vertx(), Helpers.getHtpasswdAuthOptions());
         JsonObject credentials      = new JsonObject();
         String url                  = context.request().absoluteURI().replace("/kill-server", "");
         String password             = context.request().headers().get("auth-token");

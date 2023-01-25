@@ -1,5 +1,6 @@
 package org.openflexo.http.server.core.helpers;
 
+import io.vertx.ext.auth.htpasswd.HtpasswdAuthOptions;
 import org.openflexo.connie.type.PrimitiveType;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
@@ -26,6 +27,7 @@ import java.util.List;
 public class Helpers {
 
     private static DefaultFlexoEditor defaultFlexoEditor;
+    private static HtpasswdAuthOptions authOptions;
 
     /**
      * If the default editor is null, create a new one and return it.
@@ -282,5 +284,12 @@ public class Helpers {
             }
         }
         return folder;
+    }
+
+    public static HtpasswdAuthOptions getHtpasswdAuthOptions() {
+        if (authOptions == null) {
+            authOptions = new HtpasswdAuthOptions();
+        }
+        return authOptions;
     }
 }
