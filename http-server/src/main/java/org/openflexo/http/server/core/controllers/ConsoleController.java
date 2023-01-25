@@ -15,7 +15,6 @@ import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
 import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
-import org.python.jline.internal.Log;
 
 /**
  *  Console rest apis controller.

@@ -9,7 +9,7 @@ import org.openflexo.foundation.fml.FlexoConcept;
 import org.openflexo.foundation.fml.PropertyCardinality;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.rm.VirtualModelResource;
+import org.openflexo.foundation.fml.rm.CompilationUnitResource;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
@@ -36,7 +36,7 @@ public class PropertiesValidator extends GenericValidator {
     private TechnologyAdapter<?> technologyAdapter;
     private boolean required;
     private boolean readOnly;
-    private VirtualModelResource virtualModelResource;
+    private CompilationUnitResource virtualModelResource;
 
     /**
      * Instantiates a new property validator.
@@ -109,7 +109,7 @@ public class PropertiesValidator extends GenericValidator {
         return errors;
     }
 
-    public VirtualModelResource validateVirtualModelResource(String vmid) throws BadValidationException {
+    public CompilationUnitResource validateVirtualModelResource(String vmid) throws BadValidationException {
         if(vmid == null || vmid.isEmpty()){
             throw new BadValidationException("Field required");
         } else {
@@ -118,7 +118,7 @@ public class PropertiesValidator extends GenericValidator {
                 if(model == null){
                     throw new BadValidationException("Invalid value");
                 } else {
-                    return (VirtualModelResource) model.getResource();
+                    return model.getResource();
                 }
             } catch (ResourceLoadingCancelledException | FlexoException | FileNotFoundException e){
                 throw new BadValidationException("Invalid value");
@@ -315,7 +315,7 @@ public class PropertiesValidator extends GenericValidator {
      *
      * @return The VirtualModelResource
      */
-    public VirtualModelResource getVirtualModelResource() {
+    public CompilationUnitResource getVirtualModelResource() {
         return virtualModelResource;
     }
 }

@@ -16,7 +16,6 @@ import org.openflexo.foundation.action.CreateProject;
 import org.openflexo.foundation.fml.FMLTechnologyAdapter;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
-import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
 import org.openflexo.foundation.project.ProjectLoader;
 import org.openflexo.foundation.resource.*;
 import org.openflexo.foundation.utils.ProjectInitializerException;
@@ -32,7 +31,6 @@ import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.toolbox.ZipUtils;
-import org.python.jline.internal.Log;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -201,68 +199,68 @@ public class ProjectsController extends GenericController {
      * @param context the routing context
      */
     public void upload(RoutingContext context) {
-        ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
-        JsonArray errors            = validator.validateUpload(context.fileUploads());
-
-        if(validator.isValid()){
-            List<FileUpload> fileUploadSet          = context.fileUploads();
-            Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
-            JsonArray results 					    = new JsonArray();
-
-            while (fileUploadIterator.hasNext()){
-                FileUpload fileUpload 	                = fileUploadIterator.next();
-                Buffer uploadedFile 	                = context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
-                byte[] buffredBytes 	                = uploadedFile.getBytes();
-                FlexoResourceCenter<?> resourceCenter   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(validator.getRcId()));
-
-
-                try {
-                    String targetDir 	= resourceCenter.getRootFolder().getFullQualifiedPath();
-
-                    File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
-
-                    FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
-                    ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip", targetDir);
-
-//                    //Delete unnecessary files
-                    uploadedRc.delete();
-
-                    try{
-                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    } catch(NoSuchFileException e){
-                        Log.warn("No __MACOSX folder to delete");
-                    }
-
-                    try{
-                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    } catch(NoSuchFileException e){
-                        Log.warn("No DS_Store file to delete");
-                    }
-
-                    File[] files = new File(targetDir).listFiles();
-
-                    for (File containedResource: files) {
-                        if (containedResource.getName().endsWith(".prj")){
-                            String projectPath = targetDir + "/" + containedResource.getName();
-
-                            try {
-                                FlexoEditor project = projectLoader.loadProject(new File(projectPath));
-                                results.add(JsonSerializer.projectSerializer(project.getProject()));
-                            } catch (ProjectLoadingCancelledException | ProjectInitializerException e) {
-                                Log.error(e.getMessage());
-                            }
-                        }
-                    }
-
-                } catch (IOException e) {
-                    badRequest(context);
-                }
-            }
-            Log.info("request status : " + context.request().isEnded());
-            context.response().end(results.encodePrettily());
-        } else {
-            badValidation(context, errors);
-        }
+//        ProjectsValidator validator = new ProjectsValidator(projectLoader, context.request());
+//        JsonArray errors            = validator.validateUpload(context.fileUploads());
+//
+//        if(validator.isValid()){
+//            List<FileUpload> fileUploadSet          = context.fileUploads();
+//            Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
+//            JsonArray results 					    = new JsonArray();
+//
+//            while (fileUploadIterator.hasNext()){
+//                FileUpload fileUpload 	                = fileUploadIterator.next();
+//                Buffer uploadedFile 	                = context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
+//                byte[] buffredBytes 	                = uploadedFile.getBytes();
+//                FlexoResourceCenter<?> resourceCenter   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(validator.getRcId()));
+//
+//
+//                try {
+//                    String targetDir 	= resourceCenter.getRootFolder().getFullQualifiedPath();
+//
+//                    File uploadedRc 	= new File(resourceCentersLocation + "uploaded_rc.zip");
+//
+//                    FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
+//                    ZipUtils.unzipFile(resourceCentersLocation + "uploaded_rc.zip", targetDir);
+//
+////                    //Delete unnecessary files
+//                    uploadedRc.delete();
+//
+//                    try{
+//                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+//                    } catch(NoSuchFileException e){
+////                        Log.warn("No __MACOSX folder to delete");
+//                    }
+//
+//                    try{
+//                        Files.walk(Paths.get(resourceCentersLocation + "uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+//                    } catch(NoSuchFileException e){
+////                        Log.warn("No DS_Store file to delete");
+//                    }
+//
+//                    File[] files = new File(targetDir).listFiles();
+//
+//                    for (File containedResource: files) {
+//                        if (containedResource.getName().endsWith(".prj")){
+//                            String projectPath = targetDir + "/" + containedResource.getName();
+//
+//                            try {
+//                                FlexoEditor project = projectLoader.loadProject(new File(projectPath));
+//                                results.add(JsonSerializer.projectSerializer(project.getProject()));
+//                            } catch (ProjectLoadingCancelledException | ProjectInitializerException e) {
+////                                Log.error(e.getMessage());
+//                            }
+//                        }
+//                    }
+//
+//                } catch (IOException e) {
+//                    badRequest(context);
+//                }
+//            }
+////            Log.info("request status : " + context.request().isEnded());
+//            context.response().end(results.encodePrettily());
+//        } else {
+//            badValidation(context, errors);
+//        }
     }
 
     /**

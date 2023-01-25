@@ -15,7 +15,6 @@ import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.ConceptsValidator;
 import org.openflexo.http.server.core.validators.EnumsValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -155,7 +154,7 @@ public class EnumsController extends GenericController {
             value.doAction();
 
             try {
-                flexoEnum.getDeclaringVirtualModel().getResource().save();
+                flexoEnum.getDeclaringCompilationUnit().getVirtualModel().getResource().save();
             } catch (SaveResourceException e) {
                 badRequest(context);
             }
@@ -176,7 +175,7 @@ public class EnumsController extends GenericController {
         FlexoConcept flexoEnum  = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
 
         if (flexoEnum instanceof FlexoEnum){
-            VirtualModel model = flexoEnum.getDeclaringVirtualModel();
+            VirtualModel model = flexoEnum.getDeclaringCompilationUnit().getVirtualModel();
             flexoEnum.delete();
 
             try {

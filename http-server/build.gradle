@@ -1,5 +1,6 @@
 dependencies {
     implementation flexoFoundation()
+    implementation group: 'org.openflexo', name: 'flexo-foundation-rm', version: '2.99-SNAPSHOT'
 
     compile 'io.vertx:vertx-core:4.3.6'
     compile 'io.vertx:vertx-web:4.3.6'
@@ -27,3 +28,4 @@ run {
         args Eval.me(serverArgs)
     }
 }
+

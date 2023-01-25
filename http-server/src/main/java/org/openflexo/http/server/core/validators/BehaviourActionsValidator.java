@@ -7,7 +7,6 @@ import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.http.server.core.exceptions.BadValidationException;
 import org.openflexo.pamela.annotations.Getter;
-import org.python.jline.internal.Log;
 
 import java.util.List;
 
@@ -73,7 +72,7 @@ public class BehaviourActionsValidator extends GenericValidator {
      * @return The name of the property
      */
     public String validateList(String list, FlexoBehaviour behaviour) throws  BadValidationException {
-        for (FlexoProperty property: behaviour.getDeclaringVirtualModel().getDeclaredProperties()) {
+        for (FlexoProperty property: behaviour.getFlexoConcept().getDeclaredProperties()) {
             if(property.getPropertyName().equals(list) && (property.getCardinality() == PropertyCardinality.ZeroMany || property.getCardinality() == PropertyCardinality.OneMany)){
                 return list;
             }

@@ -17,7 +17,6 @@ import org.openflexo.http.server.core.validators.BehaviourActionsValidator;
 import org.openflexo.http.server.core.validators.BehaviourParametersValidator;
 import org.openflexo.http.server.core.validators.BehavioursValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 import java.util.List;
@@ -103,7 +102,7 @@ public class BehavioursController extends GenericController {
             behaviour.doAction();
 
             try {
-                concept.getDeclaringVirtualModel().getResource().save();
+                concept.getDeclaringCompilationUnit().getResource().save();
             } catch (SaveResourceException e) {
                 badRequest(context);
             }
@@ -161,7 +160,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                      = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
             JsonArray errors                        = validator.validatePrimitive();
 
@@ -201,7 +200,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                      = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
             JsonArray errors                        = validator.validateFmlInstance();
 
@@ -240,7 +239,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(vm_id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                      = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                      = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourParametersValidator validator  = new BehaviourParametersValidator(context.request(), virtualModelLibrary);
             JsonArray errors                        = validator.validateFmlEnum();
 
@@ -321,7 +320,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                  = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateLogAction();
 
@@ -361,7 +360,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                  = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateAssignationAction(behaviour);
 
@@ -405,7 +404,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                  = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateAssignationAction(behaviour);
 
@@ -453,7 +452,7 @@ public class BehavioursController extends GenericController {
         FlexoBehaviour behaviour    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id)).getDeclaredFlexoBehaviour(signature);
 
         if (behaviour != null){
-            VirtualModel model                  = behaviour.getDeclaringVirtualModel();
+            VirtualModel model                  = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
             JsonArray errors                    = validator.validateAssignationAction(behaviour);
 
@@ -511,7 +510,7 @@ public class BehavioursController extends GenericController {
             behaviour.removeFromParameters(removedParam);
 
             try {
-                behaviour.getDeclaringVirtualModel().getResource().save();
+                behaviour.getDeclaringCompilationUnit().getVirtualModel().getResource().save();
             } catch (SaveResourceException e) {
                 badRequest(context);
             }

@@ -124,7 +124,7 @@ public class ConceptsController extends GenericController {
         FlexoConcept concept    = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
 
         if (concept != null){
-            VirtualModel model                  = concept.getDeclaringVirtualModel();
+            VirtualModel model                  = concept.getDeclaringCompilationUnit().getVirtualModel();
             DeleteFlexoConceptObjects action    = DeleteFlexoConceptObjects.actionType.makeNewAction(concept, null, editor);
             action.doAction();
 

@@ -9,8 +9,8 @@ import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
 import org.openflexo.foundation.fml.action.DeleteFlexoConceptObjects;
 import org.openflexo.foundation.fml.action.DeleteVirtualModel;
-import org.openflexo.foundation.fml.rm.VirtualModelResource;
-import org.openflexo.foundation.fml.rm.VirtualModelResourceFactory;
+import org.openflexo.foundation.fml.rm.CompilationUnitResource;
+import org.openflexo.foundation.fml.rm.CompilationUnitResourceFactory;
 import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.resource.ResourceLoadingCancelledException;
 import org.openflexo.foundation.resource.SaveResourceException;
@@ -20,7 +20,6 @@ import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 
@@ -51,8 +50,8 @@ public class VirtualModelsController extends GenericController {
      */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
-        for (VirtualModel virtualModel : virtualModelLibrary.getLoadedVirtualModels()) {
-            result.add(JsonSerializer.virtualModelSerializer(virtualModel));
+        for (FMLCompilationUnit compilationUnit: virtualModelLibrary.getLoadedCompilationUnits()) {
+            result.add(JsonSerializer.virtualModelSerializer(compilationUnit.getVirtualModel()));
         }
         context.response().end(result.encodePrettily());
     }
@@ -68,10 +67,10 @@ public class VirtualModelsController extends GenericController {
 
         if(validator.isValid()){
             FMLTechnologyAdapter fmlTechnologyAdapter   = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
-            VirtualModelResourceFactory factory         = fmlTechnologyAdapter.getVirtualModelResourceFactory();
+            CompilationUnitResourceFactory factory      = fmlTechnologyAdapter.getCompilationUnitResourceFactory();
             FlexoProject<?> project                     = ProjectsRepository.getProjectById(virtualModelLibrary, validator.getProjectId());
             VirtualModel newVirtualModel                = null;
-            VirtualModelResource newVirtualModelResource;
+            CompilationUnitResource newVirtualModelResource;
 
             try {
                 String virtualModelUri  = Helpers.createVirtualModelUri(project, validator.getName());
@@ -86,8 +85,8 @@ public class VirtualModelsController extends GenericController {
                     folder = fmlTechnologyAdapter.getGlobalRepository(project).getRootFolder();
                 }
 
-                newVirtualModelResource = factory.makeTopLevelVirtualModelResource(validator.getName(), virtualModelUri, folder, true);
-                newVirtualModel         = newVirtualModelResource.getLoadedResourceData();
+                newVirtualModelResource = factory.makeTopLevelCompilationUnitResource(validator.getName(), virtualModelUri, folder, true);
+                newVirtualModel         = newVirtualModelResource.getLoadedResourceData().getVirtualModel();
 
                 newVirtualModel.setDescription(validator.getDescription());
                 newVirtualModel.setVisibility(validator.getVisibility());
@@ -106,8 +105,10 @@ public class VirtualModelsController extends GenericController {
         }
     }
 
+
     /**
-     * It gets the virtual model with the given id from the virtual model library, and returns it as a JSON object
+     * It gets the virtual model with the given id from the virtual model library, and if it exists, it returns it as a
+     * JSON object
      *
      * @param context the context of the request
      */

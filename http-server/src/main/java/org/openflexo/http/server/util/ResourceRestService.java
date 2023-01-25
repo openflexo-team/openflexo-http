@@ -42,7 +42,6 @@ import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.CompilationUnitResource;
 import org.openflexo.foundation.fml.*;
-import org.openflexo.foundation.fml.rm.VirtualModelResourceImpl;
 import org.openflexo.foundation.fml.rt.*;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
@@ -391,7 +390,7 @@ public abstract class ResourceRestService<D, R> {
 			String id = context.request().getParam(("id"));
 			R resource = getLoadedResource(id);
 			FMLRTVirtualModelInstanceResourceImpl rtvmiri = (FMLRTVirtualModelInstanceResourceImpl) resource;
-			FMLRTVirtualModelInstance  rtvmi = rtvmiri.getModel();
+			FMLRTVirtualModelInstance  rtvmi = rtvmiri.getVirtualModelInstance();
 
 
 			JsonObject result = new JsonObject();

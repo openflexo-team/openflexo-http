@@ -109,7 +109,7 @@ public class PropertiesController extends GenericController {
             property.doAction();
 
             try {
-                concept.getDeclaringVirtualModel().getResource().save();
+                concept.getDeclaringCompilationUnit().getVirtualModel().getResource().save();
             } catch (SaveResourceException e) {
                 badRequest(context);
             }
@@ -170,7 +170,7 @@ public class PropertiesController extends GenericController {
             role.doAction();
 
             try {
-                concept.getDeclaringVirtualModel().getResource().save();
+                concept.getDeclaringCompilationUnit().getVirtualModel().getResource().save();
             } catch (SaveResourceException e) {
                 badRequest(context);
             }
@@ -204,7 +204,7 @@ public class PropertiesController extends GenericController {
             modelSlot.setVmRes(validator.getVirtualModelResource());
             modelSlot.doAction();
 
-            VirtualModel model = concept.getDeclaringVirtualModel();
+            VirtualModel model = concept.getDeclaringCompilationUnit().getVirtualModel();
             try {
                 model.getResource().save();
             } catch (SaveResourceException e) {

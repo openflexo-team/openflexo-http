@@ -59,7 +59,6 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocketFrame;
 import io.vertx.core.json.DecodeException;
-import org.python.jline.internal.Log;
 
 //import org.openflexo.toolbox.JsonUtils;
 /**

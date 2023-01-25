@@ -20,7 +20,6 @@ import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.http.server.util.ResourceUtils;
-import org.python.jline.internal.Log;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -103,7 +102,7 @@ public class JsonSerializer {
         result.put("resource_type", "PrimitiveProperty");
         result.put("cardinality", role.getCardinality());
         result.put("type", role.getPrimitiveType());
-        result.put("virtual_model_id", IdUtils.encodeuri(role.getDeclaringVirtualModel().getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(role.getDeclaringCompilationUnit().getVirtualModel().getURI()));
 
         return result;
     }
@@ -126,7 +125,7 @@ public class JsonSerializer {
         result.put("is_abstract", behaviour.isAbstract());
         result.put("description", behaviour.getDescription());
         result.put("signature", behaviour.getSignature());
-        result.put("virtual_model_id", IdUtils.encodeuri(behaviour.getDeclaringVirtualModel().getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(behaviour.getDeclaringCompilationUnit().getVirtualModel().getURI()));
 
         return result;
     }
@@ -177,7 +176,7 @@ public class JsonSerializer {
         result.put("is_abstract", concept.isAbstract());
         result.put("description", concept.getDescription());
         result.put("parent_id", parent_id);
-        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringVirtualModel().getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringCompilationUnit().getVirtualModel().getURI()));
 
         return result;
     }
@@ -336,12 +335,18 @@ public class JsonSerializer {
      * @return A JsonObject
      */
     public static JsonObject behaviourActionSerializer(EditionAction action){
-        JsonObject result = new JsonObject();
+        JsonObject result   = new JsonObject();
+        String behaviourId  = null;
 
         result.put("name", action.getName());
         result.put("resource_type", "BehaviourAction");
         result.put("description", action.getDescription());
-        result.put("behaviour_id", IdUtils.encodeuri(action.getOwner().getURI()));
+
+        if(action.getRootOwner() instanceof FlexoBehaviour){
+            behaviourId  = IdUtils.encodeuri(((FlexoBehaviour) action.getRootOwner()).getURI());
+        }
+        // TODO : implement the else bloc
+        result.put("behaviour_id", behaviourId);
 
         return result;
     }
@@ -422,7 +427,7 @@ public class JsonSerializer {
         result.put("visibility", concept.getVisibility().toString());
         result.put("is_abstract", concept.isAbstract());
         result.put("description", concept.getDescription());
-        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringVirtualModel().getURI()));
+        result.put("virtual_model_id", IdUtils.encodeuri(concept.getDeclaringCompilationUnit().getVirtualModel().getURI()));
 
         return result;
     }

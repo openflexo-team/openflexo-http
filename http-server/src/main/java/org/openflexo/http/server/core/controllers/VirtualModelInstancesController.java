@@ -21,7 +21,6 @@ import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.VirtualModelInstancesValidator;
 import org.openflexo.http.server.util.IdUtils;
-import org.python.jline.internal.Log;
 
 import java.io.FileNotFoundException;
 import java.util.List;

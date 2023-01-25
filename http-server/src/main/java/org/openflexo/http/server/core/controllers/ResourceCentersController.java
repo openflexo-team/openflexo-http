@@ -16,7 +16,6 @@ import org.openflexo.http.server.core.validators.ResourceCentersValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.toolbox.ZipUtils;
-import org.python.jline.internal.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -200,60 +199,61 @@ public class ResourceCentersController extends GenericController {
      *
      * @param context The routing context of the request.
      */
+    // TODO : refactor the unzip code (maybe use factory dp)
     public void upload(RoutingContext context){
-        ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
-        JsonArray errors                    = validator.validateUpload(context.fileUploads());
-
-        if(validator.isValid()){
-            List<FileUpload> fileUploadSet          = context.fileUploads();
-            Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
-            JsonArray results 					    = new JsonArray();
-
-            while (fileUploadIterator.hasNext()){
-                FileUpload fileUpload 	= fileUploadIterator.next();
-                Buffer uploadedFile 	= context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
-                byte[] buffredBytes 	= uploadedFile.getBytes();
-
-                try {
-                    String targetDir 	= "src/main/resources/uploaded_rc/";
-                    File uploadedRc 	= new File("src/main/resources/uploaded_rc.zip");
-
-                    FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
-                    ZipUtils.unzipFile("src/main/resources/uploaded_rc.zip", targetDir);
-
-                    //Delete unnecessary files
-                    uploadedRc.delete();
-
-                    try{
-                        Files.walk(Paths.get("src/main/resources/uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    } catch(NoSuchFileException e){
-                        Log.warn("No __MACOSX folder to delete");
-                    }
-
-                    try{
-                        Files.walk(Paths.get("src/main/resources/uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-                    } catch(NoSuchFileException e){
-                        Log.warn("No DS_Store file to delete");
-                    }
-
-                    File[] files = new File(targetDir).listFiles();
-
-                    if(files != null && files.length > 0) {
-                        for (File f : files){
-                            if (f.getName().endsWith(".prj")) {
-                                DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir + f.getName()), resourceCenterService);
-                                resourceCenterService.addToResourceCenters(center);
-                                results.add(JsonUtils.getCenterDescription(center));
-                            }
-                        }
-                    }
-                } catch (IOException e) {
-                    badRequest(context);
-                }
-            }
-            context.response().end(results.encodePrettily());
-        } else {
-            badValidation(context, errors);
-        }
+//        ResourceCentersValidator validator  = new ResourceCentersValidator(context.request());
+//        JsonArray errors                    = validator.validateUpload(context.fileUploads());
+//
+//        if(validator.isValid()){
+//            List<FileUpload> fileUploadSet          = context.fileUploads();
+//            Iterator<FileUpload> fileUploadIterator = fileUploadSet.iterator();
+//            JsonArray results 					    = new JsonArray();
+//
+//            while (fileUploadIterator.hasNext()){
+//                FileUpload fileUpload 	= fileUploadIterator.next();
+//                Buffer uploadedFile 	= context.vertx().fileSystem().readFileBlocking(fileUpload.uploadedFileName());
+//                byte[] buffredBytes 	= uploadedFile.getBytes();
+//
+//                try {
+//                    String targetDir 	= "src/main/resources/uploaded_rc/";
+//                    File uploadedRc 	= new File("src/main/resources/uploaded_rc.zip");
+//
+//                    FileUtils.writeByteArrayToFile(uploadedRc, buffredBytes);
+//                    ZipUtils.unzipFile("src/main/resources/uploaded_rc.zip", targetDir);
+//
+//                    //Delete unnecessary files
+//                    uploadedRc.delete();
+//
+//                    try{
+//                        Files.walk(Paths.get("src/main/resources/uploaded_rc/__MACOSX/")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+//                    } catch(NoSuchFileException e){
+////                        Log.warn("No __MACOSX folder to delete");
+//                    }
+//
+//                    try{
+//                        Files.walk(Paths.get("src/main/resources/uploaded_rc/.DS_Store")).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+//                    } catch(NoSuchFileException e){
+////                        Log.warn("No DS_Store file to delete");
+//                    }
+//
+//                    File[] files = new File(targetDir).listFiles();
+//
+//                    if(files != null && files.length > 0) {
+//                        for (File f : files){
+//                            if (f.getName().endsWith(".prj")) {
+//                                DirectoryResourceCenter center = DirectoryResourceCenter.instanciateNewDirectoryResourceCenter(new File(targetDir + f.getName()), resourceCenterService);
+//                                resourceCenterService.addToResourceCenters(center);
+//                                results.add(JsonUtils.getCenterDescription(center));
+//                            }
+//                        }
+//                    }
+//                } catch (IOException e) {
+//                    badRequest(context);
+//                }
+//            }
+//            context.response().end(results.encodePrettily());
+//        } else {
+//            badValidation(context, errors);
+//        }
     }
 }
