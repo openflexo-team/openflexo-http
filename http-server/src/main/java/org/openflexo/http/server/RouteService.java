@@ -16,15 +16,4 @@ public interface RouteService<Context> {
 
 	default void addRoutes(Vertx vertx, Router router) { /* Do nothing by default. */ }
 
-	default void notFound(RoutingContext context) {
-		context.response().setStatusCode(404).close();
-	}
-
-	default void error(RoutingContext context, Exception e) {
-		HttpServerResponse response = context.response();
-		response.write("{ error: '"+ e.getClass().getSimpleName() +"'; message: '" + e.getMessage() +"'; stackTrace: ''}");
-		response.setStatusCode(500);
-		response.close();
-	}
-
 }

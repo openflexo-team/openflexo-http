@@ -102,7 +102,7 @@ function createJsonElement(source: any): HTMLElement {
     } else {
         let valueCode = document.createElement("code");
         valueCode.innerText = source + " ";
-       return valueCode;
+        return valueCode;
     }
 
 }
@@ -127,18 +127,18 @@ function retreiveContext() {
 
     let json = api.call(contextInput.value);
     json.then(json => {
-        clearElement(result);
-        result.appendChild(createJsonElement(json));
-        window.scrollTo(0, 0);
-    },
-    (event) => {
-        clearElement(result);
-        var error = document.createElement("div");
-        error.className = "details";
-        error.innerText = "Error : " + event.currentTarget.statusText;
-        result.appendChild(error);
-        window.scrollTo(0, 0);
-    });
+            clearElement(result);
+            result.appendChild(createJsonElement(json));
+            window.scrollTo(0, 0);
+        },
+        (event) => {
+            clearElement(result);
+            var error = document.createElement("div");
+            error.className = "details";
+            error.innerText = "Error : " + event.currentTarget.statusText;
+            result.appendChild(error);
+            window.scrollTo(0, 0);
+        });
 }
 
 function saveResource(resourceId: string) {
@@ -192,8 +192,8 @@ function evaluateBinding(left: string, right: string) {
 
     let result =
         leftBinding != null ?
-        api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
-        api.evaluate(rightBinding, detailedCheckbox.value == "true");
+            api.assign(leftBinding, rightBinding, detailedCheckbox.value == "true") :
+            api.evaluate(rightBinding, detailedCheckbox.value == "true");
 
     api.addChangeListener(rightBinding, (value) => {
         var contextInput = <HTMLInputElement>document.getElementById("context");

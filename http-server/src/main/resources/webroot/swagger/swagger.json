@@ -1,0 +1,1142 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "Documentation for Openflexo REST APIs.",
+    "version" : "1.0.0",
+    "title" : "Openflexo-http REST APIs",
+    "contact" : {
+      "email" : "contact@openflexo.org"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "server.openflexo.org",
+  "tags" : [ {
+    "name" : "Project",
+    "description" : "Logical container of resources located in project directory",
+    "externalDocs" : {
+      "description" : "Find out more",
+      "url" : "https://openflexo.org"
+    }
+  } ],
+  "schemes" : [ "http", "https"],
+  "paths" : {
+    "/projects/" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Finds all projects",
+        "description" : "",
+        "operationId" : "findAllProjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Project" ],
+        "summary" : "Create new project",
+        "description" : "",
+        "operationId" : "addProject",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        } , {
+          "name" : "resource_center_id",
+          "required" : true
+        }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/{id}/" : {
+      "get" : {
+        "tags" : [ "Project" ],
+        "summary" : "Find project by ID",
+        "operationId" : "getProjectById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "patch" : {
+        "tags" : [ "Project" ],
+        "summary" : "Updates a project in the store with form data",
+        "operationId" : "editProject",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "description" : "Name of project that needs to be updated",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "200" : {
+            "description" : "successful operation"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Project" ],
+        "summary" : "Deletes a project",
+        "description" : "",
+        "operationId" : "deleteProject",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Project id to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/upload" : {
+      "post" : {
+        "tags" : [ "Project" ],
+        "summary" : "Upload one or multiple project(s)",
+        "description" : "",
+        "operationId" : "uploadProject",
+        "consumes" : [ "application/zip", "application/json" ],
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation"
+          },
+          "schema" : {
+            "type" : "array"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/{id}/resources/" : {
+      "get" : {
+        "tags" : [ "Resource" ],
+        "summary" : "Find project resources",
+        "operationId" : "getProjectResources",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to get resources",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/{id}/resources/load" : {
+      "post" : {
+        "tags" : [ "Resource" ],
+        "summary" : "Load all project resources",
+        "operationId" : "loadProjectResources",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to get resources",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/projects/{id}/folders/" : {
+      "get" : {
+        "tags" : [ "Folder" ],
+        "summary" : "Find project folders",
+        "operationId" : "getProjectFolders",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to get folders",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Folder" ],
+        "summary" : "Add new folder",
+        "operationId" : "addNewFolder",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to add to a folder",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Project not found"
+          },
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/" : {
+      "get" : {
+        "tags" : [ "VirtualModel" ],
+        "summary" : "Finds all virtual models",
+        "description" : "",
+        "operationId" : "findAllVirtualModels",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "VirtualModel" ],
+        "summary" : "Create new virtual model",
+        "description" : "",
+        "operationId" : "addVirtualModel",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "visibility",
+          "required" : true
+        }, {
+          "name" : "is_abstract",
+          "required" : true
+        }, {
+          "name" : "project_id",
+          "required" : true
+        }, {
+          "name" : "path",
+          "required" : false
+        }, {
+          "name" : "parent_id",
+          "required" : true
+        }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{id}/" : {
+      "get" : {
+        "tags" : [ "VirtualModel" ],
+        "summary" : "Find virtual model by ID",
+        "operationId" : "getVirtualModelById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of virtual model to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "VirtualModel" ],
+        "summary" : "Deletes a virtual model",
+        "description" : "",
+        "operationId" : "deleteVirtualModel",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Virtual model id to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/enums/" : {
+      "get" : {
+        "tags" : [ "Enum" ],
+        "summary" : "Finds all virtual model's enums",
+        "description" : "",
+        "operationId" : "findAllEnums",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Virtual model not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Enum" ],
+        "summary" : "Create new enum",
+        "description" : "",
+        "operationId" : "addEnum",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "visibility",
+          "required" : true
+        }, {
+          "name" : "is_abstract",
+          "required" : true
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful  operation"
+          },
+          "404" : {
+            "description" : "Virtual model not found"
+          },
+          "422" : {
+            "description" : "Bad validation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/enums/{id}/" : {
+      "get" : {
+        "tags" : [ "Enum" ],
+        "summary" : "Find Enum by ID",
+        "operationId" : "getEnumById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of enum to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model or enum not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Enum" ],
+        "summary" : "Deletes an enum",
+        "description" : "",
+        "operationId" : "deleteEnum",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "vmid",
+            "in" : "path",
+            "description" : "Virtual model id to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Enum id to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model or enum not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/enums/{id}/values/" : {
+      "get" : {
+        "tags" : [ "EnumValue" ],
+        "summary" : "Finds all enum's values",
+        "description" : "",
+        "operationId" : "findAllEnumValues",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Virtual model or enum not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "EnumValue" ],
+        "summary" : "Create new enum value",
+        "description" : "",
+        "operationId" : "addEnumValue",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "422" : {
+            "description" : "Bad validation"
+          },
+          "schema" : {
+            "type" : "array"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/" : {
+      "get" : {
+        "tags" : [ "Concept" ],
+        "summary" : "Finds all concepts",
+        "description" : "",
+        "operationId" : "findAllConcepts",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Virtual model not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Concept" ],
+        "summary" : "Create new concept",
+        "description" : "",
+        "operationId" : "addConcept",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "visibility",
+          "required" : true
+        }, {
+          "name" : "is_abstract",
+          "required" : true
+        }, {
+          "name" : "parent_id",
+          "required" : true
+        }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/" : {
+      "get" : {
+        "tags" : [ "Concept" ],
+        "summary" : "Find concept by ID",
+        "operationId" : "getConceptById",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model or concept not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Concept" ],
+        "summary" : "Deletes a concept",
+        "description" : "",
+        "operationId" : "deleteConcept",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Concept id to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model or concept not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    }
+  },
+  "definitions" : {
+    "Project" : {
+      "type" : "object",
+      "required" : [ "name" , "resource_center_id"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "resource_center_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Folder" : {
+      "type" : "object",
+      "required" : ["name"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "parent" : {
+          "type" : "string"
+        },
+        "modified" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "VirtualModel" : {
+      "type" : "object",
+      "required" : [ "name" , "visibility", "is_abstract", "project_id", "parent_id"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "project_id" : {
+          "type" : "string"
+        },
+        "parent_id" : {
+          "type" : "string"
+        },
+        "path" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Enum" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "EnumValue" : {
+      "type" : "object",
+      "required" : ["name"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "index" : {
+          "type" : "number"
+        },
+        "enum_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Concept" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PrimitiveProperty" : {
+      "type" : "object",
+      "required" : ["name", "is_abstract", "type", "cardinality"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["string", "date", "boolean", "integer", "byte", "long", "short", "float", "double"]
+        },
+        "cardinality" : {
+          "type" : "string",
+          "enum" : ["one", "zeromany", "onemany", "zeroone"]
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ConceptInstanceRole" : {
+      "type" : "object",
+      "required" : ["name", "concept_id", "cardinality"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "concept_id" : {
+          "type" : "string"
+        },
+        "concept_type_name" : {
+          "type" : "string"
+        },
+        "concept_type_id" : {
+          "type" : "string"
+        },
+        "cardinality" : {
+          "type" : "string",
+          "enum" : ["one", "zeromany", "onemany", "zeroone"]
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ModelSlot" : {
+      "type" : "object",
+      "required" : ["name", "virtual_model_id", "required", "read_only", "technology_adapter"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "technology_adapter" : {
+          "type" : "string"
+        },
+        "read_only" : {
+          "type" : "boolean"
+        },
+        "required" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "Behaviour" : {
+      "type" : "object",
+      "required" : ["name", "visibility", "is_abstract", "type"],
+      "properties" : {
+        "id" : {
+          "type" : "string"
+        },
+        "signature" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["action", "cloning", "creation", "deletion", "event", "synchronization", "navigation"]
+        },
+        "visibility" : {
+          "type" : "string",
+          "enum" : ["public", "protected", "default", "private"]
+        },
+        "is_abstract" : {
+          "type" : "boolean"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "PrimitiveParameter" : {
+      "type" : "object",
+      "required" : ["name", "type", "default_value", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "type" : {
+          "type" : "string",
+          "enum" : ["string", "date", "boolean", "integer", "byte", "long", "short", "float", "double"]
+        },
+        "default_Value" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FmlInstanceParameter" : {
+      "type" : "object",
+      "required" : ["name", "fml_instance_id", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "fml_instance_id" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FmlEnumParameter" : {
+      "type" : "object",
+      "required" : ["name", "enum_id", "is_required"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "enum_id" : {
+          "type" : "string"
+        },
+        "is_required" : {
+          "type" : "boolean"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "BehaviourAction" : {
+      "type" : "object",
+      "required" : ["left", "right"],
+      "properties" : {
+        "resource_type" : {
+          "type" : "string"
+        },
+        "left" : {
+          "type" : "string"
+        },
+        "right" : {
+          "type" : "string"
+        },
+        "description" : {
+          "type" : "string"
+        }
+      }
+    },
+    "LogAction" : {
+      "type" : "object",
+      "required" : ["value", "level"],
+      "properties" : {
+        "resource_type" : {
+          "type" : "string"
+        },
+        "value" : {
+          "type" : "string"
+        },
+        "level" : {
+          "type" : "string"
+        },
+        "date" : {
+          "type" : "string"
+        },
+        "millis" : {
+          "type" : "number"
+        },
+        "concept_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "VirtualModelInstance" : {
+      "type" : "object",
+      "required" : ["name", "title"],
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "uri" : {
+          "type" : "string"
+        },
+        "id" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "virtual_model_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "FlexoConceptInstance" : {
+      "type" : "object",
+      "required" : ["concept_id"],
+      "properties" : {
+        "flexo_id" : {
+          "type" : "string"
+        },
+        "resource_type" : {
+          "type" : "string"
+        },
+        "concept_id" : {
+          "type" : "string"
+        }
+      }
+    },
+    "ApiResponse" : {
+      "type" : "object",
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "type" : {
+          "type" : "string"
+        },
+        "message" : {
+          "type" : "string"
+        }
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}

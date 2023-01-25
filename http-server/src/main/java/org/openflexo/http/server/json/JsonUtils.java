@@ -71,6 +71,7 @@
 package org.openflexo.http.server.json;
 
 import org.openflexo.foundation.FlexoObject;
+import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.resource.FlexoResource;
 import org.openflexo.foundation.resource.FlexoResourceCenter;
 import org.openflexo.foundation.resource.ResourceData;
@@ -78,16 +79,27 @@ import org.openflexo.foundation.resource.ResourceRepository;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
+import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
+import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.http.server.util.ResourceUtils;
 
 import io.vertx.core.json.JsonObject;
+import org.openflexo.toolbox.StringUtils;
+
+import java.util.*;
 
 /**
  * Utility methods for JSON handling
  */
 public class JsonUtils {
+
+	/** Map of technology adapters to corresponding {@link TechnologyAdapterRouteComplement} */
+	private final static Map<TechnologyAdapter<?>, TechnologyAdapterRouteComplement> complementMap = new LinkedHashMap<>();
+
+	/** Map of registered {@link org.openflexo.http.server.util.PamelaResourceRestService}s for each technology adapters */
+	private final static Map<TechnologyAdapter<?>, List<ResourceRestService>> restServices = new HashMap<>();
 
 	public static JsonObject getCenterDescription(FlexoResourceCenter<?> center) {
 		String uri = center.getDefaultBaseURI();
@@ -181,8 +193,7 @@ public class JsonUtils {
 		return resourceDescription;
 	}
 
-	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter<?> adapter,
-			TechnologyAdapterRouteService service) {
+	public static JsonObject getTechnologyAdapterDescription(String id, TechnologyAdapter<?> adapter) {
 		JsonObject result = new JsonObject();
 		result.put("name", adapter.getName());
 		result.put("type", "TechnologyAdapter");
@@ -193,9 +204,19 @@ public class JsonUtils {
 		String url = "/ta/" + id;
 		result.put("url", url);
 
-		service.complementTechnologyAdapter(adapter, result);
+		JsonUtils.complementTechnologyAdapter(adapter, result);
 
 		return result;
+	}
+
+	public static void complementTechnologyAdapter(TechnologyAdapter<?> adapter, JsonObject result) {
+		TechnologyAdapterRouteComplement complement = JsonUtils.complementMap.get(adapter);
+		result.put("complemented", complement != null);
+		for (ResourceRestService service : JsonUtils.restServices.getOrDefault(adapter, Collections.emptyList())) {
+			String simpleName = service.getResourceClass().getSimpleName();
+			String route = result.getString("url") + service.getPrefix();
+			result.put(StringUtils.firstsLower(simpleName) + "Url", route);
+		}
 	}
 
 }

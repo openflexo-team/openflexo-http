@@ -1,6 +1,7 @@
 define(["require", "exports", "./BoundComponent", "../ui/Component", "../ui/utils", "../ui/Grid"], function (require, exports, BoundComponent_1, Component_1, utils_1, Grid_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    exports.BoundGridCell = void 0;
     class BoundGridCell extends BoundComponent_1.BoundComponent {
         // private readonly changelistener;// = value => this.container.innerText = value;
         // private runtimeBinding: RuntimeBindingId<string>|null;
@@ -12,7 +13,7 @@ define(["require", "exports", "./BoundComponent", "../ui/Component", "../ui/util
             this.updateRuntime(runtime);
         }
         create() {
-            this.container = utils_1.toHTMLElement(this.wrappedElement);
+            this.container = (0, utils_1.toHTMLElement)(this.wrappedElement);
             //this.container.appendChild(toHTMLElement(this.wrappedElement));
             //mdlUpgradeElement(this.container);
         }
@@ -24,4 +25,4 @@ define(["require", "exports", "./BoundComponent", "../ui/Component", "../ui/util
     }
     exports.BoundGridCell = BoundGridCell;
 });
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRHcmlkQ2VsbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkJvdW5kR3JpZENlbGwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7O0lBV0EsbUJBQTJCLFNBQVEsK0JBQWM7UUFNOUMsa0ZBQWtGO1FBRWxGLHlEQUF5RDtRQUV4RCxZQUNJLEdBQVEsRUFDUixVQUF1QixJQUFJLEVBQzNCLGNBQTBCLEVBQ2xCLE9BQWUsQ0FBQztZQUUxQixLQUFLLENBQUMsR0FBRyxDQUFDLENBQUM7WUFGRCxTQUFJLEdBQUosSUFBSSxDQUFZO1lBRzFCLElBQUksQ0FBQyxjQUFjLEdBQUcsSUFBSSxlQUFRLENBQUMsY0FBYyxFQUFFLElBQUksQ0FBQyxDQUFDO1lBQ3pELElBQUksQ0FBQyxNQUFNLEVBQUUsQ0FBQztZQUNkLElBQUksQ0FBQyxhQUFhLENBQUMsT0FBTyxDQUFDLENBQUM7UUFDOUIsQ0FBQztRQUVTLE1BQU07WUFDWixJQUFJLENBQUMsU0FBUyxHQUFvQixxQkFBYSxDQUFDLElBQUksQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUNyRSxpRUFBaUU7WUFDakUsb0NBQW9DO1FBQ3hDLENBQUM7UUFFRCxTQUFTLENBQUMsTUFBZTtZQUNyQixFQUFFLENBQUEsQ0FBRSxJQUFJLENBQUMsY0FBYyxZQUFZLHFCQUFVLENBQUMsQ0FBQSxDQUFDO2dCQUMzQyxJQUFJLENBQUMsY0FBYyxDQUFDLFNBQVMsQ0FBQyxNQUFNLENBQUMsQ0FBQztZQUMxQyxDQUFDO1FBRUwsQ0FBQztLQUNKO0lBbENELHNDQWtDQyJ9
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiQm91bmRHcmlkQ2VsbC5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIkJvdW5kR3JpZENlbGwudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7OztJQVdBLE1BQWEsYUFBYyxTQUFRLCtCQUFjO1FBTTlDLGtGQUFrRjtRQUVsRix5REFBeUQ7UUFFeEQsWUFDSSxHQUFRLEVBQ1IsVUFBdUIsSUFBSSxFQUMzQixjQUEwQixFQUNsQixPQUFlLENBQUM7WUFFMUIsS0FBSyxDQUFDLEdBQUcsQ0FBQyxDQUFDO1lBRkQsU0FBSSxHQUFKLElBQUksQ0FBWTtZQUcxQixJQUFJLENBQUMsY0FBYyxHQUFHLElBQUksZUFBUSxDQUFDLGNBQWMsRUFBRSxJQUFJLENBQUMsQ0FBQztZQUN6RCxJQUFJLENBQUMsTUFBTSxFQUFFLENBQUM7WUFDZCxJQUFJLENBQUMsYUFBYSxDQUFDLE9BQU8sQ0FBQyxDQUFDO1FBQzlCLENBQUM7UUFFUyxNQUFNO1lBQ1osSUFBSSxDQUFDLFNBQVMsR0FBb0IsSUFBQSxxQkFBYSxFQUFDLElBQUksQ0FBQyxjQUFjLENBQUMsQ0FBQztZQUNyRSxpRUFBaUU7WUFDakUsb0NBQW9DO1FBQ3hDLENBQUM7UUFFRCxTQUFTLENBQUMsTUFBZTtZQUNyQixJQUFJLElBQUksQ0FBQyxjQUFjLFlBQVkscUJBQVMsRUFBRTtnQkFDMUMsSUFBSSxDQUFDLGNBQWMsQ0FBQyxTQUFTLENBQUMsTUFBTSxDQUFDLENBQUM7YUFDekM7UUFFTCxDQUFDO0tBQ0o7SUFsQ0Qsc0NBa0NDIn0=

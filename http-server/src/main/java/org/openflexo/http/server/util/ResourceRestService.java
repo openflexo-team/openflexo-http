@@ -39,13 +39,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openflexo.foundation.FlexoEditor;
-import org.openflexo.foundation.fml.ActionScheme;
-import org.openflexo.foundation.fml.CreationScheme;
-import org.openflexo.foundation.fml.FlexoBehaviour;
-import org.openflexo.foundation.fml.FlexoBehaviourParameter;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rm.CompilationUnitResource;
-import org.openflexo.foundation.fml.rt.FMLRTVirtualModelInstance;
+import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.rm.VirtualModelResourceImpl;
+import org.openflexo.foundation.fml.rt.*;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeAction;
 import org.openflexo.foundation.fml.rt.action.ActionSchemeActionFactory;
 import org.openflexo.foundation.fml.rt.action.CreateBasicVirtualModelInstance;
@@ -103,6 +101,7 @@ public abstract class ResourceRestService<D, R> {
 		router.get(prefix + "/:id").produces(RouteService.JSON).handler(this::serveRoot);
 		router.get(prefix + "/:id/object").produces(RouteService.JSON).handler(this::serveEntityList);
 		router.get(prefix + "/:id/object/:eid").produces(RouteService.JSON).handler(this::serveEntity);
+		router.get(prefix + "/:id/describe").produces(RouteService.JSON).handler(this::describeEntity);
 		router.post(prefix + "/:id/createInstance").produces(RouteService.JSON).handler(this::createInstance);
 		router.post(prefix + "/:id/executeBehaviour").produces(RouteService.JSON).handler(this::executeBehaviour);
 	}
@@ -347,5 +346,76 @@ public abstract class ResourceRestService<D, R> {
 	private static void error(RoutingContext context, Throwable e) {
 		HttpServerResponse response = context.response();
 		response.end(new JsonError(e).toString());
+	}
+
+	private JsonArray convertEmbeddedFlexoInstancesListToJson(FlexoConceptInstance rootFci) {
+		// Print root flexo concept instances
+		JsonArray fciEmbedded = new JsonArray();
+		for(FlexoConceptInstance fci : rootFci.getEmbeddedFlexoConceptInstances()) {
+			JsonObject fciObject = new JsonObject();
+			fciObject.put("id", fci.getFlexoID());
+			fciObject.put("type", fci.getFlexoConcept().getName());
+			fciObject.put("actors", convertFciActorsToJson(fci));
+			fciEmbedded.add(fciObject);
+		}
+		return fciEmbedded;
+
+	}
+
+	private JsonArray convertFciActorsToJson(FlexoConceptInstance fci) {
+		JsonArray result = new JsonArray();
+		for(ActorReference actor : fci.getActors()) {
+			JsonObject actorObj = new JsonObject();
+			PropertyCardinality actorCardinality = actor.getFlexoRole().getCardinality();
+			if(actorCardinality == PropertyCardinality.One || actorCardinality == PropertyCardinality.ZeroOne ) {
+				actorObj.put("id", actor.getFlexoID());
+				actorObj.put("name", actor.getRoleName());
+
+				if(actor instanceof PrimitiveActorReference){
+					actorObj.put("value", actor.getModellingElement().toString());
+				}
+				if(actor instanceof ModelObjectActorReference){
+					actorObj.put("reference", convertFciActorsToJson((FlexoConceptInstance) actor.getModellingElement()).getJsonObject(0));
+				}
+				result.add(actorObj);
+			} else {
+
+			}
+		}
+		return result;
+	}
+
+	private void describeEntity(RoutingContext context) {
+		try {
+			// Getting the context
+			String id = context.request().getParam(("id"));
+			R resource = getLoadedResource(id);
+			FMLRTVirtualModelInstanceResourceImpl rtvmiri = (FMLRTVirtualModelInstanceResourceImpl) resource;
+			FMLRTVirtualModelInstance  rtvmi = rtvmiri.getModel();
+
+
+			JsonObject result = new JsonObject();
+			result.put("id", rtvmi.getFlexoID());
+			result.put("name", rtvmi.getTitle());
+			result.put("type", rtvmi.getVirtualModel().getName());
+
+			// Print basic actors
+			result.put("actors", convertFciActorsToJson(rtvmi));
+
+			// Print root flexo concept instances
+			JsonArray fciEmbedded = new JsonArray();
+			for(FlexoConceptInstance fci : rtvmi.getAllRootFlexoConceptInstances()) {
+				JsonObject fciObject = new JsonObject();
+				fciObject.put("id", fci.getFlexoID());
+				fciObject.put("type", fci.getFlexoConcept().getName());
+				fciObject.put("actors", convertFciActorsToJson(fci));
+				fciObject.put("embeddedFlexoConceptInstances", convertEmbeddedFlexoInstancesListToJson(fci));
+				fciEmbedded.add(fciObject);
+			}
+			result.put("embeddedFlexoConceptInstances", fciEmbedded);
+			context.response().end(result.encode());
+		} catch (Exception e) {
+			error(context, e);
+		}
 	}
 }
