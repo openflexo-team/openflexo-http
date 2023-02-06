@@ -8,11 +8,13 @@ import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.EventListener;
 import org.openflexo.foundation.fml.action.PropertyEntry;
 import org.openflexo.foundation.fml.rt.FMLRTTechnologyAdapter;
 import org.openflexo.foundation.fml.rt.logging.FMLConsole;
 import org.openflexo.foundation.resource.RepositoryFolder;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
+import org.openflexo.http.server.core.RestTerminal;
 import org.openflexo.toolbox.ZipUtils;
 
 import java.io.File;
@@ -24,10 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  *  Generic Helpers.
@@ -275,6 +274,13 @@ public class Helpers {
         }
     }
 
+    /**
+     * It takes a path and a project, and returns the folder that corresponds to the path
+     *
+     * @param path the path to the folder you want to get
+     * @param project the project to which the folder belongs
+     * @return The folder that matches the path.
+     */
     public static RepositoryFolder getFolderFromPath(String path, FlexoProject<?> project){
         RepositoryFolder folder     = project.getRootFolder();
         RepositoryFolder subFolder;
@@ -296,6 +302,13 @@ public class Helpers {
         return folder;
     }
 
+    /**
+     * It takes a zip file, unzips it, and returns the files inside
+     *
+     * @param targetDir The directory where the zip file will be unzipped.
+     * @param uploadedFile The file that was uploaded by the user
+     * @return A list of files in the target directory.
+     */
     public static File[] unzipFile(String targetDir, Buffer uploadedFile) throws IOException {
         byte[] buffredBytes = uploadedFile.getBytes();
         File uploadedRc     = new File(WORKSPACE + "uploaded_rc.zip");

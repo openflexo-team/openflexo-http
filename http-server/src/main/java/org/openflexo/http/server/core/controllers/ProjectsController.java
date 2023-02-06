@@ -52,7 +52,6 @@ public class ProjectsController extends GenericController {
     private final TechnologyAdapterRouteService technologyAdapterRestService;
     private final ProjectLoader projectLoader;
     private final DefaultFlexoEditor editor;
-    private final static String resourceCentersLocation = "/Users/mac/openflexo/2.0.1/openflexo-http/http-connector-rc/src/main/resources/API/";
 
     /**
      * Instantiates a new Projects controller.

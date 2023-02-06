@@ -32,6 +32,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
     private BehavioursController bhvController;
     private ConsoleController cslController;
     private EnumsController enmController;
+    private TerminalController cliController;
 
     /**
      * It creates all the necessary controllers and registers them with the service.
@@ -53,6 +54,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         bhvController   = new BehavioursController(serviceManager.getVirtualModelLibrary());
         cslController   = new ConsoleController(serviceManager.getVirtualModelLibrary());
         enmController   = new EnumsController(serviceManager.getVirtualModelLibrary());
+        cliController   = new TerminalController(serviceManager.getVirtualModelLibrary());
     }
 
     /**
@@ -255,5 +257,10 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/console").produces(JSON).handler(cslController::show);
 
         router.post("/kill-server").produces(JSON).handler(cslController::shutdown);
+
+        router.post("/terminal/get").produces(JSON).handler(cliController::get);
+        router.post("/terminal/init").produces(JSON).handler(cliController::init);
+        router.post("/terminal/execute").produces(JSON).handler(cliController::execute);
+        router.post("/terminal/history").produces(JSON).handler(cliController::history);
     }
 }

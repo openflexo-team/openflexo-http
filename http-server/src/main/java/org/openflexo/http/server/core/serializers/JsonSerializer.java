@@ -5,6 +5,7 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoObject;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.fml.*;
+import org.openflexo.foundation.fml.cli.command.AbstractCommand;
 import org.openflexo.foundation.fml.editionaction.EditionAction;
 import org.openflexo.foundation.fml.rt.FMLRTModelSlot;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
@@ -15,16 +16,14 @@ import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
+import org.openflexo.http.server.core.RestTerminal;
 import org.openflexo.http.server.core.TechnologyAdapterRouteComplement;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
 import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.http.server.util.ResourceUtils;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A class for defining Json serializers
@@ -468,6 +467,55 @@ public class JsonSerializer {
         result.put("modified", folder.isModified());
         result.put("uri", folder.getDefaultBaseURI());
         result.put("id", IdUtils.encodeuri(folder.getDefaultBaseURI()));
+
+        return result;
+    }
+
+    /**
+     * It takes a list of strings and a terminal object and returns a JSON object
+     *
+     * @param output The output of the command
+     * @param terminal The terminal object that was created when the user logged in.
+     * @return A JsonObject
+     */
+    public static JsonObject terminalOutputSerializer(List<String> output, RestTerminal terminal) {
+        JsonArray out   = new JsonArray();
+        JsonObject term = new JsonObject();
+        JsonObject line;
+
+        if (output != null){
+            for (String l: output) {
+                line = new JsonObject();
+                line.put("line", l.trim());
+                line.put("resource_type", "CommandLineOutput");
+                out.add(line);
+            }
+        }
+
+        term.put("prompt", terminal.getCi().getPrompt());
+        term.put("output", out);
+
+        return term;
+    }
+
+    /**
+     * It takes a list of commands and returns a JSON array of objects that represent the commands
+     *
+     * @param history The list of commands that you want to display.
+     * @return A JsonArray
+     */
+    public static JsonArray terminalHistorySerializer(List<AbstractCommand> history) {
+        JsonArray result = new  JsonArray();
+
+        for (AbstractCommand cmd : history){
+            JsonObject line = new JsonObject();
+
+            line.put("text", cmd.toString());
+            line.put("replace", true);
+            line.put("type", "input");
+
+            result.add(line);
+        }
 
         return result;
     }
