@@ -14,26 +14,6 @@
     <script>
         var sessionId   = localStorage.getItem('session_id')
         var prompt      = 'openflexo'
-        var lHistory    = []
-
-        const executeCommand = (cmd, term) => {
-            let url = '/terminal/execute'
-
-            $.ajax({
-                url: url,
-                method: 'POST',
-                data: {
-                    'command': cmd,
-                    'session_id': sessionId
-                },
-                dataType: 'json',
-                async: false,
-                success: function (response) {
-                    term.output(response.output[0].line).input()
-                    term.options.prefix = response.prompt + ' > <d color="#00f501">$</d> '
-                }
-            })
-        };
 
         const createTerminal = () => {
             let url = '/terminal/init'
@@ -93,23 +73,10 @@
                 loading: () => '<d color="yellow">Please wait for a moment...</d>',
                 notFound: (val) => `<d color='red'>${val}</d> : command not found`,
             })
-
-            // $('#term > textarea.term-textarea').off('keydown')
-
-            // $('#term > textarea.term-textarea').on('keyup', function(e){
-            //
-            //
-            //     lHistory.push($(this).val())
-            //     if(e.key === "Enter" || e.keyCode === 13){
-            //         executeCommand(lHistory.slice(-2).shift().trim(), term)
-            //         lHistory = []
-            //     }
-            // })
         }
 
         $(() => {
             initTerminal();
-
         })
     </script>
 </body>

@@ -2127,16 +2127,16 @@
 	      }
 	    }
 	  });
-	  events.proxy($header, 'dblclick', function (event) {
-	    if (event.target === $header) {
-	      term.emit('fullscreen', !isFullscreen);
-	    }
-	  });
-	  events.proxy(window, 'resize', function () {
-	    if (isFullscreen) {
-	      debounceResize();
-	    }
-	  });
+	  // events.proxy($header, 'dblclick', function (event) {
+	  //   if (event.target === $header) {
+	  //     term.emit('fullscreen', !isFullscreen);
+	  //   }
+	  // });
+	  // events.proxy(window, 'resize', function () {
+	  //   if (isFullscreen) {
+	  //     debounceResize();
+	  //   }
+	  // });
 	}
 
 	var INPUT = 'input';
@@ -3349,8 +3349,16 @@
 			  dataType: 'json',
 			  async: false,
 			  success: function (response) {
-			    _result = response.output[0].line
-			  }
+			    _result = ""
+				  response.output.forEach(element => _result += element.line + "\n")
+
+				  _this2.term.options.prefix = response.prompt + ' > <d color="#00f501">$</d> '
+			  },
+				error : function(response){
+					if(response.status == 422){
+						_result = `Invalid command : <d color="red"> ${response.responseJSON[0]['command']}</d>`
+					}
+				}
 			})
 	        return this.output(_result).input();
 	      }
