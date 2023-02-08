@@ -693,6 +693,700 @@
         "x-contentType" : "application/json",
         "x-accepts" : "application/json"
       }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/properties/" : {
+      "get" : {
+        "tags" : [ "Property" ],
+        "summary" : "Finds all properties",
+        "description" : "",
+        "operationId" : "findAllProperties",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Concept not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/properties/{name}" : {
+      "get" : {
+        "tags" : [ "Property" ],
+        "summary" : "Find property by name",
+        "operationId" : "getPropertyByName",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of property to return",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model, concept or property not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Property" ],
+        "summary" : "Deletes a property",
+        "description" : "",
+        "operationId" : "deleteProperty",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "vmid",
+            "in" : "path",
+            "description" : "ID of virtual model to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "in" : "path",
+            "description" : "ID of concept to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "name",
+            "in" : "path",
+            "description" : "Name of property to return",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model, concept or  property not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/properties/add-primitive" : {
+      "post" : {
+        "tags" : [ "Property" ],
+        "summary" : "Create new primitive property",
+        "description" : "",
+        "operationId" : "addPrimitiveProperty",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "cardinality",
+          "required" : true
+        }, {
+          "name" : "type",
+          "required" : true
+        }],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/properties/add-flexo-concept-instance-role" : {
+      "post" : {
+        "tags" : [ "Property" ],
+        "summary" : "Create new concept instance role property",
+        "description" : "",
+        "operationId" : "addFlexoConceptInstanceRole",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "cardinality",
+          "required" : true
+        }, {
+          "name" : "concept_id",
+          "required" : true
+        }],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/properties/add-model-slot" : {
+      "post" : {
+        "tags" : [ "Property" ],
+        "summary" : "Create new model  slot property",
+        "description" : "",
+        "operationId" : "addModelSlotProperty",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "required",
+          "required" : true
+        }, {
+          "name" : "read_only",
+          "required" : true
+        }, {
+          "name" : "technology_adapter",
+          "required" : true
+        }, {
+          "name" : "virtual_model_id",
+          "required" : true
+        }],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours" : {
+      "get" : {
+        "tags" : [ "Behaviour" ],
+        "summary" : "Finds all behaviours",
+        "description" : "",
+        "operationId" : "findAllBehaviours",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Virtual model or concept not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "post" : {
+        "tags" : [ "Behaviour" ],
+        "summary" : "Create new behaviour",
+        "description" : "",
+        "operationId" : "addConcept",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "vmid",
+            "in" : "path",
+            "description" : "ID of virtual model to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "in" : "path",
+            "description" : "ID of concept to use",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "name",
+            "required" : true
+          }, {
+            "name" : "description",
+            "required" : false
+          }, {
+            "name" : "visibility",
+            "required" : true
+          }, {
+            "name" : "is_abstract",
+            "required" : true
+          }, {
+            "name" : "type",
+            "required" : true
+          }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}" : {
+      "get" : {
+        "tags" : [ "Behaviour" ],
+        "summary" : "Find Behaviour by Signature",
+        "operationId" : "getBahaviourBySignature",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "Signature of Behaviour to return",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "404" : {
+            "description" : "Virtual model or concept not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Behaviour" ],
+        "summary" : "Deletes a behaviour",
+        "description" : "",
+        "operationId" : "deleteBehaviour",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "Signature of behaviour to delete",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "404" : {
+            "description" : "Virtual model, concept or behaviour not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}/parameters/" : {
+      "get" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Finds all parameters",
+        "description" : "",
+        "operationId" : "findAllParameters",
+        "produces" : [ "application/json" ],
+        "parameters" : [],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Virtual mode, concept or behaviour not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}/parameters/{name}" : {
+      "get" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Find parameter by name",
+        "operationId" : "getParameteryByName",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "signature",
+          "in" : "path",
+          "description" : "Signature of behaviour to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of property to return",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation"
+          },
+          "404" : {
+            "description" : "Virtual model, concept, behaviour or property not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      },
+      "delete" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Deletes a parameter",
+        "description" : "",
+        "operationId" : "deleteParameter",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "vmid",
+            "in" : "path",
+            "description" : "ID of virtual model to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "in" : "path",
+            "description" : "ID of concept to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "signature",
+            "in" : "path",
+            "description" : "Signature of behaviour to use",
+            "required" : true,
+            "type" : "string"
+          },{
+            "name" : "name",
+            "in" : "path",
+            "description" : "Name of property to return",
+            "required" : true,
+            "type" : "string"
+          } ],
+        "responses" : {
+          "204" : {
+            "description" : "successful operation"
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "404" : {
+            "description" : "Virtual model, concept or  property not found"
+          }
+        },
+        "security" : [ ],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}/parameters/add-primitive" : {
+      "post" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Create new primitive parameter",
+        "description" : "",
+        "operationId" : "addPrimitiveParameter",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "signature",
+          "in" : "path",
+          "description" : "Signature of behaviour to use",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "is_required",
+          "required" : true
+        }, {
+          "name" : "default_value",
+          "required" : true
+        }, {
+          "name" : "type",
+          "required" : true
+        }],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}/parameters/add-fml-instance" : {
+      "post" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Create new fml instance parameter",
+        "description" : "",
+        "operationId" : "addFmlInstanceParameter",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "vmid",
+          "in" : "path",
+          "description" : "ID of virtual model to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of concept to use",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "signature",
+          "in" : "path",
+          "description" : "Signature of behaviour to use",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "required" : true
+        }, {
+          "name" : "description",
+          "required" : false
+        }, {
+          "name" : "is_required",
+          "required" : true
+        }, {
+          "name" : "fml_instance_id",
+          "required" : true
+        }],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
+    "/virtual-models/{vmid}/concepts/{id}/behaviours/{signature}/parameters/add-fml-enum" : {
+      "post" : {
+        "tags" : [ "Parameter" ],
+        "summary" : "Create new fml enum  value parameter",
+        "description" : "",
+        "operationId" : "addFmlEnumValueParameter",
+        "consumes" : [ "application/json" ],
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "vmid",
+            "in" : "path",
+            "description" : "ID of virtual model to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "id",
+            "in" : "path",
+            "description" : "ID of concept to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "signature",
+            "in" : "path",
+            "description" : "Signature of behaviour to use",
+            "required" : true,
+            "type" : "string"
+          }, {
+            "name" : "name",
+            "required" : true
+          }, {
+            "name" : "description",
+            "required" : false
+          }, {
+            "name" : "is_required",
+            "required" : true
+          }, {
+            "name" : "enum_id",
+            "required" : true
+          }
+        ],
+        "responses" : {
+          "422" : {
+            "description" : "Bad validation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "400" : {
+            "description" : "Bad request"
+          },
+          "200" : {
+            "description" : "Successful operation"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
     }
   },
   "definitions" : {

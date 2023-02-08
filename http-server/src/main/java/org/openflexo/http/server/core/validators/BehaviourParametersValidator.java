@@ -65,7 +65,7 @@ public class BehaviourParametersValidator extends GenericValidator{
     public JsonArray validatePrimitive(){
         String rName        = request.getFormAttribute("name").trim();
         String rType        = request.getFormAttribute("type");
-        String rDefValue    = request.getFormAttribute("default_Value");
+        String rDefValue    = request.getFormAttribute("default_value");
         String rDescription = request.getFormAttribute("description");
         String rIsRequired  = request.getFormAttribute("is_required");
         errors              = new JsonArray();
