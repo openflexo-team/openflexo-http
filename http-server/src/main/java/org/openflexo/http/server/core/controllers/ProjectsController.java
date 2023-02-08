@@ -56,7 +56,9 @@ public class ProjectsController extends GenericController {
     /**
      * Instantiates a new Projects controller.
      *
+     * @param virtualModelLibrary the virtual model library
      * @param projectLoader the project loader
+     * @param technologyAdapterRestService the technology Adapter Rest Service
      */
     public ProjectsController(VirtualModelLibrary virtualModelLibrary, ProjectLoader projectLoader, TechnologyAdapterRouteService technologyAdapterRestService) {
         this.virtualModelLibrary            = virtualModelLibrary;

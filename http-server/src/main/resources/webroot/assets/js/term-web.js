@@ -3336,7 +3336,8 @@
 	        }
 	      } else {
 
-	        var _result = notFound.call(this.term, text, argv);
+	        // var _result = notFound.call(this.term, text, argv);
+	        var _result = 'Something went wrong';
 			let url 	= '/terminal/execute'
 
 			$.ajax({
@@ -3357,6 +3358,9 @@
 				error : function(response){
 					if(response.status == 422){
 						_result = `Invalid command : <d color="red"> ${response.responseJSON[0]['command']}</d>`
+					}
+					if(response.status == 401){
+						_result = `<d color="red"> Not authorized </d>`
 					}
 				}
 			})

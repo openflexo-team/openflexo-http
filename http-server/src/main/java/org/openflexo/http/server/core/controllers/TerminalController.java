@@ -3,39 +3,47 @@ package org.openflexo.http.server.core.controllers;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.fml.cli.CommandInterpreter;
 import org.openflexo.foundation.fml.cli.ParseException;
-import org.openflexo.foundation.fml.cli.command.AbstractCommand;
 import org.openflexo.foundation.fml.cli.command.FMLCommandExecutionException;
 import org.openflexo.http.server.core.RestTerminal;
-import org.openflexo.http.server.core.helpers.Helpers;
 import org.openflexo.http.server.core.repositories.TerminalRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.TerminalValidator;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
+/**
+ *  Terminal rest apis controller.
+ * @author Ihab Benamer
+ */
 public class TerminalController extends GenericController {
     private final VirtualModelLibrary virtualModelLibrary;
-    private final DefaultFlexoEditor editor;
+    private final static String ROOT_WORKSPACE = "workspace/";
 
-    private List<String> history = new ArrayList();
-
+    /**
+     * Instantiates a new Terminal controller.
+     *
+     * @param virtualModelLibrary virtual model library
+     */
     public TerminalController(VirtualModelLibrary virtualModelLibrary) {
         this.virtualModelLibrary    = virtualModelLibrary;
-        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
+    /**
+     * It creates a new terminal, registers it in the terminal repository, and returns the terminal's session ID and prompt
+     *
+     * @param context the routing context
+     */
     public void init(RoutingContext context) {
         FlexoServiceManager serviceManager  = virtualModelLibrary.getServiceManager();
         try {
-            RestTerminal terminal = new RestTerminal(serviceManager, "/tmp/");
+            RestTerminal terminal = new RestTerminal(serviceManager, new File(ROOT_WORKSPACE).getAbsolutePath());
             TerminalRepository.registerTerminal(terminal);
 
             JsonObject result = new JsonObject();
@@ -50,6 +58,11 @@ public class TerminalController extends GenericController {
         }
     }
 
+    /**
+     * If the session ID is not null, then get the terminal from the repository and return the session ID and prompt
+     *
+     * @param context The routing context.
+     */
     public void get(RoutingContext context) {
         String sessionId = context.request().getFormAttribute("session_id");
 
@@ -71,6 +84,11 @@ public class TerminalController extends GenericController {
         }
     }
 
+    /**
+     * If the terminal is valid, execute the command and return the output
+     *
+     * @param context The routing context.
+     */
     public void execute(RoutingContext context) {
         TerminalValidator validator = new TerminalValidator(context.request());
         JsonArray errors            = validator.validate();
@@ -80,14 +98,43 @@ public class TerminalController extends GenericController {
                 RestTerminal terminal = TerminalRepository.getTerminal(validator.getSessionId());
 
                 if(terminal == null || terminal.getCi() == null){
-//                    terminal = new RestTerminal(virtualModelLibrary.getServiceManager(), "/tmp/");
                     notFound(context);
                 } else {
                     CommandInterpreter ci = terminal.getCi();
 
-                    ci.executeCommand(validator.getCommand());
+                    if(validator.getCommand().toLowerCase().trim().startsWith("cd")){
 
-                    context.response().end(JsonSerializer.terminalOutputSerializer(ci.getOutput(), terminal).encodePrettily());
+                        ci.executeCommand("pwd");
+
+                        String root         = new File(ROOT_WORKSPACE).getAbsolutePath();
+                        String currentDir   = ci.getOutput().get(0);
+                        String path         = validator.getCommand().replace("cd", "").trim();
+
+                        if (path.startsWith("/")){
+                            path = root + path;
+                        }
+
+                        ci.executeCommand("cd " + path);
+                        ci.executeCommand("pwd");
+
+                        if(ci.getOutput().get(0).contains(root)){
+                            context.response().end(JsonSerializer.terminalOutputSerializer(Collections.emptyList(), terminal).encodePrettily());
+                        } else {
+                            ci.executeCommand("cd " + currentDir);
+                            notAuthorized(context);
+                        }
+                    } else {
+                        ci.executeCommand(validator.getCommand());
+
+                        List<String> output = ci.getOutput();
+
+                        if(validator.getCommand().trim().equalsIgnoreCase("pwd")){
+                            output.set(0, ci.getOutput().get(0).replace(new File(ROOT_WORKSPACE).getAbsolutePath(), "/").replace("//", "/"));
+
+                        }
+
+                        context.response().end(JsonSerializer.terminalOutputSerializer(output, terminal).encodePrettily());
+                    }
                 }
             } catch (FMLCommandExecutionException | ParseException e) {
                 JsonObject error = new JsonObject();
@@ -102,6 +149,11 @@ public class TerminalController extends GenericController {
         }
     }
 
+    /**
+     * If the terminal exists, return the history of the terminal
+     *
+     * @param context The routing context is the object that contains all the information about the request and response.
+     */
     public void history(RoutingContext context) {
         String  sessionId       = context.request().getFormAttribute("session_id");
         RestTerminal terminal   = TerminalRepository.getTerminal(sessionId);
@@ -110,11 +162,7 @@ public class TerminalController extends GenericController {
             notFound(context);
 
         } else {
-//            context.response().end(terminal.getCi().getHistory().stream().map(AbstractCommand::getOriginalCommandAsString).collect(Collectors.joining()));
-
             context.response().end(JsonSerializer.terminalHistorySerializer(terminal.getCi().getHistory()).encodePrettily());
-//            emptyResponse(context);
-//                    context.response().end(JsonSerializer.terminalOutputSerializer(ci.getOutput(), terminal).encodePrettily());
         }
     }
 }
