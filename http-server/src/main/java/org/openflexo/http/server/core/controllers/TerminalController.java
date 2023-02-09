@@ -15,6 +15,8 @@ import org.openflexo.http.server.core.validators.TerminalValidator;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,7 +45,7 @@ public class TerminalController extends GenericController {
     public void init(RoutingContext context) {
         FlexoServiceManager serviceManager  = virtualModelLibrary.getServiceManager();
         try {
-            RestTerminal terminal = new RestTerminal(serviceManager, new File(ROOT_WORKSPACE).getAbsolutePath());
+            RestTerminal terminal = new RestTerminal(serviceManager, Files.createDirectories(Paths.get(ROOT_WORKSPACE)).toFile().getAbsolutePath());
             TerminalRepository.registerTerminal(terminal);
 
             JsonObject result = new JsonObject();
