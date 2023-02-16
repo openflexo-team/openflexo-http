@@ -469,7 +469,7 @@ if (typeof(mxLoadStylesheets) == 'undefined')
 // {
 // 	mxClient.basePath = '.';
 // }
-mxClient.basePath = '.';
+mxClient.basePath = '';
 /**
  * Variable: imageBasePath
  *

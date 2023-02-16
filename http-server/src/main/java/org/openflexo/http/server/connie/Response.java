@@ -43,18 +43,18 @@ import java.util.Objects;
  */
 public final class Response extends ConnieMessage {
 
-	public int id;
+	public long id;
 
 	public Object result;
 
 	public String error;
 
-	public Response(int id) {
+	public Response(long id) {
 		this(id, null, null);
 	}
 
 	public Response(
-			@JsonProperty("id") int id,
+			@JsonProperty("id") long id,
 			@JsonProperty("result") Object result,
 			@JsonProperty("error") String error
 	) {
@@ -71,7 +71,7 @@ public final class Response extends ConnieMessage {
 		return error(-1, error);
 	}
 
-	public static Response error(int id, String error) {
+	public static Response error(long id, String error) {
 		return new Response(id, null, error);
 	}
 }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>browser-amd-editor</title>
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+	</head>
+	<body>
+		<div id="container" style="position:absolute; width: 100%; height: 100%;"></div>
+
+		<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
+		<script src="/monaco-editor/min/vs/loader.js"></script>
+
+<!--		<script type="module" src="/js/test.js"></script>-->
+
+		<script>
+			var webSocket = new WebSocket("ws://localhost:8080/websocket")
+			function sendMessage(message) {
+				webSocket.send(message);
+			}
+
+			require.config({ paths: { vs: '/monaco-editor/min/vs' } });
+
+			require(['vs/editor/editor.main'], function () {
+				var editor = monaco.editor.create(document.getElementById('container'), {
+					value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+					language: 'javascript'
+				});
+
+
+
+				editor.getModel().onDidChangeContent((event) => {
+					// console.log(editor.getValue())
+					// evaluateBinding("leftInput.value", "rightInput.value")
+
+					// sendMessage(editor.getValue())
+					console.log(event.changes)
+				});
+
+			});
+
+		</script>
+	</body>
+</html>

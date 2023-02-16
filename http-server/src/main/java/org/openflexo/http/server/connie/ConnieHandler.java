@@ -35,12 +35,10 @@
 
 package org.openflexo.http.server.connie;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
+import jline.internal.Log;
 import org.openflexo.connie.Bindable;
 import org.openflexo.connie.BindingEvaluationContext;
 import org.openflexo.connie.DataBinding;
@@ -82,7 +80,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		return compiledBindings.computeIfAbsent(id, (bId) -> {
 			Bindable model = getOrCreateBindable(id);
 			DataBinding<Object> binding = new DataBinding<>(id.expression, model, Object.class, DataBinding.BindingDefinitionType.GET);
-			// binding.decode();
+//			binding.decode();
 			return binding;
 		});
 	}
@@ -195,12 +193,32 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 				if (message instanceof AssignationRequest) {
 					respondToAssignationRequest((AssignationRequest) message);
 				}
+				if (message instanceof SynchronisationRequest) {
+					for (ClientConnection client: clients){
+						if (!client.equals(this)){
+							client.respondToSynchronisationRequest((SynchronisationRequest) message);
+						}
+					}
+				}
 
 			} catch (DecodeException e) {
 				String message = "Can't decode request: " + e.getMessage();
 				System.out.println(message);
 				socket.write(Response.error(message).toBuffer());
 			}
+		}
+
+		private void respondToSynchronisationRequest(SynchronisationRequest request) {
+			String message 		= request.toString();
+			Response response 	= new Response(request.id, message, null);
+
+			Log.info(message);
+
+
+//			socket.write(message.getBytes());
+//			socket.write(response.toBuffer());
+
+			socket.writeTextMessage(message);
 		}
 
 		private void respondToEvaluationRequest(EvaluationRequest request) {
@@ -213,8 +231,12 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 					try {
 						Object value = binding.getBindingValue(context);
 						response.result = toJson(value, request.detailed);
-					} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
+					} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
+						System.out.println(error);
+						socket.write(Response.error(request.id, error).toBuffer());
+					} catch (ReflectiveOperationException e) {
+						String error = "Reflective Operation Exception " + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(Response.error(request.id, error).toBuffer());
 					}
@@ -234,9 +256,9 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		}
 
 		private void respondToListeningRequest(ListeningRequest request) {
-			Response response = new Response(request.id);
+			Response response 				= new Response(request.id);
 			RuntimeBindingId runtimeBinding = request.runtimeBinding;
-			DataBinding<Object> binding = getOrCreateBinding(runtimeBinding.binding);
+			DataBinding<Object> binding 	= getOrCreateBinding(runtimeBinding.binding);
 
 			if (binding.isValid()) {
 				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
@@ -246,10 +268,12 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 						Object value = binding.getBindingValue(context);
 						response.result = toJson(value, request.detailed);
 						;
-					} catch (TypeMismatchException | NullReferenceException | ReflectiveOperationException e) {
+					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
 						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
 						System.out.println(error);
 						socket.write(Response.error(request.id, error).toBuffer());
+					} catch (ReflectiveOperationException e) {
+						throw new RuntimeException(e);
 					}
 
 					BindingPathChangeListener<?> listener = listenedBindings.get(runtimeBinding);
@@ -275,46 +299,7 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 			else {
 				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
 			}
-
 			socket.write(response.toBuffer());
-			//			if (binding.isValid()) {
-//				BindingEvaluationContext context = getOrCreateContext(runtimeBinding);
-//				if (context != null) {
-//
-//					try {
-//						Object value = binding.getBindingValue(context);
-//						response.result = toJson(value, request.detailed);
-//						;
-//					} catch (TypeMismatchException | NullReferenceException | InvocationTargetException e) {
-//						String error = "Can't evaluate binding" + request.runtimeBinding + ": " + e;
-//						System.out.println(error);
-//						socket.write(Response.error(request.id, error).toBuffer());
-//					}
-//
-//					BindingValueChangeListener<?> listener = listenedBindings.get(runtimeBinding);
-//					if (listener == null) {
-//						listener = new BindingValueChangeListener<Object>(binding, context) {
-//							@Override
-//							public void bindingValueChanged(Object source, Object newValue) {
-//								sendChangeEvent(runtimeBinding, newValue);
-//							}
-//						};
-//						listener.startObserving();
-//					}
-//					listenedBindings.put(runtimeBinding, listener);
-//
-//				}
-//				else {
-//					String error = "Runtime url '" + request.runtimeBinding + "' is invalid";
-//					System.out.println(error);
-//					socket.write(Response.error(request.id, error).toBuffer());
-//				}
-//
-//			}
-//			else {
-//				response.error = "Invalid binding '" + binding.invalidBindingReason() + "'";
-//			}
-//			socket.write(response.toBuffer());
 		}
 
 		private void respondToAssignationRequest(AssignationRequest request) {
@@ -340,12 +325,15 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 									Object rightValue = valueBinding.getBindingValue(rightContext);
 									leftBinding.setBindingValue(rightValue, leftContext);
 									response.result = toJson(rightValue, request.detailed);
-								} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
+								} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 									String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
 											+ request.right.binding.expression + ": " + e;
 									socket.write(Response.error(request.id, error).toBuffer());
 								} catch (NotSettableContextException e) {
 									String error = "Can't set expression '" + request.left.binding + "'";
+									socket.write(Response.error(request.id, error).toBuffer());
+								} catch (ReflectiveOperationException e) {
+									String error = "Reflective Operation Exception '" + request.left.binding + "'";
 									socket.write(Response.error(request.id, error).toBuffer());
 								}
 							}
@@ -376,12 +364,15 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 							leftBinding.setBindingValue(newValue, leftContext);
 							response.result = toJson(newValue, request.detailed);
 
-						} catch (TypeMismatchException | ReflectiveOperationException | NullReferenceException e) {
+						} catch (TypeMismatchException | InvocationTargetException | NullReferenceException e) {
 							String error = "Can't evaluate  " + request.left.binding.expression + " and/or "
 									+ request.right.binding.expression + ": " + e;
 							socket.write(Response.error(request.id, error).toBuffer());
 						} catch (NotSettableContextException e) {
 							String error = "Can't set expression '" + request.left.binding + "'";
+							socket.write(Response.error(request.id, error).toBuffer());
+						} catch (ReflectiveOperationException e) {
+							String error = "Reflective Operation Exception '" + request.left.binding + "'";
 							socket.write(Response.error(request.id, error).toBuffer());
 						}
 
@@ -432,12 +423,4 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 		return taRouteService.getSerializer().toJson(object, detailed);
 	}
 
-//	private String handleCanvasXml(ListeningRequest request){
-//		String message = request.runtimeBinding.binding.expression;
-//
-//		Log.info(message);
-//		Log.info(JsonUtils.convertXmlToJson(message));
-//
-//		return JsonUtils.convertXmlToJson(message);
-//	}
 }

@@ -366,7 +366,7 @@ Format.prototype.refresh = function()
 	xml = mxUtils.getXml(this.editorUi.editor.getGraphXml());
 	window.localStorage.setItem('canvas_xml', xml);
 
-	// evaluateBinding(xml);
+	evaluateBinding(xml);
 	// console.log("--- refresh ---");
 	// Performance tweak: No refresh needed if not visible
 	if (this.container.style.width == '0px')

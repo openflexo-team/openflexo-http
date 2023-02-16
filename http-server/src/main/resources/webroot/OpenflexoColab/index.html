@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>browser-amd-editor</title>
+	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+</head>
+<body style="margin: 0px">
+<div id="container" style="position:absolute; width: 100%; height: 100%;"></div>
+
+<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
+<script src="/monaco-editor/min/vs/loader.js"></script>
+
+<script>
+	require.config({ paths: { vs: '/monaco-editor/min/vs' } });
+
+	require(['vs/editor/editor.main'], function () {
+		monaco.editor.setTheme("vs-dark")
+
+		var messageId
+		var changes;
+
+		function generateUniqueId() {
+			const timestamp = Date.now()
+			const random 	= Math.floor(Math.random() * 1000000)
+			const uniqueId 	= timestamp * 1000000 + random
+			messageId 		= uniqueId
+
+			return uniqueId
+		}
+
+		var port 		= window.location.port
+		var hostname 	= window.location.hostname
+
+		var webSocket 	= new WebSocket(`ws://${hostname}:${port}/websocket`)
+
+		function sendMessage() {
+			console.log("message sent")
+			let message =  {
+				"type": "SynchronisationRequest",
+				"id": generateUniqueId(),
+				"changes": changes
+			}
+
+			webSocket.send(JSON.stringify(message))
+		}
+
+		function debounce(cb, delay = 0) {
+			let timeout = 0
+			return function(...args) {
+				clearTimeout(timeout)
+				timeout = setTimeout(cb.bind(this, ...args), delay)
+			}
+		}
+
+		// const sendMessage = debounce(() => {
+		// 	console.log("message sent")
+		// 	let message =  {
+		// 		"type": "SynchronisationRequest",
+		// 		"id": generateUniqueId(),
+		// 		"changes": changes
+		// 	}
+		//
+		// 	webSocket.send(JSON.stringify(message))
+		//
+		// 	changes = []
+		// }, 450)
+
+
+
+		webSocket.onmessage = function (event) {
+			let changes = JSON.parse(event.data)
+
+			if(messageId !== changes.id) {
+				editor.executeEdits("source", changes.changes)
+				messageId 	= changes.id
+			}
+		}
+
+		var editor = monaco.editor.create(document.getElementById('container'), {
+			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+			language: 'javascript'
+		});
+
+		editor.onKeyUp(() => {
+			// sendMessage()
+
+			sendMessage()
+		})
+
+		editor.onDidPaste(() => {
+			sendMessage()
+		})
+
+		editor.getModel().onDidChangeContent((event) => {
+			// changes.push(...(event.changes))
+			changes = event.changes
+			editor.getId()
+
+		})
+	})
+
+</script>
+</body>
+</html>
+
+
+
