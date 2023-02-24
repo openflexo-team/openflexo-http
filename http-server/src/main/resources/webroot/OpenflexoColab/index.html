@@ -59,13 +59,14 @@
 		webSocket.send(JSON.stringify(message))
 	}
 
-	const sendChangeCursorMessage = (webSocket, cursor, position) => {
+	const sendChangeCursorMessage = (webSocket, cursor, position, init) => {
 		let message =  {
 			"type": "FmlEditorCursorChangeRequest",
 			"id": generateUniqueId(),
 			"label": cursor.label,
 			"position": position,
 			"color": cursor.color,
+			"init": init,
 		}
 		webSocket.send(JSON.stringify(message))
 	}
@@ -102,7 +103,7 @@
 		const webSocket		= new WebSocket(`ws://${hostname}:${port}/websocket`)
 
 		webSocket.onopen = () => {
-			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition())
+			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), true)
 			updateCursor(editor, remoteCursor)
 		}
 
@@ -129,7 +130,7 @@
 				const offset = editor.getModel().getOffsetAt(editor.getPosition())
 
 				remoteCursor.setOffset(offset)
-				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition())
+				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
 			}
 		})
 
@@ -137,14 +138,14 @@
 			const offset = editor.getModel().getOffsetAt(editor.getPosition())
 
 			remoteCursor.setOffset(offset)
-			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition())
+			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
 		})
 
 		editor.onKeyUp((e) => {
 			if (e.keyCode != 37 && e.keyCode != 38 && e.keyCode != 39 && e.keyCode != 40 && e.keyCode != 15 && e.keyCode != 16 && e.keyCode != 17 && e.keyCode != 18){
 				sendChangeCodeMessage(editor, webSocket)
 
-				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition())
+				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
 			}
 		})
 

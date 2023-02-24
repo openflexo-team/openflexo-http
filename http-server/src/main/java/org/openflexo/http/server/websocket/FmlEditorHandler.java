@@ -72,6 +72,15 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
                     }
                 }  else if (message instanceof FmlEditorCursorChangeRequest){
                     cursor = (FmlEditorCursorChangeRequest) message;
+
+                    if(cursor.init && !sourceCode.isEmpty()) {
+                        JsonObject response = new JsonObject();
+
+                        response.put("type", "code");
+                        response.put("content", sourceCode);
+
+                        socket.writeTextMessage(response.encodePrettily());
+                    }
                 }
 
                 List<FmlEditorCursorChangeRequest> cursors = clients.stream().map(EditorClient::getCursor).collect(Collectors.toList());
@@ -93,7 +102,7 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
 
             JsonObject response = new JsonObject();
             response.put("type", "code");
-            response.put("content", request.code);
+            response.put("content", sourceCode);
 
             // TODO : handle fml code here
 

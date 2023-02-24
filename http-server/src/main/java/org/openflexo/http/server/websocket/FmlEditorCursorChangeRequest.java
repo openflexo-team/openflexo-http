@@ -22,17 +22,20 @@ public class FmlEditorCursorChangeRequest extends ConnieMessage {
     public final String label;
     public final String color;
     public final Position position;
+    public final boolean init;
 
     public FmlEditorCursorChangeRequest(
             @JsonProperty("id") String id,
             @JsonProperty("label") String label,
             @JsonProperty("color") String color,
-            @JsonProperty("position") Position position
+            @JsonProperty("position") Position position,
+            @JsonProperty("init") boolean init
     ){
         this.id         = id;
         this.label      = label;
         this.color      = color;
         this.position   = position;
+        this.init       = init;
     }
 
     @Override
