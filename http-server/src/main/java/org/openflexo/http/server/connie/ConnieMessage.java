@@ -40,6 +40,8 @@ import com.fasterxml.jackson.annotation.JsonSubTypes.Type;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.Json;
+import org.openflexo.http.server.websocket.FmlEditorCursorChangeRequest;
+import org.openflexo.http.server.websocket.FmlEditorRequest;
 
 /**
  * Base class for exchanged messages with the WebSocket
@@ -54,6 +56,8 @@ import io.vertx.core.json.Json;
 	@Type(value = EvaluationRequest.class, name = "EvaluationRequest"),
 	@Type(value = AssignationRequest.class, name = "AssignationRequest"),
 	@Type(value = ListeningRequest.class, name = "ListeningRequest"),
+	@Type(value = FmlEditorCursorChangeRequest.class, name = "FmlEditorCursorChangeRequest"),
+	@Type(value = FmlEditorRequest.class, name = "FmlEditorRequest"),
 	@Type(value = Response.class, name = "Response"),
 	@Type(value = ChangeEvent.class, name = "ChangeEvent"),
 })
@@ -61,7 +65,7 @@ public class ConnieMessage {
 
 	public final String type = getClass().getSimpleName();
 
-	Buffer toBuffer() {
+	public Buffer toBuffer() {
 		return Buffer.buffer(Json.encode(this));
 	}
 

@@ -22,6 +22,7 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import org.openflexo.http.server.websocket.FmlEditorHandler;
 
 /**
  * HTTP Service for OpenFlexo
@@ -148,6 +149,7 @@ public class HttpService extends FlexoServiceImpl {
 		server = vertx.createHttpServer(serverOptions);
 		server.requestHandler(router);
 		server.webSocketHandler(new ConnieHandler(serviceManager, technologyAdapterRestService));
+		server.webSocketHandler(new FmlEditorHandler(serviceManager, technologyAdapterRestService));
 
 		logger.info("Starting HTTP Server on " + host + ":" + port);
 		server.listen(port, host);
