@@ -69,7 +69,7 @@ public class VirtualModelsController extends GenericController {
             FMLTechnologyAdapter fmlTechnologyAdapter   = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
             CompilationUnitResourceFactory factory      = fmlTechnologyAdapter.getCompilationUnitResourceFactory();
             FlexoProject<?> project                     = ProjectsRepository.getProjectById(virtualModelLibrary, validator.getProjectId());
-            VirtualModel newVirtualModel                = null;
+            VirtualModel newVirtualModel;
             CompilationUnitResource newVirtualModelResource;
 
             try {

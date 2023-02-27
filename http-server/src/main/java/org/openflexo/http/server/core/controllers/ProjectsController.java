@@ -178,7 +178,6 @@ public class ProjectsController extends GenericController {
         JsonArray errors            = validator.validate();
 
         if(validator.isValid()){
-            // TODO: add validation rule for the parent field
             RepositoryFolder parent = Helpers.getFolderFromPath(validator.getParent(), project);
 
             if (parent == null) {

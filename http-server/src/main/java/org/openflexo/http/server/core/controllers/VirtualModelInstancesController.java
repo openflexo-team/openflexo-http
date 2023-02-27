@@ -203,7 +203,7 @@ public class VirtualModelInstancesController extends GenericController{
      * @param context the routing context
      */
     public void behaviours(RoutingContext context) {
-        String vmid             = context.request().getParam("vmid");
+        String vmid = context.request().getParam("vmid");
 
         try {
             VirtualModel model  = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(vmid));

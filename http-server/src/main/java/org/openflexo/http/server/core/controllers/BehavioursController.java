@@ -406,17 +406,16 @@ public class BehavioursController extends GenericController {
         if (behaviour != null){
             VirtualModel model                  = behaviour.getDeclaringCompilationUnit().getVirtualModel();
             BehaviourActionsValidator validator = new BehaviourActionsValidator(context.request());
-            JsonArray errors                    = validator.validateAssignationAction(behaviour);
+            JsonArray errors                    = validator.validateAddToListAction(behaviour);
 
             if(validator.isValid()){
 
                 CreateEditionAction editionAction = CreateEditionAction.actionType.makeNewAction(behaviour.getControlGraph(), null, editor);
+
                 editionAction.setEditionActionClass(ExpressionAction.class);
                 editionAction.setAddToListAction(true);
                 editionAction.setListExpression(new DataBinding<>(validator.getLeft()));
-
                 editionAction.doAction();
-
 
                 ExpressionAction expressionAction = (ExpressionAction) editionAction.getBaseEditionAction();
                 expressionAction.setExpression(new DataBinding<>(validator.getRight()));
@@ -432,7 +431,6 @@ public class BehavioursController extends GenericController {
                 } else {
                     badRequest(context);
                 }
-
             } else {
                 badValidation(context, errors);
             }

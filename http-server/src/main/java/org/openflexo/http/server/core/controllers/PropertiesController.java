@@ -187,13 +187,13 @@ public class PropertiesController extends GenericController {
      * @param context the routing context
      */
     public void addModelSlot(RoutingContext context) {
-        String id                   = context.request().getParam("id").trim();
-        FlexoConcept concept        = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
-        PropertiesValidator validator = new PropertiesValidator(context.request(), virtualModelLibrary);
-        JsonArray errors            = validator.validateModelSlot();
+        String id                       = context.request().getParam("id").trim();
+        FlexoConcept concept            = virtualModelLibrary.getFlexoConcept(IdUtils.decodeId(id));
+        PropertiesValidator validator   = new PropertiesValidator(context.request(), virtualModelLibrary);
+        JsonArray errors                = validator.validateModelSlot();
 
         if(validator.isValid()){
-            CreateModelSlot modelSlot = CreateModelSlot.actionType.makeNewAction(concept, null, editor);
+            CreateModelSlot modelSlot   = CreateModelSlot.actionType.makeNewAction(concept, null, editor);
 
             modelSlot.setModelSlotClass(FMLRTVirtualModelInstanceModelSlot.class);
             modelSlot.setTechnologyAdapter(validator.getTechnologyAdapter());

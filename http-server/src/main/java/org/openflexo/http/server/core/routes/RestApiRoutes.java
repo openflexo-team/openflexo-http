@@ -121,8 +121,6 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/prj/").produces(JSON).handler(prjController::add);
         router.post("/projects/upload").produces(JSON).handler(prjController::upload);
         router.post("/prj/upload").produces(JSON).handler(prjController::upload);
-        router.patch("/projects/:id/").produces(JSON).handler(prjController::edit);
-        router.patch("/prj/:id/").produces(JSON).handler(prjController::edit);
         router.delete("/projects/:id").produces(JSON).handler(prjController::delete);
         router.delete("/prj/:id").produces(JSON).handler(prjController::delete);
         router.get("/projects/:id/resources/").produces(JSON).handler(prjController::resources);
@@ -143,8 +141,6 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/vm/:id").produces(JSON).handler(vmController::get);
         router.post("/virtual-models/").produces(JSON).handler(vmController::add);
         router.post("/vm/").produces(JSON).handler(vmController::add);
-        router.patch("/virtual-models/:id/").produces(JSON).handler(vmController::edit);
-        router.patch("/vm/:id/").produces(JSON).handler(vmController::edit);
         router.delete("/virtual-models/:id").produces(JSON).handler(vmController::delete);
         router.delete("/vm/:id").produces(JSON).handler(vmController::delete);
 
@@ -237,10 +233,6 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/projects/:prjid/virtual-model/:vmid/instances/:id/behaviours/:signature/execute").produces(JSON).handler(vmiController::executeBehaviour);
         router.post("/prj/:prjid/vm/:vmid/instances/:id/bhv/:signature/exe").produces(JSON).handler(vmiController::executeBehaviour);
 
-        router.patch("/projects/:prjid/virtual-model/:vmid/instances/:id/").produces(JSON).handler(vmiController::edit);
-        router.patch("/prj/:prjid/vm/:vmid/instances/:id/").produces(JSON).handler(vmiController::edit);
-        router.delete("/projects/:prjid/virtual-model/:vmid/instances/:id/").produces(JSON).handler(vmiController::delete);
-        router.delete("/prj/:prjid/vm/:vmid/instances/:id/").produces(JSON).handler(vmiController::delete);
 
         // Concept Instances
         router.post("/concept-instances/").produces(JSON).handler(cpiController::add);
@@ -249,8 +241,6 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/cpi/").produces(JSON).handler(cpiController::list);
         router.get("/concept-instances/:id").produces(JSON).handler(cpiController::get);
         router.get("/cpi/:id").produces(JSON).handler(cpiController::get);
-        router.patch("/concept-instances/:id/").produces(JSON).handler(cpiController::edit);
-        router.patch("/cpi/:id/").produces(JSON).handler(cpiController::edit);
         router.delete("/concept-instances/:id/").produces(JSON).handler(cpiController::delete);
         router.delete("/cpi/:id/").produces(JSON).handler(cpiController::delete);
 
