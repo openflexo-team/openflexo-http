@@ -11,10 +11,10 @@
 
 <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
 
-<script>var require = {paths: {'vs': '/monaco-editor/min/vs'}};</script>
-<script src="/monaco-editor/min/vs/loader.js"></script>
-<script src="/monaco-editor/min/vs/editor/editor.main.nls.js"></script>
-<script src="/monaco-editor/min/vs/editor/editor.main.js"></script>
+<script>var require = {paths: {'vs': '/assets/min/vs'}};</script>
+<script src="/assets/min/vs/loader.js"></script>
+<script src="/assets/min/vs/editor/editor.main.nls.js"></script>
+<script src="/assets/min/vs/editor/editor.main.js"></script>
 <script src="/js/monaco-collab-ext.js"></script>
 
 <script>
@@ -82,7 +82,7 @@
 		})
 	}
 
-	require.config({ paths: { vs: '/monaco-editor/min/vs' } })
+	require.config({ paths: { vs: '/assets/min/vs' } })
 
 	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
 		const editor = monaco.editor.create(document.getElementById('container'), {
