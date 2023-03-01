@@ -57,6 +57,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.core.http.WebSocketFrame;
 import io.vertx.core.json.DecodeException;
+import org.openflexo.http.server.websocket.requests.GraphEditorXmlChangeRequest;
 
 //import org.openflexo.toolbox.JsonUtils;
 /**
@@ -199,6 +200,10 @@ public class ConnieHandler implements Handler<ServerWebSocket> {
 							client.respondToSynchronisationRequest((SynchronisationRequest) message);
 						}
 					}
+				}
+				if (message instanceof GraphEditorXmlChangeRequest) {
+
+					Log.info("test");
 				}
 
 			} catch (DecodeException e) {

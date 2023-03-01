@@ -9,8 +9,10 @@ import io.vertx.core.json.JsonObject;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.http.server.connie.*;
 import org.openflexo.http.server.core.TechnologyAdapterRouteService;
+import org.openflexo.http.server.websocket.requests.FmlEditorCursorChangeRequest;
+import org.openflexo.http.server.websocket.requests.FmlEditorRequest;
+import org.openflexo.http.server.websocket.requests.GraphEditorXmlChangeRequest;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,41 +25,55 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
 
     private final FlexoServiceManager serviceManager;
     private final TechnologyAdapterRouteService taRouteService;
-    private final Set<EditorClient> clients = new HashSet<>();
+    private final Set<WebSocketClient> clients = new HashSet<>();
     private String sourceCode;
+    private String xmlCanvas;
 
     public FmlEditorHandler(FlexoServiceManager serviceManager, TechnologyAdapterRouteService taRouteService) {
         this.serviceManager = serviceManager;
         this.taRouteService = taRouteService;
     }
 
-    private void register(EditorClient client) {
+    private void register(WebSocketClient client) {
         clients.add(client);
     }
 
-    private void unregister(EditorClient client) {
+    private void unregister(WebSocketClient client) {
         clients.remove(client);
     }
 
     @Override
     public void handle(ServerWebSocket socket) {
-        register(new EditorClient(socket));
+        register(new WebSocketClient(socket));
     }
 
-    private class EditorClient {
+    private class WebSocketClient {
         private final ServerWebSocket socket;
         private FmlEditorCursorChangeRequest cursor;
+        private String type;
 
         public FmlEditorCursorChangeRequest getCursor() {
             return cursor;
         }
 
-        public EditorClient(ServerWebSocket socket) {
+        public WebSocketClient(ServerWebSocket socket) {
             this.socket = socket;
 
             socket.frameHandler(this::handleFrame);
             socket.exceptionHandler(this::exceptionHandler);
             socket.endHandler(this::endHandler);
+
+            if (this.socket.path().startsWith("/FmlEditor")) {
+                type = "FmlEditor";
+
+                this.respondToFmlEditionRequest(null);
+            } else if (this.socket.path().startsWith("/GraphEditor")) {
+                type = "GraphEditor";
+                
+                this.respondToGraphXmlChangeRequest(null);
+            } else {
+                type = "other";
+            }
         }
 
         private void handleFrame(WebSocketFrame frame) {
@@ -65,15 +81,24 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
                 ConnieMessage message = ConnieMessage.read(frame.textData());
 
                 if (message instanceof FmlEditorRequest) {
-                    for (EditorClient client: clients){
-                        if (!client.equals(this)){
+                    sourceCode = ((FmlEditorRequest) message).code;
+                    for (WebSocketClient client: clients){
+                        if (!client.equals(this) && client.type.equals("FmlEditor")){
                             client.respondToFmlEditionRequest((FmlEditorRequest) message);
+                        }
+                    }
+
+                    List<FmlEditorCursorChangeRequest> cursors = clients.stream().map(WebSocketClient::getCursor).collect(Collectors.toList());
+
+                    for (WebSocketClient client: clients){
+                        if (client.type.equals("FmlEditor")){
+                            client.respondToCursorChangeRequest(cursors);
                         }
                     }
                 }  else if (message instanceof FmlEditorCursorChangeRequest){
                     cursor = (FmlEditorCursorChangeRequest) message;
 
-                    if(cursor.init && !sourceCode.isEmpty()) {
+                    if(cursor != null && cursor.init && !sourceCode.isEmpty()) {
                         JsonObject response = new JsonObject();
 
                         response.put("type", "code");
@@ -81,14 +106,22 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
 
                         socket.writeTextMessage(response.encodePrettily());
                     }
+
+                    List<FmlEditorCursorChangeRequest> cursors = clients.stream().map(WebSocketClient::getCursor).collect(Collectors.toList());
+
+                    for (WebSocketClient client: clients){
+                        if (client.type.equals("FmlEditor")) {
+                            client.respondToCursorChangeRequest(cursors);
+                        }
+                    }
+                }  else if (message instanceof GraphEditorXmlChangeRequest){
+                    xmlCanvas = ((GraphEditorXmlChangeRequest) message).content;
+                    for (WebSocketClient client: clients){
+                        if (!client.equals(this) && client.type.equals("GraphEditor")){
+                            client.respondToGraphXmlChangeRequest((GraphEditorXmlChangeRequest) message);
+                        }
+                    }
                 }
-
-                List<FmlEditorCursorChangeRequest> cursors = clients.stream().map(EditorClient::getCursor).collect(Collectors.toList());
-
-                for (EditorClient client: clients){
-                    client.respondToCursorChangeRequest(cursors);
-                }
-
             } catch (DecodeException e) {
                 String message = "Can't decode request: " + e.getMessage();
                 System.out.println(message);
@@ -97,8 +130,9 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
         }
         
         private void respondToFmlEditionRequest(FmlEditorRequest request) {
-            sourceCode = request.code;
-//            Response response 	= new Response(request.id, message, null);
+            if(request != null && !request.code.isEmpty()){
+                sourceCode = request.code;
+            }
 
             JsonObject response = new JsonObject();
             response.put("type", "code");
@@ -120,7 +154,18 @@ public class FmlEditorHandler  implements Handler<ServerWebSocket> {
             response.put("type", "cursor");
             response.put("content", message);
 
-            // TODO : handle fml code here
+            socket.writeTextMessage(response.encodePrettily());
+        }
+        
+        private void respondToGraphXmlChangeRequest(GraphEditorXmlChangeRequest message) {
+            if(message != null && !message.content.isEmpty()){
+                xmlCanvas = message.content;
+            }
+            
+            JsonObject response = new JsonObject();
+
+            response.put("type", "xml");
+            response.put("content", xmlCanvas);
 
             socket.writeTextMessage(response.encodePrettily());
         }

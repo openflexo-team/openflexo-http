@@ -181,7 +181,6 @@ public class OpenFlexoServer extends AbstractVerticle {
 								default:
 									System.err.println("Unknown short option '" + arg.charAt(j) + "'");
 									System.exit(1);
-
 							}
 						}
 					}

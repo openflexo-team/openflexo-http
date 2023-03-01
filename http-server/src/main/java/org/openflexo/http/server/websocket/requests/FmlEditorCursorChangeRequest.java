@@ -1,4 +1,4 @@
-package org.openflexo.http.server.websocket;
+package org.openflexo.http.server.websocket.requests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.vertx.core.json.JsonObject;

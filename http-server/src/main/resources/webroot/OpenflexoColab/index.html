@@ -3,25 +3,25 @@
 <head>
 	<title>Openflexo Colab</title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<link rel="stylesheet" href="/css/monaco-collab-ext.css">
-	<link rel="stylesheet" href="/css/example.css">
+	<link rel="stylesheet" href="/assets/colab/css/monaco-collab-ext.css">
+	<link rel="stylesheet" href="/assets/colab/css/example.css">
 </head>
 <body style="margin: 0px">
 <div id="container" style="position:absolute; width: 100%; height: 100%;"></div>
 
 <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
 
-<script>var require = {paths: {'vs': '/assets/min/vs'}};</script>
-<script src="/assets/min/vs/loader.js"></script>
-<script src="/assets/min/vs/editor/editor.main.nls.js"></script>
-<script src="/assets/min/vs/editor/editor.main.js"></script>
-<script src="/js/monaco-collab-ext.js"></script>
+<script>var require = {paths: {'vs': '/assets/colab/min/vs'}};</script>
+<script src="/assets/colab/min/vs/loader.js"></script>
+<script src="/assets/colab/min/vs/editor/editor.main.nls.js"></script>
+<script src="/assets/colab/min/vs/editor/editor.main.js"></script>
+<script src="/assets/colab/js/monaco-collab-ext.js"></script>
 
 <script>
-	let name = prompt("Please enter your name", "");
+	let name = prompt("Please enter your name", "")
 
 	if (name == null || name == "") {
-		name = "User 1";
+		name = "User 1"
 	}
 
 	const port 		= window.location.port
@@ -30,7 +30,7 @@
 	var changes
 
 	const getCursorColor = () => {
-		return "#" + Math.floor(Math.random()*16777215).toString(16);
+		return "#" + Math.floor(Math.random()*16777215).toString(16)
 	}
 
 	const generateUniqueId = () => {
@@ -82,26 +82,22 @@
 		})
 	}
 
-	require.config({ paths: { vs: '/assets/min/vs' } })
+	require.config({ paths: { vs: '/assets/colab/min/vs' } })
 
 	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
 		const editor = monaco.editor.create(document.getElementById('container'), {
-			value: ['function x() {', '\tconsole.log("Hello world!");', '}'].join('\n'),
+			value: ['function x() {', '\tconsole.log("Hello world!")', '}'].join('\n'),
 			language: 'javascript',
 			theme: 'vs-dark'
 		})
-
-		console.log("init cursor : " + thisCursor.id)
 
 		const remoteCursorManager = new MonacoCollabExt.RemoteCursorManager({
 			editor: editor,
 			tooltips: true,
 			tooltipDuration: 2
 		})
-
 		const remoteCursor	= remoteCursorManager.addCursor(thisCursor.id, thisCursor.color, thisCursor.label)
-		const webSocket		= new WebSocket(`ws://${hostname}:${port}/websocket`)
-
+		const webSocket		= new WebSocket(`ws://${hostname}:${port}/FmlEditor`)
 		webSocket.onopen = () => {
 			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), true)
 			updateCursor(editor, remoteCursor)
