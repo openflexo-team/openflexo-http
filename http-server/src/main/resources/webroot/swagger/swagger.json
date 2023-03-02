@@ -687,6 +687,34 @@
         "x-accepts" : "application/json"
       }
     },
+    "/virtual-models/{id}/fml" : {
+      "get" : {
+        "tags" : [ "VirtualModel" ],
+        "summary" : "Get virtual model FML representation",
+        "operationId" : "getVirtualModelFml",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "ID of virtual model to return",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation"
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
     "/virtual-models/{vmid}/enums/" : {
       "get" : {
         "tags" : [ "Enum" ],

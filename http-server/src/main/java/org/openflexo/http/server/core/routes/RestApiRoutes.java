@@ -143,6 +143,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/vm/").produces(JSON).handler(vmController::add);
         router.delete("/virtual-models/:id").produces(JSON).handler(vmController::delete);
         router.delete("/vm/:id").produces(JSON).handler(vmController::delete);
+        router.get("/virtual-models/:id/fml").produces(JSON).handler(vmController::fml);
+        router.get("/vm/:id/fml").produces(JSON).handler(vmController::fml);
 
         // Enums
         router.get("/virtual-models/:vmid/enums/").produces(JSON).handler(enmController::list);

@@ -38,19 +38,19 @@ public class VirtualModelsController extends GenericController {
      * @param virtualModelLibrary the virtual model library
      */
     public VirtualModelsController(VirtualModelLibrary virtualModelLibrary) {
-        this.virtualModelLibrary    = virtualModelLibrary;
-        editor                      = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
+        this.virtualModelLibrary = virtualModelLibrary;
+        editor = Helpers.getDefaultFlexoEditor(virtualModelLibrary);
     }
 
     /**
      * It creates a JSON array, iterates over the virtual models in the library, and adds each virtual model to the array
      *
      * @param context The routing context is the object that contains all the information about the request and the
-     * response.
+     *                response.
      */
     public void list(RoutingContext context) {
         JsonArray result = new JsonArray();
-        for (FMLCompilationUnit compilationUnit: virtualModelLibrary.getLoadedCompilationUnits()) {
+        for (FMLCompilationUnit compilationUnit : virtualModelLibrary.getLoadedCompilationUnits()) {
             result.add(JsonSerializer.virtualModelSerializer(compilationUnit.getVirtualModel()));
         }
         context.response().end(result.encodePrettily());
@@ -62,19 +62,19 @@ public class VirtualModelsController extends GenericController {
      * @param context the routing context
      */
     public void add(RoutingContext context) {
-        VirtualModelsValidator validator    = new VirtualModelsValidator(context.request(), virtualModelLibrary);
-        JsonArray errors                    = validator.validate();
+        VirtualModelsValidator validator = new VirtualModelsValidator(context.request(), virtualModelLibrary);
+        JsonArray errors = validator.validate();
 
-        if(validator.isValid()){
-            FMLTechnologyAdapter fmlTechnologyAdapter   = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
-            CompilationUnitResourceFactory factory      = fmlTechnologyAdapter.getCompilationUnitResourceFactory();
-            FlexoProject<?> project                     = ProjectsRepository.getProjectById(virtualModelLibrary, validator.getProjectId());
+        if (validator.isValid()) {
+            FMLTechnologyAdapter fmlTechnologyAdapter = virtualModelLibrary.getServiceManager().getTechnologyAdapterService().getTechnologyAdapter(FMLTechnologyAdapter.class);
+            CompilationUnitResourceFactory factory = fmlTechnologyAdapter.getCompilationUnitResourceFactory();
+            FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, validator.getProjectId());
             VirtualModel newVirtualModel;
             CompilationUnitResource newVirtualModelResource;
 
             try {
-                String virtualModelUri  = Helpers.createVirtualModelUri(project, validator.getName());
-                String path             = validator.getPath();
+                String virtualModelUri = Helpers.createVirtualModelUri(project, validator.getName());
+                String path = validator.getPath();
                 RepositoryFolder folder = null;
 
                 if (path != null && !path.isEmpty()) {
@@ -86,13 +86,13 @@ public class VirtualModelsController extends GenericController {
                 }
 
                 newVirtualModelResource = factory.makeTopLevelCompilationUnitResource(validator.getName(), virtualModelUri, folder, true);
-                newVirtualModel         = newVirtualModelResource.getLoadedResourceData().getVirtualModel();
+                newVirtualModel = newVirtualModelResource.getLoadedResourceData().getVirtualModel();
 
                 newVirtualModel.setDescription(validator.getDescription());
                 newVirtualModel.setVisibility(validator.getVisibility());
                 newVirtualModel.setAbstract(validator.isAbstract());
 
-                if(validator.getParent() != null){
+                if (validator.getParent() != null) {
                     newVirtualModel.addToParentFlexoConcepts(validator.getParent());
                 }
 
@@ -116,7 +116,7 @@ public class VirtualModelsController extends GenericController {
         String id = context.request().getParam("id").trim();
         try {
             VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            if (model != null){
+            if (model != null) {
                 context.response().end(JsonSerializer.virtualModelSerializer(model).encodePrettily());
             } else {
                 notFound(context);
@@ -127,7 +127,8 @@ public class VirtualModelsController extends GenericController {
         }
     }
 
-    public void edit(RoutingContext context) {}
+    public void edit(RoutingContext context) {
+    }
 
     /**
      * It deletes a virtual model
@@ -138,11 +139,31 @@ public class VirtualModelsController extends GenericController {
         String id = context.request().getParam("id").trim();
 
         try {
-            VirtualModel model          = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
-            DeleteVirtualModel action   = DeleteVirtualModel.actionType.makeNewAction(model, null, editor);
+            VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            DeleteVirtualModel action = DeleteVirtualModel.actionType.makeNewAction(model, null, editor);
             action.doAction();
 
             emptyResponse(context);
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It takes the id of a virtual model, loads it, and returns its FML representation
+     *
+     * @param context the context of the request
+     */
+    public void fml(RoutingContext context) {
+        String id = context.request().getParam("id").trim();
+        try {
+            VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            if (model != null) {
+                context.response().end(model.getFMLPrettyPrint());
+            } else {
+                notFound(context);
+            }
+
         } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
             notFound(context);
         }
