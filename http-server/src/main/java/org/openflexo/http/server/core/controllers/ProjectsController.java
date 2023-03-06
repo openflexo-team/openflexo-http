@@ -7,15 +7,12 @@ import io.vertx.ext.web.FileUpload;
 import io.vertx.ext.web.RoutingContext;
 
 import jline.internal.Log;
-import org.apache.commons.io.FileUtils;
 import org.openflexo.foundation.DefaultFlexoEditor;
 import org.openflexo.foundation.FlexoEditor;
 import org.openflexo.foundation.FlexoException;
 import org.openflexo.foundation.FlexoProject;
 import org.openflexo.foundation.action.AddRepositoryFolder;
 import org.openflexo.foundation.action.CreateProject;
-import org.openflexo.foundation.fml.FMLTechnologyAdapter;
-import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.VirtualModelLibrary;
 import org.openflexo.foundation.project.ProjectLoader;
 import org.openflexo.foundation.resource.*;
@@ -27,20 +24,13 @@ import org.openflexo.http.server.core.repositories.ProjectsRepository;
 import org.openflexo.http.server.core.serializers.JsonSerializer;
 import org.openflexo.http.server.core.validators.FolderValidator;
 import org.openflexo.http.server.core.validators.ProjectsValidator;
-import org.openflexo.http.server.core.validators.ResourceCentersValidator;
-import org.openflexo.http.server.core.validators.VirtualModelsValidator;
 import org.openflexo.http.server.json.JsonUtils;
 import org.openflexo.http.server.util.IdUtils;
-import org.openflexo.toolbox.ZipUtils;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.*;
 
 /**
@@ -161,7 +151,8 @@ public class ProjectsController extends GenericController {
         JsonArray result        = new JsonArray();
 
         for (RepositoryFolder folder: project.getRootFolder().getChildren()) {
-            result.add(JsonSerializer.folderSerializer(folder));
+
+            result.add(JsonSerializer.repositoryFolderSerializer(folder));
         }
         context.response().end(result.encodePrettily());
     }
@@ -188,7 +179,7 @@ public class ProjectsController extends GenericController {
             addRepositoryFolder.setNewFolderName(validator.getName());
             addRepositoryFolder.doAction();
 
-            context.response().end(JsonSerializer.folderSerializer(addRepositoryFolder.getNewFolder()).encodePrettily());
+            context.response().end(JsonSerializer.repositoryFolderSerializer(addRepositoryFolder.getNewFolder()).encodePrettily());
         } else {
             badValidation(context, errors);
         }
@@ -214,7 +205,7 @@ public class ProjectsController extends GenericController {
                 FlexoResourceCenter<?> resourceCenter   = projectLoader.getServiceManager().getResourceCenterService().getFlexoResourceCenter(IdUtils.decodeId(validator.getRcId()));
                 
                 try {
-                    String targetDir 	= resourceCenter.getRootFolder().getFullQualifiedPath();
+                    String targetDir    = resourceCenter.getRootFolder().getFullQualifiedPath();
                     File[] files        = Helpers.unzipFile(targetDir, uploadedFile);
 
                     for (File containedResource: files) {
@@ -275,7 +266,6 @@ public class ProjectsController extends GenericController {
         JsonObject results      = new JsonObject();
 
         if (project != null){
-
             for (FlexoResource<?> resource : project.getAllResources()) {
                 try {
                     resource.loadResourceData();
@@ -287,6 +277,44 @@ public class ProjectsController extends GenericController {
 
             results.put("Loaded", loaded);
             results.put("Failed", failed);
+            context.response().end(results.encodePrettily());
+        } else {
+            notFound(context);
+        }
+    }
+
+    /**
+     * It takes a project id, finds the project, then iterates through the project's root folder and adds each subfolder to
+     * the project
+     *
+     * @param context the routing context
+     */
+    public void loadFolders(RoutingContext context){
+        String id               = context.request().getParam("id").trim();
+        FlexoProject<?> project = ProjectsRepository.getProjectById(virtualModelLibrary, id);
+        JsonArray results       = new JsonArray();
+
+        if (project != null){
+            Path startDir = Paths.get(project.getRootFolder().getFullQualifiedPath());
+            try {
+                DirectoryStream<Path> stream = Files.newDirectoryStream(startDir);
+
+                for (Path path : stream) {
+                    if (Files.isDirectory(path)) {
+                        RepositoryFolder parent = project.getRootFolder();
+
+                        AddRepositoryFolder addRepositoryFolder = AddRepositoryFolder.actionType.makeNewAction(parent, null, editor);
+
+                        addRepositoryFolder.setNewFolderName(path.getFileName().toString());
+                        addRepositoryFolder.doAction();
+
+                        results.add(JsonSerializer.repositoryFolderSerializer(addRepositoryFolder.getNewFolder()));
+                    }
+                }
+            } catch (Exception e) {
+                badRequest(context);
+            }
+
             context.response().end(results.encodePrettily());
         } else {
             notFound(context);

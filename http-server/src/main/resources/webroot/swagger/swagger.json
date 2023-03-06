@@ -565,6 +565,35 @@
         "x-accepts" : "application/json"
       }
     },
+    "/projects/{id}/folders/load" : {
+      "post" : {
+        "tags" : [ "Resource" ],
+        "summary" : "Loads all project folders",
+        "operationId" : "loadProjectFolders",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "id",
+          "in" : "path",
+          "description" : "ID of project to use",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Successful operation",
+            "schema" : {
+              "type" : "array"
+            }
+          },
+          "404" : {
+            "description" : "Not found"
+          }
+        },
+        "security" : [],
+        "x-contentType" : "application/json",
+        "x-accepts" : "application/json"
+      }
+    },
     "/virtual-models/" : {
       "get" : {
         "tags" : [ "VirtualModel" ],

@@ -12,7 +12,6 @@ import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
 import org.openflexo.foundation.fml.rt.VirtualModelInstance;
 import org.openflexo.foundation.fml.rt.logging.FMLLogRecord;
 import org.openflexo.foundation.resource.*;
-import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResource;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterResourceRepository;
@@ -23,6 +22,7 @@ import org.openflexo.http.server.util.IdUtils;
 import org.openflexo.http.server.util.ResourceRestService;
 import org.openflexo.http.server.util.ResourceUtils;
 
+import java.nio.file.Path;
 import java.util.*;
 
 /**
@@ -458,7 +458,7 @@ public class JsonSerializer {
      * @param folder The folder object to be serialized.
      * @return A JsonObject
      */
-    public static JsonObject folderSerializer(RepositoryFolder folder) {
+    public static JsonObject repositoryFolderSerializer(RepositoryFolder folder) {
         JsonObject result = new JsonObject();
 
         result.put("name", folder.getName());

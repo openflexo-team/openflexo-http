@@ -133,6 +133,8 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.get("/prj/:id/fdr/").produces(JSON).handler(prjController::folders);
         router.post("/projects/:id/folders/").produces(JSON).handler(prjController::addFolder);
         router.post("/prj/:id/fdr/").produces(JSON).handler(prjController::addFolder);
+        router.post("/projects/:id/folders/load").produces(JSON).handler(prjController::loadFolders);
+        router.post("/prj/:id/fdr/load").produces(JSON).handler(prjController::loadFolders);
 
         // Virtual Models
         router.get("/virtual-models/").produces(JSON).handler(vmController::list);

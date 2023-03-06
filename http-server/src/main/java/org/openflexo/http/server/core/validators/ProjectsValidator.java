@@ -45,7 +45,7 @@ public class ProjectsValidator extends GenericValidator{
      */
     public String validateResourceCenterID(String id) throws BadValidationException {
         if(id == null || id.isEmpty()){
-            throw new BadValidationException("Field required");
+            throw new BadValidationException("Invalid value");
         } else {
             if(ResourceCentersRepository.getResourceCenterById(projectLoader, id) == null){
                 throw new BadValidationException("Field required");
