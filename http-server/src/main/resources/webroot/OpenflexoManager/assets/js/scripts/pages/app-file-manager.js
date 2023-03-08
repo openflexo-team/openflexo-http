@@ -101,44 +101,44 @@ $(function () {
   }
 
   // Files Treeview
-  if (filesTreeView.length) {
-    filesTreeView.jstree({
-      core: {
-        themes: {
-          dots: false
-        },
-        data: [
-          {
-            text: 'My Drive',
-            children: [
-              {
-                text: 'photos',
-                children: [
-                  {
-                    text: 'image-1.jpg',
-                    type: 'jpg'
-                  },
-                  {
-                    text: 'image-2.jpg',
-                    type: 'jpg'
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      plugins: ['types'],
-      types: {
-        default: {
-          icon: 'far fa-folder font-medium-1'
-        },
-        jpg: {
-          icon: 'far fa-file-image text-info font-medium-1'
-        }
-      }
-    });
-  }
+  // if (filesTreeView.length) {
+  //   filesTreeView.jstree({
+  //     core: {
+  //       themes: {
+  //         dots: false
+  //       },
+  //       data: [
+  //         {
+  //           text: 'My Drive',
+  //           children: [
+  //             {
+  //               text: 'photos',
+  //               children: [
+  //                 {
+  //                   text: 'image-1.jpg',
+  //                   type: 'jpg'
+  //                 },
+  //                 {
+  //                   text: 'image-2.jpg',
+  //                   type: 'jpg'
+  //                 }
+  //               ]
+  //             }
+  //           ]
+  //         }
+  //       ]
+  //     },
+  //     plugins: ['types'],
+  //     types: {
+  //       default: {
+  //         icon: 'far fa-folder font-medium-1'
+  //       },
+  //       jpg: {
+  //         icon: 'far fa-file-image text-info font-medium-1'
+  //       }
+  //     }
+  //   });
+  // }
 
   // click event for show sidebar
   sidebarToggler.on('click', function () {

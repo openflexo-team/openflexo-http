@@ -2,18 +2,18 @@
 <html class="dark-layout loading" lang="en" data-textdirection="ltr">
 <!-- BEGIN: Head-->
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=0,minimal-ui">
     <title>Openflexo Manager</title>
     <link rel="apple-touch-icon" href="/OpenflexoManager/assets/images/ico/apple-icon-120.png">
     <link rel="shortcut icon" type="image/x-icon" href="/OpenflexoManager/assets/images/ico/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,3000,4000,5000,6001,4001,5001,600" rel="stylesheet">
 
     <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="/OpenflexoManager/assets/vendors/css/vendors.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendors/css/vendors.min.css">
     <link rel="stylesheet" type="text/css" href="/OpenflexoManager/assets/fonts/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" type="text/css" href="/OpenflexoManager/assets/vendors/css/extensions/jstree.min.css">
+    <link rel="stylesheet" type="text/css" href="/assets/vendors/css/extensions/jstree.min.css">
     <!-- END: Vendor CSS-->
 
     <!-- BEGIN: Theme CSS-->
@@ -47,7 +47,7 @@
                     <div class="search-data">
                         <p class="search-data-title mb-0">Two new item submitted</p><small class="text-muted">Marketing Manager</small>
                     </div>
-                </div><small class="search-data-size me-50 text-muted">&apos;17kb</small>
+                </div><small class="search-data-size me-50 text-muted">&apos17kb</small>
             </a></li>
         <li class="auto-suggestion"><a class="d-flex align-items-center justify-content-between w-100" href="app-file-manager.html">
                 <div class="d-flex">
@@ -55,7 +55,7 @@
                     <div class="search-data">
                         <p class="search-data-title mb-0">52 JPG file Generated</p><small class="text-muted">FontEnd Developer</small>
                     </div>
-                </div><small class="search-data-size me-50 text-muted">&apos;11kb</small>
+                </div><small class="search-data-size me-50 text-muted">&apos11kb</small>
             </a></li>
         <li class="auto-suggestion"><a class="d-flex align-items-center justify-content-between w-100" href="app-file-manager.html">
                 <div class="d-flex">
@@ -63,7 +63,7 @@
                     <div class="search-data">
                         <p class="search-data-title mb-0">25 PDF File Uploaded</p><small class="text-muted">Digital Marketing Manager</small>
                     </div>
-                </div><small class="search-data-size me-50 text-muted">&apos;150kb</small>
+                </div><small class="search-data-size me-50 text-muted">&apos150kb</small>
             </a></li>
         <li class="auto-suggestion"><a class="d-flex align-items-center justify-content-between w-100" href="app-file-manager.html">
                 <div class="d-flex">
@@ -71,7 +71,7 @@
                     <div class="search-data">
                         <p class="search-data-title mb-0">Anna_Strong.doc</p><small class="text-muted">Web Designer</small>
                     </div>
-                </div><small class="search-data-size me-50 text-muted">&apos;256kb</small>
+                </div><small class="search-data-size me-50 text-muted">&apos256kb</small>
             </a></li>
         <li class="d-flex align-items-center"><a href="#">
                 <h6 class="section-label mt-75 mb-0">Members</h6>
@@ -255,16 +255,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="btn-group view-toggle ms-50" role="group">
-                                        <input type="radio" class="btn-check" name="view-btn-radio" data-view="grid" id="gridView" checked autocomplete="off" />
-                                        <label class="btn btn-outline-primary p-50 btn-sm" for="gridView">
-                                            <i data-feather="grid"></i>
-                                        </label>
-                                        <input type="radio" class="btn-check" name="view-btn-radio" data-view="list" id="listView" autocomplete="off" />
-                                        <label class="btn btn-outline-primary p-50 btn-sm" for="listView">
-                                            <i data-feather="list"></i>
-                                        </label>
-                                    </div>
+
                                 </div>
                             </div>
                             <!-- search area ends here -->
@@ -276,7 +267,7 @@
                                         <div class="col-12">
                                             <h6 class="files-section-title mb-75">Resource Centers</h6>
                                         </div>
-                                        <div class="flexo-resource-centers row"></div>
+                                        <div class="flexo-resourcfe-centers row"></div>
                                     </div>
                                 </div>
                                 <!-- drives area ends-->
@@ -592,11 +583,13 @@
                 feather.replace({
                     width: 14,
                     height: 14
-                });
+                })
             }
         })
     </script>
     <script type="text/javascript">
+        var projects = []
+
         const createResourceCenter = (rc) => {
             return  `<div class="col-lg-3 col-md-6 col-12">
                         <div class="card shadow-none border cursor-pointer">
@@ -629,11 +622,11 @@
                                 </div>
                             </div>
                         </div>
-                    </div>`;
+                    </div>`
         }
 
         const createResource = (resource) => {
-            return ``;
+            return ``
         }
 
         const createProject = (prj) => {
@@ -658,14 +651,14 @@
                             </div>
 <!--                            <small class="file-accessed text-muted">Last accessed: 21 hours ago</small>-->
                         </div>
-                    </div>`;
+                    </div>`
         }
 
         const createSidebarProject = (name) => {
             return `<a href="#" class="list-group-item list-group-item-action ">
                         <i data-feather="package" class="me-50 font-medium-3"></i>
                         <span class="align-middle">${name}</span>
-                    </a>`;
+                    </a>`
         }
 
         const fetchResourceCenters = () => {
@@ -674,12 +667,13 @@
             $.ajax({
                 url: url,
                 method: 'GET',
+                async: false,
                 success: function(response) {
                     let flexo_rcs   = ''
 
                     JSON.parse(response).forEach(function(obj) {
                         flexo_rcs += createResourceCenter(obj)
-                    });
+                    })
 
                     $('.flexo-resource-centers').html(flexo_rcs)
                 }
@@ -692,17 +686,57 @@
             $.ajax({
                 url: url,
                 method: 'GET',
+                async: false,
                 success: function(response) {
                     let flexo_prjs  = ''
                     let flexo_sprjs = ''
+                    projects        = JSON.parse(response)
 
-                    JSON.parse(response).forEach(function(obj) {
-                        flexo_prjs += createProject(obj)
+                    projects.forEach(function(obj) {
+                        flexo_prjs  += createProject(obj)
                         flexo_sprjs += createSidebarProject(obj.name)
-                    });
+                    })
 
                     $('.flexo-projects').html(flexo_prjs)
                     $('.flexo-projects-sidebar').html(flexo_sprjs)
+                }
+            })
+        }
+
+        const fetchProjectResources = (id) => {
+            const url = `/prj/${id}/rsc/`
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                async: false,
+                success: function(response) {
+                    let resources = JSON.parse(response)
+
+                    projects.map(x => {
+                        if(x.id == id){
+                            x['resources'] = resources
+                        }
+                    })
+                }
+            })
+        }
+
+        const fetchProjectFolders = (id) => {
+            const url = `/prj/${id}/fdr/`
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                async: false,
+                success: function(response) {
+                    let folders = JSON.parse(response)
+
+                    projects.map(x => {
+                        if(x.id == id){
+                            x['folders'] = folders
+                        }
+                    })
                 }
             })
         }
@@ -714,6 +748,7 @@
             $.ajax({
                 url: url,
                 method: 'POST',
+                async: false,
                 data:{
                     rc_path: rc_path,
                 },
@@ -731,6 +766,7 @@
             $.ajax({
                 url: url,
                 method: 'POST',
+                async: false,
                 data:{
                     name: prj_name,
                     rc_id: rc_id,
@@ -750,6 +786,86 @@
         $(() => {
             fetchResourceCenters()
             fetchProjects()
+
+            projects.map(x => {
+                fetchProjectResources(x.id)
+            })
+
+            projects.map(x => {
+                fetchProjectFolders(x.id)
+            })
+
+            let data = []
+
+            projects.map(x => {
+                let folders = []
+                x.folders.map(y => {
+                    folders.push({
+                        text: y.name,
+                        type: 'folder'
+                    })
+                })
+
+                let resources = []
+                x.resources.map(y => {
+                    resources.push({
+                        text: y.name,
+                        type: 'doc',
+                        data:{
+                            uri : y.uri,
+                            id : y.id
+                        },
+                        children: []
+                    })
+                })
+
+                data.push({
+                    text: x.name,
+                    children: resources.concat(folders)
+                })
+            })
+
+            $('.my-drive').jstree({
+                core: {
+                    themes: {
+                        dots: false
+                    },
+                    data: data
+                },
+                plugins: ['types', 'contextmenu'],
+                types: {
+                    default: {
+                        icon: 'far fa-folder font-medium-1'
+                    },
+                    jpg: {
+                        icon: 'far fa-file-image text-info font-medium-1'
+                    },
+                    doc: {
+                        icon: 'far fa-file text-info font-medium-1'
+                    }
+                },
+                contextmenu : {
+                    items : {
+                        item1 : {
+                            label : 'delete',
+                            action : function (data) {
+
+                            }
+                        },
+                        edit : {
+                            label : 'edit',
+                            action : function (data) {
+                                let url = '/OpenflexoColab/?file=' + $.jstree.reference(data.reference).get_node(data.reference).data.id
+
+                                window.open(url, '_blank').focus()
+                            }
+                        }
+                    }
+                },
+                // contextmenu : {
+                //     items : function () { console.log("test trest test") }
+                // }
+            });
         })
     </script>
 </body>

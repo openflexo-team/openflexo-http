@@ -11,7 +11,8 @@
 
 <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
 
-<script>var require = {paths: {'vs': '/assets/colab/min/vs'}};</script>
+<script>var require = {paths: {'vs': '/assets/colab/min/vs'}}</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="/assets/colab/min/vs/loader.js"></script>
 <script src="/assets/colab/min/vs/editor/editor.main.nls.js"></script>
 <script src="/assets/colab/min/vs/editor/editor.main.js"></script>
@@ -21,7 +22,7 @@
 	let name = prompt("Please enter your name", "")
 
 	if (name == null || name == "") {
-		name = "User 1"
+		name = "User " +  Math.random()
 	}
 
 	const port 		= window.location.port
@@ -82,11 +83,32 @@
 		})
 	}
 
+	const getVirtualModelFml = (id) => {
+		let fml = ''
+		let url = `/vm/${id}/fml`
+
+		$.ajax({
+			url: url,
+			method: 'GET',
+			async: false,
+			success: function (response) {
+				fml = response
+			}
+		})
+
+		return fml
+	}
+
 	require.config({ paths: { vs: '/assets/colab/min/vs' } })
 
 	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
+		const urlParams = new URLSearchParams(window.location.search)
+
+		const fml = getVirtualModelFml((urlParams.get('file')))
+		console.log(fml)
+
 		const editor = monaco.editor.create(document.getElementById('container'), {
-			value: ['function x() {', '\tconsole.log("Hello world!")', '}'].join('\n'),
+			value: fml,
 			language: 'javascript',
 			theme: 'vs-dark'
 		})
