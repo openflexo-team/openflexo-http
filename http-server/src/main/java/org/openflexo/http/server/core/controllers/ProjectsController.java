@@ -243,7 +243,13 @@ public class ProjectsController extends GenericController {
 
         if (project != null){
             JsonArray result = new JsonArray();
-            for (FlexoResource<?> resource : project.getAllResources()) {
+
+            Collection<FlexoResource<?>> resources  = project.getAllResources();
+            HashSet<String> names                   = new HashSet<>();
+
+            resources.removeIf(e -> !names.add(IdUtils.encodeuri(e.getName())));
+
+            for (FlexoResource<?> resource : resources) {
                 result.add(JsonUtils.getResourceDescription(resource, technologyAdapterRestService));
             }
             context.response().end(result.encodePrettily());
