@@ -92,6 +92,7 @@ public class TestProperties extends AbstractRestTest {
         String vmId         = vm.getString("id");
         String name         = "prop" + UUID.randomUUID().hashCode();
 
+
         form.set("name", name);
         form.set("type", "String");
         form.set("cardinality", "One");
@@ -104,6 +105,7 @@ public class TestProperties extends AbstractRestTest {
                 Assertions.assertEquals(primitiveProp.getString("type"), "String");
                 Assertions.assertEquals(primitiveProp.getString("cardinality"), "One");
                 Assertions.assertEquals(primitiveProp.getString("name"), name);
+                Assertions.assertEquals(primitiveProp.getString("description"), "description");
                 Assertions.assertEquals(primitiveProp.getString("virtual_model_id"), vmId);
                 Assertions.assertEquals(res.statusCode(), 200);
 
@@ -130,6 +132,7 @@ public class TestProperties extends AbstractRestTest {
                 prop = res.bodyAsJsonObject();
 
                 Assertions.assertEquals(prop.getString("concept_id"), vmId);
+                Assertions.assertEquals(prop.getString("description"), "description");
                 Assertions.assertEquals(prop.getString("cardinality"), "One");
                 Assertions.assertEquals(prop.getString("name"), name);
                 Assertions.assertEquals(res.statusCode(), 200);
@@ -163,6 +166,7 @@ public class TestProperties extends AbstractRestTest {
                 Assertions.assertEquals(prop.getString("read_only"), "false");
                 Assertions.assertEquals(prop.getString("technology_adapter"), "FML technology adapter");
                 Assertions.assertEquals(prop.getString("virtual_model_id"), vmId);
+                Assertions.assertEquals(prop.getString("description"), "description");
                 Assertions.assertEquals(prop.getString("name"), name);
                 Assertions.assertEquals(res.statusCode(), 200);
 
@@ -186,6 +190,7 @@ public class TestProperties extends AbstractRestTest {
                 Assertions.assertEquals(res.toJsonObject().getString("cardinality"), "One");
                 Assertions.assertEquals(res.toJsonObject().getString("name"), name);
                 Assertions.assertEquals(res.toJsonObject().getString("type"), "String");
+                Assertions.assertEquals(res.toJsonObject().getString("description"), "description");
 
                 context.completeNow();
             });

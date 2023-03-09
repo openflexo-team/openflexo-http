@@ -94,7 +94,7 @@ public class EnumsController extends GenericController {
                 CreateFlexoEnum flexoEnum = CreateFlexoEnum.actionType.makeNewAction(model, null, editor);
 
                 flexoEnum.setNewFlexoEnumName(validator.getName());
-                flexoEnum.setNewFlexoEnumDescription(validator.getDescription());
+//                flexoEnum.setNewFlexoEnumDescription(validator.getDescription());
                 flexoEnum.setVisibility(validator.getVisibility());
                 flexoEnum.setIsAbstract(validator.isAbstract());
                 flexoEnum.doAction();
