@@ -168,4 +168,29 @@ public class VirtualModelsController extends GenericController {
             notFound(context);
         }
     }
+
+    public void saveFml(RoutingContext context) {
+        String id = context.request().getParam("id").trim();
+
+        try {
+            VirtualModel model = virtualModelLibrary.getVirtualModel(IdUtils.decodeId(id));
+            if (model != null) {
+                VirtualModelsValidator validator    = new VirtualModelsValidator(context.request(), virtualModelLibrary);
+                JsonArray errors                    = validator.validateFml();
+
+                if (validator.isValid()) {
+                    String fml = validator.getFml();
+                    System.out.println(fml);
+                    emptyResponse(context);
+                } else {
+                    badValidation(context, errors);
+                }
+            } else {
+                notFound(context);
+            }
+
+        } catch (FileNotFoundException | ResourceLoadingCancelledException | FlexoException e) {
+            notFound(context);
+        }
+    }
 }

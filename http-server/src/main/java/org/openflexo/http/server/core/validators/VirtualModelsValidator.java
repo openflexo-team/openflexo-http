@@ -28,6 +28,7 @@ public class VirtualModelsValidator extends GenericValidator{
     private String projectId;
     private String path;
     private FlexoConcept parent;
+    private String fml;
 
     /**
      * Instantiates a new Virtual models validator.
@@ -62,6 +63,14 @@ public class VirtualModelsValidator extends GenericValidator{
             } catch (IllegalArgumentException e){
                 throw new BadValidationException("Invalid value");
             }
+        }
+    }
+
+    public String validateFml(String fml) throws BadValidationException {
+        if(fml == null || fml.isEmpty()){
+            throw new BadValidationException("Field required");
+        } else {
+            return fml;
         }
     }
 
@@ -137,6 +146,30 @@ public class VirtualModelsValidator extends GenericValidator{
     }
 
     /**
+     *  It takes the FML string, validates it, and returns a JsonArray of errors otherwise
+     *
+     * @return A JsonArray of errors.
+     */
+    public JsonArray validateFml(){
+        JsonObject errorLine;
+        errors              = new JsonArray();
+        String rFml         = request.getFormAttribute("fml");
+
+        try{
+            fml = validateFml(rFml);
+        } catch (BadValidationException e){
+            errorLine = new JsonObject();
+            errorLine.put("parent_id", e.getMessage());
+            errors.add(errorLine);
+        }
+
+        if(errors.isEmpty())
+            isValid = true;
+
+        return errors;
+    }
+
+    /**
      * This method returns true if the object is valid, and false if it is not.
      * 
      * @return The boolean value of isValid.
@@ -199,7 +232,21 @@ public class VirtualModelsValidator extends GenericValidator{
         return path;
     }
 
+    /**
+     * Returns the parent FlexoConcept of this FlexoConcept.
+     *
+     * @return The parent of the FlexoConcept
+     */
     public FlexoConcept getParent() {
         return parent;
+    }
+
+    /**
+     * This function returns the value of the fml variable
+     *
+     * @return The fml variable is being returned.
+     */
+    public String getFml() {
+        return fml;
     }
 }

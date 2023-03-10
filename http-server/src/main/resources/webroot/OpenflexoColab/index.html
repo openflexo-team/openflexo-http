@@ -4,10 +4,24 @@
 	<title>Openflexo Colab</title>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 	<link rel="stylesheet" href="/assets/colab/css/monaco-collab-ext.css">
-	<link rel="stylesheet" href="/assets/colab/css/example.css">
+	<link rel="stylesheet" href="/assets/colab/css/custom.css">
+
 </head>
-<body style="margin: 0px">
-<div id="container" style="position:absolute; width: 100%; height: 100%;"></div>
+<body>
+
+<div class="container">
+	<div class="navbar" >
+		<div class="logo">
+			<h3>Openflexo <span class="subtext">Colab</span></h3>
+		</div>
+		<div class="actions">
+			<button class="save-btn" onclick="handleSaveButton()">Save</button>
+<!--			<button class="validate-btn">Validate</button>-->
+		</div>
+
+	</div>
+	<div id="code-container"></div>
+</div>
 
 <!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
 
@@ -25,10 +39,12 @@
 		name = "User " +  Math.random()
 	}
 
+	const urlParams = new URLSearchParams(window.location.search)
 	const port 		= window.location.port
 	const hostname 	= window.location.hostname
 	var messageId
 	var changes
+	var editor
 
 	const getCursorColor = () => {
 		return "#" + Math.floor(Math.random()*16777215).toString(16)
@@ -99,15 +115,30 @@
 		return fml
 	}
 
+	const handleSaveButton = () => {
+		let url = `/vm/${urlParams.get('file')}/fml`
+		let fml = editor.getModel().getValue()
+
+		$.ajax({
+			url: url,
+			method: 'POST',
+			async: false,
+			data: {
+				fml: fml
+			},
+			success: function (response) {
+				console.log(response)
+			}
+		})
+	}
+
 	require.config({ paths: { vs: '/assets/colab/min/vs' } })
 
 	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
-		const urlParams = new URLSearchParams(window.location.search)
-
-		const fml = getVirtualModelFml((urlParams.get('file')))
+		const fml = getVirtualModelFml(urlParams.get('file'))
 		console.log(fml)
 
-		const editor = monaco.editor.create(document.getElementById('container'), {
+		editor = monaco.editor.create(document.getElementById('code-container'), {
 			value: fml,
 			language: 'javascript',
 			theme: 'vs-dark'
@@ -120,7 +151,8 @@
 		})
 		const remoteCursor	= remoteCursorManager.addCursor(thisCursor.id, thisCursor.color, thisCursor.label)
 		const webSocket		= new WebSocket(`ws://${hostname}:${port}/FmlEditor`)
-		webSocket.onopen = () => {
+
+		webSocket.onopen 	= () => {
 			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), true)
 			updateCursor(editor, remoteCursor)
 		}
@@ -175,7 +207,6 @@
 			console.log("code changed")
 		})
 	})
-
 </script>
 </body>
 </html>
