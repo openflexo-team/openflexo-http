@@ -486,7 +486,7 @@ public class JsonSerializer {
         if (output != null){
             for (String l: output) {
                 line = new JsonObject();
-                line.put("line", l.trim());
+                line.put("line", l.replace(">", "]").replace("<", "[").trim());
                 line.put("resource_type", "CommandLineOutput");
                 out.add(line);
             }

@@ -2,7 +2,7 @@
   "swagger" : "2.0",
   "info" : {
     "description" : "Documentation for Openflexo REST APIs.",
-    "version" : "1.0.0",
+    "version" : "2.99",
     "title" : "Openflexo-http REST APIs",
     "contact" : {
       "email" : "contact@openflexo.org"

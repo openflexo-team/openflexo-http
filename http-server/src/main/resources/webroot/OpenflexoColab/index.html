@@ -136,11 +136,10 @@
 
 	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
 		const fml = getVirtualModelFml(urlParams.get('file'))
-		console.log(fml)
 
 		editor = monaco.editor.create(document.getElementById('code-container'), {
 			value: fml,
-			language: 'javascript',
+			language: 'java',
 			theme: 'vs-dark'
 		})
 
