@@ -519,4 +519,22 @@ public class JsonSerializer {
 
         return result;
     }
+
+    /**
+     * This Java function serializes a list of strings into a JSON array.
+     *
+     * @param values values is a List of Strings that contains the possible completion options for a terminal command. The
+     * method terminalCompletionSerializer takes this list as input and returns a JsonArray that contains the same values.
+     * This is useful for sending the completion options to a client application that is interacting with the terminal.
+     * @return A JsonArray containing the values from the input List<String> is being returned.
+     */
+    public static JsonArray terminalCompletionSerializer(List<String> values) {
+        JsonArray result = new JsonArray();
+
+        for (String val : values) {
+            result.add(val);
+        }
+
+        return result;
+    }
 }

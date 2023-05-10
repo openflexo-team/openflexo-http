@@ -18,7 +18,7 @@ public class TerminalValidator extends GenericValidator {
     }
 
     public JsonArray validate(){
-        String rCommand     = request.getFormAttribute("command").trim();
+        String rCommand     = request.getFormAttribute("command");
         String rSessionId   = request.getFormAttribute("session_id");
         errors              = new JsonArray();
 

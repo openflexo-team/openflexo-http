@@ -14,6 +14,7 @@
     <script>
         var sessionId   = localStorage.getItem('session_id')
         var prompt      = 'openflexo'
+        var term;
 
         const createTerminal = () => {
             let url = '/terminal/init'
@@ -59,7 +60,7 @@
                 getTerminal()
             }
 
-            var term = new Term({
+            term = new Term({
                 recorder: false,
                 draggable: false,
                 container: '#term',
@@ -77,6 +78,41 @@
 
         $(() => {
             initTerminal();
+
+            $('.term-textarea').on("keydown", function(e){
+                if(e.which == 9){
+                    e.preventDefault()
+                    let url = '/terminal/completion'
+
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        data: {
+                            'session_id' : sessionId,
+                            'command' : localStorage.getItem('cmd')
+                        },
+                        async: false,
+                        dataType: 'json',
+                        success: function (response) {
+
+                            if (response.length == 1) {
+                                term.output(response[0])
+                                term.input(response[0])
+                            } else {
+
+                                let result = response.reduce((res, val) => {
+                                    return res + "    " + val
+                                }, "")
+                                term.output(result.trim())
+                                term.input(localStorage.getItem('cmd'))
+                            }
+                        },
+                        error: function() {
+                            console.log("error")
+                        }
+                    })
+                }
+            });
         })
     </script>
 </body>

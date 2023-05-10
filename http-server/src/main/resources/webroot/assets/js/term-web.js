@@ -3248,7 +3248,9 @@
 	    };
 
 	    this.output(welcome).input();
+
 	    term.on('input', function (text) {
+		  localStorage.setItem('cmd', text)
 	      if (drawer.cacheEditable) {
 	        if (_this.isQuestion) {
 	          _this.question(drawer.lastCacheLog.prefix, text);

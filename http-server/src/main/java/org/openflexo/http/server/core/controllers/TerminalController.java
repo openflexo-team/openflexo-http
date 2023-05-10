@@ -167,4 +167,30 @@ public class TerminalController extends GenericController {
             context.response().end(JsonSerializer.terminalHistorySerializer(terminal.getCi().getHistory()).encodePrettily());
         }
     }
+
+    /**
+     * This function validates a terminal command and returns a list of available completions for that command.
+     *
+     * @param context The context object represents the current HTTP request/response context. It contains information
+     * about the incoming request (such as headers, parameters, and body) and provides methods to send a response back to
+     * the client.
+     */
+    public void completion(RoutingContext context) {
+        TerminalValidator validator = new TerminalValidator(context.request());
+        JsonArray errors            = validator.validate();
+
+        if(validator.isValid()){
+            RestTerminal terminal = TerminalRepository.getTerminal(validator.getSessionId());
+
+            if(terminal == null || terminal.getCi() == null){
+                notFound(context);
+            } else {
+                List<String> availableCompletion = terminal.getCi().getAvailableCompletion(validator.getCommand());
+
+                context.response().end(JsonSerializer.terminalCompletionSerializer(availableCompletion).encodePrettily());
+            }
+        } else {
+            badValidation(context, errors);
+        }
+    }
 }
