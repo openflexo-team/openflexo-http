@@ -98,7 +98,7 @@
                             if (response.length == 1) {
                                 term.output(response[0])
                                 term.input(response[0])
-                            } else {
+                            } else if  (response.length > 1){
 
                                 let result = response.reduce((res, val) => {
                                     return res + "    " + val

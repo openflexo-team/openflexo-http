@@ -259,5 +259,6 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
         router.post("/terminal/execute").produces(JSON).handler(cliController::execute);
         router.post("/terminal/history").produces(JSON).handler(cliController::history);
         router.post("/terminal/completion").produces(JSON).handler(cliController::completion);
+        router.post("/terminal/kill").produces(JSON).handler(cliController::kill);
     }
 }

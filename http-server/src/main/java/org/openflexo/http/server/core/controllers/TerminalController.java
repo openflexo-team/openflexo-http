@@ -102,15 +102,16 @@ public class TerminalController extends GenericController {
                 if(terminal == null || terminal.getCi() == null){
                     notFound(context);
                 } else {
-                    CommandInterpreter ci = terminal.getCi();
+                    CommandInterpreter ci   = terminal.getCi();
+                    String command          = validator.getCommand().trim();
 
-                    if(validator.getCommand().toLowerCase().trim().startsWith("cd")){
+                    if(command.toLowerCase().trim().startsWith("cd")){
 
                         ci.executeCommand("pwd");
 
                         String root         = new File(ROOT_WORKSPACE).getAbsolutePath();
                         String currentDir   = ci.getOutput().get(0);
-                        String path         = validator.getCommand().replace("cd", "").trim();
+                        String path         = command.replace("cd", "").trim();
 
                         if (path.startsWith("/")){
                             path = root + path;
@@ -126,13 +127,12 @@ public class TerminalController extends GenericController {
                             notAuthorized(context);
                         }
                     } else {
-                        ci.executeCommand(validator.getCommand());
+                        ci.executeCommand(command);
 
                         List<String> output = ci.getOutput();
 
-                        if(validator.getCommand().trim().equalsIgnoreCase("pwd")){
+                        if(command.equalsIgnoreCase("pwd")){
                             output.set(0, ci.getOutput().get(0).replace(new File(ROOT_WORKSPACE).getAbsolutePath(), "/").replace("//", "/"));
-
                         }
 
                         context.response().end(JsonSerializer.terminalOutputSerializer(output, terminal).encodePrettily());
@@ -191,6 +191,18 @@ public class TerminalController extends GenericController {
             }
         } else {
             badValidation(context, errors);
+        }
+    }
+
+    public void kill(RoutingContext context) {
+        String  sessionId       = context.request().getFormAttribute("session_id");
+        RestTerminal terminal   = TerminalRepository.getTerminal(sessionId);
+
+        if(terminal == null){
+            notFound(context);
+        } else {
+            TerminalRepository.removeTerminal(sessionId);
+            emptyResponse(context);
         }
     }
 }
