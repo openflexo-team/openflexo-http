@@ -18,4 +18,8 @@ public class TerminalRepository {
     public static RestTerminal getTerminal(String key) {
         return terminals.get(key);
     }
+
+    public static void removeTerminal(String key) {
+        terminals.remove(key);
+    }
 }

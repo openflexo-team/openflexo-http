@@ -3248,7 +3248,9 @@
 	    };
 
 	    this.output(welcome).input();
+
 	    term.on('input', function (text) {
+		  localStorage.setItem('cmd', text)
 	      if (drawer.cacheEditable) {
 	        if (_this.isQuestion) {
 	          _this.question(drawer.lastCacheLog.prefix, text);
@@ -3335,36 +3337,54 @@
 	          return this.output(action.output).input();
 	        }
 	      } else {
-
-	        // var _result = notFound.call(this.term, text, argv);
-	        var _result = 'Something went wrong';
-			let url 	= '/terminal/execute'
-
-			$.ajax({
-			  url: url,
-			  method: 'POST',
-			  data: {
-			   'command': text,
-			   'session_id': sessionId
-			  },
-			  dataType: 'json',
-			  async: false,
-			  success: function (response) {
-			    _result = ""
-				  response.output.forEach(element => _result += element.line + "\n")
-
-				  _this2.term.options.prefix = response.prompt + ' > <d color="#00f501">$</d> '
-			  },
-				error : function(response){
-					if(response.status == 422){
-						_result = `Invalid command : <d color="red"> ${response.responseJSON[0]['command']}</d>`
+			if (text.trim().toLowerCase() == 'exit'){
+				let url 	= '/terminal/kill'
+				$.ajax({
+					url: url,
+					method: 'POST',
+					dataType:'json',
+					data: {
+						'session_id': sessionId
+					},
+					async: false,
+					success: function (response) {
+						localStorage.setItem('session_id', '')
+						_this2.term.output('................... Session deleted !')
 					}
-					if(response.status == 401){
-						_result = `<d color="red"> Not authorized </d>`
+				})
+
+			} else {
+				// var _result = notFound.call(this.term, text, argv);
+				var _result = 'Something went wrong';
+				let url 	= '/terminal/execute'
+
+				$.ajax({
+					url: url,
+					method: 'POST',
+					data: {
+						'command': text.trim(),
+						'session_id': sessionId
+					},
+					dataType: 'json',
+					async: false,
+					success: function (response) {
+						_result = ""
+						response.output.forEach(element => _result += element.line + "\n")
+
+						_this2.term.options.prefix = response.prompt + ' > <d color="#00f501">$</d> '
+					},
+					error : function(response){
+						if(response.status == 422){
+							_result = `Invalid command : <d color="red"> ${response.responseJSON[0]['command']}</d>`
+						}
+						if(response.status == 401){
+							_result = `<d color="red"> Not authorized </d>`
+						}
 					}
-				}
-			})
-	        return this.output(_result).input();
+				})
+				return this.output(_result).input()
+			}
+
 	      }
 	    }
 	  }, {
