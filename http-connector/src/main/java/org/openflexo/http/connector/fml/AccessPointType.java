@@ -40,6 +40,7 @@ import java.lang.reflect.Type;
 
 import org.openflexo.foundation.fml.TechnologySpecificType;
 import org.openflexo.foundation.fml.VirtualModelInstanceType;
+import org.openflexo.foundation.technologyadapter.SpecificTypeInfo;
 import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.AccessPoint;
 
@@ -67,7 +68,7 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	public VirtualModelInstanceType getInstanceType() {
 		return instanceType;
 	}
@@ -125,4 +126,16 @@ public class AccessPointType implements TechnologySpecificType<HttpTechnologyAda
 	public void resolve() {
 		System.out.println("-------> Resolving " + instanceType);
 	}
+
+	@Override
+	public void registerSpecificTypeInfo(SpecificTypeInfo<HttpTechnologyAdapter> typeInfo) {
+		this.typeInfo = typeInfo;
+	}
+
+	public SpecificTypeInfo<HttpTechnologyAdapter> getSpecificTypeInfo() {
+		return typeInfo;
+	}
+
+	private SpecificTypeInfo<HttpTechnologyAdapter> typeInfo;
+
 }
