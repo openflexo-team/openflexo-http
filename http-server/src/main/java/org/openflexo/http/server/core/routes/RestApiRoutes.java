@@ -3,6 +3,7 @@ package org.openflexo.http.server.core.routes;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.CorsHandler;
 import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapter;
 import org.openflexo.http.server.HttpService;
@@ -65,6 +66,7 @@ public class RestApiRoutes implements RouteService<FlexoServiceManager> {
      */
     @Override
     public void addRoutes(Vertx vertx, Router router) {
+        router.route().handler(CorsHandler.create(".*."));
         router.route().handler(BodyHandler.create());
 
         // Resource centers
