@@ -1,214 +1,30 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-	<title>Openflexo Colab</title>
-	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<link rel="stylesheet" href="/assets/colab/css/monaco-collab-ext.css">
-	<link rel="stylesheet" href="/assets/colab/css/custom.css">
-
+    <title>Openflexo Colab</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+	
+  <script type="module" crossorigin src="/OpenflexoColab/assets/index-e8d740ba.js"></script>
+  <link rel="stylesheet" href="/OpenflexoColab/assets/index-4826039e.css">
 </head>
+
 <body>
-
-<div class="container">
-	<div class="navbar" >
-		<div class="logo">
-			<h3>Openflexo <span class="subtext">Colab</span></h3>
-		</div>
-		<div class="actions">
-			<button class="save-btn" onclick="handleSaveButton()">Save</button>
-<!--			<button class="validate-btn">Validate</button>-->
-		</div>
-
-	</div>
-	<div id="code-container"></div>
-</div>
-
-<!-- OR ANY OTHER AMD LOADER HERE INSTEAD OF loader.js -->
-
-<script>var require = {paths: {'vs': '/assets/colab/min/vs'}}</script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/assets/colab/min/vs/loader.js"></script>
-<script src="/assets/colab/min/vs/editor/editor.main.nls.js"></script>
-<script src="/assets/colab/min/vs/editor/editor.main.js"></script>
-<script src="/assets/colab/js/monaco-collab-ext.js"></script>
-
-<script>
-	let name = prompt("Please enter your name", "")
-
-	if (name == null || name == "") {
-		name = "User " +  Math.random()
-	}
-
-	const urlParams = new URLSearchParams(window.location.search)
-	const port 		= window.location.port
-	const hostname 	= window.location.hostname
-	var messageId
-	var changes
-	var editor
-
-	const getCursorColor = () => {
-		return "#" + Math.floor(Math.random()*16777215).toString(16)
-	}
-
-	const generateUniqueId = () => {
-		const timestamp = Date.now()
-		const random 	= Math.floor(Math.random() * 1000000)
-		const uniqueId 	= timestamp * 1000000 + random
-		messageId 		= uniqueId
-
-		return uniqueId
-	}
-
-	const thisCursor = {
-		id: "Cursor" + generateUniqueId(),
-		label: name,
-		color: getCursorColor(),
-		position: {lineNumber: 0, column: 0}
-	}
-
-	const sendChangeCodeMessage = (editor,  webSocket) => {
-		let message =  {
-			"type": "FmlEditorRequest",
-			"id": generateUniqueId(),
-			"code": editor.getModel().getValue(),
-		}
-
-		webSocket.send(JSON.stringify(message))
-	}
-
-	const sendChangeCursorMessage = (webSocket, cursor, position, init) => {
-		let message =  {
-			"type": "FmlEditorCursorChangeRequest",
-			"id": generateUniqueId(),
-			"label": cursor.label,
-			"position": position,
-			"color": cursor.color,
-			"init": init,
-		}
-		webSocket.send(JSON.stringify(message))
-	}
-
-	const updateCursor = (editor, cursor) => {
-		const offset = editor.getModel().getOffsetAt(editor.getPosition())
-		cursor.setOffset(offset)
-	}
-
-	const clearCursors = (cursorManager) => {
-		Array.from(cursorManager.getCursors()).map(cursor => {
-			cursorManager.removeCursor(cursor.getCursorId())
-		})
-	}
-
-	const getVirtualModelFml = (id) => {
-		let fml = ''
-		let url = `/vm/${id}/fml`
-
-		$.ajax({
-			url: url,
-			method: 'GET',
-			async: false,
-			success: function (response) {
-				fml = response
-			}
-		})
-
-		return fml
-	}
-
-	const handleSaveButton = () => {
-		let url = `/vm/${urlParams.get('file')}/fml`
-		let fml = editor.getModel().getValue()
-
-		$.ajax({
-			url: url,
-			method: 'POST',
-			async: false,
-			data: {
-				fml: fml
-			},
-			success: function (response) {
-				console.log(response)
-			}
-		})
-	}
-
-	require.config({ paths: { vs: '/assets/colab/min/vs' } })
-
-	require(['vs/editor/editor.main', 'MonacoCollabExt'], function(m, MonacoCollabExt) {
-		const fml = getVirtualModelFml(urlParams.get('file'))
-
-		editor = monaco.editor.create(document.getElementById('code-container'), {
-			value: fml,
-			language: 'java',
-			theme: 'vs-dark'
-		})
-
-		const remoteCursorManager = new MonacoCollabExt.RemoteCursorManager({
-			editor: editor,
-			tooltips: true,
-			tooltipDuration: 2
-		})
-		const remoteCursor	= remoteCursorManager.addCursor(thisCursor.id, thisCursor.color, thisCursor.label)
-		const webSocket		= new WebSocket(`ws://${hostname}:${port}/FmlEditor`)
-
-		webSocket.onopen 	= () => {
-			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), true)
-			updateCursor(editor, remoteCursor)
-		}
-
-		webSocket.onmessage = function (event) {
-			let response = JSON.parse(event.data)
-
-			if (response.type == "code") {
-				editor.setValue(response.content)
-			} else if (response.type == "cursor") {
-				clearCursors(remoteCursorManager)
-
-				let cursors = response.content
-				cursors.forEach((cursor) => {
-					let offset 	= editor.getModel().getOffsetAt(cursor.position)
-					let newCursor = remoteCursorManager.addCursor(cursor.id, cursor.color, cursor.label)
-
-					newCursor.setOffset(offset)
-				})
-			}
-		}
-
-		editor.onDidChangeCursorPosition((e) => {
-			if(e.reason != 1){
-				const offset = editor.getModel().getOffsetAt(editor.getPosition())
-
-				remoteCursor.setOffset(offset)
-				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
-			}
-		})
-
-		editor.onDidFocusEditorText((e) => {
-			const offset = editor.getModel().getOffsetAt(editor.getPosition())
-
-			remoteCursor.setOffset(offset)
-			sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
-		})
-
-		editor.onKeyUp((e) => {
-			if (e.keyCode != 37 && e.keyCode != 38 && e.keyCode != 39 && e.keyCode != 40 && e.keyCode != 15 && e.keyCode != 16 && e.keyCode != 17 && e.keyCode != 18){
-				sendChangeCodeMessage(editor, webSocket)
-
-				sendChangeCursorMessage(webSocket, thisCursor, editor.getPosition(), false)
-			}
-		})
-
-		editor.onDidPaste(() => {
-			sendChangeCodeMessage(editor, webSocket)
-		})
-
-		editor.onDidChangeModel(() => {
-			console.log("code changed")
-		})
-	})
-</script>
+	<div class="container">
+        <div class="navbar" >
+            <div class="logo">
+                <h3>Openflexo <span class="subtext">Colab</span></h3>
+            </div>
+            <div class="actions">
+                <button class="save-btn" onclick="handleSaveButton()">Save</button>
+    			<button class="validate-btn"  onclick="handleValidateButton()">Validate</button>
+            </div>
+        </div>
+        <div id="container"></div>
+    </div>
+    
 </body>
+
 </html>
-
-
-
