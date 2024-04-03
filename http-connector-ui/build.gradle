@@ -1,6 +1,6 @@
 dependencies {
    implementation project(':http-connector')
-   implementation flexoUi()
+   //implementation flexoUi()
    implementation flexoUi()
    implementation fmlTechnologyAdapterUi()
    implementation fmlRtTechnologyAdapterUi()
