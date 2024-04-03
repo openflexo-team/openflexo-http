@@ -1,7 +1,5 @@
-include 'http-server'
 include 'http-connector'
 include 'http-connector-ui'
 include 'http-connector-rc'
-include 'gina-http'
 include 'http-connector-test-rc'
 

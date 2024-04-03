@@ -1,4 +1,0 @@
-
-# Technology Adapter Routes
-
-TODO
