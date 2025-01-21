@@ -43,6 +43,7 @@ import java.util.logging.Logger;
 import org.openflexo.connie.DataBinding;
 import org.openflexo.foundation.fml.FlexoBehaviour;
 import org.openflexo.foundation.fml.rt.editionaction.BehaviourCallArgument;
+import org.openflexo.foundation.fml.validation.BindingIsRequiredAndMustBeValid;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.pamela.annotations.DefineValidationRule;
 import org.openflexo.pamela.annotations.ImplementationClass;
