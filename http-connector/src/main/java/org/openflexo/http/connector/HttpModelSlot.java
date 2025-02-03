@@ -27,7 +27,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
-import org.openflexo.foundation.fml.rt.InferedFMLRTModelSlot;
+import org.openflexo.foundation.fml.rt.ReflectedFMLRTModelSlot;
 import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.http.connector.HttpModelSlot.HttpModelSlotImpl;
 import org.openflexo.http.connector.fml.HttpVirtualModelInstanceType;
@@ -53,7 +53,7 @@ import org.openflexo.pamela.annotations.XMLAttribute;
  */
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpModelSlotImpl.class)
-public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extends InferedFMLRTModelSlot<VMI, HttpTechnologyAdapter> {
+public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extends ReflectedFMLRTModelSlot<VMI, HttpTechnologyAdapter> {
 
 	/**
 	 * General format of responses for requests in that HttpModelSlot
@@ -164,7 +164,7 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>> extend
 	public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
 
 	abstract class HttpModelSlotImpl<VMI extends HttpVirtualModelInstance<VMI>>
-			extends InferedFMLRTModelSlotImpl<VMI, HttpTechnologyAdapter> implements HttpModelSlot<VMI> {
+			extends ReflectedFMLRTModelSlotImpl<VMI, HttpTechnologyAdapter> implements HttpModelSlot<VMI> {
 
 		private DataBinding<String> url;
 		private DataBinding<String> user;
