@@ -71,7 +71,7 @@ import org.openflexo.pamela.annotations.XMLAttribute;
 @ImplementationClass(HttpVirtualModelInstanceImpl.class)
 @Imports(@Import(HttpFlexoConceptInstance.class))
 public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<VMI>>
-		extends ReflectedVirtualModelInstance<VMI, AccessPointResource, HttpTechnologyAdapter> {
+		extends ReflectedVirtualModelInstance<VMI, AccessPointResource, AccessPoint, HttpTechnologyAdapter> {
 
 	String URL_KEY = "url";
 	String USER_KEY = "user";
@@ -109,8 +109,9 @@ public interface HttpVirtualModelInstance<VMI extends HttpVirtualModelInstance<V
 
 	public void setSupportFactory(ContentSupportFactory<?, ?> supportFactory);
 
-	abstract class HttpVirtualModelInstanceImpl<VMI extends HttpVirtualModelInstance<VMI>> extends
-			ReflectedVirtualModelInstanceImpl<VMI, AccessPointResource, HttpTechnologyAdapter> implements HttpVirtualModelInstance<VMI> {
+	abstract class HttpVirtualModelInstanceImpl<VMI extends HttpVirtualModelInstance<VMI>>
+			extends ReflectedVirtualModelInstanceImpl<VMI, AccessPointResource, AccessPoint, HttpTechnologyAdapter>
+			implements HttpVirtualModelInstance<VMI> {
 
 		@SuppressWarnings("unused")
 		private static final Logger logger = FlexoLogger.getLogger(HttpVirtualModelInstance.class.getPackage().toString());

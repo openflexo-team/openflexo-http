@@ -55,7 +55,7 @@ import org.openflexo.pamela.annotations.XMLAttribute;
 @ModelEntity(isAbstract = true)
 @ImplementationClass(HttpModelSlotImpl.class)
 public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>>
-		extends ReflectedFMLRTModelSlot<VMI, AccessPointResource, HttpTechnologyAdapter> {
+		extends ReflectedFMLRTModelSlot<VMI, AccessPointResource, AccessPoint, HttpTechnologyAdapter> {
 
 	/**
 	 * General format of responses for requests in that HttpModelSlot
@@ -165,8 +165,8 @@ public interface HttpModelSlot<VMI extends HttpVirtualModelInstance<VMI>>
 	 */
 	public AbstractVirtualModelInstanceModelFactory<?> getVirtualModelInstanceModelFactory(FlexoServiceManager serviceManager);
 
-	abstract class HttpModelSlotImpl<VMI extends HttpVirtualModelInstance<VMI>>
-			extends ReflectedFMLRTModelSlotImpl<VMI, AccessPointResource, HttpTechnologyAdapter> implements HttpModelSlot<VMI> {
+	abstract class HttpModelSlotImpl<VMI extends HttpVirtualModelInstance<VMI>> extends
+			ReflectedFMLRTModelSlotImpl<VMI, AccessPointResource, AccessPoint, HttpTechnologyAdapter> implements HttpModelSlot<VMI> {
 
 		private DataBinding<String> url;
 		private DataBinding<String> user;
