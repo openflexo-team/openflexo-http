@@ -27,7 +27,7 @@ import org.openflexo.foundation.FlexoServiceManager;
 import org.openflexo.foundation.fml.FlexoRole;
 import org.openflexo.foundation.fml.VirtualModel;
 import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
-import org.openflexo.foundation.fml.rt.ReflectedFMLRTModelSlot;
+import org.openflexo.foundation.fml.rt.reflect.ReflectedFMLRTModelSlot;
 import org.openflexo.foundation.technologyadapter.ModelSlot;
 import org.openflexo.http.connector.HttpModelSlot.HttpModelSlotImpl;
 import org.openflexo.http.connector.fml.HttpVirtualModelInstanceType;

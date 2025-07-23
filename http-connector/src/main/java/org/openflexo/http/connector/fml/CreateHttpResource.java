@@ -438,7 +438,7 @@ public interface CreateHttpResource<VMI extends HttpVirtualModelInstance<VMI>>
 
 					CreationSchemeAction creationSchemeAction = new CreationSchemeAction(getCreationScheme(), null, null,
 							(FlexoBehaviourAction<?, ?, ?>) evaluationContext);
-					creationSchemeAction.initWithFlexoConceptInstance(data);
+					creationSchemeAction.assignNewFlexoConceptInstance(data);
 					for (CreateHttpResourceParameter p : getParameters()) {
 						// Unused FlexoBehaviourParameter param = p.getParam();
 						Object value = p.evaluateParameterValue((FlexoBehaviourAction<?, ?, ?>) evaluationContext);
