@@ -38,13 +38,18 @@
 
 package org.openflexo.http.connector.model.xmlrpc;
 
+import org.openflexo.foundation.fml.AbstractCreationScheme;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.FMLExecutionException;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.reflect.ReflectedFlexoConceptInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
-import org.openflexo.http.connector.rm.xmlrpc.XmlRpcVirtualModelInstanceResource;
+import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
 import org.openflexo.pamela.factory.PamelaModelFactory;
@@ -55,11 +60,11 @@ import org.openflexo.pamela.factory.PamelaModelFactory;
  * @author sylvain
  * 
  */
-public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<XmlRpcVirtualModelInstance> {
+public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<XmlRpcVirtualModelInstance, MapSupport> {
 
-	public XmlRpcVirtualModelInstanceModelFactory(XmlRpcVirtualModelInstanceResource virtualModelInstanceResource,
-			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
-		super(virtualModelInstanceResource, XmlRpcVirtualModelInstance.class, editingContext, taService);
+	public XmlRpcVirtualModelInstanceModelFactory(AccessPointResource resource, EditingContext editingContext,
+			TechnologyAdapterService taService) throws ModelDefinitionException {
+		super(resource, XmlRpcVirtualModelInstance.class, editingContext, taService);
 	}
 
 	@Override
@@ -77,6 +82,14 @@ public class XmlRpcVirtualModelInstanceModelFactory extends HttpVirtualModelInst
 			return (HttpFlexoConceptInstance<S>) returned;
 		}
 		logger.warning("Unexpected support for XmlRpcVirtualModelInstanceModelFactory: " + support);
+		return null;
+	}
+
+	@Override
+	public ReflectedFlexoConceptInstance<MapSupport> makeNewFlexoConceptInstance(FlexoConcept concept, MapSupport supportObject,
+			FlexoConceptInstance container, VirtualModelInstance<?, ?> ownerVirtualModelInstance, AbstractCreationScheme creationScheme,
+			RunTimeEvaluationContext evaluationContext) throws FMLExecutionException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

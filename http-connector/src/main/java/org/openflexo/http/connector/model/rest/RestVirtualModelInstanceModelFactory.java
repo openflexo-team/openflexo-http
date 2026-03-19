@@ -40,13 +40,18 @@ package org.openflexo.http.connector.model.rest;
 
 import java.util.logging.Logger;
 
+import org.openflexo.foundation.fml.AbstractCreationScheme;
 import org.openflexo.foundation.fml.FlexoConcept;
+import org.openflexo.foundation.fml.rt.FMLExecutionException;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
+import org.openflexo.foundation.fml.rt.RunTimeEvaluationContext;
+import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.reflect.ReflectedFlexoConceptInstance;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
 import org.openflexo.http.connector.model.ContentSupport;
 import org.openflexo.http.connector.model.HttpFlexoConceptInstance;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
-import org.openflexo.http.connector.rm.rest.RestVirtualModelInstanceResource;
+import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.logging.FlexoLogger;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
@@ -58,13 +63,13 @@ import org.openflexo.pamela.factory.PamelaModelFactory;
  * @author sylvain
  * 
  */
-public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<RestVirtualModelInstance> {
+public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstanceModelFactory<RestVirtualModelInstance, JsonSupport> {
 
 	private static final Logger logger = FlexoLogger.getLogger(RestVirtualModelInstanceModelFactory.class.getPackage().toString());
 
-	public RestVirtualModelInstanceModelFactory(RestVirtualModelInstanceResource virtualModelInstanceResource,
-			EditingContext editingContext, TechnologyAdapterService taService) throws ModelDefinitionException {
-		super(virtualModelInstanceResource, RestVirtualModelInstance.class, editingContext, taService);
+	public RestVirtualModelInstanceModelFactory(AccessPointResource resource, EditingContext editingContext,
+			TechnologyAdapterService taService) throws ModelDefinitionException {
+		super(resource, RestVirtualModelInstance.class, editingContext, taService);
 	}
 
 	@Override
@@ -82,6 +87,14 @@ public class RestVirtualModelInstanceModelFactory extends HttpVirtualModelInstan
 			return (HttpFlexoConceptInstance<S>) returned;
 		}
 		logger.warning("Unexpected support for RestVirtualModelInstanceModelFactory: " + support);
+		return null;
+	}
+
+	@Override
+	public ReflectedFlexoConceptInstance<JsonSupport> makeNewFlexoConceptInstance(FlexoConcept concept, JsonSupport supportObject,
+			FlexoConceptInstance container, VirtualModelInstance<?, ?> ownerVirtualModelInstance, AbstractCreationScheme creationScheme,
+			RunTimeEvaluationContext evaluationContext) throws FMLExecutionException {
+		// TODO Auto-generated method stub
 		return null;
 	}
 

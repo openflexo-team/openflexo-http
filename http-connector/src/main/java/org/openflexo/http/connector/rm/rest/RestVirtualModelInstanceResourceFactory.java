@@ -27,7 +27,6 @@ import org.openflexo.http.connector.HttpTechnologyAdapter;
 import org.openflexo.http.connector.model.HttpVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.model.rest.JsonSupportFactory;
 import org.openflexo.http.connector.model.rest.RestVirtualModelInstance;
-import org.openflexo.http.connector.model.rest.RestVirtualModelInstanceModelFactory;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
 import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResourceFactory;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
@@ -73,9 +72,10 @@ public class RestVirtualModelInstanceResourceFactory extends HttpVirtualModelIns
 	@Override
 	public HttpVirtualModelInstanceModelFactory makeModelFactory(HttpVirtualModelInstanceResource<RestVirtualModelInstance> resource,
 			TechnologyContextManager<HttpTechnologyAdapter> technologyContextManager) throws ModelDefinitionException {
-		return new RestVirtualModelInstanceModelFactory((RestVirtualModelInstanceResource) resource,
+		/*return new RestVirtualModelInstanceModelFactory((RestVirtualModelInstanceResource) resource,
 				technologyContextManager.getTechnologyAdapter().getServiceManager().getEditingContext(),
-				technologyContextManager.getTechnologyAdapter().getServiceManager().getTechnologyAdapterService());
+				technologyContextManager.getTechnologyAdapter().getServiceManager().getTechnologyAdapterService());*/
+		return null;
 	}
 
 	/*	@Override

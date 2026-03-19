@@ -39,11 +39,11 @@
 package org.openflexo.http.connector.model;
 
 import org.openflexo.foundation.fml.FlexoConcept;
-import org.openflexo.foundation.fml.rt.AbstractVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.fml.rt.FlexoConceptInstance;
-import org.openflexo.foundation.fml.rt.VirtualModelInstance;
+import org.openflexo.foundation.fml.rt.reflect.ReflectedVirtualModelInstanceModelFactory;
 import org.openflexo.foundation.technologyadapter.TechnologyAdapterService;
-import org.openflexo.http.connector.rm.HttpVirtualModelInstanceResource;
+import org.openflexo.http.connector.HttpTechnologyAdapter;
+import org.openflexo.http.connector.rm.AccessPointResource;
 import org.openflexo.pamela.exceptions.ModelDefinitionException;
 import org.openflexo.pamela.factory.EditingContext;
 import org.openflexo.pamela.factory.PamelaModelFactory;
@@ -54,14 +54,21 @@ import org.openflexo.pamela.factory.PamelaModelFactory;
  * @author sylvain
  * 
  */
-public abstract class HttpVirtualModelInstanceModelFactory<VMI extends HttpVirtualModelInstance<VMI>>
-		extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource<VMI>> {
+public abstract class HttpVirtualModelInstanceModelFactory<VMI extends HttpVirtualModelInstance<VMI>, S extends ContentSupport<?>>
+		// extends AbstractVirtualModelInstanceModelFactory<HttpVirtualModelInstanceResource<VMI>> {
+		extends ReflectedVirtualModelInstanceModelFactory<AccessPointResource, AccessPoint, HttpTechnologyAdapter, S> {
 
-	public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource<VMI> virtualModelInstanceResource,
+	public HttpVirtualModelInstanceModelFactory(AccessPointResource resource,
+			Class<VMI/*? extends VirtualModelInstance<?, ?>*/> baseVMIClass, EditingContext editingContext,
+			TechnologyAdapterService taService) throws ModelDefinitionException {
+		super(resource, baseVMIClass, editingContext, taService);
+	}
+
+	/*public HttpVirtualModelInstanceModelFactory(HttpVirtualModelInstanceResource<VMI> virtualModelInstanceResource,
 			Class<? extends VirtualModelInstance<?, ?>> baseVMIClass, EditingContext editingContext, TechnologyAdapterService taService)
 			throws ModelDefinitionException {
 		super(virtualModelInstanceResource, baseVMIClass, editingContext, taService);
-	}
+	}*/
 
 	public abstract <S extends ContentSupport<?>> HttpFlexoConceptInstance<S> newFlexoConceptInstance(VMI owner,
 			FlexoConceptInstance container, S support, FlexoConcept concept);
